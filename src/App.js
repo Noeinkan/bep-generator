@@ -1,107 +1,114 @@
-import React, { useState } from 'react';
-import { ChevronRight, ChevronLeft, Download, FileText, Users, Settings, CheckCircle, AlertCircle, Building, Zap, Shield, Database, Calendar, Target, BookOpen, Monitor } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { ChevronRight, ChevronLeft, Download, FileText, Users, Settings, CheckCircle, AlertCircle, Building, Zap, Shield, Database, Calendar, Target, BookOpen, Monitor, Eye, FileType, Printer } from 'lucide-react';
 
 const ProfessionalBEPGenerator = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [bepType, setBepType] = useState('pre-appointment');
+
+  const previewRef = useRef(null);
+
+  
   const [formData, setFormData] = useState({
     // Project Information
-    projectName: '',
-    projectNumber: '',
-    projectDescription: '',
-    projectType: '',
-    projectTimeline: '',
-    projectBudget: '',
+    projectName: 'New Office Complex Development',
+    projectNumber: 'NOC-2025-001',
+    projectDescription: 'A modern 15-story office complex with retail spaces on the ground floor, underground parking, and sustainable building systems. The project includes advanced MEP systems, curtain wall facades, and LEED Gold certification requirements.',
+    projectType: 'Commercial Building',
+    projectTimeline: '36 months (March 2025 - February 2028)',
+    projectBudget: '£45M - £52M',
     
     // Stakeholders
-    appointingParty: '',
-    leadAppointedParty: '',
-    appointedParties: '',
-    informationManager: '',
-    taskTeamLeaders: '',
+    appointingParty: 'Metropolitan Development Corp.',
+    leadAppointedParty: 'Global Construction Ltd.',
+    appointedParties: 'Architecture: Modern Design Associates\nStructural: Engineering Excellence Ltd.\nMEP: Advanced Systems Group\nQuantity Surveyor: Cost Management Partners\nSpecialist Facades: Curtain Wall Experts Ltd.',
+    informationManager: 'Sarah Johnson, BIM Manager - Global Construction Ltd.',
+    taskTeamLeaders: 'Architecture: John Smith (Modern Design Associates)\nStructural: Emily Chen (Engineering Excellence Ltd.)\nMEP: Michael Rodriguez (Advanced Systems Group)\nFacades: David Wilson (Curtain Wall Experts Ltd.)',
     
     // BIM Goals and Uses
-    bimGoals: '',
-    bimUses: [],
-    primaryObjectives: '',
+    bimGoals: 'Implement a collaborative BIM workflow to improve design coordination, reduce construction conflicts, optimize project delivery timelines, and establish a comprehensive digital asset for facility management handover.',
+    bimUses: ['Design Authoring', '3D Coordination', 'Clash Detection', 'Quantity Take-off', '4D Planning'],
+    primaryObjectives: 'Achieve zero design conflicts at construction stage, reduce RFIs by 40%, improve construction efficiency, and deliver comprehensive FM data for operations.',
     
     // Level of Information Need (LOIN)
-    informationPurposes: [],
-    geometricalInfo: '',
-    alphanumericalInfo: '',
-    documentationInfo: '',
-    informationFormats: [],
+    informationPurposes: ['Design Development', 'Construction Planning', 'Quantity Surveying', 'Facility Management'],
+    geometricalInfo: 'LOD 350 for construction documentation phase, with dimensional accuracy of ±10mm for structural elements and ±5mm for MEP coordination points.',
+    alphanumericalInfo: 'All building elements must include material specifications, performance data, manufacturer information, maintenance requirements, and warranty details.',
+    documentationInfo: 'Construction drawings, specifications, schedules, O&M manuals, warranty documents, and asset registers in digital format.',
+    informationFormats: ['IFC 4', 'PDF', 'BCF 2.1', 'DWG', 'COBie'],
     
     // Information Delivery Planning
-    midpDescription: '',
-    keyMilestones: '',
-    deliverySchedule: '',
-    tidpRequirements: '',
+    midpDescription: 'The MIDP coordinates all discipline-specific TIDPs into a unified delivery schedule aligned with RIBA stages and construction milestones. Information exchanges occur at stage gates with formal approval processes.',
+    keyMilestones: 'Stage 2 (Concept Design): Basic geometry and spatial coordination\nStage 3 (Spatial Coordination): Full coordination model\nStage 4 (Technical Design): Construction-ready information\nStage 5 (Manufacturing): Production information\nStage 6 (Handover): As-built models and FM data',
+    deliverySchedule: 'Monthly model updates during design phases, weekly coordination cycles during construction documentation, and daily updates during critical construction phases.',
+    tidpRequirements: 'Each task team must produce TIDPs detailing their information deliverables, responsibilities, quality requirements, and delivery schedules in alignment with project milestones.',
     
     // Common Data Environment
-    cdeProvider: '',
-    cdePlatform: '',
-    workflowStates: '',
-    accessControl: '',
-    securityMeasures: '',
-    backupProcedures: '',
+    cdeProvider: 'Autodesk BIM 360',
+    cdePlatform: 'BIM 360 Design & Docs - Enterprise Version 2024',
+    workflowStates: 'Work in Progress (WIP): Active development by task teams\nShared: Available for coordination and review\nPublished: Approved for use by the project team\nArchived: Historical versions for reference',
+    accessControl: 'Role-based access with project administrator, discipline leads, team members, and read-only stakeholder levels. Multi-factor authentication required for all users.',
+    securityMeasures: 'ISO 27001 compliant platform with end-to-end encryption, regular security audits, data residency controls, and comprehensive audit logging.',
+    backupProcedures: 'Automated daily backups with 30-day retention, weekly full system backups, geographic redundancy, and quarterly disaster recovery testing.',
     
     // Technology Requirements
-    bimSoftware: [],
-    fileFormats: [],
-    hardwareRequirements: '',
-    networkRequirements: '',
-    interoperabilityNeeds: '',
+    bimSoftware: ['Autodesk Revit', 'Navisworks', 'Solibri Model Checker', 'BIM 360'],
+    fileFormats: ['IFC 4', 'DWG', 'PDF', 'BCF 2.1', 'NWD'],
+    hardwareRequirements: 'Minimum: Intel i7 or equivalent, 32GB RAM, dedicated graphics card (RTX 3060 or higher), 1TB SSD storage, dual monitors recommended.',
+    networkRequirements: 'High-speed internet connection (minimum 100 Mbps), VPN access for remote working, secure cloud connectivity to CDE platform.',
+    interoperabilityNeeds: 'Seamless data exchange between Revit disciplines, coordination in Navisworks, model checking in Solibri, and cloud collaboration through BIM 360.',
     
     // Information Production Methods
-    modelingStandards: '',
-    namingConventions: '',
-    fileStructure: '',
-    versionControl: '',
-    dataExchangeProtocols: '',
+    modelingStandards: 'UK BIM Alliance standards, Uniclass 2015 classification system, LOD specification based on AIA guidelines, and company-specific modeling conventions.',
+    namingConventions: 'Project code: NOC, Originator codes by discipline (ARC, STR, MEP), Volume/Level codes, Type classifications following BS 1192 naming convention.',
+    fileStructure: 'Organized by discipline and project phase with clear folder hierarchies, version control through file naming, and linked file management protocols.',
+    versionControl: 'Sequential numbering (P01, P02, etc.) for WIP, formal revision codes (A, B, C, etc.) for issued drawings, with comprehensive revision tracking.',
+    dataExchangeProtocols: 'Weekly IFC exports for coordination, BCF workflow for issue management, and formal information exchanges at project milestones.',
     
     // Quality Assurance
-    qaFramework: '',
-    modelValidation: '',
-    reviewProcesses: '',
-    approvalWorkflows: '',
-    complianceVerification: '',
+    qaFramework: 'Comprehensive QA process including automated model checking, manual design reviews, coordination clash detection, and compliance verification against project standards.',
+    modelValidation: 'Automated checking using Solibri Model Checker for geometric accuracy, completeness, and standard compliance. Manual reviews for design intent and buildability.',
+    reviewProcesses: 'Stage gate reviews at each RIBA stage, weekly coordination reviews, monthly progress reviews, and formal design freeze approvals.',
+    approvalWorkflows: 'Task team lead approval, discipline coordination review, project manager authorization, and client sign-off for major milestones.',
+    complianceVerification: 'Regular audits against ISO 19650 requirements, BIM standards compliance checks, and quality metrics monitoring.',
     
     // Information Security & Privacy
-    dataClassification: '',
-    accessPermissions: '',
-    encryptionRequirements: '',
-    dataTransferProtocols: '',
-    privacyConsiderations: '',
+    dataClassification: 'Public: Marketing materials\nInternal: Design development work\nConfidential: Commercial information\nRestricted: Security-sensitive building systems',
+    accessPermissions: 'Granular permissions based on project roles, need-to-know basis for sensitive information, regular access reviews, and immediate revocation upon project completion.',
+    encryptionRequirements: 'AES-256 encryption for data at rest, TLS 1.3 for data in transit, encrypted email for sensitive communications, and secure file transfer protocols.',
+    dataTransferProtocols: 'Secure cloud transfer through approved CDE, encrypted email for sensitive documents, secure FTP for large files, and audit trails for all transfers.',
+    privacyConsiderations: 'GDPR compliance for all personal data, data retention policies, right to erasure procedures, and privacy impact assessments for data processing.',
     
     // Training and Competency
-    bimCompetencyLevels: '',
-    trainingRequirements: '',
-    certificationNeeds: '',
-    projectSpecificTraining: '',
+    bimCompetencyLevels: 'Level 1 (Awareness): All project staff\nLevel 2 (Knowledge): Discipline leads and coordinators\nLevel 3 (Competence): BIM specialists and managers\nLevel 4 (Expertise): Information manager and senior BIM roles',
+    trainingRequirements: 'Software proficiency certification, ISO 19650 awareness training, project-specific BIM procedures, and CDE platform training for all users.',
+    certificationNeeds: 'BIM certification for key personnel, software vendor certifications, ISO 19650 practitioner certification, and ongoing professional development.',
+    projectSpecificTraining: 'Project induction covering BIM requirements, CDE usage training, modeling standards workshop, and regular update sessions for process changes.',
     
     // Coordination and Collaboration
-    coordinationMeetings: '',
-    clashDetectionWorkflow: '',
-    issueResolution: '',
-    communicationProtocols: '',
-    federationStrategy: '',
+    coordinationMeetings: 'Weekly BIM coordination meetings, monthly progress reviews, quarterly stakeholder updates, and ad-hoc sessions for critical issues.',
+    clashDetectionWorkflow: 'Automated daily clash detection in Navisworks, weekly clash reports, prioritized resolution tracking, and formal sign-off on cleared clashes.',
+    issueResolution: 'BCF-based issue tracking, responsibility assignment, deadline management, escalation procedures, and resolution verification process.',
+    communicationProtocols: 'Project collaboration platform for daily communication, formal reporting channels, escalation matrix, and documented decision-making process.',
+    federationStrategy: 'Central federated model in Navisworks updated weekly, discipline model linking protocols, version synchronization, and coordination point management.',
     
     // Risk Management
-    informationRisks: '',
-    technologyRisks: '',
-    riskMitigation: '',
-    contingencyPlans: '',
+    informationRisks: 'Data loss through inadequate backup procedures, information security breaches, quality issues from insufficient checking, interoperability failures between software platforms.',
+    technologyRisks: 'Software compatibility issues, hardware failures affecting productivity, network connectivity problems, cloud service outages, and version control conflicts.',
+    riskMitigation: 'Robust backup strategies, comprehensive security measures, regular quality audits, software compatibility testing, and redundant system capabilities.',
+    contingencyPlans: 'Alternative CDE platforms identified, backup workflow procedures, emergency communication protocols, and rapid response teams for critical issues.',
     
     // Compliance and Monitoring
-    performanceMetrics: '',
-    monitoringProcedures: '',
-    auditTrails: '',
-    updateProcesses: ''
+    performanceMetrics: 'Model quality scores, coordination efficiency metrics, information delivery timeline adherence, and stakeholder satisfaction ratings.',
+    monitoringProcedures: 'Monthly performance reviews, automated quality checking, delivery milestone tracking, and continuous improvement feedback loops.',
+    auditTrails: 'Comprehensive logging of all CDE activities, version history tracking, approval records, and change management documentation.',
+    updateProcesses: 'Quarterly BEP reviews, change request procedures, stakeholder approval for modifications, and continuous alignment with project requirements.'
   });
 
-  const [completedSections, setCompletedSections] = useState(new Set());
 
+  const [completedSections, setCompletedSections] = useState(new Set());
+  const [exportFormat, setExportFormat] = useState('html');
+  const [showPreview, setShowPreview] = useState(false);
+  const [generatedContent, setGeneratedContent] = useState('');
   const steps = [
     {
       title: 'BEP Type & Project Info',
@@ -255,41 +262,175 @@ const ProfessionalBEPGenerator = () => {
     }
   };
 
-  const generateProfessionalBEP = () => {
+
+  const generateBEPContent = () => {
     const currentDate = new Date();
     const formattedDate = currentDate.toLocaleDateString();
     const formattedTime = currentDate.toLocaleTimeString();
 
-    const bepContent = `
-      <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+    return `
+      <!DOCTYPE html>
+      <html lang="en">
       <head>
-        <meta charset="utf-8">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>BIM Execution Plan - ${formData.projectName}</title>
         <style>
-          body { font-family: 'Segoe UI', Arial, sans-serif; margin: 40px; line-height: 1.6; color: #333; }
-          .header { text-align: center; border-bottom: 3px solid #2563eb; padding-bottom: 20px; margin-bottom: 30px; }
-          h1 { color: #1e40af; font-size: 28px; margin-bottom: 10px; }
-          .subtitle { color: #059669; font-size: 18px; font-weight: bold; margin-bottom: 5px; }
-          .bep-type { background: #dbeafe; padding: 10px; border-radius: 8px; display: inline-block; margin: 10px 0; font-weight: bold; }
-          h2 { color: #1e40af; margin-top: 35px; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; font-size: 20px; }
-          h3 { color: #374151; margin-top: 25px; font-size: 16px; border-left: 4px solid #2563eb; padding-left: 12px; }
-          .section { margin: 25px 0; }
-          .info-box { background-color: #f8fafc; padding: 20px; border-left: 4px solid #2563eb; margin: 20px 0; border-radius: 0 8px 8px 0; }
-          .category-header { background: linear-gradient(135deg, #2563eb, #1e40af); color: white; padding: 15px; margin: 30px 0 20px 0; border-radius: 8px; font-weight: bold; font-size: 18px; }
+          @media print {
+            .no-print { display: none !important; }
+            body { margin: 0; }
+          }
+          body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            margin: 40px; 
+            line-height: 1.6; 
+            color: #333; 
+            background: white;
+          }
+          .header { 
+            text-align: center; 
+            border-bottom: 3px solid #2563eb; 
+            padding-bottom: 20px; 
+            margin-bottom: 30px; 
+          }
+          h1 { 
+            color: #1e40af; 
+            font-size: 28px; 
+            margin-bottom: 10px; 
+          }
+          .subtitle { 
+            color: #059669; 
+            font-size: 18px; 
+            font-weight: bold; 
+            margin-bottom: 5px; 
+          }
+          .bep-type { 
+            background: #dbeafe; 
+            padding: 10px; 
+            border-radius: 8px; 
+            display: inline-block; 
+            margin: 10px 0; 
+            font-weight: bold; 
+          }
+          h2 { 
+            color: #1e40af; 
+            margin-top: 35px; 
+            border-bottom: 2px solid #e5e7eb; 
+            padding-bottom: 8px; 
+            font-size: 20px; 
+            page-break-after: avoid;
+          }
+          h3 { 
+            color: #374151; 
+            margin-top: 25px; 
+            font-size: 16px; 
+            border-left: 4px solid #2563eb; 
+            padding-left: 12px; 
+          }
+          .section { 
+            margin: 25px 0; 
+            page-break-inside: avoid;
+          }
+          .info-box { 
+            background-color: #f8fafc; 
+            padding: 20px; 
+            border-left: 4px solid #2563eb; 
+            margin: 20px 0; 
+            border-radius: 0 8px 8px 0; 
+          }
+          .category-header { 
+            background: linear-gradient(135deg, #2563eb, #1e40af); 
+            color: white; 
+            padding: 15px; 
+            margin: 30px 0 20px 0; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            font-size: 18px; 
+            page-break-before: always;
+          }
           ul { margin: 10px 0; padding-left: 25px; }
           li { margin: 8px 0; }
-          .footer { margin-top: 50px; padding-top: 25px; border-top: 2px solid #e5e7eb; background: #f9fafb; padding: 25px; border-radius: 8px; }
-          table { width: 100%; border-collapse: collapse; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-          th, td { padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: left; }
-          th { background-color: #f8fafc; font-weight: bold; color: #374151; }
-          .label { font-weight: bold; width: 250px; color: #4b5563; }
-          .highlight { background-color: #fef3c7; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b; margin: 15px 0; }
-          .compliance-box { background: #ecfdf5; border: 2px solid #10b981; padding: 20px; border-radius: 8px; margin: 20px 0; }
-          .risk-box { background: #fef2f2; border: 2px solid #ef4444; padding: 15px; border-radius: 8px; margin: 15px 0; }
-          .page-break { page-break-before: always; }
+          .footer { 
+            margin-top: 50px; 
+            padding-top: 25px; 
+            border-top: 2px solid #e5e7eb; 
+            background: #f9fafb; 
+            padding: 25px; 
+            border-radius: 8px; 
+          }
+          table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin: 20px 0; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+          }
+          th, td { 
+            padding: 12px; 
+            border-bottom: 1px solid #e5e7eb; 
+            text-align: left; 
+          }
+          th { 
+            background-color: #f8fafc; 
+            font-weight: bold; 
+            color: #374151; 
+          }
+          .label { 
+            font-weight: bold; 
+            width: 250px; 
+            color: #4b5563; 
+          }
+          .highlight { 
+            background-color: #fef3c7; 
+            padding: 15px; 
+            border-radius: 8px; 
+            border-left: 4px solid #f59e0b; 
+            margin: 15px 0; 
+          }
+          .compliance-box { 
+            background: #ecfdf5; 
+            border: 2px solid #10b981; 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin: 20px 0; 
+          }
+          .risk-box { 
+            background: #fef2f2; 
+            border: 2px solid #ef4444; 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin: 15px 0; 
+          }
+          .preview-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+          }
+          .preview-controls button {
+            margin: 0 5px;
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+          }
+          .preview-controls button:hover {
+            background: #f5f5f5;
+          }
         </style>
       </head>
       <body>
+        ${showPreview ? `
+        <div class="preview-controls no-print">
+          <button onclick="window.print()">Print/Save as PDF</button>
+          <button onclick="window.close()">Close Preview</button>
+        </div>
+        ` : ''}
+        
         <div class="header">
           <h1>BIM EXECUTION PLAN (BEP)</h1>
           <div class="subtitle">ISO 19650-2 Compliant</div>
@@ -367,7 +508,6 @@ const ProfessionalBEPGenerator = () => {
           </div>
         </div>
 
-        <div class="page-break"></div>
         <div class="category-header">MANAGEMENT ASPECTS</div>
 
         <div class="section">
@@ -542,7 +682,6 @@ const ProfessionalBEPGenerator = () => {
           </div>
         </div>
 
-        <div class="page-break"></div>
         <div class="category-header">TECHNICAL ASPECTS</div>
 
         <div class="section">
@@ -714,20 +853,91 @@ const ProfessionalBEPGenerator = () => {
       </body>
       </html>
     `;
+  };
 
-    const blob = new Blob([bepContent], { 
-      type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
-    });
+
+
+  const previewBEP = () => {
+    const content = generateBEPContent();
+    setGeneratedContent(content);
+    setShowPreview(true);
+    
+    // Apri in una nuova finestra per preview
+    const previewWindow = window.open('', '_blank', 'width=1200,height=800');
+    previewWindow.document.write(content);
+    previewWindow.document.close();
+  };
+
+  const downloadBEP = () => {
+    const content = generateBEPContent();
+    const currentDate = new Date().toISOString().split('T')[0];
+    const fileName = `Professional_BEP_${formData.projectName || 'Project'}_${currentDate}`;
+    
+    let blob, mimeType, extension;
+    
+    switch (exportFormat) {
+      case 'html':
+        blob = new Blob([content], { type: 'text/html;charset=utf-8' });
+        mimeType = 'text/html';
+        extension = '.html';
+        break;
+      case 'pdf':
+        // Per PDF, apriamo la finestra di stampa del browser
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(content);
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+          printWindow.print();
+        }, 500);
+        return;
+      case 'word':
+        // Formato HTML compatibile con Word
+        const wordContent = `
+          <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+                xmlns:w='urn:schemas-microsoft-com:office:word' 
+                xmlns='http://www.w3.org/TR/REC-html40'>
+          <head>
+            <meta charset="utf-8">
+            <meta name="ProgId" content="Word.Document">
+            <meta name="Generator" content="Microsoft Word 15">
+            <meta name="Originator" content="Microsoft Word 15">
+            <!--[if !mso]>
+            <style>
+              v\\:* {behavior:url(#default#VML);}
+              o\\:* {behavior:url(#default#VML);}
+              w\\:* {behavior:url(#default#VML);}
+              .shape {behavior:url(#default#VML);}
+            </style>
+            <![endif]-->
+          </head>
+          <body>
+            ${content.replace(/<style>.*?<\/style>/s, '').replace(/<div class="preview-controls.*?<\/div>/s, '')}
+          </body>
+          </html>
+        `;
+        blob = new Blob([wordContent], { 
+          type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
+        });
+        mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        extension = '.doc';
+        break;
+      default:
+        blob = new Blob([content], { type: 'text/html;charset=utf-8' });
+        mimeType = 'text/html';
+        extension = '.html';
+    }
     
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Professional_BEP_${formData.projectName || 'Project'}_${new Date().toISOString().split('T')[0]}.doc`;
+    a.download = fileName + extension;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
+
 
   const renderStep = () => {
     switch (currentStep) {
@@ -1821,13 +2031,66 @@ const ProfessionalBEPGenerator = () => {
 
                 <div className="flex space-x-3">
                   {currentStep === steps.length - 1 ? (
-                    <button
-                      onClick={generateProfessionalBEP}
-                      className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-lg transition-all transform hover:scale-105 shadow-lg"
-                    >
-                      <Download className="w-5 h-5" />
-                      <span>Generate Professional BEP</span>
-                    </button>
+                    <div className="flex flex-col space-y-4">
+                      {/* Export Format Selection */}
+                      <div className="flex items-center space-x-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <span className="text-sm font-medium text-blue-900">Export Format:</span>
+                        <div className="flex space-x-3">
+                          <label className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              value="html"
+                              checked={exportFormat === 'html'}
+                              onChange={(e) => setExportFormat(e.target.value)}
+                              className="text-blue-600"
+                            />
+                            <FileType className="w-4 h-4 text-blue-600" />
+                            <span className="text-sm text-blue-900">HTML</span>
+                          </label>
+                          <label className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              value="pdf"
+                              checked={exportFormat === 'pdf'}
+                              onChange={(e) => setExportFormat(e.target.value)}
+                              className="text-blue-600"
+                            />
+                            <Printer className="w-4 h-4 text-blue-600" />
+                            <span className="text-sm text-blue-900">PDF</span>
+                          </label>
+                          <label className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              value="word"
+                              checked={exportFormat === 'word'}
+                              onChange={(e) => setExportFormat(e.target.value)}
+                              className="text-blue-600"
+                            />
+                            <FileText className="w-4 h-4 text-blue-600" />
+                            <span className="text-sm text-blue-900">Word</span>
+                          </label>
+                        </div>
+                      </div>
+                      
+                      {/* Action Buttons */}
+                      <div className="flex space-x-3">
+                        <button
+                          onClick={previewBEP}
+                          className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-all shadow-lg"
+                        >
+                          <Eye className="w-5 h-5" />
+                          <span>Preview BEP</span>
+                        </button>
+                        
+                        <button
+                          onClick={downloadBEP}
+                          className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-lg transition-all transform hover:scale-105 shadow-lg"
+                        >
+                          <Download className="w-5 h-5" />
+                          <span>Download Professional BEP</span>
+                        </button>
+                      </div>
+                    </div>
                   ) : (
                     <button
                       onClick={nextStep}
