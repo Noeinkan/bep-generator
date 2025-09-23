@@ -1,12 +1,15 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { ChevronRight, ChevronLeft, Download, FileText, Users, Settings, CheckCircle, AlertCircle, Building, Zap, Shield, Database, Calendar, Target, BookOpen, Monitor, Eye, FileType, Printer } from 'lucide-react';
+import jsPDF from 'jspdf';
+import { Packer, Document, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, AlignmentType } from 'docx';
+import DOMPurify from 'dompurify';
 
 // Configurazione centralizzata
 const CONFIG = {
   categories: {
-    Commercial: 'bg-blue-100 text-blue-800',
-    Management: 'bg-green-100 text-green-800',
-    Technical: 'bg-purple-100 text-purple-800'
+    Commercial: { name: 'COMMERCIAL ASPECTS', bg: 'bg-blue-100 text-blue-800' },
+    Management: { name: 'MANAGEMENT ASPECTS', bg: 'bg-green-100 text-green-800' },
+    Technical: { name: 'TECHNICAL ASPECTS', bg: 'bg-purple-100 text-purple-800' }
   },
   
   options: {
@@ -237,36 +240,49 @@ const INITIAL_DATA = {
 };
 
 // Componenti riutilizzabili
-const InputField = ({ field, value, onChange, options }) => {
-  const { name, label, type, required, rows, placeholder } = field;
-  const optionsList = options ? CONFIG.options[options] : null;
+const InputField = React.memo(({ field, value, onChange, error }) => {
+  const { name, label, type, required, rows, placeholder, options: fieldOptions } = field;
+  const optionsList = fieldOptions ? CONFIG.options[fieldOptions] : null;
 
   const baseClasses = "w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500";
+
+  const handleCheckboxChange = (option) => {
+    const current = Array.isArray(value) ? value : [];
+    const updated = current.includes(option)
+      ? current.filter(item => item !== option)
+      : [...current, option];
+    onChange(name, updated);
+  };
 
   switch (type) {
     case 'textarea':
       return (
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <label htmlFor={name} className="block text-sm font-medium mb-2">
             {label} {required && '*'}
           </label>
           <textarea
+            id={name}
+            aria-required={required}
             value={value || ''}
             onChange={(e) => onChange(name, e.target.value)}
             rows={rows || 3}
             className={baseClasses}
             placeholder={placeholder || `Enter ${label.toLowerCase()}...`}
           />
+          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
         </div>
       );
 
     case 'select':
       return (
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <label htmlFor={name} className="block text-sm font-medium mb-2">
             {label} {required && '*'}
           </label>
           <select
+            id={name}
+            aria-required={required}
             value={value || ''}
             onChange={(e) => onChange(name, e.target.value)}
             className={baseClasses}
@@ -276,6 +292,7 @@ const InputField = ({ field, value, onChange, options }) => {
               <option key={option} value={option}>{option}</option>
             ))}
           </select>
+          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
         </div>
       );
 
@@ -287,45 +304,44 @@ const InputField = ({ field, value, onChange, options }) => {
           </label>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-60 overflow-y-auto border rounded-lg p-3">
             {optionsList?.map(option => (
-              <label key={option} className="flex items-center space-x-2 p-2 border rounded cursor-pointer hover:bg-gray-50">
+              <label key={option} htmlFor={`${name}-${option}`} className="flex items-center space-x-2 p-2 border rounded cursor-pointer hover:bg-gray-50">
                 <input
+                  id={`${name}-${option}`}
                   type="checkbox"
                   checked={(value || []).includes(option)}
-                  onChange={() => {
-                    const current = value || [];
-                    const updated = current.includes(option)
-                      ? current.filter(item => item !== option)
-                      : [...current, option];
-                    onChange(name, updated);
-                  }}
+                  onChange={() => handleCheckboxChange(option)}
                   className="rounded"
                 />
                 <span className="text-sm">{option}</span>
               </label>
             ))}
           </div>
+          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
         </div>
       );
 
     default:
       return (
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <label htmlFor={name} className="block text-sm font-medium mb-2">
             {label} {required && '*'}
           </label>
           <input
+            id={name}
+            aria-required={required}
             type="text"
             value={value || ''}
             onChange={(e) => onChange(name, e.target.value)}
             className={baseClasses}
             placeholder={placeholder || `Enter ${label.toLowerCase()}`}
           />
+          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
         </div>
       );
   }
-};
+});
 
-const ProgressSidebar = ({ steps, currentStep, completedSections, onStepClick, validateStep }) => (
+const ProgressSidebar = React.memo(({ steps, currentStep, completedSections, onStepClick, validateStep }) => (
   <div className="bg-white rounded-lg shadow-sm p-6 sticky top-8">
     <h2 className="text-lg font-semibold mb-4">Progress Overview</h2>
     <div className="space-y-3">
@@ -355,7 +371,7 @@ const ProgressSidebar = ({ steps, currentStep, completedSections, onStepClick, v
               </p>
               <p className="text-xs text-gray-500 mt-1">{step.description}</p>
               <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mt-1 ${
-                CONFIG.categories[step.category]
+                CONFIG.categories[step.category].bg
               }`}>
                 {step.category}
               </span>
@@ -394,7 +410,7 @@ const ProgressSidebar = ({ steps, currentStep, completedSections, onStepClick, v
       </div>
     </div>
   </div>
-);
+));
 
 const BepTypeSelector = ({ bepType, setBepType }) => (
   <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
@@ -422,34 +438,175 @@ const BepTypeSelector = ({ bepType, setBepType }) => (
   </div>
 );
 
+const FormStep = React.memo(({ stepIndex, formData, updateFormData, errors, bepType, setBepType, generateBEPContent }) => {
+  const stepConfig = CONFIG.formFields[stepIndex];
+  if (!stepConfig) return null;
+
+  return (
+    <div className="space-y-6">
+      {stepIndex === 0 && <BepTypeSelector bepType={bepType} setBepType={setBepType} />}
+      
+      <h3 className="text-xl font-semibold">{stepConfig.title}</h3>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {stepConfig.fields.map(field => (
+          <div key={field.name} className={field.type === 'textarea' || field.type === 'checkbox' ? 'md:col-span-2' : ''}>
+            <InputField
+              field={field}
+              value={formData[field.name]}
+              onChange={updateFormData}
+              error={errors[field.name]}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+});
+
+const PreviewExportPage = ({ generateBEPContent, exportFormat, setExportFormat, previewBEP, downloadBEP, isExporting }) => {
+  const content = generateBEPContent();
+  return (
+    <div className="space-y-6">
+      <h3 className="text-xl font-semibold">Preview & Export</h3>
+      <div className="flex items-center space-x-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+        <span className="text-sm font-medium text-blue-900">Export Format:</span>
+        <div className="flex space-x-3">
+          {[
+            { value: 'html', icon: FileType, label: 'HTML' },
+            { value: 'pdf', icon: Printer, label: 'PDF' },
+            { value: 'word', icon: FileText, label: 'Word' }
+          ].map(format => (
+            <label key={format.value} className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="radio"
+                value={format.value}
+                checked={exportFormat === format.value}
+                onChange={(e) => setExportFormat(e.target.value)}
+                className="text-blue-600"
+              />
+              <format.icon className="w-4 h-4 text-blue-600" />
+              <span className="text-sm text-blue-900">{format.label}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+      
+      <div className="flex space-x-3">
+        <button
+          onClick={previewBEP}
+          className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-all shadow-lg"
+        >
+          <Eye className="w-5 h-5" />
+          <span>Preview BEP</span>
+        </button>
+        
+        <button
+          onClick={downloadBEP}
+          disabled={isExporting}
+          className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-lg transition-all transform hover:scale-105 shadow-lg disabled:opacity-50"
+        >
+          <Download className="w-5 h-5" />
+          <span>{isExporting ? 'Exporting...' : 'Download Professional BEP'}</span>
+        </button>
+      </div>
+
+      <iframe
+        srcDoc={content}
+        title="BEP Preview"
+        className="w-full border rounded-lg"
+        style={{ height: '600px' }}
+      />
+    </div>
+  );
+};
+
 const ProfessionalBEPGenerator = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [bepType, setBepType] = useState('pre-appointment');
   const [formData, setFormData] = useState(INITIAL_DATA);
   const [completedSections, setCompletedSections] = useState(new Set());
   const [exportFormat, setExportFormat] = useState('html');
+  const [errors, setErrors] = useState({});
+  const [isExporting, setIsExporting] = useState(false);
 
-  const updateFormData = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  useEffect(() => {
+    const savedData = localStorage.getItem('bepData');
+    if (savedData) {
+      setFormData(JSON.parse(savedData));
+    }
+  }, []);
+
+  const debounce = (func, delay) => {
+    let timeoutId;
+    return (...args) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func(...args), delay);
+    };
   };
 
-  const validateStep = (stepIndex) => {
+  useEffect(() => {
+    const debouncedSave = debounce(() => {
+      localStorage.setItem('bepData', JSON.stringify(formData));
+    }, 500);
+    debouncedSave();
+  }, [formData]);
+
+  const updateFormData = useCallback((field, value) => {
+    const sanitizedValue = typeof value === 'string' ? DOMPurify.sanitize(value) : value;
+    setFormData(prev => ({ ...prev, [field]: sanitizedValue }));
+    const stepConfig = CONFIG.formFields[currentStep];
+    const fieldConfig = stepConfig.fields.find(f => f.name === field);
+    if (fieldConfig) {
+      const error = validateField(field, sanitizedValue, fieldConfig.required);
+      setErrors(prev => ({ ...prev, [field]: error }));
+    }
+  }, [currentStep]);
+
+  const validateField = (name, value, required) => {
+    if (required && (!value || (Array.isArray(value) && value.length === 0) || (typeof value === 'string' && value.trim() === ''))) {
+      return `${name.replace(/([A-Z])/g, ' $1').trim()} is required`;
+    }
+    return null;
+  };
+
+  const validateStep = useCallback((stepIndex) => {
     const stepConfig = CONFIG.formFields[stepIndex];
     if (!stepConfig) return true;
     
-    const requiredFields = stepConfig.fields.filter(field => field.required);
-    return requiredFields.every(field => {
+    return stepConfig.fields.every(field => {
       const value = formData[field.name];
-      return Array.isArray(value) ? value.length > 0 : value && value.trim() !== '';
+      return !field.required || (value && (Array.isArray(value) ? value.length > 0 : value.trim() !== ''));
     });
+  }, [formData]);
+
+  const validatedSteps = useMemo(() => {
+    return CONFIG.steps.map((_, index) => validateStep(index));
+  }, [validateStep]);
+
+  const validateCurrentStep = () => {
+    const stepConfig = CONFIG.formFields[currentStep];
+    const newErrors = {};
+    let isValid = true;
+
+    stepConfig.fields.forEach(field => {
+      const error = validateField(field.name, formData[field.name], field.required);
+      if (error) {
+        newErrors[field.name] = error;
+        isValid = false;
+      }
+    });
+
+    setErrors(newErrors);
+    return isValid;
   };
 
   const nextStep = () => {
-    if (validateStep(currentStep)) {
+    if (validateCurrentStep()) {
       setCompletedSections(prev => new Set([...prev, currentStep]));
-    }
-    if (currentStep < CONFIG.steps.length - 1) {
-      setCurrentStep(currentStep + 1);
+      if (currentStep < CONFIG.steps.length - 1) {
+        setCurrentStep(currentStep + 1);
+      }
     }
   };
 
@@ -459,127 +616,62 @@ const ProfessionalBEPGenerator = () => {
     }
   };
 
+  const onStepClick = useCallback((index) => setCurrentStep(index), []);
+
+  const goToPreview = () => {
+    if (validateCurrentStep()) {
+      setCompletedSections(prev => new Set([...prev, currentStep]));
+      setCurrentStep(CONFIG.steps.length);
+    }
+  };
+
   const generateBEPContent = () => {
     const currentDate = new Date();
     const formattedDate = currentDate.toLocaleDateString();
     const formattedTime = currentDate.toLocaleTimeString();
 
-    const sections = [
-      { category: 'COMMERCIAL ASPECTS', items: [
-        { title: '1. PROJECT INFORMATION AND OBJECTIVES', fields: [
-          { label: 'Project Name', value: formData.projectName },
-          { label: 'Project Number', value: formData.projectNumber },
-          { label: 'Project Type', value: formData.projectType },
-          { label: 'Timeline', value: formData.projectTimeline },
-          { label: 'Budget', value: formData.projectBudget },
-          { label: 'Project Description', value: formData.projectDescription, isText: true }
-        ]},
-        { title: '2. STAKEHOLDERS AND RESPONSIBILITIES', fields: [
-          { label: 'Appointing Party', value: formData.appointingParty },
-          { label: 'Lead Appointed Party', value: formData.leadAppointedParty },
-          { label: 'Information Manager', value: formData.informationManager },
-          { label: 'Task Team Leaders', value: formData.taskTeamLeaders, isText: true },
-          { label: 'Appointed Parties', value: formData.appointedParties, isText: true }
-        ]},
-        { title: '3. BIM GOALS AND OBJECTIVES', fields: [
-          { label: 'BIM Goals', value: formData.bimGoals, isText: true },
-          { label: 'Primary Objectives', value: formData.primaryObjectives, isText: true },
-          { label: 'BIM Uses', value: formData.bimUses, isList: true }
-        ]}
-      ]},
-      { category: 'MANAGEMENT ASPECTS', items: [
-        { title: '4. LEVEL OF INFORMATION NEED (LOIN)', fields: [
-          { label: 'Information Purposes', value: formData.informationPurposes, isList: true },
-          { label: 'Geometrical Information Requirements', value: formData.geometricalInfo, isText: true },
-          { label: 'Alphanumerical Information Requirements', value: formData.alphanumericalInfo, isText: true },
-          { label: 'Documentation Requirements', value: formData.documentationInfo, isText: true },
-          { label: 'Information Formats', value: formData.informationFormats, isList: true }
-        ]},
-        { title: '5. INFORMATION DELIVERY PLANNING', fields: [
-          { label: 'Master Information Delivery Plan (MIDP)', value: formData.midpDescription, isText: true },
-          { label: 'Key Information Delivery Milestones', value: formData.keyMilestones, isText: true },
-          { label: 'Delivery Schedule', value: formData.deliverySchedule, isText: true },
-          { label: 'Task Information Delivery Plans (TIDPs)', value: formData.tidpRequirements, isText: true }
-        ]},
-        { title: '6. INFORMATION PRODUCTION METHODS AND PROCEDURES', fields: [
-          { label: 'Modeling Standards', value: formData.modelingStandards, isText: true },
-          { label: 'Naming Conventions', value: formData.namingConventions, isText: true },
-          { label: 'File Structure', value: formData.fileStructure, isText: true },
-          { label: 'Version Control', value: formData.versionControl, isText: true },
-          { label: 'Data Exchange Protocols', value: formData.dataExchangeProtocols, isText: true }
-        ]},
-        { title: '7. QUALITY ASSURANCE AND CONTROL', fields: [
-          { label: 'Quality Assurance Framework', value: formData.qaFramework, isText: true },
-          { label: 'Model Validation Procedures', value: formData.modelValidation, isText: true },
-          { label: 'Review Processes', value: formData.reviewProcesses, isText: true },
-          { label: 'Approval Workflows', value: formData.approvalWorkflows, isText: true },
-          { label: 'Compliance Verification', value: formData.complianceVerification, isText: true }
-        ]},
-        { title: '8. INFORMATION SECURITY AND PRIVACY', fields: [
-          { label: 'Data Classification', value: formData.dataClassification, isText: true },
-          { label: 'Access Permissions', value: formData.accessPermissions, isText: true },
-          { label: 'Encryption Requirements', value: formData.encryptionRequirements, isText: true },
-          { label: 'Data Transfer Protocols', value: formData.dataTransferProtocols, isText: true },
-          { label: 'Privacy Considerations', value: formData.privacyConsiderations, isText: true }
-        ]},
-        { title: '9. TRAINING AND COMPETENCY', fields: [
-          { label: 'BIM Competency Levels', value: formData.bimCompetencyLevels, isText: true },
-          { label: 'Training Requirements', value: formData.trainingRequirements, isText: true },
-          { label: 'Certification Requirements', value: formData.certificationNeeds, isText: true },
-          { label: 'Project-Specific Training', value: formData.projectSpecificTraining, isText: true }
-        ]}
-      ]},
-      { category: 'TECHNICAL ASPECTS', items: [
-        { title: '10. COMMON DATA ENVIRONMENT (CDE)', fields: [
-          { label: 'CDE Provider', value: formData.cdeProvider },
-          { label: 'CDE Platform', value: formData.cdePlatform },
-          { label: 'Workflow States', value: formData.workflowStates, isText: true },
-          { label: 'Access Control', value: formData.accessControl, isText: true },
-          { label: 'Security Measures', value: formData.securityMeasures, isText: true },
-          { label: 'Backup Procedures', value: formData.backupProcedures, isText: true }
-        ]},
-        { title: '11. TECHNOLOGY AND SOFTWARE REQUIREMENTS', fields: [
-          { label: 'BIM Software Applications', value: formData.bimSoftware, isList: true },
-          { label: 'File Formats', value: formData.fileFormats, isList: true },
-          { label: 'Hardware Requirements', value: formData.hardwareRequirements, isText: true },
-          { label: 'Network Requirements', value: formData.networkRequirements, isText: true },
-          { label: 'Interoperability Requirements', value: formData.interoperabilityNeeds, isText: true }
-        ]},
-        { title: '12. COORDINATION AND COLLABORATION PROCEDURES', fields: [
-          { label: 'Coordination Meetings', value: formData.coordinationMeetings, isText: true },
-          { label: 'Clash Detection Workflow', value: formData.clashDetectionWorkflow, isText: true },
-          { label: 'Issue Resolution Process', value: formData.issueResolution, isText: true },
-          { label: 'Communication Protocols', value: formData.communicationProtocols, isText: true },
-          { label: 'Model Federation Strategy', value: formData.federationStrategy, isText: true }
-        ]},
-        { title: '13. RISK MANAGEMENT', fields: [
-          { label: 'Information-Related Risks', value: formData.informationRisks, isText: true },
-          { label: 'Technology-Related Risks', value: formData.technologyRisks, isText: true },
-          { label: 'Risk Mitigation Strategies', value: formData.riskMitigation, isText: true },
-          { label: 'Contingency Plans', value: formData.contingencyPlans, isText: true }
-        ]},
-        { title: '14. COMPLIANCE AND MONITORING', fields: [
-          { label: 'Performance Metrics and KPIs', value: formData.performanceMetrics, isText: true },
-          { label: 'Monitoring Procedures', value: formData.monitoringProcedures, isText: true },
-          { label: 'Audit Trails', value: formData.auditTrails, isText: true },
-          { label: 'Update Processes', value: formData.updateProcesses, isText: true }
-        ]}
-      ]}
-    ];
+    // Group steps by category
+    const groupedSteps = CONFIG.steps.reduce((acc, step, index) => {
+      const cat = step.category;
+      if (!acc[cat]) acc[cat] = [];
+      acc[cat].push({ index, title: `${acc[cat].length + 1}. ${step.title.toUpperCase()}`, fields: CONFIG.formFields[index].fields });
+      return acc;
+    }, {});
 
     const renderField = (field) => {
-      if (!field.value) return '';
+      let value = formData[field.name];
+      if (!value) return '';
       
-      if (field.isList && Array.isArray(field.value)) {
-        return `<h3>${field.label}</h3><ul>${field.value.map(item => `<li>${item}</li>`).join('')}</ul>`;
+      value = DOMPurify.sanitize(value);
+
+      if (field.type === 'checkbox' && Array.isArray(value)) {
+        return `<h3>${field.label}</h3><ul>${value.map(item => `<li>${item}</li>`).join('')}</ul>`;
       }
       
-      if (field.isText) {
-        return `<h3>${field.label}</h3><p>${field.value}</p>`;
+      if (field.type === 'textarea') {
+        return `<h3>${field.label}</h3><p>${value}</p>`;
       }
       
-      return `<tr><td class="label">${field.label}:</td><td>${field.value}</td></tr>`;
+      return `<tr><td class="label">${field.label}:</td><td>${value}</td></tr>`;
     };
+
+    const sectionsHtml = Object.entries(groupedSteps).map(([cat, items]) => [
+      `<div class="category-header">${CONFIG.categories[cat].name}</div>`,
+      items.map(item => {
+        const fields = item.fields;
+        const tableFields = fields.filter(f => f.type !== 'textarea' && f.type !== 'checkbox');
+        const otherFields = fields.filter(f => f.type === 'textarea' || f.type === 'checkbox');
+        return `
+          <div class="section">
+            <h2>${item.title}</h2>
+            <div class="info-box">
+              ${tableFields.length > 0 ? `<table>${tableFields.map(renderField).join('')}</table>` : ''}
+              ${otherFields.map(renderField).join('')}
+            </div>
+          </div>
+        `;
+      }).join('')
+    ]).flat().join('');
 
     return `
       <!DOCTYPE html>
@@ -627,18 +719,7 @@ const ProfessionalBEPGenerator = () => {
           </table>
         </div>
 
-        ${sections.map(section => `
-          <div class="category-header">${section.category}</div>
-          ${section.items.map(item => `
-            <div class="section">
-              <h2>${item.title}</h2>
-              <div class="info-box">
-                ${item.fields.some(f => !f.isText && !f.isList) ? `<table>${item.fields.filter(f => !f.isText && !f.isList).map(renderField).join('')}</table>` : ''}
-                ${item.fields.filter(f => f.isText || f.isList).map(renderField).join('')}
-              </div>
-            </div>
-          `).join('')}
-        `).join('')}
+        ${sectionsHtml}
 
         <div class="footer">
           <h3>Document Control Information</h3>
@@ -656,29 +737,347 @@ const ProfessionalBEPGenerator = () => {
     `;
   };
 
-  const downloadBEP = () => {
+  const generateDocx = async () => {
+    const currentDate = new Date();
+    const formattedDate = currentDate.toLocaleDateString();
+    const formattedTime = currentDate.toLocaleTimeString();
+
+    const sections = [];
+
+    // Header
+    sections.push(
+      new Paragraph({
+        text: "BIM EXECUTION PLAN (BEP)",
+        heading: HeadingLevel.HEADING_1,
+        alignment: AlignmentType.CENTER
+      }),
+      new Paragraph({
+        text: "ISO 19650-2 Compliant",
+        heading: HeadingLevel.HEADING_2,
+        alignment: AlignmentType.CENTER
+      }),
+      new Paragraph({
+        text: `${bepType === 'pre-appointment' ? 'Pre-Appointment BEP' : 'Post-Appointment BEP'}`,
+        alignment: AlignmentType.CENTER
+      })
+    );
+
+    // Document Information Table
+    sections.push(
+      new Paragraph({
+        text: "Document Information",
+        heading: HeadingLevel.HEADING_3
+      }),
+      new Table({
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        rows: [
+          new TableRow({
+            children: [
+              new TableCell({ children: [new Paragraph("Document Type:")], width: { size: 50, type: WidthType.PERCENTAGE } }),
+              new TableCell({ children: [new Paragraph(bepType === 'pre-appointment' ? 'Pre-Appointment BEP' : 'Post-Appointment BEP')] })
+            ]
+          }),
+          new TableRow({
+            children: [
+              new TableCell({ children: [new Paragraph("Project Name:")] }),
+              new TableCell({ children: [new Paragraph(formData.projectName || 'Not specified')] })
+            ]
+          }),
+          new TableRow({
+            children: [
+              new TableCell({ children: [new Paragraph("Project Number:")] }),
+              new TableCell({ children: [new Paragraph(formData.projectNumber || 'Not specified')] })
+            ]
+          }),
+          new TableRow({
+            children: [
+              new TableCell({ children: [new Paragraph("Generated Date:")] }),
+              new TableCell({ children: [new Paragraph(`${formattedDate} at ${formattedTime}`)] })
+            ]
+          }),
+          new TableRow({
+            children: [
+              new TableCell({ children: [new Paragraph("Status:")] }),
+              new TableCell({ children: [new Paragraph("Work in Progress")] })
+            ]
+          })
+        ]
+      })
+    );
+
+    // Group steps by category
+    const groupedSteps = CONFIG.steps.reduce((acc, step, index) => {
+      const cat = step.category;
+      if (!acc[cat]) acc[cat] = [];
+      acc[cat].push({ index, title: `${acc[cat].length + 1}. ${step.title.toUpperCase()}`, fields: CONFIG.formFields[index].fields });
+      return acc;
+    }, {});
+
+    Object.entries(groupedSteps).forEach(([cat, items]) => {
+      sections.push(
+        new Paragraph({
+          text: CONFIG.categories[cat].name,
+          heading: HeadingLevel.HEADING_1
+        })
+      );
+
+      items.forEach(item => {
+        sections.push(
+          new Paragraph({
+            text: item.title,
+            heading: HeadingLevel.HEADING_2
+          })
+        );
+
+        const fields = item.fields;
+        const tableFields = fields.filter(f => f.type !== 'textarea' && f.type !== 'checkbox');
+        const otherFields = fields.filter(f => f.type === 'textarea' || f.type === 'checkbox');
+
+        if (tableFields.length > 0) {
+          const tableRows = tableFields.map(field => 
+            new TableRow({
+              children: [
+                new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: field.label + ":", bold: true }) ] })] }),
+                new TableCell({ children: [new Paragraph(formData[field.name] || '')] })
+              ]
+            })
+          );
+
+          sections.push(
+            new Table({
+              width: { size: 100, type: WidthType.PERCENTAGE },
+              rows: tableRows
+            })
+          );
+        }
+
+        otherFields.forEach(field => {
+          sections.push(
+            new Paragraph({
+              text: field.label,
+              heading: HeadingLevel.HEADING_3
+            })
+          );
+
+          const value = formData[field.name];
+          if (field.type === 'checkbox' && Array.isArray(value)) {
+            value.forEach(item => {
+              sections.push(
+                new Paragraph({
+                  text: item,
+                  bullet: { level: 0 }
+                })
+              );
+            });
+          } else if (field.type === 'textarea') {
+            sections.push(
+              new Paragraph(value || '')
+            );
+          }
+        });
+      });
+    });
+
+    // Footer
+    sections.push(
+      new Paragraph({
+        text: "Document Control Information",
+        heading: HeadingLevel.HEADING_3
+      }),
+      new Table({
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        rows: [
+          new TableRow({
+            children: [
+              new TableCell({ children: [new Paragraph("Document Type:")] }),
+              new TableCell({ children: [new Paragraph("BIM Execution Plan (BEP)")] })
+            ]
+          }),
+          new TableRow({
+            children: [
+              new TableCell({ children: [new Paragraph("ISO Standard:")] }),
+              new TableCell({ children: [new Paragraph("ISO 19650-2:2018")] })
+            ]
+          }),
+          new TableRow({
+            children: [
+              new TableCell({ children: [new Paragraph("Document Status:")] }),
+              new TableCell({ children: [new Paragraph("Work in Progress")] })
+            ]
+          }),
+          new TableRow({
+            children: [
+              new TableCell({ children: [new Paragraph("Generated By:")] }),
+              new TableCell({ children: [new Paragraph("Professional BEP Generator Tool")] })
+            ]
+          }),
+          new TableRow({
+            children: [
+              new TableCell({ children: [new Paragraph("Generated Date:")] }),
+              new TableCell({ children: [new Paragraph(formattedDate)] })
+            ]
+          }),
+          new TableRow({
+            children: [
+              new TableCell({ children: [new Paragraph("Generated Time:")] }),
+              new TableCell({ children: [new Paragraph(formattedTime)] })
+            ]
+          })
+        ]
+      })
+    );
+
+    const doc = new Document({
+      sections: [{
+        properties: {},
+        children: sections,
+      }],
+    });
+
+    return doc;
+  };
+
+  const generatePDF = () => {
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+    let y = 10;
+    const margin = 10;
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const maxLineWidth = pageWidth - 2 * margin;
+    const lineHeight = 6;
+
+    const addText = (text, size, bold = false, align = 'left') => {
+      pdf.setFontSize(size);
+      pdf.setFont('helvetica', bold ? 'bold' : 'normal');
+      const lines = text.split('\n').flatMap(line => pdf.splitTextToSize(line, maxLineWidth));
+      lines.forEach(line => {
+        pdf.text(line, margin, y, { align });
+        y += lineHeight;
+        if (y > 270) {
+          pdf.addPage();
+          y = margin;
+        }
+      });
+    };
+
+    const addTable = (rows) => {
+      rows.forEach(([label, value]) => {
+        addText(label + ':', 10, true);
+        addText(value, 10);
+        y += lineHeight / 2;
+      });
+    };
+
+    const currentDate = new Date();
+    const formattedDate = currentDate.toLocaleDateString();
+    const formattedTime = currentDate.toLocaleTimeString();
+
+    // Header
+    addText('BIM EXECUTION PLAN (BEP)', 18, true, 'center');
+    y += lineHeight;
+    addText('ISO 19650-2 Compliant', 14, true, 'center');
+    y += lineHeight;
+    addText(bepType === 'pre-appointment' ? 'Pre-Appointment BEP' : 'Post-Appointment BEP', 12, true, 'center');
+    y += lineHeight * 2;
+
+    // Document Information
+    addText('Document Information', 12, true);
+    y += lineHeight;
+    addTable([
+      ['Document Type', bepType === 'pre-appointment' ? 'Pre-Appointment BEP' : 'Post-Appointment BEP'],
+      ['Project Name', formData.projectName || 'Not specified'],
+      ['Project Number', formData.projectNumber || 'Not specified'],
+      ['Generated Date', `${formattedDate} at ${formattedTime}`],
+      ['Status', 'Work in Progress']
+    ]);
+    y += lineHeight * 2;
+
+    // Group steps by category
+    const groupedSteps = CONFIG.steps.reduce((acc, step, index) => {
+      const cat = step.category;
+      if (!acc[cat]) acc[cat] = [];
+      acc[cat].push({ index, title: `${acc[cat].length + 1}. ${step.title.toUpperCase()}`, fields: CONFIG.formFields[index].fields });
+      return acc;
+    }, {});
+
+    Object.entries(groupedSteps).forEach(([cat, items]) => {
+      addText(CONFIG.categories[cat].name, 16, true);
+      y += lineHeight;
+
+      items.forEach(item => {
+        addText(item.title, 14, true);
+        y += lineHeight;
+
+        item.fields.forEach(field => {
+          const value = formData[field.name] || '';
+          addText(field.label, 12, true);
+          y += lineHeight / 2;
+
+          if (field.type === 'checkbox' && Array.isArray(value)) {
+            value.forEach(item => {
+              addText('- ' + item, 10);
+            });
+          } else {
+            addText(value, 10);
+          }
+          y += lineHeight / 2;
+        });
+        y += lineHeight;
+      });
+    });
+
+    // Footer
+    y += lineHeight * 2;
+    addText('Document Control Information', 12, true);
+    y += lineHeight;
+    addTable([
+      ['Document Type', 'BIM Execution Plan (BEP)'],
+      ['ISO Standard', 'ISO 19650-2:2018'],
+      ['Document Status', 'Work in Progress'],
+      ['Generated By', 'Professional BEP Generator Tool'],
+      ['Generated Date', formattedDate],
+      ['Generated Time', formattedTime]
+    ]);
+
+    return pdf;
+  };
+
+  const downloadBEP = async () => {
+    setIsExporting(true);
     const content = generateBEPContent();
     const currentDate = new Date().toISOString().split('T')[0];
     const fileName = `Professional_BEP_${formData.projectName || 'Project'}_${currentDate}`;
-    
-    if (exportFormat === 'pdf') {
-      const printWindow = window.open('', '_blank');
-      printWindow.document.write(content);
-      printWindow.document.close();
-      printWindow.focus();
-      setTimeout(() => printWindow.print(), 500);
-      return;
+
+    try {
+      if (exportFormat === 'html') {
+        const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${fileName}.html`;
+        a.click();
+        URL.revokeObjectURL(url);
+      } else if (exportFormat === 'pdf') {
+        const pdf = generatePDF();
+        pdf.save(`${fileName}.pdf`);
+      } else if (exportFormat === 'word') {
+        const doc = await generateDocx();
+        const blob = await Packer.toBlob(doc);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${fileName}.docx`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('Export error:', error);
+    } finally {
+      setIsExporting(false);
     }
-    
-    const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName + (exportFormat === 'word' ? '.doc' : '.html');
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
   };
 
   const previewBEP = () => {
@@ -686,32 +1085,6 @@ const ProfessionalBEPGenerator = () => {
     const previewWindow = window.open('', '_blank', 'width=1200,height=800');
     previewWindow.document.write(content);
     previewWindow.document.close();
-  };
-
-  const renderStepContent = () => {
-    const stepConfig = CONFIG.formFields[currentStep];
-    if (!stepConfig) return null;
-
-    return (
-      <div className="space-y-6">
-        {currentStep === 0 && <BepTypeSelector bepType={bepType} setBepType={setBepType} />}
-        
-        <h3 className="text-xl font-semibold">{stepConfig.title}</h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {stepConfig.fields.map(field => (
-            <div key={field.name} className={field.type === 'textarea' || field.type === 'checkbox' ? 'md:col-span-2' : ''}>
-              <InputField
-                field={field}
-                value={formData[field.name]}
-                onChange={updateFormData}
-                options={field.options}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-    );
   };
 
   return (
@@ -742,8 +1115,8 @@ const ProfessionalBEPGenerator = () => {
               steps={CONFIG.steps}
               currentStep={currentStep}
               completedSections={completedSections}
-              onStepClick={setCurrentStep}
-              validateStep={validateStep}
+              onStepClick={onStepClick}
+              validateStep={(index) => validatedSteps[index]}
             />
           </div>
 
@@ -751,17 +1124,38 @@ const ProfessionalBEPGenerator = () => {
             <div className="bg-white rounded-lg shadow-sm p-8">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">{CONFIG.steps[currentStep].title}</h2>
-                  <p className="text-gray-600 mt-1">{CONFIG.steps[currentStep].description}</p>
+                  <h2 className="text-2xl font-bold text-gray-900">{currentStep < CONFIG.steps.length ? CONFIG.steps[currentStep].title : 'Preview & Export'}</h2>
+                  <p className="text-gray-600 mt-1">{currentStep < CONFIG.steps.length ? CONFIG.steps[currentStep].description : 'Preview and export the generated BEP'}</p>
                 </div>
-                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                  CONFIG.categories[CONFIG.steps[currentStep].category]
-                }`}>
-                  {CONFIG.steps[currentStep].category} Aspects
-                </span>
+                {currentStep < CONFIG.steps.length && (
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                    CONFIG.categories[CONFIG.steps[currentStep].category].bg
+                  }`}>
+                    {CONFIG.steps[currentStep].category} Aspects
+                  </span>
+                )}
               </div>
 
-              {renderStepContent()}
+              {currentStep < CONFIG.steps.length ? (
+                <FormStep 
+                  stepIndex={currentStep} 
+                  formData={formData} 
+                  updateFormData={updateFormData} 
+                  errors={errors}
+                  bepType={bepType}
+                  setBepType={setBepType}
+                  generateBEPContent={generateBEPContent}
+                />
+              ) : (
+                <PreviewExportPage 
+                  generateBEPContent={generateBEPContent}
+                  exportFormat={exportFormat}
+                  setExportFormat={setExportFormat}
+                  previewBEP={previewBEP}
+                  downloadBEP={downloadBEP}
+                  isExporting={isExporting}
+                />
+              )}
 
               <div className="flex justify-between items-center mt-8 pt-6 border-t">
                 <button
@@ -774,54 +1168,11 @@ const ProfessionalBEPGenerator = () => {
                 </button>
 
                 <div className="text-sm text-gray-500">
-                  Step {currentStep + 1} of {CONFIG.steps.length}
+                  Step {currentStep + 1} of {CONFIG.steps.length + (currentStep >= CONFIG.steps.length ? 1 : 0)}
                 </div>
 
                 <div className="flex space-x-3">
-                  {currentStep === CONFIG.steps.length - 1 ? (
-                    <div className="flex flex-col space-y-4">
-                      <div className="flex items-center space-x-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                        <span className="text-sm font-medium text-blue-900">Export Format:</span>
-                        <div className="flex space-x-3">
-                          {[
-                            { value: 'html', icon: FileType, label: 'HTML' },
-                            { value: 'pdf', icon: Printer, label: 'PDF' },
-                            { value: 'word', icon: FileText, label: 'Word' }
-                          ].map(format => (
-                            <label key={format.value} className="flex items-center space-x-2 cursor-pointer">
-                              <input
-                                type="radio"
-                                value={format.value}
-                                checked={exportFormat === format.value}
-                                onChange={(e) => setExportFormat(e.target.value)}
-                                className="text-blue-600"
-                              />
-                              <format.icon className="w-4 h-4 text-blue-600" />
-                              <span className="text-sm text-blue-900">{format.label}</span>
-                            </label>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      <div className="flex space-x-3">
-                        <button
-                          onClick={previewBEP}
-                          className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-all shadow-lg"
-                        >
-                          <Eye className="w-5 h-5" />
-                          <span>Preview BEP</span>
-                        </button>
-                        
-                        <button
-                          onClick={downloadBEP}
-                          className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-lg transition-all transform hover:scale-105 shadow-lg"
-                        >
-                          <Download className="w-5 h-5" />
-                          <span>Download Professional BEP</span>
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
+                  {currentStep < CONFIG.steps.length - 1 ? (
                     <button
                       onClick={nextStep}
                       className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
@@ -829,7 +1180,15 @@ const ProfessionalBEPGenerator = () => {
                       <span>Next</span>
                       <ChevronRight className="w-4 h-4" />
                     </button>
-                  )}
+                  ) : currentStep === CONFIG.steps.length - 1 ? (
+                    <button
+                      onClick={goToPreview}
+                      className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
+                    >
+                      <span>Preview & Export</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  ) : null}
                 </div>
               </div>
             </div>
