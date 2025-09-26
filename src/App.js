@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { ChevronRight, ChevronLeft, Download, FileText, Users, Settings, CheckCircle, AlertCircle, Building, Zap, Shield, Database, Calendar, Target, BookOpen, Monitor, Eye, FileType, Printer } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Download, FileText, Users, Settings, CheckCircle, AlertCircle, Building, Zap, Shield, Database, Calendar, Target, BookOpen, Monitor, Eye, FileType, Printer, LogOut, User } from 'lucide-react';
 import jsPDF from 'jspdf';
 import { Packer, Document, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, AlignmentType } from 'docx';
 import DOMPurify from 'dompurify';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import AuthWrapper from './components/AuthWrapper';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Configurazione centralizzata
 const CONFIG = {
@@ -522,6 +525,7 @@ const PreviewExportPage = ({ generateBEPContent, exportFormat, setExportFormat, 
 };
 
 const ProfessionalBEPGenerator = () => {
+  const { user, logout } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [bepType, setBepType] = useState('pre-appointment');
   const [formData, setFormData] = useState(INITIAL_DATA);
@@ -531,11 +535,13 @@ const ProfessionalBEPGenerator = () => {
   const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
-    const savedData = localStorage.getItem('bepData');
-    if (savedData) {
-      setFormData(JSON.parse(savedData));
+    if (user) {
+      const savedData = localStorage.getItem(`bepData_${user.id}`);
+      if (savedData) {
+        setFormData(JSON.parse(savedData));
+      }
     }
-  }, []);
+  }, [user]);
 
   const debounce = (func, delay) => {
     let timeoutId;
@@ -547,10 +553,12 @@ const ProfessionalBEPGenerator = () => {
 
   useEffect(() => {
     const debouncedSave = debounce(() => {
-      localStorage.setItem('bepData', JSON.stringify(formData));
+      if (user) {
+        localStorage.setItem(`bepData_${user.id}`, JSON.stringify(formData));
+      }
     }, 500);
     debouncedSave();
-  }, [formData]);
+  }, [formData, user]);
 
   const updateFormData = useCallback((field, value) => {
     const sanitizedValue = typeof value === 'string' ? DOMPurify.sanitize(value) : value;
@@ -1099,10 +1107,23 @@ const ProfessionalBEPGenerator = () => {
               </div>
               <span className="text-sm text-gray-500">ISO 19650-2 Compliant</span>
             </div>
-            <div className="text-sm text-gray-600">
+            <div className="flex items-center space-x-4">
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                 {bepType === 'pre-appointment' ? 'Pre-Appointment BEP' : 'Post-Appointment BEP'}
               </span>
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                  <User className="w-4 h-4" />
+                  <span>Welcome, {user?.name || 'User'}</span>
+                </div>
+                <button
+                  onClick={logout}
+                  className="flex items-center space-x-1 text-sm text-gray-600 hover:text-gray-800 transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Logout</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -1199,4 +1220,67 @@ const ProfessionalBEPGenerator = () => {
   );
 };
 
-export default ProfessionalBEPGenerator;
+const App = () => {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+};
+
+const AppContent = () => {
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      // Save any pending data before closing
+      if (user) {
+        const currentData = localStorage.getItem(`bepData_${user.id}`);
+        if (currentData) {
+          // Data is already saved due to auto-save, but we can add any final cleanup here
+          console.log('Application closing - data preserved');
+        }
+      }
+
+      // Optional: Show confirmation dialog for unsaved work
+      // event.preventDefault();
+      // event.returnValue = '';
+    };
+
+    const handleUnload = () => {
+      // Cleanup any background processes or connections
+      console.log('Application closed');
+    };
+
+    // Add event listeners for window close
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('unload', handleUnload);
+
+    // Cleanup event listeners on component unmount
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('unload', handleUnload);
+    };
+  }, [user]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Zap className="w-12 h-12 text-blue-600 animate-pulse mx-auto mb-4" />
+          <p className="text-gray-600">Loading BEP Generator...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return user ? (
+    <ProtectedRoute>
+      <ProfessionalBEPGenerator />
+    </ProtectedRoute>
+  ) : (
+    <AuthWrapper />
+  );
+};
+
+export default App;
