@@ -1,11 +1,133 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { ChevronRight, ChevronLeft, Download, FileText, Users, Settings, CheckCircle, AlertCircle, Building, Zap, Shield, Database, Calendar, Target, BookOpen, Monitor, Eye, FileType, Printer, LogOut, User } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useMemo, createContext, useContext } from 'react';
+import { ChevronRight, ChevronLeft, Download, FileText, Users, Settings, CheckCircle, AlertCircle, Building, Zap, Shield, Database, Calendar, Target, BookOpen, Monitor, Eye, FileType, Printer } from 'lucide-react';
 import jsPDF from 'jspdf';
 import { Packer, Document, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, AlignmentType } from 'docx';
 import DOMPurify from 'dompurify';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import AuthWrapper from './components/AuthWrapper';
-import ProtectedRoute from './components/ProtectedRoute';
+
+// Authentication Context
+const AuthContext = createContext();
+
+const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
+const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('bepUser');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+    setLoading(false);
+  }, []);
+
+  const login = (userData) => {
+    setUser(userData);
+    localStorage.setItem('bepUser', JSON.stringify(userData));
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('bepUser');
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+const Login = () => {
+  const { login } = useAuth();
+  const [formData, setFormData] = useState({ name: '', company: '', email: '' });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (formData.name && formData.company) {
+      login({
+        id: Date.now(),
+        name: formData.name,
+        company: formData.company,
+        email: formData.email
+      });
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
+        <div className="text-center mb-8">
+          <Zap className="w-16 h-16 text-blue-600 mx-auto mb-4" />
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">BEP Generator</h1>
+          <p className="text-gray-600">Professional BIM Execution Plans</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Full Name *
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.name}
+              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Your full name"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Company *
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.company}
+              onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Your company name"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="your.email@company.com"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+          >
+            Start Creating BEP
+          </button>
+        </form>
+
+        <div className="mt-8 text-center text-sm text-gray-500">
+          <p>ISO 19650-2 Compliant • Professional Templates</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
 
 // Configurazione centralizzata
 const CONFIG = {
@@ -13,6 +135,35 @@ const CONFIG = {
     Commercial: { name: 'COMMERCIAL ASPECTS', bg: 'bg-blue-100 text-blue-800' },
     Management: { name: 'MANAGEMENT ASPECTS', bg: 'bg-green-100 text-green-800' },
     Technical: { name: 'TECHNICAL ASPECTS', bg: 'bg-purple-100 text-purple-800' }
+  },
+
+  bepTypeDefinitions: {
+    'pre-appointment': {
+      title: 'Pre-Appointment BEP',
+      subtitle: 'Tender Phase Document',
+      description: 'A document outlining the prospective delivery team\'s proposed approach, capability, and capacity to meet the appointing party\'s exchange information requirements (EIRs). It demonstrates to the client that the potential delivery team has the ability to handle project data according to any assigned information criteria.',
+      purpose: 'Demonstrates capability during tender phase',
+      focus: 'Proposed approach and team capability',
+      language: 'We propose to...  Our capability includes...  We would implement...',
+      icon: Building,
+      color: 'blue',
+      bgClass: 'bg-blue-50',
+      borderClass: 'border-blue-200',
+      textClass: 'text-blue-900'
+    },
+    'post-appointment': {
+      title: 'Post-Appointment BEP',
+      subtitle: 'Project Execution Document',
+      description: 'Confirms the delivery team\'s information management approach and includes detailed planning and schedules. It offers a delivery instrument that the appointed delivery team will use to produce, manage and exchange project information during the appointment.',
+      purpose: 'Delivery instrument during project execution',
+      focus: 'Confirmed approach with detailed planning',
+      language: 'We will deliver...  The assigned team will...  Implementation schedule is...',
+      icon: CheckCircle,
+      color: 'green',
+      bgClass: 'bg-green-50',
+      borderClass: 'border-green-200',
+      textClass: 'text-green-900'
+    }
   },
   
   options: {
@@ -43,35 +194,76 @@ const CONFIG = {
   ],
 
   formFields: {
-    0: {
-      title: 'Project Information and Objectives',
-      fields: [
-        { name: 'projectName', label: 'Project Name', required: true, type: 'text' },
-        { name: 'projectNumber', label: 'Project Number', type: 'text' },
-        { name: 'projectType', label: 'Project Type', required: true, type: 'select', options: 'projectTypes' },
-        { name: 'appointingParty', label: 'Appointing Party', required: true, type: 'text' },
-        { name: 'projectTimeline', label: 'Project Timeline', type: 'text' },
-        { name: 'projectBudget', label: 'Project Budget', type: 'text' },
-        { name: 'projectDescription', label: 'Project Description', type: 'textarea', rows: 4 }
-      ]
+    'pre-appointment': {
+      0: {
+        title: 'Project Information and Proposed Approach',
+        fields: [
+          { name: 'projectName', label: 'Project Name', required: true, type: 'text' },
+          { name: 'projectNumber', label: 'Project Number', type: 'text' },
+          { name: 'projectType', label: 'Project Type', required: true, type: 'select', options: 'projectTypes' },
+          { name: 'appointingParty', label: 'Appointing Party', required: true, type: 'text' },
+          { name: 'proposedTimeline', label: 'Proposed Project Timeline', type: 'text' },
+          { name: 'estimatedBudget', label: 'Estimated Project Budget', type: 'text' },
+          { name: 'projectDescription', label: 'Project Description', type: 'textarea', rows: 4 },
+          { name: 'tenderApproach', label: 'Our Proposed Approach', type: 'textarea', rows: 3, placeholder: 'Describe your proposed approach to the project...' }
+        ]
+      },
+      1: {
+        title: 'Proposed Team and Capabilities',
+        fields: [
+          { name: 'proposedLead', label: 'Proposed Lead Appointed Party', required: true, type: 'text' },
+          { name: 'proposedInfoManager', label: 'Proposed Information Manager', required: true, type: 'text' },
+          { name: 'proposedTeamLeaders', label: 'Proposed Task Team Leaders', type: 'table', columns: ['Discipline', 'Name & Title', 'Company', 'Experience'] },
+          { name: 'teamCapabilities', label: 'Team Capabilities and Experience', type: 'textarea', rows: 4, placeholder: 'Describe your team\'s relevant experience and capabilities...' },
+          { name: 'subcontractors', label: 'Proposed Subcontractors/Partners', type: 'table', columns: ['Role/Service', 'Company Name', 'Certification', 'Contact'] }
+        ]
+      },
+      2: {
+        title: 'Proposed BIM Goals and Objectives',
+        fields: [
+          { name: 'proposedBimGoals', label: 'Proposed BIM Goals', required: true, type: 'textarea', rows: 4, placeholder: 'Our proposed BIM goals for this project include...' },
+          { name: 'proposedObjectives', label: 'Proposed Primary Objectives', type: 'textarea', rows: 3 },
+          { name: 'intendedBimUses', label: 'Intended BIM Uses', required: true, type: 'checkbox', options: 'bimUses' }
+        ]
+      }
     },
-    1: {
-      title: 'Stakeholders and Responsibilities',
-      fields: [
-        { name: 'leadAppointedParty', label: 'Lead Appointed Party', required: true, type: 'text' },
-        { name: 'informationManager', label: 'Information Manager', required: true, type: 'text' },
-        { name: 'taskTeamLeaders', label: 'Task Team Leaders', type: 'textarea', rows: 3 },
-        { name: 'appointedParties', label: 'Appointed Parties', type: 'textarea', rows: 4 }
-      ]
-    },
-    2: {
-      title: 'BIM Goals and Objectives',
-      fields: [
-        { name: 'bimGoals', label: 'BIM Goals', required: true, type: 'textarea', rows: 4 },
-        { name: 'primaryObjectives', label: 'Primary Objectives', type: 'textarea', rows: 3 },
-        { name: 'bimUses', label: 'BIM Uses', required: true, type: 'checkbox', options: 'bimUses' }
-      ]
-    },
+    'post-appointment': {
+      0: {
+        title: 'Project Information and Confirmed Objectives',
+        fields: [
+          { name: 'projectName', label: 'Project Name', required: true, type: 'text' },
+          { name: 'projectNumber', label: 'Project Number', type: 'text' },
+          { name: 'projectType', label: 'Project Type', required: true, type: 'select', options: 'projectTypes' },
+          { name: 'appointingParty', label: 'Appointing Party', required: true, type: 'text' },
+          { name: 'confirmedTimeline', label: 'Confirmed Project Timeline', type: 'text' },
+          { name: 'confirmedBudget', label: 'Confirmed Project Budget', type: 'text' },
+          { name: 'projectDescription', label: 'Project Description', type: 'textarea', rows: 4 },
+          { name: 'deliveryApproach', label: 'Confirmed Delivery Approach', type: 'textarea', rows: 3, placeholder: 'Our confirmed approach to project delivery...' }
+        ]
+      },
+      1: {
+        title: 'Confirmed Team and Responsibilities',
+        fields: [
+          { name: 'leadAppointedParty', label: 'Lead Appointed Party', required: true, type: 'text' },
+          { name: 'informationManager', label: 'Information Manager', required: true, type: 'text' },
+          { name: 'assignedTeamLeaders', label: 'Assigned Task Team Leaders', type: 'table', columns: ['Discipline', 'Name & Title', 'Company', 'Role Details'] },
+          { name: 'finalizedParties', label: 'Finalized Appointed Parties', type: 'table', columns: ['Role/Service', 'Company Name', 'Lead Contact', 'Contract Value'] },
+          { name: 'resourceAllocation', label: 'Resource Allocation', type: 'textarea', rows: 3, placeholder: 'Detailed resource allocation and assignments...' }
+        ]
+      },
+      2: {
+        title: 'Confirmed BIM Goals and Implementation',
+        fields: [
+          { name: 'confirmedBimGoals', label: 'Confirmed BIM Goals', required: true, type: 'textarea', rows: 4, placeholder: 'The confirmed BIM goals for this project are...' },
+          { name: 'implementationObjectives', label: 'Implementation Objectives', type: 'textarea', rows: 3 },
+          { name: 'finalBimUses', label: 'Final BIM Uses', required: true, type: 'checkbox', options: 'bimUses' }
+        ]
+      }
+    }
+  },
+
+  // Keep the original shared formFields for sections 3-11 that are common to both
+  sharedFormFields: {
     3: {
       title: 'Level of Information Need (LOIN)',
       fields: [
@@ -86,7 +278,7 @@ const CONFIG = {
       title: 'Information Delivery Planning',
       fields: [
         { name: 'midpDescription', label: 'Master Information Delivery Plan (MIDP)', required: true, type: 'textarea', rows: 4 },
-        { name: 'keyMilestones', label: 'Key Information Delivery Milestones', required: true, type: 'textarea', rows: 4 },
+        { name: 'keyMilestones', label: 'Key Information Delivery Milestones', required: true, type: 'table', columns: ['Stage/Phase', 'Milestone Description', 'Deliverables', 'Due Date'] },
         { name: 'deliverySchedule', label: 'Delivery Schedule', type: 'textarea', rows: 3 },
         { name: 'tidpRequirements', label: 'Task Information Delivery Plans (TIDPs)', type: 'textarea', rows: 3 }
       ]
@@ -96,7 +288,7 @@ const CONFIG = {
       fields: [
         { name: 'cdeProvider', label: 'CDE Provider', required: true, type: 'text' },
         { name: 'cdePlatform', label: 'CDE Platform Version', type: 'text' },
-        { name: 'workflowStates', label: 'Workflow States', required: true, type: 'textarea', rows: 4 },
+        { name: 'workflowStates', label: 'Workflow States', required: true, type: 'table', columns: ['State Name', 'Description', 'Access Level', 'Next State'] },
         { name: 'accessControl', label: 'Access Control', type: 'textarea', rows: 3 },
         { name: 'securityMeasures', label: 'Security Measures', type: 'textarea', rows: 3 },
         { name: 'backupProcedures', label: 'Backup Procedures', type: 'textarea', rows: 3 }
@@ -115,17 +307,17 @@ const CONFIG = {
     7: {
       title: 'Information Production Methods and Procedures',
       fields: [
-        { name: 'modelingStandards', label: 'Modeling Standards', required: true, type: 'textarea', rows: 4 },
+        { name: 'modelingStandards', label: 'Modeling Standards', required: true, type: 'table', columns: ['Standard/Guideline', 'Version', 'Application Area', 'Compliance Level'] },
         { name: 'namingConventions', label: 'Naming Conventions', required: true, type: 'textarea', rows: 3 },
         { name: 'fileStructure', label: 'File Structure', type: 'textarea', rows: 3 },
-        { name: 'versionControl', label: 'Version Control', type: 'textarea', rows: 3 },
-        { name: 'dataExchangeProtocols', label: 'Data Exchange Protocols', type: 'textarea', rows: 3 }
+        { name: 'versionControl', label: 'Version Control', type: 'table', columns: ['Document Type', 'Version Format', 'Approval Process', 'Archive Location'] },
+        { name: 'dataExchangeProtocols', label: 'Data Exchange Protocols', type: 'table', columns: ['Exchange Type', 'Format', 'Frequency', 'Delivery Method'] }
       ]
     },
     8: {
       title: 'Quality Assurance and Control',
       fields: [
-        { name: 'qaFramework', label: 'Quality Assurance Framework', required: true, type: 'textarea', rows: 4 },
+        { name: 'qaFramework', label: 'Quality Assurance Framework', required: true, type: 'table', columns: ['QA Activity', 'Responsibility', 'Frequency', 'Tools/Methods'] },
         { name: 'modelValidation', label: 'Model Validation Procedures', required: true, type: 'textarea', rows: 4 },
         { name: 'reviewProcesses', label: 'Review Processes', type: 'textarea', rows: 3 },
         { name: 'approvalWorkflows', label: 'Approval Workflows', type: 'textarea', rows: 3 },
@@ -169,37 +361,107 @@ const CONFIG = {
         { name: 'updateProcesses', label: 'Update Processes', type: 'textarea', rows: 3 }
       ]
     }
+  },
+
+  // Function to get appropriate form fields based on BEP type and step
+  getFormFields: (bepType, stepIndex) => {
+    // For steps 0-2, use BEP type specific fields
+    if (stepIndex <= 2 && CONFIG.formFields[bepType] && CONFIG.formFields[bepType][stepIndex]) {
+      return CONFIG.formFields[bepType][stepIndex];
+    }
+    // For steps 3-11, use shared fields
+    if (stepIndex >= 3 && CONFIG.sharedFormFields[stepIndex]) {
+      return CONFIG.sharedFormFields[stepIndex];
+    }
+    return null;
   }
 };
 
 // Dati iniziali di esempio
 const INITIAL_DATA = {
+  // Common fields for both BEP types
   projectName: 'New Office Complex Development',
   projectNumber: 'NOC-2025-001',
   projectDescription: 'A modern 15-story office complex with retail spaces on the ground floor, underground parking, and sustainable building systems. The project includes advanced MEP systems, curtain wall facades, and LEED Gold certification requirements.',
   projectType: 'Commercial Building',
-  projectTimeline: '36 months (March 2025 - February 2028)',
-  projectBudget: '£45M - £52M',
   appointingParty: 'Metropolitan Development Corp.',
+
+  // Pre-appointment specific fields
+  proposedTimeline: '36 months (March 2025 - February 2028)',
+  estimatedBudget: '£45M - £52M (preliminary estimate based on current scope)',
+  tenderApproach: 'Our proposed approach focuses on collaborative BIM implementation from day one, utilizing cloud-based platforms for real-time coordination, implementing clash detection protocols, and establishing clear information exchange procedures to ensure seamless project delivery.',
+  proposedLead: 'Global Construction Ltd. (Lead Contractor with 15+ years BIM experience)',
+  proposedInfoManager: 'Sarah Johnson, BIM Manager - Global Construction Ltd. (ISO 19650 Lead Practitioner)',
+  proposedTeamLeaders: [
+    { 'Discipline': 'Architecture', 'Name & Title': 'John Smith, Director', 'Company': 'Modern Design Associates', 'Experience': '12 years BIM experience, 50+ projects' },
+    { 'Discipline': 'Structural', 'Name & Title': 'Emily Chen, Senior Engineer', 'Company': 'Engineering Excellence Ltd.', 'Experience': '10 years structural BIM, P.Eng' },
+    { 'Discipline': 'MEP', 'Name & Title': 'Michael Rodriguez, BIM Coordinator', 'Company': 'Advanced Systems Group', 'Experience': '8 years MEP coordination experience' },
+    { 'Discipline': 'Facades', 'Name & Title': 'David Wilson, Technical Director', 'Company': 'Curtain Wall Experts Ltd.', 'Experience': '15 years facade design, BIM certified' }
+  ],
+  teamCapabilities: 'Our team brings together over 45 years of combined BIM experience across all disciplines. We have successfully delivered 50+ projects using collaborative BIM workflows, including 3 similar high-rise office complexes. Our capabilities include advanced parametric modeling, 4D/5D simulation, clash detection, and FM data preparation.',
+  subcontractors: [
+    { 'Role/Service': 'MEP Services', 'Company Name': 'Advanced Systems Group', 'Certification': 'ISO 19650 certified', 'Contact': 'info@advancedsystems.com' },
+    { 'Role/Service': 'Curtain Wall', 'Company Name': 'Specialist Facades Ltd.', 'Certification': 'BIM Level 2 compliant', 'Contact': 'projects@specialistfacades.com' },
+    { 'Role/Service': 'Landscaping', 'Company Name': 'Green Spaces Design', 'Certification': 'Autodesk certified', 'Contact': 'design@greenspaces.com' }
+  ],
+  proposedBimGoals: 'We propose to implement a collaborative BIM workflow that will improve design coordination by 60%, reduce construction conflicts by 90%, optimize project delivery timelines by 20%, and establish a comprehensive digital asset for facility management handover.',
+  proposedObjectives: 'Our proposed objectives include achieving zero design conflicts at construction stage, reducing RFIs by 40%, improving construction efficiency by 25%, and delivering comprehensive FM data for operations.',
+  intendedBimUses: ['Design Authoring', '3D Coordination', 'Clash Detection', 'Quantity Take-off', '4D Planning'],
+
+  // Post-appointment specific fields
+  confirmedTimeline: '36 months (March 2025 - February 2028) - Contract confirmed',
+  confirmedBudget: '£47.5M - Final contract value',
+  deliveryApproach: 'Our confirmed delivery approach implements the collaborative BIM workflow as agreed in contract, utilizing Autodesk BIM 360 for cloud-based coordination, weekly clash detection reviews, and structured information exchanges at key project milestones.',
   leadAppointedParty: 'Global Construction Ltd.',
-  appointedParties: 'Architecture: Modern Design Associates\nStructural: Engineering Excellence Ltd.\nMEP: Advanced Systems Group\nQuantity Surveyor: Cost Management Partners\nSpecialist Facades: Curtain Wall Experts Ltd.',
   informationManager: 'Sarah Johnson, BIM Manager - Global Construction Ltd.',
-  taskTeamLeaders: 'Architecture: John Smith (Modern Design Associates)\nStructural: Emily Chen (Engineering Excellence Ltd.)\nMEP: Michael Rodriguez (Advanced Systems Group)\nFacades: David Wilson (Curtain Wall Experts Ltd.)',
+  assignedTeamLeaders: [
+    { 'Discipline': 'Architecture', 'Name & Title': 'John Smith, Project Director', 'Company': 'Modern Design Associates', 'Role Details': 'Overall design coordination and client liaison' },
+    { 'Discipline': 'Structural', 'Name & Title': 'Emily Chen, Senior Engineer', 'Company': 'Engineering Excellence Ltd.', 'Role Details': 'Structural design and analysis coordination' },
+    { 'Discipline': 'MEP', 'Name & Title': 'Michael Rodriguez, BIM Coordinator', 'Company': 'Advanced Systems Group', 'Role Details': 'MEP systems integration and clash detection' },
+    { 'Discipline': 'Facades', 'Name & Title': 'David Wilson, Technical Director', 'Company': 'Curtain Wall Experts Ltd.', 'Role Details': 'Facade design and performance optimization' }
+  ],
+  finalizedParties: [
+    { 'Role/Service': 'Architecture', 'Company Name': 'Modern Design Associates', 'Lead Contact': 'John Smith - j.smith@mda.com', 'Contract Value': '£2.1M' },
+    { 'Role/Service': 'Structural Engineering', 'Company Name': 'Engineering Excellence Ltd.', 'Lead Contact': 'Emily Chen - e.chen@engexcel.com', 'Contract Value': '£1.8M' },
+    { 'Role/Service': 'MEP Engineering', 'Company Name': 'Advanced Systems Group', 'Lead Contact': 'Michael Rodriguez - m.rodriguez@asg.com', 'Contract Value': '£3.2M' },
+    { 'Role/Service': 'Quantity Surveying', 'Company Name': 'Cost Management Partners', 'Lead Contact': 'Sarah Williams - s.williams@cmp.com', 'Contract Value': '£0.3M' },
+    { 'Role/Service': 'Specialist Facades', 'Company Name': 'Curtain Wall Experts Ltd.', 'Lead Contact': 'David Wilson - d.wilson@cwe.com', 'Contract Value': '£4.5M' }
+  ],
+  resourceAllocation: 'Project staffing confirmed: 2x Senior BIM Coordinators, 4x Discipline BIM Modelers, 1x Information Manager, 1x CDE Administrator. Weekly allocation: 40 hours coordination, 160 hours modeling, 20 hours QA/QC.',
+  confirmedBimGoals: 'The confirmed BIM goals include implementing collaborative workflows to achieve improved design coordination, reduced construction conflicts, optimized delivery timelines, and comprehensive digital asset creation for facility management.',
+  implementationObjectives: 'Implementation objectives include zero design conflicts at construction, 40% reduction in RFIs, improved construction efficiency, and delivery of comprehensive FM data for operations.',
+  finalBimUses: ['Design Authoring', '3D Coordination', 'Clash Detection', 'Quantity Take-off', '4D Planning'],
+
+  // Legacy fields for backward compatibility
   bimGoals: 'Implement a collaborative BIM workflow to improve design coordination, reduce construction conflicts, optimize project delivery timelines, and establish a comprehensive digital asset for facility management handover.',
   bimUses: ['Design Authoring', '3D Coordination', 'Clash Detection', 'Quantity Take-off', '4D Planning'],
   primaryObjectives: 'Achieve zero design conflicts at construction stage, reduce RFIs by 40%, improve construction efficiency, and deliver comprehensive FM data for operations.',
+  // Legacy fields for backward compatibility (converted from table format)
+  taskTeamLeaders: 'Architecture: John Smith (Modern Design Associates)\nStructural: Emily Chen (Engineering Excellence Ltd.)\nMEP: Michael Rodriguez (Advanced Systems Group)\nFacades: David Wilson (Curtain Wall Experts Ltd.)',
+  appointedParties: 'Architecture: Modern Design Associates\nStructural: Engineering Excellence Ltd.\nMEP: Advanced Systems Group\nQuantity Surveyor: Cost Management Partners\nSpecialist Facades: Curtain Wall Experts Ltd.',
   informationPurposes: ['Design Development', 'Construction Planning', 'Quantity Surveying', 'Facility Management'],
   geometricalInfo: 'LOD 350 for construction documentation phase, with dimensional accuracy of ±10mm for structural elements and ±5mm for MEP coordination points.',
   alphanumericalInfo: 'All building elements must include material specifications, performance data, manufacturer information, maintenance requirements, and warranty details.',
   documentationInfo: 'Construction drawings, specifications, schedules, O&M manuals, warranty documents, and asset registers in digital format.',
   informationFormats: ['IFC 4', 'PDF', 'BCF 2.1', 'DWG', 'COBie'],
   midpDescription: 'The MIDP coordinates all discipline-specific TIDPs into a unified delivery schedule aligned with RIBA stages and construction milestones. Information exchanges occur at stage gates with formal approval processes.',
-  keyMilestones: 'Stage 2 (Concept Design): Basic geometry and spatial coordination\nStage 3 (Spatial Coordination): Full coordination model\nStage 4 (Technical Design): Construction-ready information\nStage 5 (Manufacturing): Production information\nStage 6 (Handover): As-built models and FM data',
+  keyMilestones: [
+    { 'Stage/Phase': 'Stage 2', 'Milestone Description': 'Concept Design Complete', 'Deliverables': 'Basic geometry and spatial coordination models', 'Due Date': 'Month 6' },
+    { 'Stage/Phase': 'Stage 3', 'Milestone Description': 'Spatial Coordination', 'Deliverables': 'Full coordination model with clash detection', 'Due Date': 'Month 12' },
+    { 'Stage/Phase': 'Stage 4', 'Milestone Description': 'Technical Design', 'Deliverables': 'Construction-ready information and documentation', 'Due Date': 'Month 18' },
+    { 'Stage/Phase': 'Stage 5', 'Milestone Description': 'Manufacturing Support', 'Deliverables': 'Production information and fabrication models', 'Due Date': 'Month 24' },
+    { 'Stage/Phase': 'Stage 6', 'Milestone Description': 'Handover', 'Deliverables': 'As-built models and FM data', 'Due Date': 'Month 36' }
+  ],
   deliverySchedule: 'Monthly model updates during design phases, weekly coordination cycles during construction documentation, and daily updates during critical construction phases.',
   tidpRequirements: 'Each task team must produce TIDPs detailing their information deliverables, responsibilities, quality requirements, and delivery schedules in alignment with project milestones.',
   cdeProvider: 'Autodesk BIM 360',
   cdePlatform: 'BIM 360 Design & Docs - Enterprise Version 2024',
-  workflowStates: 'Work in Progress (WIP): Active development by task teams\nShared: Available for coordination and review\nPublished: Approved for use by the project team\nArchived: Historical versions for reference',
+  workflowStates: [
+    { 'State Name': 'Work in Progress (WIP)', 'Description': 'Active development by task teams', 'Access Level': 'Author only', 'Next State': 'Shared' },
+    { 'State Name': 'Shared', 'Description': 'Available for coordination and review', 'Access Level': 'Team members', 'Next State': 'Published' },
+    { 'State Name': 'Published', 'Description': 'Approved for use by the project team', 'Access Level': 'All stakeholders', 'Next State': 'Archived' },
+    { 'State Name': 'Archived', 'Description': 'Historical versions for reference', 'Access Level': 'Read-only access', 'Next State': 'N/A' }
+  ],
   accessControl: 'Role-based access with project administrator, discipline leads, team members, and read-only stakeholder levels. Multi-factor authentication required for all users.',
   securityMeasures: 'ISO 27001 compliant platform with end-to-end encryption, regular security audits, data residency controls, and comprehensive audit logging.',
   backupProcedures: 'Automated daily backups with 30-day retention, weekly full system backups, geographic redundancy, and quarterly disaster recovery testing.',
@@ -208,12 +470,33 @@ const INITIAL_DATA = {
   hardwareRequirements: 'Minimum: Intel i7 or equivalent, 32GB RAM, dedicated graphics card (RTX 3060 or higher), 1TB SSD storage, dual monitors recommended.',
   networkRequirements: 'High-speed internet connection (minimum 100 Mbps), VPN access for remote working, secure cloud connectivity to CDE platform.',
   interoperabilityNeeds: 'Seamless data exchange between Revit disciplines, coordination in Navisworks, model checking in Solibri, and cloud collaboration through BIM 360.',
-  modelingStandards: 'UK BIM Alliance standards, Uniclass 2015 classification system, LOD specification based on AIA guidelines, and company-specific modeling conventions.',
+  modelingStandards: [
+    { 'Standard/Guideline': 'UK BIM Alliance Standards', 'Version': 'v2.1', 'Application Area': 'General BIM practices', 'Compliance Level': 'Mandatory' },
+    { 'Standard/Guideline': 'Uniclass 2015', 'Version': '2015', 'Application Area': 'Classification system', 'Compliance Level': 'Mandatory' },
+    { 'Standard/Guideline': 'AIA LOD Specification', 'Version': '2019', 'Application Area': 'Level of development', 'Compliance Level': 'Mandatory' },
+    { 'Standard/Guideline': 'Company Modeling Guide', 'Version': 'v3.2', 'Application Area': 'Internal procedures', 'Compliance Level': 'Required' }
+  ],
   namingConventions: 'Project code: NOC, Originator codes by discipline (ARC, STR, MEP), Volume/Level codes, Type classifications following BS 1192 naming convention.',
   fileStructure: 'Organized by discipline and project phase with clear folder hierarchies, version control through file naming, and linked file management protocols.',
-  versionControl: 'Sequential numbering (P01, P02, etc.) for WIP, formal revision codes (A, B, C, etc.) for issued drawings, with comprehensive revision tracking.',
-  dataExchangeProtocols: 'Weekly IFC exports for coordination, BCF workflow for issue management, and formal information exchanges at project milestones.',
-  qaFramework: 'Comprehensive QA process including automated model checking, manual design reviews, coordination clash detection, and compliance verification against project standards.',
+  versionControl: [
+    { 'Document Type': 'Working Models', 'Version Format': 'P01, P02, P03...', 'Approval Process': 'Author approval only', 'Archive Location': 'WIP folder' },
+    { 'Document Type': 'Issued Drawings', 'Version Format': 'A, B, C, D...', 'Approval Process': 'Discipline lead + PM', 'Archive Location': 'Published folder' },
+    { 'Document Type': 'Coordination Models', 'Version Format': 'Weekly increments', 'Approval Process': 'BIM Coordinator', 'Archive Location': 'Shared folder' },
+    { 'Document Type': 'Final Deliverables', 'Version Format': 'Client approval code', 'Approval Process': 'Client sign-off', 'Archive Location': 'Client portal' }
+  ],
+  dataExchangeProtocols: [
+    { 'Exchange Type': 'IFC Coordination', 'Format': 'IFC 4.0', 'Frequency': 'Weekly', 'Delivery Method': 'BIM 360 upload' },
+    { 'Exchange Type': 'Issue Management', 'Format': 'BCF 2.1', 'Frequency': 'Daily as needed', 'Delivery Method': 'BCF workflow' },
+    { 'Exchange Type': 'Drawing Sets', 'Format': 'PDF + DWG', 'Frequency': 'At milestones', 'Delivery Method': 'Client portal' },
+    { 'Exchange Type': 'FM Handover', 'Format': 'COBie + IFC', 'Frequency': 'Final delivery', 'Delivery Method': 'Secure transfer' }
+  ],
+  qaFramework: [
+    { 'QA Activity': 'Automated Model Checking', 'Responsibility': 'BIM Coordinator', 'Frequency': 'Daily', 'Tools/Methods': 'Solibri Model Checker + custom rules' },
+    { 'QA Activity': 'Manual Design Reviews', 'Responsibility': 'Discipline Leads', 'Frequency': 'Weekly', 'Tools/Methods': 'Navisworks review sessions' },
+    { 'QA Activity': 'Clash Detection', 'Responsibility': 'BIM Coordinator', 'Frequency': 'Bi-weekly', 'Tools/Methods': 'Navisworks Manage + BCF reports' },
+    { 'QA Activity': 'Standards Compliance', 'Responsibility': 'Information Manager', 'Frequency': 'Monthly', 'Tools/Methods': 'Compliance checklist + audit trail' },
+    { 'QA Activity': 'Client Reviews', 'Responsibility': 'Project Manager', 'Frequency': 'At milestones', 'Tools/Methods': 'Formal review meetings + sign-off' }
+  ],
   modelValidation: 'Automated checking using Solibri Model Checker for geometric accuracy, completeness, and standard compliance. Manual reviews for design intent and buildability.',
   reviewProcesses: 'Stage gate reviews at each RIBA stage, weekly coordination reviews, monthly progress reviews, and formal design freeze approvals.',
   approvalWorkflows: 'Task team lead approval, discipline coordination review, project manager authorization, and client sign-off for major milestones.',
@@ -243,6 +526,152 @@ const INITIAL_DATA = {
 };
 
 // Componenti riutilizzabili
+const EditableTable = React.memo(({ field, value, onChange, error }) => {
+  const { name, label, required, columns = ['Role/Discipline', 'Name/Company', 'Experience/Notes'] } = field;
+  const tableData = Array.isArray(value) ? value : [];
+
+  const addRow = () => {
+    const newRow = columns.reduce((acc, col) => ({ ...acc, [col]: '' }), {});
+    onChange(name, [...tableData, newRow]);
+  };
+
+  const removeRow = (index) => {
+    const newData = tableData.filter((_, i) => i !== index);
+    onChange(name, newData);
+  };
+
+  const updateCell = (rowIndex, column, cellValue) => {
+    const newData = tableData.map((row, index) =>
+      index === rowIndex ? { ...row, [column]: cellValue } : row
+    );
+    onChange(name, newData);
+  };
+
+  const moveRow = (fromIndex, toIndex) => {
+    if (toIndex < 0 || toIndex >= tableData.length) return;
+    const newData = [...tableData];
+    const [movedRow] = newData.splice(fromIndex, 1);
+    newData.splice(toIndex, 0, movedRow);
+    onChange(name, newData);
+  };
+
+  return (
+    <div className="mb-8">
+      <label className="block text-lg font-semibold mb-4 text-gray-800">
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+
+      <div className="border rounded-xl overflow-hidden shadow-sm bg-white">
+        <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-3">
+              <span className="text-base font-semibold text-gray-800">
+                {tableData.length} {tableData.length === 1 ? 'Entry' : 'Entries'}
+              </span>
+              {tableData.length > 0 && (
+                <span className="text-sm text-gray-500">
+                  Click and drag to reorder • Use textarea for multi-line content
+                </span>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={addRow}
+              className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-105 shadow-md"
+            >
+              <span className="text-lg">+</span>
+              <span>Add Row</span>
+            </button>
+          </div>
+        </div>
+
+        {tableData.length === 0 ? (
+          <div className="p-12 text-center text-gray-500">
+            <Users className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+            <p className="text-lg">No entries yet. Click "Add Row" to get started.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto bg-white">
+            <table className="w-full min-w-full table-fixed">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="w-16 px-2 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Order
+                  </th>
+                  {columns.map((column, index) => (
+                    <th key={column} className={`px-3 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider ${
+                      columns.length === 4 ? 'w-1/4' :
+                      columns.length === 3 ? 'w-1/3' :
+                      'w-auto'
+                    }`}>
+                      {column}
+                    </th>
+                  ))}
+                  <th className="w-16 px-2 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {tableData.map((row, rowIndex) => (
+                  <tr key={rowIndex} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-2 py-2">
+                      <div className="flex flex-col items-center space-y-1">
+                        <button
+                          type="button"
+                          onClick={() => moveRow(rowIndex, rowIndex - 1)}
+                          disabled={rowIndex === 0}
+                          className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-xs"
+                          title="Move up"
+                        >
+                          ↑
+                        </button>
+                        <span className="text-xs font-medium text-gray-600 bg-gray-100 px-1 py-0.5 rounded">{rowIndex + 1}</span>
+                        <button
+                          type="button"
+                          onClick={() => moveRow(rowIndex, rowIndex + 1)}
+                          disabled={rowIndex === tableData.length - 1}
+                          className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-xs"
+                          title="Move down"
+                        >
+                          ↓
+                        </button>
+                      </div>
+                    </td>
+                    {columns.map(column => (
+                      <td key={column} className="px-1 py-2">
+                        <textarea
+                          value={row[column] || ''}
+                          onChange={(e) => updateCell(rowIndex, column, e.target.value)}
+                          className="w-full min-h-[100px] p-2 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm resize-y"
+                          placeholder={`Enter ${column.toLowerCase()}...`}
+                          rows={4}
+                        />
+                      </td>
+                    ))}
+                    <td className="px-2 py-2">
+                      <button
+                        type="button"
+                        onClick={() => removeRow(rowIndex)}
+                        className="w-8 h-8 flex items-center justify-center text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors font-medium text-sm"
+                        title="Remove row"
+                      >
+                        ✕
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+    </div>
+  );
+});
+
 const InputField = React.memo(({ field, value, onChange, error }) => {
   const { name, label, type, required, rows, placeholder, options: fieldOptions } = field;
   const optionsList = fieldOptions ? CONFIG.options[fieldOptions] : null;
@@ -258,6 +687,16 @@ const InputField = React.memo(({ field, value, onChange, error }) => {
   };
 
   switch (type) {
+    case 'table':
+      return (
+        <EditableTable
+          field={field}
+          value={value}
+          onChange={onChange}
+          error={error}
+        />
+      );
+
     case 'textarea':
       return (
         <div>
@@ -415,45 +854,128 @@ const ProgressSidebar = React.memo(({ steps, currentStep, completedSections, onS
   </div>
 ));
 
-const BepTypeSelector = ({ bepType, setBepType }) => (
-  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-    <h3 className="text-lg font-semibold text-blue-900 mb-3">BEP Type Selection</h3>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {[
-        { value: 'pre-appointment', title: 'Pre-Appointment BEP', description: 'Demonstrates capability and proposed approach during tender phase' },
-        { value: 'post-appointment', title: 'Post-Appointment BEP', description: 'Confirms delivery approach with detailed planning and schedules' }
-      ].map(option => (
-        <label key={option.value} className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-          bepType === option.value ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-        }`}>
-          <input
-            type="radio"
-            value={option.value}
-            checked={bepType === option.value}
-            onChange={(e) => setBepType(e.target.value)}
-            className="sr-only"
-          />
-          <div className="font-medium text-gray-900">{option.title}</div>
-          <div className="text-sm text-gray-600 mt-1">{option.description}</div>
-        </label>
-      ))}
+const EnhancedBepTypeSelector = ({ bepType, setBepType, onProceed }) => (
+  <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl p-8">
+      <div className="text-center mb-8">
+        <Zap className="w-16 h-16 text-blue-600 mx-auto mb-4" />
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">BIM Execution Plan Generator</h1>
+        <p className="text-gray-600 mb-6">Choose your BEP type to begin the tailored workflow</p>
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-left">
+          <h3 className="font-semibold text-yellow-800 mb-2">What is a BEP?</h3>
+          <p className="text-sm text-yellow-700">
+            A BIM Execution Plan (BEP) explains how the information management aspects of the appointment will be carried out by the delivery team.
+            It sets out how information requirements are managed and delivered collectively by all parties involved in the project.
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        {Object.entries(CONFIG.bepTypeDefinitions).map(([key, definition]) => {
+          const IconComponent = definition.icon;
+          const isSelected = bepType === key;
+
+          return (
+            <div
+              key={key}
+              className={`relative p-6 border-2 rounded-xl cursor-pointer transition-all transform hover:scale-105 ${
+                isSelected
+                  ? `border-${definition.color}-500 ${definition.bgClass} shadow-lg`
+                  : 'border-gray-200 bg-white hover:border-gray-300 shadow-md'
+              }`}
+              onClick={() => setBepType(key)}
+            >
+              <div className="flex items-start space-x-4">
+                <div className={`p-3 rounded-lg ${
+                  isSelected ? `bg-${definition.color}-100` : 'bg-gray-100'
+                }`}>
+                  <IconComponent className={`w-8 h-8 ${
+                    isSelected ? `text-${definition.color}-600` : 'text-gray-600'
+                  }`} />
+                </div>
+
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <h3 className={`text-xl font-bold ${
+                      isSelected ? definition.textClass : 'text-gray-900'
+                    }`}>
+                      {definition.title}
+                    </h3>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      isSelected
+                        ? `bg-${definition.color}-100 text-${definition.color}-700`
+                        : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      {definition.subtitle}
+                    </span>
+                  </div>
+
+                  <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                    {definition.description}
+                  </p>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Target className="w-4 h-4 text-gray-500" />
+                      <span className="text-sm font-medium text-gray-700">Purpose:</span>
+                      <span className="text-sm text-gray-600">{definition.purpose}</span>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <Eye className="w-4 h-4 text-gray-500" />
+                      <span className="text-sm font-medium text-gray-700">Focus:</span>
+                      <span className="text-sm text-gray-600">{definition.focus}</span>
+                    </div>
+
+                    <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                      <span className="text-xs font-medium text-gray-700 block mb-1">Language Style:</span>
+                      <span className="text-xs text-gray-600 italic">{definition.language}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {isSelected && (
+                <div className="absolute top-3 right-3">
+                  <CheckCircle className={`w-6 h-6 text-${definition.color}-600`} />
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="text-center">
+        <button
+          onClick={onProceed}
+          disabled={!bepType}
+          className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium px-8 py-3 rounded-lg transition-all transform hover:scale-105 shadow-lg mx-auto disabled:transform-none disabled:cursor-not-allowed"
+        >
+          <span>Proceed with {bepType ? CONFIG.bepTypeDefinitions[bepType].title : 'Selected BEP Type'}</span>
+          <ChevronRight className="w-5 h-5" />
+        </button>
+
+        {bepType && (
+          <p className="mt-3 text-sm text-gray-600">
+            You've selected: <span className="font-medium">{CONFIG.bepTypeDefinitions[bepType].title}</span>
+          </p>
+        )}
+      </div>
     </div>
   </div>
 );
 
-const FormStep = React.memo(({ stepIndex, formData, updateFormData, errors, bepType, setBepType, generateBEPContent }) => {
-  const stepConfig = CONFIG.formFields[stepIndex];
+const FormStep = React.memo(({ stepIndex, formData, updateFormData, errors, bepType }) => {
+  const stepConfig = CONFIG.getFormFields(bepType, stepIndex);
   if (!stepConfig) return null;
 
   return (
     <div className="space-y-6">
-      {stepIndex === 0 && <BepTypeSelector bepType={bepType} setBepType={setBepType} />}
-      
       <h3 className="text-xl font-semibold">{stepConfig.title}</h3>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {stepConfig.fields.map(field => (
-          <div key={field.name} className={field.type === 'textarea' || field.type === 'checkbox' ? 'md:col-span-2' : ''}>
+          <div key={field.name} className={field.type === 'textarea' || field.type === 'checkbox' || field.type === 'table' ? 'md:col-span-2' : ''}>
             <InputField
               field={field}
               value={formData[field.name]}
@@ -524,24 +1046,52 @@ const PreviewExportPage = ({ generateBEPContent, exportFormat, setExportFormat, 
   );
 };
 
-const ProfessionalBEPGenerator = () => {
-  const { user, logout } = useAuth();
+const AppContent = () => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Zap className="w-12 h-12 text-blue-600 animate-pulse mx-auto mb-4" />
+          <p className="text-gray-600">Loading BEP Generator...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Login />;
+  }
+
+  return <ProfessionalBEPGenerator user={user} />;
+};
+
+const ProfessionalBEPGenerator = ({ user }) => {
+  const { logout } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
-  const [bepType, setBepType] = useState('pre-appointment');
+  const [bepType, setBepType] = useState('');
   const [formData, setFormData] = useState(INITIAL_DATA);
   const [completedSections, setCompletedSections] = useState(new Set());
   const [exportFormat, setExportFormat] = useState('html');
   const [errors, setErrors] = useState({});
   const [isExporting, setIsExporting] = useState(false);
+  const [showBepTypeSelector, setShowBepTypeSelector] = useState(true);
 
   useEffect(() => {
-    if (user) {
-      const savedData = localStorage.getItem(`bepData_${user.id}`);
-      if (savedData) {
-        setFormData(JSON.parse(savedData));
+    const savedData = localStorage.getItem(`bepData_${user.id}`);
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        // Merge saved data with INITIAL_DATA to ensure new fields have example values
+        setFormData({ ...INITIAL_DATA, ...parsedData });
+      } catch (error) {
+        console.error('Error parsing saved data:', error);
+        // If there's an error, use INITIAL_DATA
+        setFormData(INITIAL_DATA);
       }
     }
-  }, [user]);
+  }, [user.id]);
 
   const debounce = (func, delay) => {
     let timeoutId;
@@ -553,23 +1103,21 @@ const ProfessionalBEPGenerator = () => {
 
   useEffect(() => {
     const debouncedSave = debounce(() => {
-      if (user) {
-        localStorage.setItem(`bepData_${user.id}`, JSON.stringify(formData));
-      }
+      localStorage.setItem(`bepData_${user.id}`, JSON.stringify(formData));
     }, 500);
     debouncedSave();
-  }, [formData, user]);
+  }, [formData, user.id]);
 
   const updateFormData = useCallback((field, value) => {
     const sanitizedValue = typeof value === 'string' ? DOMPurify.sanitize(value) : value;
     setFormData(prev => ({ ...prev, [field]: sanitizedValue }));
-    const stepConfig = CONFIG.formFields[currentStep];
-    const fieldConfig = stepConfig.fields.find(f => f.name === field);
+    const stepConfig = CONFIG.getFormFields(bepType, currentStep);
+    const fieldConfig = stepConfig?.fields.find(f => f.name === field);
     if (fieldConfig) {
       const error = validateField(field, sanitizedValue, fieldConfig.required);
       setErrors(prev => ({ ...prev, [field]: error }));
     }
-  }, [currentStep]);
+  }, [currentStep, bepType]);
 
   const validateField = (name, value, required) => {
     if (required && (!value || (Array.isArray(value) && value.length === 0) || (typeof value === 'string' && value.trim() === ''))) {
@@ -579,21 +1127,23 @@ const ProfessionalBEPGenerator = () => {
   };
 
   const validateStep = useCallback((stepIndex) => {
-    const stepConfig = CONFIG.formFields[stepIndex];
+    const stepConfig = CONFIG.getFormFields(bepType, stepIndex);
     if (!stepConfig) return true;
-    
+
     return stepConfig.fields.every(field => {
       const value = formData[field.name];
       return !field.required || (value && (Array.isArray(value) ? value.length > 0 : value.trim() !== ''));
     });
-  }, [formData]);
+  }, [formData, bepType]);
 
   const validatedSteps = useMemo(() => {
     return CONFIG.steps.map((_, index) => validateStep(index));
   }, [validateStep]);
 
   const validateCurrentStep = () => {
-    const stepConfig = CONFIG.formFields[currentStep];
+    const stepConfig = CONFIG.getFormFields(bepType, currentStep);
+    if (!stepConfig) return true;
+
     const newErrors = {};
     let isValid = true;
 
@@ -642,25 +1192,55 @@ const ProfessionalBEPGenerator = () => {
     const groupedSteps = CONFIG.steps.reduce((acc, step, index) => {
       const cat = step.category;
       if (!acc[cat]) acc[cat] = [];
-      acc[cat].push({ index, title: `${acc[cat].length + 1}. ${step.title.toUpperCase()}`, fields: CONFIG.formFields[index].fields });
+      const stepConfig = CONFIG.getFormFields(bepType, index);
+      if (stepConfig) {
+        acc[cat].push({ index, title: `${acc[cat].length + 1}. ${stepConfig.title.toUpperCase()}`, fields: stepConfig.fields });
+      }
       return acc;
     }, {});
 
     const renderField = (field) => {
       let value = formData[field.name];
       if (!value) return '';
-      
-      value = DOMPurify.sanitize(value);
 
       if (field.type === 'checkbox' && Array.isArray(value)) {
-        return `<h3>${field.label}</h3><ul>${value.map(item => `<li>${item}</li>`).join('')}</ul>`;
+        return `<h3>${field.label}</h3><ul>${value.map(item => `<li>${DOMPurify.sanitize(item)}</li>`).join('')}</ul>`;
       }
-      
+
+      if (field.type === 'table' && Array.isArray(value)) {
+        if (value.length === 0) return '';
+
+        const columns = field.columns || ['Role/Discipline', 'Name/Company', 'Experience/Notes'];
+        let tableHtml = `<h3>${field.label}</h3>`;
+        tableHtml += '<table class="table-data" style="width: 100%; border-collapse: collapse; margin: 10px 0;">';
+
+        // Header
+        tableHtml += '<thead><tr style="background: #f3f4f6;">';
+        columns.forEach(col => {
+          tableHtml += `<th style="border: 1px solid #d1d5db; padding: 8px; text-align: left; font-weight: bold;">${col}</th>`;
+        });
+        tableHtml += '</tr></thead>';
+
+        // Rows
+        tableHtml += '<tbody>';
+        value.forEach((row, index) => {
+          tableHtml += `<tr style="background: ${index % 2 === 0 ? '#ffffff' : '#f9fafb'};">`;
+          columns.forEach(col => {
+            const cellValue = DOMPurify.sanitize(row[col] || '');
+            tableHtml += `<td style="border: 1px solid #d1d5db; padding: 8px;">${cellValue}</td>`;
+          });
+          tableHtml += '</tr>';
+        });
+        tableHtml += '</tbody></table>';
+
+        return tableHtml;
+      }
+
       if (field.type === 'textarea') {
-        return `<h3>${field.label}</h3><p>${value}</p>`;
+        return `<h3>${field.label}</h3><p>${DOMPurify.sanitize(value)}</p>`;
       }
-      
-      return `<tr><td class="label">${field.label}:</td><td>${value}</td></tr>`;
+
+      return `<tr><td class="label">${field.label}:</td><td>${DOMPurify.sanitize(value)}</td></tr>`;
     };
 
     const sectionsHtml = Object.entries(groupedSteps).map(([cat, items]) => [
@@ -713,17 +1293,21 @@ const ProfessionalBEPGenerator = () => {
         <div class="header">
           <h1>BIM EXECUTION PLAN (BEP)</h1>
           <div class="subtitle">ISO 19650-2 Compliant</div>
-          <div class="bep-type">${bepType === 'pre-appointment' ? 'Pre-Appointment BEP' : 'Post-Appointment BEP'}</div>
+          <div class="bep-type">${CONFIG.bepTypeDefinitions[bepType].title}</div>
+          <div class="bep-purpose" style="background: #f3f4f6; padding: 10px; border-radius: 8px; margin: 10px 0; font-style: italic; color: #6b7280;">
+            ${CONFIG.bepTypeDefinitions[bepType].description}
+          </div>
         </div>
 
         <div class="compliance-box">
           <h3>Document Information</h3>
           <table>
-            <tr><td class="label">Document Type:</td><td>${bepType === 'pre-appointment' ? 'Pre-Appointment BEP' : 'Post-Appointment BEP'}</td></tr>
+            <tr><td class="label">Document Type:</td><td>${CONFIG.bepTypeDefinitions[bepType].title}</td></tr>
+            <tr><td class="label">Document Purpose:</td><td>${CONFIG.bepTypeDefinitions[bepType].purpose}</td></tr>
             <tr><td class="label">Project Name:</td><td>${formData.projectName || 'Not specified'}</td></tr>
             <tr><td class="label">Project Number:</td><td>${formData.projectNumber || 'Not specified'}</td></tr>
             <tr><td class="label">Generated Date:</td><td>${formattedDate} at ${formattedTime}</td></tr>
-            <tr><td class="label">Status:</td><td>Work in Progress</td></tr>
+            <tr><td class="label">Status:</td><td>${bepType === 'pre-appointment' ? 'Tender Submission' : 'Working Document'}</td></tr>
           </table>
         </div>
 
@@ -765,7 +1349,11 @@ const ProfessionalBEPGenerator = () => {
         alignment: AlignmentType.CENTER
       }),
       new Paragraph({
-        text: `${bepType === 'pre-appointment' ? 'Pre-Appointment BEP' : 'Post-Appointment BEP'}`,
+        text: CONFIG.bepTypeDefinitions[bepType].title,
+        alignment: AlignmentType.CENTER
+      }),
+      new Paragraph({
+        text: CONFIG.bepTypeDefinitions[bepType].description,
         alignment: AlignmentType.CENTER
       })
     );
@@ -782,7 +1370,13 @@ const ProfessionalBEPGenerator = () => {
           new TableRow({
             children: [
               new TableCell({ children: [new Paragraph("Document Type:")], width: { size: 50, type: WidthType.PERCENTAGE } }),
-              new TableCell({ children: [new Paragraph(bepType === 'pre-appointment' ? 'Pre-Appointment BEP' : 'Post-Appointment BEP')] })
+              new TableCell({ children: [new Paragraph(CONFIG.bepTypeDefinitions[bepType].title)] })
+            ]
+          }),
+          new TableRow({
+            children: [
+              new TableCell({ children: [new Paragraph("Document Purpose:")] }),
+              new TableCell({ children: [new Paragraph(CONFIG.bepTypeDefinitions[bepType].purpose)] })
             ]
           }),
           new TableRow({
@@ -806,7 +1400,7 @@ const ProfessionalBEPGenerator = () => {
           new TableRow({
             children: [
               new TableCell({ children: [new Paragraph("Status:")] }),
-              new TableCell({ children: [new Paragraph("Work in Progress")] })
+              new TableCell({ children: [new Paragraph(bepType === 'pre-appointment' ? 'Tender Submission' : 'Working Document')] })
             ]
           })
         ]
@@ -817,7 +1411,10 @@ const ProfessionalBEPGenerator = () => {
     const groupedSteps = CONFIG.steps.reduce((acc, step, index) => {
       const cat = step.category;
       if (!acc[cat]) acc[cat] = [];
-      acc[cat].push({ index, title: `${acc[cat].length + 1}. ${step.title.toUpperCase()}`, fields: CONFIG.formFields[index].fields });
+      const stepConfig = CONFIG.getFormFields(bepType, index);
+      if (stepConfig) {
+        acc[cat].push({ index, title: `${acc[cat].length + 1}. ${stepConfig.title.toUpperCase()}`, fields: stepConfig.fields });
+      }
       return acc;
     }, {});
 
@@ -979,6 +1576,37 @@ const ProfessionalBEPGenerator = () => {
       });
     };
 
+    const addTableData = (field) => {
+      let value = formData[field.name];
+      if (!value) return;
+
+      addText(field.label + ':', 12, true);
+      y += lineHeight / 2;
+
+      if (field.type === 'table' && Array.isArray(value)) {
+        if (value.length === 0) return;
+
+        const columns = field.columns || ['Role/Discipline', 'Name/Company', 'Experience/Notes'];
+
+        // Add table header
+        let headerText = columns.join(' | ');
+        addText(headerText, 9, true);
+        addText('-'.repeat(headerText.length), 9);
+
+        // Add table rows
+        value.forEach((row, index) => {
+          let rowText = columns.map(col => row[col] || '').join(' | ');
+          addText(rowText, 9);
+        });
+        y += lineHeight;
+      } else if (field.type === 'checkbox' && Array.isArray(value)) {
+        addText(value.join(', '), 10);
+      } else if (typeof value === 'string') {
+        addText(value, 10);
+      }
+      y += lineHeight;
+    };
+
     const currentDate = new Date();
     const formattedDate = currentDate.toLocaleDateString();
     const formattedTime = currentDate.toLocaleTimeString();
@@ -988,18 +1616,21 @@ const ProfessionalBEPGenerator = () => {
     y += lineHeight;
     addText('ISO 19650-2 Compliant', 14, true, 'center');
     y += lineHeight;
-    addText(bepType === 'pre-appointment' ? 'Pre-Appointment BEP' : 'Post-Appointment BEP', 12, true, 'center');
+    addText(CONFIG.bepTypeDefinitions[bepType].title, 12, true, 'center');
+    y += lineHeight;
+    addText(CONFIG.bepTypeDefinitions[bepType].description, 10, false, 'center');
     y += lineHeight * 2;
 
     // Document Information
     addText('Document Information', 12, true);
     y += lineHeight;
     addTable([
-      ['Document Type', bepType === 'pre-appointment' ? 'Pre-Appointment BEP' : 'Post-Appointment BEP'],
+      ['Document Type', CONFIG.bepTypeDefinitions[bepType].title],
+      ['Document Purpose', CONFIG.bepTypeDefinitions[bepType].purpose],
       ['Project Name', formData.projectName || 'Not specified'],
       ['Project Number', formData.projectNumber || 'Not specified'],
       ['Generated Date', `${formattedDate} at ${formattedTime}`],
-      ['Status', 'Work in Progress']
+      ['Status', bepType === 'pre-appointment' ? 'Tender Submission' : 'Working Document']
     ]);
     y += lineHeight * 2;
 
@@ -1007,7 +1638,10 @@ const ProfessionalBEPGenerator = () => {
     const groupedSteps = CONFIG.steps.reduce((acc, step, index) => {
       const cat = step.category;
       if (!acc[cat]) acc[cat] = [];
-      acc[cat].push({ index, title: `${acc[cat].length + 1}. ${step.title.toUpperCase()}`, fields: CONFIG.formFields[index].fields });
+      const stepConfig = CONFIG.getFormFields(bepType, index);
+      if (stepConfig) {
+        acc[cat].push({ index, title: `${acc[cat].length + 1}. ${stepConfig.title.toUpperCase()}`, fields: stepConfig.fields });
+      }
       return acc;
     }, {});
 
@@ -1020,18 +1654,22 @@ const ProfessionalBEPGenerator = () => {
         y += lineHeight;
 
         item.fields.forEach(field => {
-          const value = formData[field.name] || '';
-          addText(field.label, 12, true);
-          y += lineHeight / 2;
-
-          if (field.type === 'checkbox' && Array.isArray(value)) {
-            value.forEach(item => {
-              addText('- ' + item, 10);
-            });
+          if (field.type === 'table') {
+            addTableData(field);
           } else {
-            addText(value, 10);
+            const value = formData[field.name] || '';
+            addText(field.label, 12, true);
+            y += lineHeight / 2;
+
+            if (field.type === 'checkbox' && Array.isArray(value)) {
+              value.forEach(item => {
+                addText('- ' + item, 10);
+              });
+            } else {
+              addText(value, 10);
+            }
+            y += lineHeight / 2;
           }
-          y += lineHeight / 2;
         });
         y += lineHeight;
       });
@@ -1095,6 +1733,28 @@ const ProfessionalBEPGenerator = () => {
     previewWindow.document.close();
   };
 
+  const handleBepTypeProceed = () => {
+    setShowBepTypeSelector(false);
+    setCurrentStep(0);
+  };
+
+  // Helper function to reset data to initial values (useful for testing)
+  const resetToInitialData = () => {
+    setFormData(INITIAL_DATA);
+    localStorage.setItem(`bepData_${user.id}`, JSON.stringify(INITIAL_DATA));
+  };
+
+  // Show BEP type selector if no type is selected
+  if (showBepTypeSelector || !bepType) {
+    return (
+      <EnhancedBepTypeSelector
+        bepType={bepType}
+        setBepType={setBepType}
+        onProceed={handleBepTypeProceed}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white shadow-sm border-b">
@@ -1108,20 +1768,20 @@ const ProfessionalBEPGenerator = () => {
               <span className="text-sm text-gray-500">ISO 19650-2 Compliant</span>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                {bepType === 'pre-appointment' ? 'Pre-Appointment BEP' : 'Post-Appointment BEP'}
-              </span>
+              <div className="text-sm text-gray-600">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  {bepType === 'pre-appointment' ? 'Pre-Appointment BEP' : 'Post-Appointment BEP'}
+                </span>
+              </div>
               <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-2 text-sm text-gray-600">
-                  <User className="w-4 h-4" />
-                  <span>Welcome, {user?.name || 'User'}</span>
-                </div>
+                <span className="text-sm text-gray-600">
+                  Welcome, {user.name}
+                </span>
                 <button
                   onClick={logout}
-                  className="flex items-center space-x-1 text-sm text-gray-600 hover:text-gray-800 transition-colors"
+                  className="text-sm text-gray-500 hover:text-gray-700 underline"
                 >
-                  <LogOut className="w-4 h-4" />
-                  <span>Logout</span>
+                  Logout
                 </button>
               </div>
             </div>
@@ -1158,14 +1818,12 @@ const ProfessionalBEPGenerator = () => {
               </div>
 
               {currentStep < CONFIG.steps.length ? (
-                <FormStep 
-                  stepIndex={currentStep} 
-                  formData={formData} 
-                  updateFormData={updateFormData} 
+                <FormStep
+                  stepIndex={currentStep}
+                  formData={formData}
+                  updateFormData={updateFormData}
                   errors={errors}
                   bepType={bepType}
-                  setBepType={setBepType}
-                  generateBEPContent={generateBEPContent}
                 />
               ) : (
                 <PreviewExportPage 
@@ -1225,61 +1883,6 @@ const App = () => {
     <AuthProvider>
       <AppContent />
     </AuthProvider>
-  );
-};
-
-const AppContent = () => {
-  const { user, loading } = useAuth();
-
-  useEffect(() => {
-    const handleBeforeUnload = (event) => {
-      // Save any pending data before closing
-      if (user) {
-        const currentData = localStorage.getItem(`bepData_${user.id}`);
-        if (currentData) {
-          // Data is already saved due to auto-save, but we can add any final cleanup here
-          console.log('Application closing - data preserved');
-        }
-      }
-
-      // Optional: Show confirmation dialog for unsaved work
-      // event.preventDefault();
-      // event.returnValue = '';
-    };
-
-    const handleUnload = () => {
-      // Cleanup any background processes or connections
-      console.log('Application closed');
-    };
-
-    // Add event listeners for window close
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    window.addEventListener('unload', handleUnload);
-
-    // Cleanup event listeners on component unmount
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      window.removeEventListener('unload', handleUnload);
-    };
-  }, [user]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <Zap className="w-12 h-12 text-blue-600 animate-pulse mx-auto mb-4" />
-          <p className="text-gray-600">Loading BEP Generator...</p>
-        </div>
-      </div>
-    );
-  }
-
-  return user ? (
-    <ProtectedRoute>
-      <ProfessionalBEPGenerator />
-    </ProtectedRoute>
-  ) : (
-    <AuthWrapper />
   );
 };
 
