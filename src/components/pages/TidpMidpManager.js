@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Plus, Calendar, Users, Download } from 'lucide-react';
 import ApiService from '../../services/apiService';
 import Toast from '../common/Toast';
@@ -10,6 +10,7 @@ const TidpMidpManager = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
   const [exportLoading, setExportLoading] = useState({});
   const [detailsItem, setDetailsItem] = useState(null);
+  const [detailsForm, setDetailsForm] = useState({ taskTeam: '', description: '', containers: [] });
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [showTidpForm, setShowTidpForm] = useState(false);
@@ -25,8 +26,11 @@ const TidpMidpManager = ({ onClose }) => {
   const [bulkExportRunning, setBulkExportRunning] = useState(false);
   const [bulkProgress, setBulkProgress] = useState({ done: 0, total: 0 });
 
+  const mountedRef = useRef(true);
   useEffect(() => {
+    mountedRef.current = true;
     loadData();
+    return () => { mountedRef.current = false; };
   }, []);
 
   const loadData = async () => {
@@ -36,12 +40,13 @@ const TidpMidpManager = ({ onClose }) => {
         ApiService.getAllTIDPs(),
         ApiService.getAllMIDPs()
       ]);
+      if (!mountedRef.current) return;
       setTidps(tidpData.tidps || []);
       setMidps(midpData.midps || []);
     } catch (error) {
-      console.error('Failed to load TIDP/MIDP data:', error);
+      if (mountedRef.current) console.error('Failed to load TIDP/MIDP data:', error);
     } finally {
-      setLoading(false);
+      if (mountedRef.current) setLoading(false);
     }
   };
 
@@ -142,6 +147,7 @@ const TidpMidpManager = ({ onClose }) => {
   const runConcurrent = async (items, worker, concurrency = 3, progressCb) => {
     let i = 0;
     let done = 0;
+    const errors = [];
     const runners = Array.from({ length: Math.min(concurrency, items.length) }).map(async () => {
       while (i < items.length) {
         const idx = i++;
@@ -149,12 +155,14 @@ const TidpMidpManager = ({ onClose }) => {
           await worker(items[idx]);
         } catch (e) {
           console.error('Worker error', e);
+          errors.push({ item: items[idx], error: e });
         }
         done++;
         if (progressCb) progressCb(done, items.length);
       }
     });
     await Promise.all(runners);
+    return { errors };
   };
 
   const exportAllTidpPdfs = async (concurrency = 3) => {
@@ -166,17 +174,24 @@ const TidpMidpManager = ({ onClose }) => {
     setBulkExportRunning(true);
     setBulkProgress({ done: 0, total: tidps.length });
     try {
-      await runConcurrent(tidps, async (t) => {
+      const result = await runConcurrent(tidps, async (t) => {
         // silent to avoid per-file toasts
         await exportTidpPdfInternal(t.id, { silent: true });
       }, concurrency, (done, total) => setBulkProgress({ done, total }));
-      setToast({ open: true, message: `All TIDP exports completed (${tidps.length})`, type: 'success' });
+      if (result && result.errors && result.errors.length > 0) {
+        console.error('Some exports failed', result.errors);
+        setToast({ open: true, message: `Completed with ${result.errors.length} failures`, type: 'error' });
+      } else {
+        setToast({ open: true, message: `All TIDP exports completed (${tidps.length})`, type: 'success' });
+      }
     } catch (err) {
       console.error(err);
       setToast({ open: true, message: 'Some TIDP exports failed', type: 'error' });
     } finally {
-      setBulkExportRunning(false);
-      setBulkProgress({ done: 0, total: 0 });
+      if (mountedRef.current) {
+        setBulkExportRunning(false);
+        setBulkProgress({ done: 0, total: 0 });
+      }
     }
   };
 
@@ -226,45 +241,77 @@ const TidpMidpManager = ({ onClose }) => {
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
           >
             <Plus className="w-4 h-4" />
-      {/* Details panel */}
-      {detailsItem && (
-        <div className="fixed right-6 top-20 w-96 bg-white border rounded-lg shadow-lg p-4 z-50">
-          <div className="flex items-center justify-between mb-3">
-            <h4 className="font-semibold">{detailsItem.type === 'tidp' ? 'TIDP Details' : 'MIDP Details'}</h4>
-            <button type="button" onClick={() => setDetailsItem(null)} className="text-sm text-gray-600">Close</button>
-          </div>
-          <div className="text-sm text-gray-700">
-            {detailsItem.type === 'tidp' ? (
-              <div>
-                <label className="block text-xs font-medium mb-1">Task Team</label>
-                <input defaultValue={detailsItem.data.taskTeam || ''} className="w-full p-2 border rounded mb-2 text-sm" id="details-taskTeam" />
-                <label className="block text-xs font-medium mb-1">Description</label>
-                <input defaultValue={detailsItem.data.description || ''} className="w-full p-2 border rounded mb-3 text-sm" id="details-description" />
-                <div className="flex space-x-2">
-                  <button type="button" onClick={() => {
-                    const updated = {
-                      taskTeam: document.getElementById('details-taskTeam').value,
-                      description: document.getElementById('details-description').value
-                    };
-                    handleUpdateTidp(detailsItem.data.id, updated);
-                  }} className="bg-blue-600 text-white px-3 py-1 rounded text-sm">Save</button>
-                  <button type="button" onClick={() => handleDeleteTidp(detailsItem.data.id)} className="bg-red-600 text-white px-3 py-1 rounded text-sm">Delete</button>
-                </div>
-              </div>
-            ) : (
-              <div>
-                <h5 className="font-medium mb-2">{detailsItem.data.projectName}</h5>
-                <p className="text-xs text-gray-600 mb-3">{detailsItem.data.description}</p>
-                <div className="flex space-x-2">
-                  <button type="button" onClick={() => setDetailsItem(null)} className="bg-gray-200 px-3 py-1 rounded text-sm">Close</button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
             <span>New TIDP</span>
           </button>
+          {/* Details panel - moved outside of the create button so it renders correctly */}
+          {detailsItem && (
+            <div className="fixed right-6 top-20 w-96 bg-white border rounded-lg shadow-lg p-4 z-50">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="font-semibold">{detailsItem.type === 'tidp' ? 'TIDP Details' : 'MIDP Details'}</h4>
+                <button type="button" onClick={() => setDetailsItem(null)} className="text-sm text-gray-600">Close</button>
+              </div>
+              <div className="text-sm text-gray-700">
+                {detailsItem.type === 'tidp' ? (
+                  <div>
+                    <label className="block text-xs font-medium mb-1">Task Team</label>
+                    <input value={detailsForm.taskTeam} onChange={(e) => setDetailsForm((s) => ({ ...s, taskTeam: e.target.value }))} className="w-full p-2 border rounded mb-2 text-sm" />
+                    <label className="block text-xs font-medium mb-1">Description</label>
+                    <input value={detailsForm.description} onChange={(e) => setDetailsForm((s) => ({ ...s, description: e.target.value }))} className="w-full p-2 border rounded mb-3 text-sm" />
+
+                    <div className="mb-3">
+                      <label className="block text-xs font-medium mb-2">Deliverables</label>
+                      <div className="space-y-2 max-h-48 overflow-auto">
+                        {(detailsForm.containers || []).map((c, ci) => (
+                          <div key={c.id || ci} className="flex items-center space-x-2">
+                            <input value={c['Container Name'] || c.name || ''} onChange={(e) => {
+                              const updated = [...(detailsForm.containers || [])];
+                              updated[ci] = { ...updated[ci], 'Container Name': e.target.value };
+                              setDetailsForm((s) => ({ ...s, containers: updated }));
+                            }} className="flex-1 p-2 border rounded text-sm" placeholder="Container Name" />
+                            <input value={c['Due Date'] || c.dueDate || ''} onChange={(e) => {
+                              const updated = [...(detailsForm.containers || [])];
+                              updated[ci] = { ...updated[ci], 'Due Date': e.target.value };
+                              setDetailsForm((s) => ({ ...s, containers: updated }));
+                            }} type="date" className="p-2 border rounded text-sm" />
+                            <button type="button" onClick={() => {
+                              const updated = (detailsForm.containers || []).filter((_, idx) => idx !== ci);
+                              setDetailsForm((s) => ({ ...s, containers: updated }));
+                            }} className="text-red-600 text-sm">Remove</button>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-2">
+                        <button type="button" onClick={() => {
+                          const updated = [...(detailsForm.containers || []), { id: `c-${Date.now()}`, 'Container Name': '', 'Due Date': '' }];
+                          setDetailsForm((s) => ({ ...s, containers: updated }));
+                        }} className="bg-gray-100 px-2 py-1 rounded text-sm">Add deliverable</button>
+                      </div>
+                    </div>
+
+                    <div className="flex space-x-2">
+                      <button type="button" onClick={() => {
+                        const updated = {
+                          taskTeam: detailsForm.taskTeam,
+                          description: detailsForm.description,
+                          containers: detailsForm.containers
+                        };
+                        handleUpdateTidp(detailsItem.data.id, updated);
+                      }} className="bg-blue-600 text-white px-3 py-1 rounded text-sm">Save</button>
+                      <button type="button" onClick={() => handleDeleteTidp(detailsItem.data.id)} className="bg-red-600 text-white px-3 py-1 rounded text-sm">Delete</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <h5 className="font-medium mb-2">{detailsItem.data.projectName}</h5>
+                    <p className="text-xs text-gray-600 mb-3">{detailsItem.data.description}</p>
+                    <div className="flex space-x-2">
+                      <button type="button" onClick={() => setDetailsItem(null)} className="bg-gray-200 px-3 py-1 rounded text-sm">Close</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {tidps.length === 0 ? (
@@ -280,7 +327,7 @@ const TidpMidpManager = ({ onClose }) => {
                 <h3 className="font-semibold text-gray-900 mb-2">{tidp.taskTeam || `TIDP ${index + 1}`}</h3>
                 <p className="text-gray-600 text-sm mb-3">{tidp.description || tidp.discipline || 'Task information delivery plan'}</p>
                 <div className="flex space-x-2">
-                  <button onClick={() => setDetailsItem({ type: 'tidp', data: tidp })} className="flex-1 bg-blue-50 text-blue-700 py-2 px-3 rounded text-sm hover:bg-blue-100 transition-colors">View</button>
+                  <button onClick={() => { setDetailsItem({ type: 'tidp', data: tidp }); setDetailsForm({ taskTeam: tidp.taskTeam || '', description: tidp.description || '', containers: tidp.containers || [] }); }} className="flex-1 bg-blue-50 text-blue-700 py-2 px-3 rounded text-sm hover:bg-blue-100 transition-colors">View</button>
                   <button disabled={!!exportLoading[tidp.id]} onClick={() => exportTidpPdf(tidp.id)} className="bg-gray-50 text-gray-700 py-2 px-3 rounded text-sm hover:bg-gray-100 transition-colors">
                     {exportLoading[tidp.id] ? '...' : <Download className="w-4 h-4" />}
                   </button>
@@ -402,13 +449,44 @@ const TidpMidpManager = ({ onClose }) => {
       return;
     }
     try {
-  const payload = { taskTeam: tidpForm.taskTeam, description: tidpForm.description };
-  await ApiService.createTIDP(payload);
+      // The server validator expects specific fields: teamName, discipline, leader, company, responsibilities, containers
+      // Provide minimal defaults so the TIDP can be created and the user can edit details in the UI.
+      const payload = {
+        teamName: tidpForm.taskTeam,
+        discipline: 'Architecture',
+        leader: 'TBD',
+        company: 'TBD',
+        responsibilities: tidpForm.description || 'TBD',
+        description: tidpForm.description,
+        containers: [
+          {
+            id: `c-${Date.now()}`,
+            'Container Name': 'Initial deliverable',
+            'Type': 'Model',
+            'Format': 'IFC',
+            'LOI Level': 'LOD 300',
+            'Author': 'TBD',
+            'Dependencies': [],
+            'Est. Time': '1 day',
+            'Milestone': 'Initial',
+            'Due Date': new Date().toISOString().slice(0,10),
+            'Status': 'Planned'
+          }
+        ]
+      };
+      const created = await ApiService.createTIDP(payload);
       setToast({ open: true, message: 'TIDP created', type: 'success' });
       setShowTidpForm(false);
       setTidpForm({ taskTeam: '', description: '' });
-      // reload list
+      // reload list and open details editor for the new TIDP (server returns { success: true, data: tidp })
       await loadData();
+      const createdTidp = (created && (created.data || created.tidp)) || created;
+      if (createdTidp) {
+        // if the wrapper exists (data), unwrap
+        const t = createdTidp.data ? createdTidp.data : createdTidp;
+        setDetailsItem({ type: 'tidp', data: t });
+        setDetailsForm({ taskTeam: t.taskTeam || '', description: t.description || '', containers: t.containers || [] });
+      }
     } catch (err) {
       console.error('Create TIDP failed', err);
       setToast({ open: true, message: err.message || 'Failed to create TIDP', type: 'error' });
@@ -471,7 +549,7 @@ const TidpMidpManager = ({ onClose }) => {
       <h1 className="text-2xl font-bold text-gray-900">TIDP/MIDP Manager</h1>
       <p className="text-gray-600">Manage Task and Master Information Delivery Plans</p>
 
-      // Append Toast outside of component return by wrapping export default with a small HOC isn't necessary; instead, we will export as-is and rely on manager to render Toast in body - add final export note
+  
           </div>
           <div className="flex items-center space-x-3">
             <button onClick={onClose} className="text-sm text-gray-600 hover:text-gray-800 underline">Back to BEP</button>

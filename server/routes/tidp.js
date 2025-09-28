@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const tidpService = require('../services/tidpService');
+const midpService = require('../services/midpService');
 const { validateTIDP, validateTIDPUpdate } = require('../validators/tidpValidator');
 
 /**
@@ -81,6 +82,23 @@ router.put('/:id', validateTIDPUpdate, async (req, res, next) => {
     const updateData = req.body;
 
     const updatedTidp = tidpService.updateTIDP(id, updateData);
+
+    // After updating a TIDP, refresh any MIDPs that include this TIDP so the MIDP aggregation stays current
+    try {
+      const allMidps = midpService.getAllMIDPs();
+      allMidps.forEach((m) => {
+        if (Array.isArray(m.includedTIDPs) && m.includedTIDPs.includes(updatedTidp.id)) {
+          try {
+            midpService.updateMIDPFromTIDPs(m.id, m.includedTIDPs);
+          } catch (midpErr) {
+            // Log and continue - don't fail the TIDP update because of MIDP refresh issues
+            console.warn(`Failed to refresh MIDP ${m.id} after TIDP update ${updatedTidp.id}:`, midpErr);
+          }
+        }
+      });
+    } catch (err) {
+      console.warn('MIDP refresh after TIDP update failed:', err);
+    }
 
     res.json({
       success: true,
