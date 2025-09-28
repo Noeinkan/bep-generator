@@ -37,6 +37,8 @@ const AppContent = () => {
     );
   }
 
+  // Temporarily bypass authentication - comment out to re-enable
+  /*
   if (!user) {
     if (showRegister) {
       return (
@@ -51,8 +53,11 @@ const AppContent = () => {
       />
     );
   }
+  */
 
-  return <ProfessionalBEPGenerator user={user} />;
+  // Use a mock user when authentication is disabled
+  const mockUser = user || { id: 'demo-user', name: 'Demo User', email: 'demo@example.com' };
+  return <ProfessionalBEPGenerator user={mockUser} />;
 };
 
 const ProfessionalBEPGenerator = ({ user }) => {
