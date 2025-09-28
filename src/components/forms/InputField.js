@@ -1,0 +1,116 @@
+import React from 'react';
+import CONFIG from '../../config/bepConfig';
+import EditableTable from './EditableTable';
+
+const InputField = React.memo(({ field, value, onChange, error }) => {
+  const { name, label, type, required, rows, placeholder, options: fieldOptions } = field;
+  const optionsList = fieldOptions ? CONFIG.options[fieldOptions] : null;
+
+  const baseClasses = "w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500";
+
+  const handleCheckboxChange = (option) => {
+    const current = Array.isArray(value) ? value : [];
+    const updated = current.includes(option)
+      ? current.filter(item => item !== option)
+      : [...current, option];
+    onChange(name, updated);
+  };
+
+  switch (type) {
+    case 'table':
+      return (
+        <EditableTable
+          field={field}
+          value={value}
+          onChange={onChange}
+          error={error}
+        />
+      );
+
+    case 'textarea':
+      return (
+        <div>
+          <label htmlFor={name} className="block text-sm font-medium mb-2">
+            {label} {required && '*'}
+          </label>
+          <textarea
+            id={name}
+            aria-required={required}
+            value={value || ''}
+            onChange={(e) => onChange(name, e.target.value)}
+            rows={rows || 3}
+            className={baseClasses}
+            placeholder={placeholder || `Enter ${label.toLowerCase()}...`}
+          />
+          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+        </div>
+      );
+
+    case 'select':
+      return (
+        <div>
+          <label htmlFor={name} className="block text-sm font-medium mb-2">
+            {label} {required && '*'}
+          </label>
+          <select
+            id={name}
+            aria-required={required}
+            value={value || ''}
+            onChange={(e) => onChange(name, e.target.value)}
+            className={baseClasses}
+          >
+            <option value="">Select {label.toLowerCase()}</option>
+            {optionsList?.map(option => (
+              <option key={option} value={option}>{option}</option>
+            ))}
+          </select>
+          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+        </div>
+      );
+
+    case 'checkbox':
+      return (
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            {label} {required && '*'}
+          </label>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-60 overflow-y-auto border rounded-lg p-3">
+            {optionsList?.map(option => (
+              <label key={option} htmlFor={`${name}-${option}`} className="flex items-center space-x-2 p-2 border rounded cursor-pointer hover:bg-gray-50">
+                <input
+                  id={`${name}-${option}`}
+                  type="checkbox"
+                  checked={(value || []).includes(option)}
+                  onChange={() => handleCheckboxChange(option)}
+                  className="rounded"
+                />
+                <span className="text-sm">{option}</span>
+              </label>
+            ))}
+          </div>
+          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+        </div>
+      );
+
+    default:
+      return (
+        <div>
+          <label htmlFor={name} className="block text-sm font-medium mb-2">
+            {label} {required && '*'}
+          </label>
+          <input
+            id={name}
+            aria-required={required}
+            type="text"
+            value={value || ''}
+            onChange={(e) => onChange(name, e.target.value)}
+            className={baseClasses}
+            placeholder={placeholder || `Enter ${label.toLowerCase()}`}
+          />
+          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+        </div>
+      );
+  }
+});
+
+export default InputField;

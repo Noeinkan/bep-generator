@@ -1,0 +1,283 @@
+import { Building, CheckCircle, Users, Target, Database, Calendar, Monitor, Settings, FileText, Shield, BookOpen, AlertCircle } from 'lucide-react';
+
+const CONFIG = {
+  categories: {
+    Commercial: { name: 'COMMERCIAL ASPECTS', bg: 'bg-blue-100 text-blue-800' },
+    Management: { name: 'MANAGEMENT ASPECTS', bg: 'bg-green-100 text-green-800' },
+    Technical: { name: 'TECHNICAL ASPECTS', bg: 'bg-purple-100 text-purple-800' }
+  },
+
+  bepTypeDefinitions: {
+    'pre-appointment': {
+      title: 'Pre-Appointment BEP',
+      subtitle: 'Tender Phase Document',
+      description: 'A document outlining the prospective delivery team\'s proposed approach, capability, and capacity to meet the appointing party\'s exchange information requirements (EIRs). It demonstrates to the client that the potential delivery team has the ability to handle project data according to any assigned information criteria.',
+      purpose: 'Demonstrates capability during tender phase',
+      focus: 'Proposed approach and team capability',
+      language: 'We propose to...  Our capability includes...  We would implement...',
+      icon: Building,
+      color: 'blue',
+      bgClass: 'bg-blue-50',
+      borderClass: 'border-blue-200',
+      textClass: 'text-blue-900'
+    },
+    'post-appointment': {
+      title: 'Post-Appointment BEP',
+      subtitle: 'Project Execution Document',
+      description: 'Confirms the delivery team\'s information management approach and includes detailed planning and schedules. It offers a delivery instrument that the appointed delivery team will use to produce, manage and exchange project information during the appointment.',
+      purpose: 'Delivery instrument during project execution',
+      focus: 'Confirmed approach with detailed planning',
+      language: 'We will deliver...  The assigned team will...  Implementation schedule is...',
+      icon: CheckCircle,
+      color: 'green',
+      bgClass: 'bg-green-50',
+      borderClass: 'border-green-200',
+      textClass: 'text-green-900'
+    }
+  },
+
+  options: {
+    bimUses: ['Design Authoring', 'Design Reviews', '3D Coordination', 'Clash Detection', 'Quantity Take-off', '4D Planning', '5D Cost Management', 'Asset Management', 'Construction Sequencing', 'Facility Management Handover', 'Energy Analysis', 'Code Validation', 'Space Planning', 'Site Analysis', 'Structural Analysis', 'MEP Analysis', 'Lighting Analysis', 'Acoustical Analysis', 'Other Analysis'],
+
+    informationPurposes: ['Design Development', 'Construction Planning', 'Quantity Surveying', 'Cost Estimation', 'Facility Management', 'Asset Management', 'Carbon Footprint Analysis', 'Fire Strategy', 'Structural Analysis', 'MEP Coordination', 'Space Management', 'Maintenance Planning', 'Energy Performance', 'Code Compliance', 'Safety Planning', 'Sustainability Assessment'],
+
+    software: ['Autodesk Revit', 'ArchiCAD', 'Tekla Structures', 'Bentley MicroStation', 'Bentley AECOsim', 'SketchUp Pro', 'Rhino', 'Navisworks', 'Solibri Model Checker', 'BIM 360', 'Trimble Connect', 'Synchro Pro', 'Vico Office', 'CostX', 'Innovaya', 'dRofus', 'BIMcollab', 'Aconex', 'PowerBI', 'Tableau', 'FME', 'Safe Software', 'Other'],
+
+    fileFormats: ['IFC 2x3', 'IFC 4', 'IFC 4.1', 'IFC 4.3', 'DWG', 'DXF', 'PDF', 'PDF/A', 'BCF 2.1', 'BCF 3.0', 'NWD', 'NWC', 'NWF', 'RVT', 'PLN', 'DGN', 'SKP', 'COBie', 'XML', 'JSON', 'CSV', 'XLS', 'XLSX'],
+
+    projectTypes: ['Commercial Building', 'Residential', 'Infrastructure', 'Industrial', 'Healthcare', 'Education', 'Mixed Use', 'Renovation/Retrofit']
+  },
+
+  steps: [
+    { title: 'BEP Type & Project Info', icon: Building, description: 'Define BEP type and basic project information', category: 'Commercial' },
+    { title: 'Executive Summary', icon: FileText, description: 'High-level overview and key commitments', category: 'Commercial' },
+    { title: 'Stakeholders & Roles', icon: Users, description: 'Define project stakeholders and responsibilities', category: 'Commercial' },
+    { title: 'BIM Goals & Uses', icon: Target, description: 'Define BIM objectives and applications', category: 'Commercial' },
+    { title: 'Level of Information Need', icon: Database, description: 'Specify LOIN requirements and content', category: 'Management' },
+    { title: 'Information Delivery Planning', icon: Calendar, description: 'MIDP, TIDPs and delivery schedules', category: 'Management' },
+    { title: 'Common Data Environment', icon: Monitor, description: 'CDE specification and workflows', category: 'Technical' },
+    { title: 'Technology Requirements', icon: Settings, description: 'Software, hardware and technical specs', category: 'Technical' },
+    { title: 'Information Production', icon: FileText, description: 'Methods, standards and procedures', category: 'Management' },
+    { title: 'Quality Assurance', icon: CheckCircle, description: 'QA framework and validation processes', category: 'Management' },
+    { title: 'Security & Privacy', icon: Shield, description: 'Information security and privacy measures', category: 'Management' },
+    { title: 'Training & Competency', icon: BookOpen, description: 'Training requirements and competency levels', category: 'Management' },
+    { title: 'Coordination & Risk', icon: AlertCircle, description: 'Collaboration procedures and risk management', category: 'Management' }
+  ],
+
+  formFields: {
+    'pre-appointment': {
+      0: {
+        title: 'Project Information and Proposed Approach',
+        fields: [
+          { name: 'projectName', label: 'Project Name', required: true, type: 'text', placeholder: 'Greenfield Office Complex Phase 2' },
+          { name: 'projectNumber', label: 'Project Number', type: 'text', placeholder: 'GF-2024-017' },
+          { name: 'projectType', label: 'Project Type', required: true, type: 'select', options: 'projectTypes' },
+          { name: 'appointingParty', label: 'Appointing Party', required: true, type: 'text', placeholder: 'ABC Development Corporation' },
+          { name: 'proposedTimeline', label: 'Proposed Project Timeline', type: 'text', placeholder: '24 months (Jan 2025 - Dec 2026)' },
+          { name: 'estimatedBudget', label: 'Estimated Project Budget', type: 'text', placeholder: '£12.5 million' },
+          { name: 'projectDescription', label: 'Project Description', type: 'textarea', rows: 4, placeholder: 'A modern 8-story office complex featuring sustainable design principles, flexible workspace layouts, and integrated smart building technologies. The building will accommodate 800+ employees across multiple tenants with shared amenities including conference facilities, cafeteria, and underground parking for 200 vehicles.' },
+          { name: 'tenderApproach', label: 'Our Proposed Approach', type: 'textarea', rows: 3, placeholder: 'Our approach emphasizes collaborative design coordination through advanced BIM workflows, early stakeholder engagement, and integrated sustainability analysis. We propose a phased delivery strategy with continuous value engineering and risk mitigation throughout all project stages.' }
+        ]
+      },
+      1: {
+        title: 'Executive Summary',
+        fields: [
+          { name: 'projectContext', label: 'Project Context and Overview', required: true, type: 'textarea', rows: 4, placeholder: 'This BEP outlines our comprehensive approach to delivering the Greenfield Office Complex using advanced BIM methodologies. Our strategy emphasizes collaborative design coordination, data-driven decision making, and seamless information handover to support long-term facility management. The project will serve as a flagship example of sustainable commercial development in the region.' },
+          { name: 'bimStrategy', label: 'BIM Strategy Summary', required: true, type: 'textarea', rows: 3, placeholder: 'Our BIM strategy centers on early clash detection, integrated 4D/5D modeling for construction sequencing and cost control, and comprehensive digital twin creation for facilities management. We will utilize federated models across all disciplines with real-time collaboration through cloud-based platforms, ensuring design quality and construction efficiency while reducing project risks.' },
+          { name: 'keyCommitments', label: 'Key Commitments and Deliverables', required: true, type: 'textarea', rows: 4, placeholder: 'We commit to full ISO 19650-2:2018 compliance throughout all project phases. Key deliverables include: coordinated federated models at each design milestone, comprehensive COBie data for asset handover, 4D construction sequences for all major building elements, and a complete digital twin with integrated IoT sensor data. All information will be delivered through our cloud-based CDE with full audit trails and version control.' },
+          { name: 'keyContacts', label: 'Key Project Contacts', type: 'table', columns: ['Role', 'Name', 'Company', 'Contact Details'] },
+          { name: 'valueProposition', label: 'Value Proposition', type: 'textarea', rows: 3, placeholder: 'Our BIM approach will deliver 15% reduction in construction costs through early clash detection, 25% faster design coordination, and comprehensive lifecycle cost analysis enabling informed material selections. The digital twin will provide 30% operational cost savings through predictive maintenance and space optimization, while the structured data handover ensures seamless facilities management integration.' }
+        ]
+      },
+      2: {
+        title: 'Proposed Team and Capabilities',
+        fields: [
+          { name: 'proposedLead', label: 'Proposed Lead Appointed Party', required: true, type: 'text', placeholder: 'Smith & Associates Architects Ltd.' },
+          { name: 'proposedInfoManager', label: 'Proposed Information Manager', required: true, type: 'text', placeholder: 'Sarah Johnson, BIM Manager (RICS Certified, ISO 19650 Lead)' },
+          { name: 'proposedTeamLeaders', label: 'Proposed Task Team Leaders', type: 'table', columns: ['Discipline', 'Name & Title', 'Company', 'Experience'] },
+          { name: 'teamCapabilities', label: 'Team Capabilities and Experience', type: 'textarea', rows: 4, placeholder: 'Our multidisciplinary team brings 15+ years of BIM implementation experience across £500M+ of commercial projects. Key capabilities include: ISO 19650 certified information management, advanced parametric design using Revit/Grasshopper, integrated MEP coordination, 4D/5D modeling expertise, and digital twin development. Recent projects include the award-winning Tech Hub (£25M) and Riverside Commercial Center (£18M).' },
+          { name: 'subcontractors', label: 'Proposed Subcontractors/Partners', type: 'table', columns: ['Role/Service', 'Company Name', 'Certification', 'Contact'] }
+        ]
+      }
+    },
+    'post-appointment': {
+      0: {
+        title: 'Project Information and Confirmed Objectives',
+        fields: [
+          { name: 'projectName', label: 'Project Name', required: true, type: 'text', placeholder: 'Greenfield Office Complex Phase 2' },
+          { name: 'projectNumber', label: 'Project Number', type: 'text', placeholder: 'GF-2024-017' },
+          { name: 'projectType', label: 'Project Type', required: true, type: 'select', options: 'projectTypes' },
+          { name: 'appointingParty', label: 'Appointing Party', required: true, type: 'text', placeholder: 'ABC Development Corporation' },
+          { name: 'confirmedTimeline', label: 'Confirmed Project Timeline', type: 'text', placeholder: '24 months (Jan 2025 - Dec 2026)' },
+          { name: 'confirmedBudget', label: 'Confirmed Project Budget', type: 'text', placeholder: '£12.5 million' },
+          { name: 'projectDescription', label: 'Project Description', type: 'textarea', rows: 4, placeholder: 'A modern 8-storey office complex featuring sustainable design principles, flexible workspace layouts, and integrated smart building technologies. The building will accommodate 800+ employees across multiple tenants with shared amenities including conference facilities, cafeteria, and underground parking for 200 vehicles.' },
+          { name: 'deliveryApproach', label: 'Confirmed Delivery Approach', type: 'textarea', rows: 3, placeholder: 'Our delivery approach implements collaborative design coordination through advanced BIM workflows, stakeholder integration at key milestones, and continuous value engineering. We will execute a phased delivery strategy with integrated sustainability analysis and proactive risk management throughout all project stages to ensure on-time, on-budget completion.' },
+          { name: 'referencedMaterial', label: 'Referenced Material', type: 'textarea', rows: 3, placeholder: 'This BEP references: Exchange Information Requirements (EIR) v2.1, Project Information Requirements (PIR) dated March 2024, ISO 19650-2:2018, BS 1192:2007+A2:2016, PAS 1192-2:2013, Client BIM Standards Manual v3.0, Health & Safety Information Requirements, and all applicable RIBA Plan of Work 2020 deliverables.' }
+        ]
+      },
+      1: {
+        title: 'Executive Summary',
+        fields: [
+          { name: 'projectContext', label: 'Project Context and Overview', required: true, type: 'textarea', rows: 4, placeholder: 'This BEP confirms our comprehensive approach to delivering the Greenfield Office Complex using advanced BIM methodologies. Our strategy emphasises collaborative design coordination, data-driven decision making, and seamless information handover to support long-term facility management. The project will serve as a flagship example of sustainable commercial development in the region, incorporating smart building technologies and flexible workspace design.' },
+          { name: 'bimStrategy', label: 'BIM Strategy Summary', required: true, type: 'textarea', rows: 3, placeholder: 'Our confirmed BIM strategy centres on early clash detection, integrated 4D/5D modelling for construction sequencing and cost control, and comprehensive digital twin creation for facilities management. We will utilise federated models across all disciplines with real-time collaboration through cloud-based platforms, ensuring design quality and construction efficiency whilst reducing project risks and enabling predictive maintenance capabilities.' },
+          { name: 'keyCommitments', label: 'Key Commitments and Deliverables', required: true, type: 'textarea', rows: 4, placeholder: 'We are committed to full ISO 19650-2:2018 compliance throughout all project phases. Key deliverables include: coordinated federated models at each design milestone, comprehensive COBie data for asset handover, 4D construction sequences for all major building elements, and a complete digital twin with integrated IoT sensor data. All information will be delivered through our cloud-based CDE with full audit trails, version control, and structured data outputs for facilities management integration.' },
+          { name: 'keyContacts', label: 'Key Project Contacts', type: 'table', columns: ['Role', 'Name', 'Company', 'Contact Details'] },
+          { name: 'valueProposition', label: 'Value Proposition', type: 'textarea', rows: 3, placeholder: 'Our BIM approach will deliver 15% reduction in construction costs through early clash detection, 25% faster design coordination, and comprehensive lifecycle cost analysis enabling informed material selections. The digital twin will provide 30% operational cost savings through predictive maintenance and space optimisation, whilst the structured data handover ensures seamless facilities management integration and supports the client\'s sustainability targets through enhanced building performance monitoring.' }
+        ]
+      },
+      2: {
+        title: 'Confirmed Team and Responsibilities',
+        fields: [
+          { name: 'leadAppointedParty', label: 'Lead Appointed Party', required: true, type: 'text', placeholder: 'Smith & Associates Architects Ltd.' },
+          { name: 'informationManager', label: 'Information Manager', required: true, type: 'text', placeholder: 'Sarah Johnson, BIM Manager (RICS Certified, ISO 19650 Lead)' },
+          { name: 'assignedTeamLeaders', label: 'Assigned Task Team Leaders', type: 'table', columns: ['Discipline', 'Name & Title', 'Company', 'Role Details'] },
+          { name: 'finalizedParties', label: 'Finalized Appointed Parties', type: 'table', columns: ['Role/Service', 'Company Name', 'Lead Contact', 'Contract Value'] },
+          { name: 'resourceAllocation', label: 'Resource Allocation', type: 'textarea', rows: 3, placeholder: 'The confirmed delivery team comprises 45 specialists across all disciplines: 12 architects, 8 structural engineers, 10 MEP engineers, 6 quantity surveyors, 4 project managers, and 5 BIM specialists. Resource allocation follows RIBA stages with peak deployment during Stage 4 (Technical Design) requiring 35 FTE personnel. Specialist consultants for sustainability and facade engineering will be engaged for 6-month periods during critical design phases.' },
+          { name: 'informationManagementResponsibilities', label: 'Information Management Responsibilities', type: 'textarea', rows: 3, placeholder: 'The Information Manager oversees all aspects of information production, validation, and exchange in accordance with ISO 19650-2:2018. Responsibilities include: establishing and maintaining the CDE, coordinating task information delivery plans (TIDPs), ensuring model federation quality, managing information security protocols, conducting regular audits of information deliverables, and facilitating cross-disciplinary information exchanges. The IM reports directly to the project director and client representative.' },
+          { name: 'organizationalStructure', label: 'Delivery Team\'s Organisational Structure and Composition', type: 'textarea', rows: 4, placeholder: 'The delivery team operates under a traditional consultant appointment structure with Smith & Associates as Lead Appointed Party. Key appointments include: Structural Engineer (Jones Engineering Ltd, £850k), MEP Engineer (TechServ Solutions, £1.2M), Quantity Surveyor (Cost Partners LLP, £180k), and Sustainability Consultant (Green Building Associates, £120k). All parties maintain direct contractual relationships with the client whilst collaborating through established BIM protocols and shared CDE access for seamless information exchange.' },
+          { name: 'taskTeamsBreakdown', label: 'Task Teams', type: 'table', columns: ['Task Team', 'Leader', 'Members', 'Responsibilities'] }
+        ]
+      }
+    }
+  },
+
+  sharedFormFields: {
+    3: {
+      title: 'BIM Goals and Objectives',
+      fields: [
+        { name: 'bimGoals', label: 'BIM Goals', required: true, type: 'textarea', rows: 4, placeholder: 'The BIM goals for this project are to enhance design coordination through clash detection reducing RFIs by 40%, improve construction sequencing through 4D modeling resulting in 20% schedule compression, enable accurate cost forecasting through 5D integration achieving ±2% budget variance, and deliver comprehensive digital asset information for lifecycle management supporting 25% reduction in operational costs over the first 5 years.' },
+        { name: 'primaryObjectives', label: 'Primary Objectives', type: 'textarea', rows: 3, placeholder: 'Primary objectives include: eliminating design conflicts before construction through rigorous clash detection protocols, optimising building performance through integrated analysis and simulation, enabling efficient construction through accurate quantity extraction and sequencing models, supporting sustainability targets through embedded carbon analysis and energy modeling, and facilitating seamless handover with structured asset data for predictive maintenance and space management.' },
+        { name: 'bimUses', label: 'BIM Uses', required: true, type: 'checkbox', options: 'bimUses' },
+        { name: 'collaborativeProductionGoals', label: 'Objectives/Goals for the Collaborative Production of Information', type: 'textarea', rows: 4, placeholder: 'Collaborative production goals focus on establishing unified data standards across all disciplines, implementing real-time model coordination through federated workflows, ensuring consistent information delivery at all project milestones, maintaining version control integrity throughout design development, facilitating transparent communication through shared visualisation platforms, and creating comprehensive audit trails for decision-making accountability whilst adhering to ISO 19650 information management principles.' },
+        { name: 'alignmentStrategy', label: 'Approach to Facilitating Information Management Goals', type: 'textarea', rows: 3, placeholder: 'Our alignment strategy implements weekly coordination meetings with federated model reviews, establishes clear responsibility matrices for information production and validation, deploys standardised naming conventions and file structures across all disciplines, utilises automated quality checking workflows to ensure compliance, maintains continuous training programmes for team competency development, and implements performance monitoring through defined KPIs including model accuracy, delivery timeliness, and information completeness metrics.' }
+      ]
+    },
+    4: {
+      title: 'Level of Information Need (LOIN)',
+      fields: [
+        { name: 'informationPurposes', label: 'Information Purposes', required: true, type: 'checkbox', options: 'informationPurposes' },
+        { name: 'geometricalInfo', label: 'Geometrical Information Requirements', type: 'textarea', rows: 3, placeholder: 'Geometrical information requirements include: LOD 300 for all structural elements during design development, LOD 400 for MEP systems and connections, LOD 350 for architectural elements including doors, windows, and fixtures, accurate site survey data with ±5mm tolerance, as-built survey verification for existing structures, detailed connection details for all structural joints, and precise spatial coordination with surveyed existing conditions to ensure clash-free installation.' },
+        { name: 'alphanumericalInfo', label: 'Alphanumerical Information Requirements', type: 'textarea', rows: 3, placeholder: 'Alphanumerical information requirements encompass: complete material specifications with thermal and fire ratings, manufacturer part numbers and product data sheets, cost data linked to quantity schedules, maintenance schedules and warranty information, energy performance data for all building systems, space programming and occupancy requirements, structural load calculations and safety factors, MEP capacity and performance specifications, and comprehensive asset data preparation for COBie handover including serial numbers and commissioning dates.' },
+        { name: 'documentationInfo', label: 'Documentation Requirements', type: 'textarea', rows: 3, placeholder: 'Documentation requirements include: technical specification documents for all building systems, operation and maintenance manuals, health and safety file documentation, commissioning reports and test certificates, warranties and guarantees documentation, training materials for building operators, emergency procedures and evacuation plans, sustainability certifications and energy assessments, planning compliance certificates, and comprehensive as-built drawings with redline markups incorporated and verified against site conditions.' },
+        { name: 'informationFormats', label: 'Information Formats', type: 'checkbox', options: 'fileFormats' },
+        { name: 'projectInformationRequirements', label: 'Project Information Requirements (PIR)', type: 'textarea', rows: 4, placeholder: 'Project Information Requirements specify deliverable information to support asset management objectives: integrated 3D models with embedded property data for space management systems, energy consumption monitoring through IoT sensor integration, preventive maintenance scheduling with equipment lifecycle data, tenant fit-out guidelines with services capacity information, building performance analytics for continuous optimisation, digital twin connectivity for predictive maintenance, compliance monitoring systems for regulatory reporting, and structured data formats supporting client\'s existing CAFM systems and sustainability reporting requirements.' }
+      ]
+    },
+    5: {
+      title: 'Information Delivery Planning',
+      fields: [
+        { name: 'midpDescription', label: 'Master Information Delivery Plan (MIDP)', required: true, type: 'textarea', rows: 4, placeholder: 'The MIDP establishes a structured schedule for information delivery aligned with RIBA Plan of Work 2020 stages. Key deliverables include: Stage 3 coordinated federated models by Month 8, Stage 4 construction-ready models with full MEP coordination by Month 14, Stage 5 as-built verification models by Month 22, and handover documentation including COBie data, O&M manuals, and digital twin integration by Month 24. Each delivery milestone includes quality gates with defined acceptance criteria and client approval processes.' },
+        { name: 'keyMilestones', label: 'Key Information Delivery Milestones', required: true, type: 'table', columns: ['Stage/Phase', 'Milestone Description', 'Deliverables', 'Due Date'] },
+        { name: 'deliverySchedule', label: 'Delivery Schedule', type: 'textarea', rows: 3, placeholder: 'Information delivery follows a phased approach: Months 1-3 (project mobilisation and concept design models), Months 4-8 (spatial coordination and developed design models), Months 9-14 (technical design and construction documentation), Months 15-20 (construction phase information and progress models), Months 21-24 (commissioning data, as-built verification, and handover documentation). Weekly model federation occurs throughout with formal milestone reviews at stage gates requiring client approval before progression.' },
+        { name: 'tidpRequirements', label: 'Task Information Delivery Plans (TIDPs)', type: 'textarea', rows: 3, placeholder: 'TIDPs define discipline-specific delivery requirements: Architecture TIDP delivers spatial models and specification schedules biweekly, Structural TIDP provides analysis models and connection details monthly, MEP TIDP delivers coordinated services models and equipment schedules fortnightly, Quantity Surveying TIDP extracts cost data and material quantities monthly, and Sustainability TIDP delivers performance analysis and compliance reports at stage gates. Each TIDP includes quality checking procedures, approval workflows, and integration requirements with the federated model.' },
+        { name: 'responsibilityMatrix', label: 'Detailed Responsibility Matrix', type: 'table', columns: ['Task/Activity', 'Responsible Party', 'Accountable Party', 'Support/Input'] },
+        { name: 'milestoneInformation', label: 'Information to be Provided at Each Information Milestone', type: 'table', columns: ['Milestone', 'Information Required', 'Format', 'Quality Level'] },
+        { name: 'mobilisationPlan', label: 'Mobilisation Plan', type: 'textarea', rows: 3, placeholder: 'Project mobilisation occurs over 4 weeks: Week 1 includes CDE setup, template development, and team onboarding; Week 2 involves standards training, tool deployment, and workflow testing; Week 3 encompasses pilot model creation, federation testing, and quality checking procedures; Week 4 includes final system validation, team competency verification, and formal project launch. All team members complete ISO 19650 certification and project-specific training before accessing the CDE and commencing information production activities.' },
+        { name: 'teamCapabilitySummary', label: 'Delivery Team Capability & Capacity Summary', type: 'textarea', rows: 3, placeholder: 'The delivery team provides comprehensive BIM capabilities across all disciplines: 15 certified BIM professionals with ISO 19650 competency, advanced modeling expertise in Revit, Tekla, and specialist analysis software, 5+ years experience delivering federated models for commercial projects £10M+, proven track record in clash detection reducing construction issues by 60%, established workflows for 4D/5D integration, and dedicated quality assurance resources ensuring deliverable compliance. Team capacity supports peak deployment of 35 specialists during technical design phases.' },
+        { name: 'informationRiskRegister', label: 'Delivery Team\'s Information Risk Register', type: 'table', columns: ['Risk Description', 'Impact', 'Probability', 'Mitigation'] },
+        { name: 'taskTeamExchange', label: 'Exchange of Information Between Task Teams', type: 'textarea', rows: 3, placeholder: 'Information exchange protocols establish: weekly model federation with automated clash detection reports, fortnightly design coordination meetings with federated model reviews, monthly design freeze periods for cross-disciplinary validation, standardised BCF workflows for issue resolution, real-time model access through shared CDE workspace, automated notification systems for model updates and issue assignments, and formal sign-off procedures for milestone deliverables ensuring all disciplines approve federated models before progression to next design stage.' },
+        { name: 'modelReferencing3d', label: 'Referencing of 3D Information Models', type: 'textarea', rows: 3, placeholder: 'Model referencing procedures ensure consistent spatial coordination: shared coordinate system established from Ordnance Survey grid references, standardised origin points and level datums across all disciplines, automated reference model linking through shared CDE folders, version control protocols preventing out-of-date reference usage, clash detection workflows identifying reference model conflicts, weekly reference model updates with team notifications, and quality gates preventing model publication without current reference verification ensuring geometric consistency throughout the federated environment.' }
+      ]
+    },
+    6: {
+      title: 'Common Data Environment (CDE)',
+      fields: [
+        { name: 'cdeProvider', label: 'CDE Provider', required: true, type: 'text', placeholder: 'Autodesk Construction Cloud' },
+        { name: 'cdePlatform', label: 'CDE Platform Version', type: 'text', placeholder: 'BIM 360 Design v2024.1' },
+        { name: 'workflowStates', label: 'Workflow States', required: true, type: 'table', columns: ['State Name', 'Description', 'Access Level', 'Next State'] },
+        { name: 'accessControl', label: 'Access Control', type: 'textarea', rows: 3, placeholder: 'Role-based access control with Project Administrator, Design Team, Review Team, and Client View permissions. Multi-factor authentication required for all users. Project folders restricted by discipline with read/write permissions assigned per project phase. Guest access limited to 30-day periods with approval workflows.' },
+        { name: 'securityMeasures', label: 'Security Measures', type: 'textarea', rows: 3, placeholder: 'End-to-end encryption for data in transit and at rest using AES-256 standards. SSL/TLS certificates for secure connections. Regular security audits and penetration testing. ISO 27001 certified cloud infrastructure. Automated malware scanning for all uploads. Data residency compliance with UK GDPR requirements.' },
+        { name: 'backupProcedures', label: 'Backup Procedures', type: 'textarea', rows: 3, placeholder: 'Automated daily backups with 30-day retention policy. Weekly full system backups with 12-month retention. Geo-redundant storage across multiple UK data centres. 99.9% uptime SLA with disaster recovery protocols. Regular backup integrity testing and documented restoration procedures. Monthly backup verification reports.' }
+      ]
+    },
+    7: {
+      title: 'Technology and Software Requirements',
+      fields: [
+        { name: 'bimSoftware', label: 'BIM Software Applications', required: true, type: 'checkbox', options: 'software' },
+        { name: 'fileFormats', label: 'File Formats', required: true, type: 'checkbox', options: 'fileFormats' },
+        { name: 'hardwareRequirements', label: 'Hardware Requirements', type: 'textarea', rows: 3 },
+        { name: 'networkRequirements', label: 'Network Requirements', type: 'textarea', rows: 3 },
+        { name: 'interoperabilityNeeds', label: 'Interoperability Requirements', type: 'textarea', rows: 3 },
+        { name: 'federationStrategy', label: 'Federation Strategy', type: 'textarea', rows: 3, placeholder: 'Strategy details...' },
+        { name: 'informationBreakdownStrategy', label: 'Information Breakdown Strategy', type: 'textarea', rows: 3, placeholder: 'Information breakdown strategy...' },
+        { name: 'federationProcess', label: 'Federation Process', type: 'textarea', rows: 3, placeholder: 'Federation process details...' },
+        { name: 'softwareHardwareInfrastructure', label: 'Software, Hardware and IT Infrastructure', type: 'table', columns: ['Category', 'Item/Component', 'Specification', 'Purpose'] },
+        { name: 'documentControlInfo', label: 'Document Control Information', type: 'textarea', rows: 4, placeholder: 'Document type, ISO standards, status, generator details...' }
+      ]
+    },
+    8: {
+      title: 'Information Production Methods and Procedures',
+      fields: [
+        { name: 'modelingStandards', label: 'Modeling Standards', required: true, type: 'table', columns: ['Standard/Guideline', 'Version', 'Application Area', 'Compliance Level'] },
+        { name: 'namingConventions', label: 'Naming Conventions', required: true, type: 'textarea', rows: 3 },
+        { name: 'fileStructure', label: 'File Structure', type: 'textarea', rows: 3 },
+        { name: 'versionControl', label: 'Version Control', type: 'table', columns: ['Document Type', 'Version Format', 'Approval Process', 'Archive Location'] },
+        { name: 'dataExchangeProtocols', label: 'Data Exchange Protocols', type: 'table', columns: ['Exchange Type', 'Format', 'Frequency', 'Delivery Method'] }
+      ]
+    },
+    9: {
+      title: 'Quality Assurance and Control',
+      fields: [
+        { name: 'qaFramework', label: 'Quality Assurance Framework', required: true, type: 'table', columns: ['QA Activity', 'Responsibility', 'Frequency', 'Tools/Methods'] },
+        { name: 'modelValidation', label: 'Model Validation Procedures', required: true, type: 'textarea', rows: 4 },
+        { name: 'reviewProcesses', label: 'Review Processes', type: 'textarea', rows: 3 },
+        { name: 'approvalWorkflows', label: 'Approval Workflows', type: 'textarea', rows: 3 },
+        { name: 'complianceVerification', label: 'Compliance Verification', type: 'textarea', rows: 3 },
+        { name: 'modelReviewAuthorisation', label: 'Information Model Review and Authorisation', type: 'textarea', rows: 3, placeholder: 'Review and authorisation procedures...' }
+      ]
+    },
+    10: {
+      title: 'Information Security and Privacy',
+      fields: [
+        { name: 'dataClassification', label: 'Data Classification', required: true, type: 'textarea', rows: 3 },
+        { name: 'accessPermissions', label: 'Access Permissions', required: true, type: 'textarea', rows: 3 },
+        { name: 'encryptionRequirements', label: 'Encryption Requirements', type: 'textarea', rows: 3 },
+        { name: 'dataTransferProtocols', label: 'Data Transfer Protocols', type: 'textarea', rows: 3 },
+        { name: 'privacyConsiderations', label: 'Privacy Considerations', type: 'textarea', rows: 3 }
+      ]
+    },
+    11: {
+      title: 'Training and Competency',
+      fields: [
+        { name: 'bimCompetencyLevels', label: 'BIM Competency Levels', required: true, type: 'textarea', rows: 4 },
+        { name: 'trainingRequirements', label: 'Training Requirements', type: 'textarea', rows: 3 },
+        { name: 'certificationNeeds', label: 'Certification Requirements', type: 'textarea', rows: 3 },
+        { name: 'projectSpecificTraining', label: 'Project-Specific Training', type: 'textarea', rows: 3 }
+      ]
+    },
+    12: {
+      title: 'Coordination, Collaboration & Risk Management',
+      fields: [
+        { name: 'coordinationMeetings', label: 'Coordination Meetings', required: true, type: 'textarea', rows: 3 },
+        { name: 'clashDetectionWorkflow', label: 'Clash Detection Workflow', type: 'textarea', rows: 3 },
+        { name: 'issueResolution', label: 'Issue Resolution Process', type: 'textarea', rows: 3 },
+        { name: 'communicationProtocols', label: 'Communication Protocols', type: 'textarea', rows: 3 },
+        { name: 'federationStrategy', label: 'Model Federation Strategy', type: 'textarea', rows: 3 },
+        { name: 'informationRisks', label: 'Information-Related Risks', required: true, type: 'textarea', rows: 4 },
+        { name: 'technologyRisks', label: 'Technology-Related Risks', type: 'textarea', rows: 3 },
+        { name: 'riskMitigation', label: 'Risk Mitigation Strategies', type: 'textarea', rows: 3 },
+        { name: 'contingencyPlans', label: 'Contingency Plans', type: 'textarea', rows: 3 },
+        { name: 'performanceMetrics', label: 'Performance Metrics and KPIs', type: 'textarea', rows: 3 },
+        { name: 'monitoringProcedures', label: 'Monitoring Procedures', type: 'textarea', rows: 3 },
+        { name: 'auditTrails', label: 'Audit Trails', type: 'textarea', rows: 3 },
+        { name: 'updateProcesses', label: 'Update Processes', type: 'textarea', rows: 3 },
+        { name: 'projectKpis', label: 'Project Key Performance Indicators (KPIs)', type: 'table', columns: ['KPI Name', 'Target Value', 'Measurement Method', 'Responsibility'] }
+      ]
+    }
+  },
+
+  // Function to get appropriate form fields based on BEP type and step
+  getFormFields: (bepType, stepIndex) => {
+    // For steps 0-2, use BEP type specific fields
+    if (stepIndex <= 2 && CONFIG.formFields[bepType] && CONFIG.formFields[bepType][stepIndex]) {
+      return CONFIG.formFields[bepType][stepIndex];
+    }
+    // For steps 3-12, use shared fields
+    if (stepIndex >= 3 && CONFIG.sharedFormFields[stepIndex]) {
+      return CONFIG.sharedFormFields[stepIndex];
+    }
+    return null;
+  }
+};
+
+export default CONFIG;

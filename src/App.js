@@ -1,404 +1,51 @@
-import React, { useState, useEffect, useCallback, useMemo, createContext, useContext } from 'react';
-import { ChevronRight, ChevronLeft, Download, FileText, Users, Settings, CheckCircle, AlertCircle, Building, Zap, Shield, Database, Calendar, Target, BookOpen, Monitor, Eye, FileType, Printer } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { ChevronRight, ChevronLeft, Download, FileText, CheckCircle, Zap, Target, Eye, FileType, Printer } from 'lucide-react';
 import jsPDF from 'jspdf';
 import { Packer, Document, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, AlignmentType } from 'docx';
 import DOMPurify from 'dompurify';
 
-// Authentication Context
-const AuthContext = createContext();
+// Import separated components
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import Login from './components/Login';
+import InputField from './components/forms/InputField';
+import ProgressSidebar from './components/ui/ProgressSidebar';
+import CONFIG from './config/bepConfig';
 
-const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-
-const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const savedUser = localStorage.getItem('bepUser');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-    setLoading(false);
-  }, []);
-
-  const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem('bepUser', JSON.stringify(userData));
-  };
-
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('bepUser');
-  };
-
-  return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-const Login = () => {
-  const { login } = useAuth();
-  const [formData, setFormData] = useState({ name: '', company: '', email: '' });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (formData.name && formData.company) {
-      login({
-        id: Date.now(),
-        name: formData.name,
-        company: formData.company,
-        email: formData.email
-      });
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
-        <div className="text-center mb-8">
-          <Zap className="w-16 h-16 text-blue-600 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">BEP Generator</h1>
-          <p className="text-gray-600">Professional BIM Execution Plans</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Full Name *
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Your full name"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Company *
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.company}
-              onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Your company name"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="your.email@company.com"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
-          >
-            Start Creating BEP
-          </button>
-        </form>
-
-        <div className="mt-8 text-center text-sm text-gray-500">
-          <p>ISO 19650-2 Compliant • Professional Templates</p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-
-
-// Configurazione centralizzata
-const CONFIG = {
-  categories: {
-    Commercial: { name: 'COMMERCIAL ASPECTS', bg: 'bg-blue-100 text-blue-800' },
-    Management: { name: 'MANAGEMENT ASPECTS', bg: 'bg-green-100 text-green-800' },
-    Technical: { name: 'TECHNICAL ASPECTS', bg: 'bg-purple-100 text-purple-800' }
-  },
-
-  bepTypeDefinitions: {
-    'pre-appointment': {
-      title: 'Pre-Appointment BEP',
-      subtitle: 'Tender Phase Document',
-      description: 'A document outlining the prospective delivery team\'s proposed approach, capability, and capacity to meet the appointing party\'s exchange information requirements (EIRs). It demonstrates to the client that the potential delivery team has the ability to handle project data according to any assigned information criteria.',
-      purpose: 'Demonstrates capability during tender phase',
-      focus: 'Proposed approach and team capability',
-      language: 'We propose to...  Our capability includes...  We would implement...',
-      icon: Building,
-      color: 'blue',
-      bgClass: 'bg-blue-50',
-      borderClass: 'border-blue-200',
-      textClass: 'text-blue-900'
-    },
-    'post-appointment': {
-      title: 'Post-Appointment BEP',
-      subtitle: 'Project Execution Document',
-      description: 'Confirms the delivery team\'s information management approach and includes detailed planning and schedules. It offers a delivery instrument that the appointed delivery team will use to produce, manage and exchange project information during the appointment.',
-      purpose: 'Delivery instrument during project execution',
-      focus: 'Confirmed approach with detailed planning',
-      language: 'We will deliver...  The assigned team will...  Implementation schedule is...',
-      icon: CheckCircle,
-      color: 'green',
-      bgClass: 'bg-green-50',
-      borderClass: 'border-green-200',
-      textClass: 'text-green-900'
-    }
-  },
-  
-  options: {
-    bimUses: ['Design Authoring', 'Design Reviews', '3D Coordination', 'Clash Detection', 'Quantity Take-off', '4D Planning', '5D Cost Management', 'Asset Management', 'Construction Sequencing', 'Facility Management Handover', 'Energy Analysis', 'Code Validation', 'Space Planning', 'Site Analysis', 'Structural Analysis', 'MEP Analysis', 'Lighting Analysis', 'Acoustical Analysis', 'Other Analysis'],
-    
-    informationPurposes: ['Design Development', 'Construction Planning', 'Quantity Surveying', 'Cost Estimation', 'Facility Management', 'Asset Management', 'Carbon Footprint Analysis', 'Fire Strategy', 'Structural Analysis', 'MEP Coordination', 'Space Management', 'Maintenance Planning', 'Energy Performance', 'Code Compliance', 'Safety Planning', 'Sustainability Assessment'],
-    
-    software: ['Autodesk Revit', 'ArchiCAD', 'Tekla Structures', 'Bentley MicroStation', 'Bentley AECOsim', 'SketchUp Pro', 'Rhino', 'Navisworks', 'Solibri Model Checker', 'BIM 360', 'Trimble Connect', 'Synchro Pro', 'Vico Office', 'CostX', 'Innovaya', 'dRofus', 'BIMcollab', 'Aconex', 'PowerBI', 'Tableau', 'FME', 'Safe Software', 'Other'],
-    
-    fileFormats: ['IFC 2x3', 'IFC 4', 'IFC 4.1', 'IFC 4.3', 'DWG', 'DXF', 'PDF', 'PDF/A', 'BCF 2.1', 'BCF 3.0', 'NWD', 'NWC', 'NWF', 'RVT', 'PLN', 'DGN', 'SKP', 'COBie', 'XML', 'JSON', 'CSV', 'XLS', 'XLSX'],
-    
-    projectTypes: ['Commercial Building', 'Residential', 'Infrastructure', 'Industrial', 'Healthcare', 'Education', 'Mixed Use', 'Renovation/Retrofit']
-  },
-
-  steps: [
-    { title: 'BEP Type & Project Info', icon: Building, description: 'Define BEP type and basic project information', category: 'Commercial' },
-    { title: 'Stakeholders & Roles', icon: Users, description: 'Define project stakeholders and responsibilities', category: 'Commercial' },
-    { title: 'BIM Goals & Uses', icon: Target, description: 'Define BIM objectives and applications', category: 'Commercial' },
-    { title: 'Level of Information Need', icon: Database, description: 'Specify LOIN requirements and content', category: 'Management' },
-    { title: 'Information Delivery Planning', icon: Calendar, description: 'MIDP, TIDPs and delivery schedules', category: 'Management' },
-    { title: 'Common Data Environment', icon: Monitor, description: 'CDE specification and workflows', category: 'Technical' },
-    { title: 'Technology Requirements', icon: Settings, description: 'Software, hardware and technical specs', category: 'Technical' },
-    { title: 'Information Production', icon: FileText, description: 'Methods, standards and procedures', category: 'Management' },
-    { title: 'Quality Assurance', icon: CheckCircle, description: 'QA framework and validation processes', category: 'Management' },
-    { title: 'Security & Privacy', icon: Shield, description: 'Information security and privacy measures', category: 'Management' },
-    { title: 'Training & Competency', icon: BookOpen, description: 'Training requirements and competency levels', category: 'Management' },
-    { title: 'Coordination & Risk', icon: AlertCircle, description: 'Collaboration procedures and risk management', category: 'Management' }
-  ],
-
-  formFields: {
-    'pre-appointment': {
-      0: {
-        title: 'Project Information and Proposed Approach',
-        fields: [
-          { name: 'projectName', label: 'Project Name', required: true, type: 'text' },
-          { name: 'projectNumber', label: 'Project Number', type: 'text' },
-          { name: 'projectType', label: 'Project Type', required: true, type: 'select', options: 'projectTypes' },
-          { name: 'appointingParty', label: 'Appointing Party', required: true, type: 'text' },
-          { name: 'proposedTimeline', label: 'Proposed Project Timeline', type: 'text' },
-          { name: 'estimatedBudget', label: 'Estimated Project Budget', type: 'text' },
-          { name: 'projectDescription', label: 'Project Description', type: 'textarea', rows: 4 },
-          { name: 'tenderApproach', label: 'Our Proposed Approach', type: 'textarea', rows: 3, placeholder: 'Describe your proposed approach to the project...' }
-        ]
-      },
-      1: {
-        title: 'Proposed Team and Capabilities',
-        fields: [
-          { name: 'proposedLead', label: 'Proposed Lead Appointed Party', required: true, type: 'text' },
-          { name: 'proposedInfoManager', label: 'Proposed Information Manager', required: true, type: 'text' },
-          { name: 'proposedTeamLeaders', label: 'Proposed Task Team Leaders', type: 'table', columns: ['Discipline', 'Name & Title', 'Company', 'Experience'] },
-          { name: 'teamCapabilities', label: 'Team Capabilities and Experience', type: 'textarea', rows: 4, placeholder: 'Describe your team\'s relevant experience and capabilities...' },
-          { name: 'subcontractors', label: 'Proposed Subcontractors/Partners', type: 'table', columns: ['Role/Service', 'Company Name', 'Certification', 'Contact'] }
-        ]
-      },
-      2: {
-        title: 'Proposed BIM Goals and Objectives',
-        fields: [
-          { name: 'proposedBimGoals', label: 'Proposed BIM Goals', required: true, type: 'textarea', rows: 4, placeholder: 'Our proposed BIM goals for this project include...' },
-          { name: 'proposedObjectives', label: 'Proposed Primary Objectives', type: 'textarea', rows: 3 },
-          { name: 'intendedBimUses', label: 'Intended BIM Uses', required: true, type: 'checkbox', options: 'bimUses' }
-        ]
-      }
-    },
-    'post-appointment': {
-      0: {
-        title: 'Project Information and Confirmed Objectives',
-        fields: [
-          { name: 'projectName', label: 'Project Name', required: true, type: 'text' },
-          { name: 'projectNumber', label: 'Project Number', type: 'text' },
-          { name: 'projectType', label: 'Project Type', required: true, type: 'select', options: 'projectTypes' },
-          { name: 'appointingParty', label: 'Appointing Party', required: true, type: 'text' },
-          { name: 'confirmedTimeline', label: 'Confirmed Project Timeline', type: 'text' },
-          { name: 'confirmedBudget', label: 'Confirmed Project Budget', type: 'text' },
-          { name: 'projectDescription', label: 'Project Description', type: 'textarea', rows: 4 },
-          { name: 'deliveryApproach', label: 'Confirmed Delivery Approach', type: 'textarea', rows: 3, placeholder: 'Our confirmed approach to project delivery...' }
-        ]
-      },
-      1: {
-        title: 'Confirmed Team and Responsibilities',
-        fields: [
-          { name: 'leadAppointedParty', label: 'Lead Appointed Party', required: true, type: 'text' },
-          { name: 'informationManager', label: 'Information Manager', required: true, type: 'text' },
-          { name: 'assignedTeamLeaders', label: 'Assigned Task Team Leaders', type: 'table', columns: ['Discipline', 'Name & Title', 'Company', 'Role Details'] },
-          { name: 'finalizedParties', label: 'Finalized Appointed Parties', type: 'table', columns: ['Role/Service', 'Company Name', 'Lead Contact', 'Contract Value'] },
-          { name: 'resourceAllocation', label: 'Resource Allocation', type: 'textarea', rows: 3, placeholder: 'Detailed resource allocation and assignments...' }
-        ]
-      },
-      2: {
-        title: 'Confirmed BIM Goals and Implementation',
-        fields: [
-          { name: 'confirmedBimGoals', label: 'Confirmed BIM Goals', required: true, type: 'textarea', rows: 4, placeholder: 'The confirmed BIM goals for this project are...' },
-          { name: 'implementationObjectives', label: 'Implementation Objectives', type: 'textarea', rows: 3 },
-          { name: 'finalBimUses', label: 'Final BIM Uses', required: true, type: 'checkbox', options: 'bimUses' }
-        ]
-      }
-    }
-  },
-
-  // Keep the original shared formFields for sections 3-11 that are common to both
-  sharedFormFields: {
-    3: {
-      title: 'Level of Information Need (LOIN)',
-      fields: [
-        { name: 'informationPurposes', label: 'Information Purposes', required: true, type: 'checkbox', options: 'informationPurposes' },
-        { name: 'geometricalInfo', label: 'Geometrical Information Requirements', type: 'textarea', rows: 3 },
-        { name: 'alphanumericalInfo', label: 'Alphanumerical Information Requirements', type: 'textarea', rows: 3 },
-        { name: 'documentationInfo', label: 'Documentation Requirements', type: 'textarea', rows: 3 },
-        { name: 'informationFormats', label: 'Information Formats', type: 'checkbox', options: 'fileFormats' }
-      ]
-    },
-    4: {
-      title: 'Information Delivery Planning',
-      fields: [
-        { name: 'midpDescription', label: 'Master Information Delivery Plan (MIDP)', required: true, type: 'textarea', rows: 4 },
-        { name: 'keyMilestones', label: 'Key Information Delivery Milestones', required: true, type: 'table', columns: ['Stage/Phase', 'Milestone Description', 'Deliverables', 'Due Date'] },
-        { name: 'deliverySchedule', label: 'Delivery Schedule', type: 'textarea', rows: 3 },
-        { name: 'tidpRequirements', label: 'Task Information Delivery Plans (TIDPs)', type: 'textarea', rows: 3 }
-      ]
-    },
-    5: {
-      title: 'Common Data Environment (CDE)',
-      fields: [
-        { name: 'cdeProvider', label: 'CDE Provider', required: true, type: 'text' },
-        { name: 'cdePlatform', label: 'CDE Platform Version', type: 'text' },
-        { name: 'workflowStates', label: 'Workflow States', required: true, type: 'table', columns: ['State Name', 'Description', 'Access Level', 'Next State'] },
-        { name: 'accessControl', label: 'Access Control', type: 'textarea', rows: 3 },
-        { name: 'securityMeasures', label: 'Security Measures', type: 'textarea', rows: 3 },
-        { name: 'backupProcedures', label: 'Backup Procedures', type: 'textarea', rows: 3 }
-      ]
-    },
-    6: {
-      title: 'Technology and Software Requirements',
-      fields: [
-        { name: 'bimSoftware', label: 'BIM Software Applications', required: true, type: 'checkbox', options: 'software' },
-        { name: 'fileFormats', label: 'File Formats', required: true, type: 'checkbox', options: 'fileFormats' },
-        { name: 'hardwareRequirements', label: 'Hardware Requirements', type: 'textarea', rows: 3 },
-        { name: 'networkRequirements', label: 'Network Requirements', type: 'textarea', rows: 3 },
-        { name: 'interoperabilityNeeds', label: 'Interoperability Requirements', type: 'textarea', rows: 3 }
-      ]
-    },
-    7: {
-      title: 'Information Production Methods and Procedures',
-      fields: [
-        { name: 'modelingStandards', label: 'Modeling Standards', required: true, type: 'table', columns: ['Standard/Guideline', 'Version', 'Application Area', 'Compliance Level'] },
-        { name: 'namingConventions', label: 'Naming Conventions', required: true, type: 'textarea', rows: 3 },
-        { name: 'fileStructure', label: 'File Structure', type: 'textarea', rows: 3 },
-        { name: 'versionControl', label: 'Version Control', type: 'table', columns: ['Document Type', 'Version Format', 'Approval Process', 'Archive Location'] },
-        { name: 'dataExchangeProtocols', label: 'Data Exchange Protocols', type: 'table', columns: ['Exchange Type', 'Format', 'Frequency', 'Delivery Method'] }
-      ]
-    },
-    8: {
-      title: 'Quality Assurance and Control',
-      fields: [
-        { name: 'qaFramework', label: 'Quality Assurance Framework', required: true, type: 'table', columns: ['QA Activity', 'Responsibility', 'Frequency', 'Tools/Methods'] },
-        { name: 'modelValidation', label: 'Model Validation Procedures', required: true, type: 'textarea', rows: 4 },
-        { name: 'reviewProcesses', label: 'Review Processes', type: 'textarea', rows: 3 },
-        { name: 'approvalWorkflows', label: 'Approval Workflows', type: 'textarea', rows: 3 },
-        { name: 'complianceVerification', label: 'Compliance Verification', type: 'textarea', rows: 3 }
-      ]
-    },
-    9: {
-      title: 'Information Security and Privacy',
-      fields: [
-        { name: 'dataClassification', label: 'Data Classification', required: true, type: 'textarea', rows: 3 },
-        { name: 'accessPermissions', label: 'Access Permissions', required: true, type: 'textarea', rows: 3 },
-        { name: 'encryptionRequirements', label: 'Encryption Requirements', type: 'textarea', rows: 3 },
-        { name: 'dataTransferProtocols', label: 'Data Transfer Protocols', type: 'textarea', rows: 3 },
-        { name: 'privacyConsiderations', label: 'Privacy Considerations', type: 'textarea', rows: 3 }
-      ]
-    },
-    10: {
-      title: 'Training and Competency',
-      fields: [
-        { name: 'bimCompetencyLevels', label: 'BIM Competency Levels', required: true, type: 'textarea', rows: 4 },
-        { name: 'trainingRequirements', label: 'Training Requirements', type: 'textarea', rows: 3 },
-        { name: 'certificationNeeds', label: 'Certification Requirements', type: 'textarea', rows: 3 },
-        { name: 'projectSpecificTraining', label: 'Project-Specific Training', type: 'textarea', rows: 3 }
-      ]
-    },
-    11: {
-      title: 'Coordination, Collaboration & Risk Management',
-      fields: [
-        { name: 'coordinationMeetings', label: 'Coordination Meetings', required: true, type: 'textarea', rows: 3 },
-        { name: 'clashDetectionWorkflow', label: 'Clash Detection Workflow', type: 'textarea', rows: 3 },
-        { name: 'issueResolution', label: 'Issue Resolution Process', type: 'textarea', rows: 3 },
-        { name: 'communicationProtocols', label: 'Communication Protocols', type: 'textarea', rows: 3 },
-        { name: 'federationStrategy', label: 'Model Federation Strategy', type: 'textarea', rows: 3 },
-        { name: 'informationRisks', label: 'Information-Related Risks', required: true, type: 'textarea', rows: 4 },
-        { name: 'technologyRisks', label: 'Technology-Related Risks', type: 'textarea', rows: 3 },
-        { name: 'riskMitigation', label: 'Risk Mitigation Strategies', type: 'textarea', rows: 3 },
-        { name: 'contingencyPlans', label: 'Contingency Plans', type: 'textarea', rows: 3 },
-        { name: 'performanceMetrics', label: 'Performance Metrics and KPIs', type: 'textarea', rows: 3 },
-        { name: 'monitoringProcedures', label: 'Monitoring Procedures', type: 'textarea', rows: 3 },
-        { name: 'auditTrails', label: 'Audit Trails', type: 'textarea', rows: 3 },
-        { name: 'updateProcesses', label: 'Update Processes', type: 'textarea', rows: 3 }
-      ]
-    }
-  },
-
-  // Function to get appropriate form fields based on BEP type and step
-  getFormFields: (bepType, stepIndex) => {
-    // For steps 0-2, use BEP type specific fields
-    if (stepIndex <= 2 && CONFIG.formFields[bepType] && CONFIG.formFields[bepType][stepIndex]) {
-      return CONFIG.formFields[bepType][stepIndex];
-    }
-    // For steps 3-11, use shared fields
-    if (stepIndex >= 3 && CONFIG.sharedFormFields[stepIndex]) {
-      return CONFIG.sharedFormFields[stepIndex];
-    }
-    return null;
-  }
-};
 
 // Dati iniziali di esempio
 const INITIAL_DATA = {
   // Common fields for both BEP types
-  projectName: 'New Office Complex Development',
-  projectNumber: 'NOC-2025-001',
-  projectDescription: 'A modern 15-story office complex with retail spaces on the ground floor, underground parking, and sustainable building systems. The project includes advanced MEP systems, curtain wall facades, and LEED Gold certification requirements.',
+  projectName: 'Greenfield Office Complex Phase 2',
+  projectNumber: 'GF-2024-017',
+  projectDescription: 'A modern 8-story office complex featuring sustainable design principles, flexible workspace layouts, and integrated smart building technologies. The building will accommodate 800+ employees across multiple tenants with shared amenities including conference facilities, cafeteria, and underground parking for 200 vehicles.',
   projectType: 'Commercial Building',
-  appointingParty: 'Metropolitan Development Corp.',
+  appointingParty: 'ABC Development Corporation',
 
   // Pre-appointment specific fields
-  proposedTimeline: '36 months (March 2025 - February 2028)',
-  estimatedBudget: '£45M - £52M (preliminary estimate based on current scope)',
-  tenderApproach: 'Our proposed approach focuses on collaborative BIM implementation from day one, utilizing cloud-based platforms for real-time coordination, implementing clash detection protocols, and establishing clear information exchange procedures to ensure seamless project delivery.',
-  proposedLead: 'Global Construction Ltd. (Lead Contractor with 15+ years BIM experience)',
-  proposedInfoManager: 'Sarah Johnson, BIM Manager - Global Construction Ltd. (ISO 19650 Lead Practitioner)',
+  proposedTimeline: '24 months (Jan 2025 - Dec 2026)',
+  estimatedBudget: '£12.5 million',
+  tenderApproach: 'Our approach emphasizes collaborative design coordination through advanced BIM workflows, early stakeholder engagement, and integrated sustainability analysis. We propose a phased delivery strategy with continuous value engineering and risk mitigation throughout all project stages.',
+  proposedLead: 'Smith & Associates Architects Ltd.',
+  proposedInfoManager: 'Sarah Johnson, BIM Manager (RICS Certified, ISO 19650 Lead)',
+
+  // Executive Summary fields
+  projectContext: 'This BEP outlines our comprehensive approach to delivering the Greenfield Office Complex using advanced BIM methodologies. Our strategy emphasizes collaborative design coordination, data-driven decision making, and seamless information handover to support long-term facility management. The project will serve as a flagship example of sustainable commercial development in the region.',
+  bimStrategy: 'Our BIM strategy centers on early clash detection, integrated 4D/5D modeling for construction sequencing and cost control, and comprehensive digital twin creation for facilities management. We will utilize federated models across all disciplines with real-time collaboration through cloud-based platforms, ensuring design quality and construction efficiency while reducing project risks.',
+  keyCommitments: 'We commit to full ISO 19650-2:2018 compliance throughout all project phases. Key deliverables include: coordinated federated models at each design milestone, comprehensive COBie data for asset handover, 4D construction sequences for all major building elements, and a complete digital twin with integrated IoT sensor data. All information will be delivered through our cloud-based CDE with full audit trails and version control.',
+  keyContacts: [
+    { 'Role': 'Project Director', 'Name': 'John Smith', 'Company': 'Smith & Associates Architects Ltd.', 'Contact Details': 'j.smith@smithassociates.com | +44 20 1234 5678' },
+    { 'Role': 'BIM Manager', 'Name': 'Sarah Johnson', 'Company': 'Smith & Associates Architects Ltd.', 'Contact Details': 's.johnson@smithassociates.com | +44 20 1234 5679' },
+    { 'Role': 'Client Representative', 'Name': 'David Brown', 'Company': 'ABC Development Corporation', 'Contact Details': 'd.brown@abcdev.com | +44 20 9876 5432' }
+  ],
+  valueProposition: 'Our BIM approach will deliver 15% reduction in construction costs through early clash detection, 25% faster design coordination, and comprehensive lifecycle cost analysis enabling informed material selections. The digital twin will provide 30% operational cost savings through predictive maintenance and space optimization, while the structured data handover ensures seamless facilities management integration.',
+
   proposedTeamLeaders: [
     { 'Discipline': 'Architecture', 'Name & Title': 'John Smith, Director', 'Company': 'Modern Design Associates', 'Experience': '12 years BIM experience, 50+ projects' },
     { 'Discipline': 'Structural', 'Name & Title': 'Emily Chen, Senior Engineer', 'Company': 'Engineering Excellence Ltd.', 'Experience': '10 years structural BIM, P.Eng' },
     { 'Discipline': 'MEP', 'Name & Title': 'Michael Rodriguez, BIM Coordinator', 'Company': 'Advanced Systems Group', 'Experience': '8 years MEP coordination experience' },
     { 'Discipline': 'Facades', 'Name & Title': 'David Wilson, Technical Director', 'Company': 'Curtain Wall Experts Ltd.', 'Experience': '15 years facade design, BIM certified' }
   ],
-  teamCapabilities: 'Our team brings together over 45 years of combined BIM experience across all disciplines. We have successfully delivered 50+ projects using collaborative BIM workflows, including 3 similar high-rise office complexes. Our capabilities include advanced parametric modeling, 4D/5D simulation, clash detection, and FM data preparation.',
+  teamCapabilities: 'Our multidisciplinary team brings 15+ years of BIM implementation experience across £500M+ of commercial projects. Key capabilities include: ISO 19650 certified information management, advanced parametric design using Revit/Grasshopper, integrated MEP coordination, 4D/5D modeling expertise, and digital twin development. Recent projects include the award-winning Tech Hub (£25M) and Riverside Commercial Center (£18M).',
   subcontractors: [
     { 'Role/Service': 'MEP Services', 'Company Name': 'Advanced Systems Group', 'Certification': 'ISO 19650 certified', 'Contact': 'info@advancedsystems.com' },
     { 'Role/Service': 'Curtain Wall', 'Company Name': 'Specialist Facades Ltd.', 'Certification': 'BIM Level 2 compliant', 'Contact': 'projects@specialistfacades.com' },
@@ -409,11 +56,12 @@ const INITIAL_DATA = {
   intendedBimUses: ['Design Authoring', '3D Coordination', 'Clash Detection', 'Quantity Take-off', '4D Planning'],
 
   // Post-appointment specific fields
-  confirmedTimeline: '36 months (March 2025 - February 2028) - Contract confirmed',
-  confirmedBudget: '£47.5M - Final contract value',
-  deliveryApproach: 'Our confirmed delivery approach implements the collaborative BIM workflow as agreed in contract, utilizing Autodesk BIM 360 for cloud-based coordination, weekly clash detection reviews, and structured information exchanges at key project milestones.',
-  leadAppointedParty: 'Global Construction Ltd.',
-  informationManager: 'Sarah Johnson, BIM Manager - Global Construction Ltd.',
+  confirmedTimeline: '24 months (Jan 2025 - Dec 2026)',
+  confirmedBudget: '£12.5 million',
+  deliveryApproach: 'Our delivery approach implements collaborative design coordination through advanced BIM workflows, stakeholder integration at key milestones, and continuous value engineering. We will execute a phased delivery strategy with integrated sustainability analysis and proactive risk management throughout all project stages to ensure on-time, on-budget completion.',
+  referencedMaterial: 'This BEP references: Exchange Information Requirements (EIR) v2.1, Project Information Requirements (PIR) dated March 2024, ISO 19650-2:2018, BS 1192:2007+A2:2016, PAS 1192-2:2013, Client BIM Standards Manual v3.0, Health & Safety Information Requirements, and all applicable RIBA Plan of Work 2020 deliverables.',
+  leadAppointedParty: 'Smith & Associates Architects Ltd.',
+  informationManager: 'Sarah Johnson, BIM Manager (RICS Certified, ISO 19650 Lead)',
   assignedTeamLeaders: [
     { 'Discipline': 'Architecture', 'Name & Title': 'John Smith, Project Director', 'Company': 'Modern Design Associates', 'Role Details': 'Overall design coordination and client liaison' },
     { 'Discipline': 'Structural', 'Name & Title': 'Emily Chen, Senior Engineer', 'Company': 'Engineering Excellence Ltd.', 'Role Details': 'Structural design and analysis coordination' },
@@ -522,337 +170,19 @@ const INITIAL_DATA = {
   performanceMetrics: 'Model quality scores, coordination efficiency metrics, information delivery timeline adherence, and stakeholder satisfaction ratings.',
   monitoringProcedures: 'Monthly performance reviews, automated quality checking, delivery milestone tracking, and continuous improvement feedback loops.',
   auditTrails: 'Comprehensive logging of all CDE activities, version history tracking, approval records, and change management documentation.',
-  updateProcesses: 'Quarterly BEP reviews, change request procedures, stakeholder approval for modifications, and continuous alignment with project requirements.'
+  updateProcesses: 'Quarterly BEP reviews, change request procedures, stakeholder approval for modifications, and continuous alignment with project requirements.',
+
+  // Additional shared fields
+  bimGoals: 'The BIM goals for this project are to enhance design coordination through clash detection reducing RFIs by 40%, improve construction sequencing through 4D modeling resulting in 20% schedule compression, enable accurate cost forecasting through 5D integration achieving ±2% budget variance, and deliver comprehensive digital asset information for lifecycle management supporting 25% reduction in operational costs over the first 5 years.',
+  primaryObjectives: 'Primary objectives include: eliminating design conflicts before construction through rigorous clash detection protocols, optimising building performance through integrated analysis and simulation, enabling efficient construction through accurate quantity extraction and sequencing models, supporting sustainability targets through embedded carbon analysis and energy modeling, and facilitating seamless handover with structured asset data for predictive maintenance and space management.',
+  cdeProvider: 'Autodesk Construction Cloud',
+  cdePlatform: 'BIM 360 Design v2024.1',
+  accessControl: 'Role-based access control with Project Administrator, Design Team, Review Team, and Client View permissions. Multi-factor authentication required for all users. Project folders restricted by discipline with read/write permissions assigned per project phase. Guest access limited to 30-day periods with approval workflows.',
+  securityMeasures: 'End-to-end encryption for data in transit and at rest using AES-256 standards. SSL/TLS certificates for secure connections. Regular security audits and penetration testing. ISO 27001 certified cloud infrastructure. Automated malware scanning for all uploads. Data residency compliance with UK GDPR requirements.',
+  backupProcedures: 'Automated daily backups with 30-day retention policy. Weekly full system backups with 12-month retention. Geo-redundant storage across multiple UK data centres. 99.9% uptime SLA with disaster recovery protocols. Regular backup integrity testing and documented restoration procedures. Monthly backup verification reports.'
 };
 
 // Componenti riutilizzabili
-const EditableTable = React.memo(({ field, value, onChange, error }) => {
-  const { name, label, required, columns = ['Role/Discipline', 'Name/Company', 'Experience/Notes'] } = field;
-  const tableData = Array.isArray(value) ? value : [];
-
-  const addRow = () => {
-    const newRow = columns.reduce((acc, col) => ({ ...acc, [col]: '' }), {});
-    onChange(name, [...tableData, newRow]);
-  };
-
-  const removeRow = (index) => {
-    const newData = tableData.filter((_, i) => i !== index);
-    onChange(name, newData);
-  };
-
-  const updateCell = (rowIndex, column, cellValue) => {
-    const newData = tableData.map((row, index) =>
-      index === rowIndex ? { ...row, [column]: cellValue } : row
-    );
-    onChange(name, newData);
-  };
-
-  const moveRow = (fromIndex, toIndex) => {
-    if (toIndex < 0 || toIndex >= tableData.length) return;
-    const newData = [...tableData];
-    const [movedRow] = newData.splice(fromIndex, 1);
-    newData.splice(toIndex, 0, movedRow);
-    onChange(name, newData);
-  };
-
-  return (
-    <div className="mb-8">
-      <label className="block text-lg font-semibold mb-4 text-gray-800">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
-
-      <div className="border rounded-xl overflow-hidden shadow-sm bg-white">
-        <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-3">
-              <span className="text-base font-semibold text-gray-800">
-                {tableData.length} {tableData.length === 1 ? 'Entry' : 'Entries'}
-              </span>
-              {tableData.length > 0 && (
-                <span className="text-sm text-gray-500">
-                  Click and drag to reorder • Use textarea for multi-line content
-                </span>
-              )}
-            </div>
-            <button
-              type="button"
-              onClick={addRow}
-              className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-105 shadow-md"
-            >
-              <span className="text-lg">+</span>
-              <span>Add Row</span>
-            </button>
-          </div>
-        </div>
-
-        {tableData.length === 0 ? (
-          <div className="p-12 text-center text-gray-500">
-            <Users className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-            <p className="text-lg">No entries yet. Click "Add Row" to get started.</p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto bg-white">
-            <table className="w-full min-w-full table-fixed">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="w-16 px-2 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Order
-                  </th>
-                  {columns.map((column, index) => (
-                    <th key={column} className={`px-3 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider ${
-                      columns.length === 4 ? 'w-1/4' :
-                      columns.length === 3 ? 'w-1/3' :
-                      'w-auto'
-                    }`}>
-                      {column}
-                    </th>
-                  ))}
-                  <th className="w-16 px-2 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {tableData.map((row, rowIndex) => (
-                  <tr key={rowIndex} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-2 py-2">
-                      <div className="flex flex-col items-center space-y-1">
-                        <button
-                          type="button"
-                          onClick={() => moveRow(rowIndex, rowIndex - 1)}
-                          disabled={rowIndex === 0}
-                          className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-xs"
-                          title="Move up"
-                        >
-                          ↑
-                        </button>
-                        <span className="text-xs font-medium text-gray-600 bg-gray-100 px-1 py-0.5 rounded">{rowIndex + 1}</span>
-                        <button
-                          type="button"
-                          onClick={() => moveRow(rowIndex, rowIndex + 1)}
-                          disabled={rowIndex === tableData.length - 1}
-                          className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-xs"
-                          title="Move down"
-                        >
-                          ↓
-                        </button>
-                      </div>
-                    </td>
-                    {columns.map(column => (
-                      <td key={column} className="px-1 py-2">
-                        <textarea
-                          value={row[column] || ''}
-                          onChange={(e) => updateCell(rowIndex, column, e.target.value)}
-                          className="w-full min-h-[100px] p-2 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm resize-y"
-                          placeholder={`Enter ${column.toLowerCase()}...`}
-                          rows={4}
-                        />
-                      </td>
-                    ))}
-                    <td className="px-2 py-2">
-                      <button
-                        type="button"
-                        onClick={() => removeRow(rowIndex)}
-                        className="w-8 h-8 flex items-center justify-center text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors font-medium text-sm"
-                        title="Remove row"
-                      >
-                        ✕
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-    </div>
-  );
-});
-
-const InputField = React.memo(({ field, value, onChange, error }) => {
-  const { name, label, type, required, rows, placeholder, options: fieldOptions } = field;
-  const optionsList = fieldOptions ? CONFIG.options[fieldOptions] : null;
-
-  const baseClasses = "w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500";
-
-  const handleCheckboxChange = (option) => {
-    const current = Array.isArray(value) ? value : [];
-    const updated = current.includes(option)
-      ? current.filter(item => item !== option)
-      : [...current, option];
-    onChange(name, updated);
-  };
-
-  switch (type) {
-    case 'table':
-      return (
-        <EditableTable
-          field={field}
-          value={value}
-          onChange={onChange}
-          error={error}
-        />
-      );
-
-    case 'textarea':
-      return (
-        <div>
-          <label htmlFor={name} className="block text-sm font-medium mb-2">
-            {label} {required && '*'}
-          </label>
-          <textarea
-            id={name}
-            aria-required={required}
-            value={value || ''}
-            onChange={(e) => onChange(name, e.target.value)}
-            rows={rows || 3}
-            className={baseClasses}
-            placeholder={placeholder || `Enter ${label.toLowerCase()}...`}
-          />
-          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-        </div>
-      );
-
-    case 'select':
-      return (
-        <div>
-          <label htmlFor={name} className="block text-sm font-medium mb-2">
-            {label} {required && '*'}
-          </label>
-          <select
-            id={name}
-            aria-required={required}
-            value={value || ''}
-            onChange={(e) => onChange(name, e.target.value)}
-            className={baseClasses}
-          >
-            <option value="">Select {label.toLowerCase()}</option>
-            {optionsList?.map(option => (
-              <option key={option} value={option}>{option}</option>
-            ))}
-          </select>
-          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-        </div>
-      );
-
-    case 'checkbox':
-      return (
-        <div>
-          <label className="block text-sm font-medium mb-2">
-            {label} {required && '*'}
-          </label>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-60 overflow-y-auto border rounded-lg p-3">
-            {optionsList?.map(option => (
-              <label key={option} htmlFor={`${name}-${option}`} className="flex items-center space-x-2 p-2 border rounded cursor-pointer hover:bg-gray-50">
-                <input
-                  id={`${name}-${option}`}
-                  type="checkbox"
-                  checked={(value || []).includes(option)}
-                  onChange={() => handleCheckboxChange(option)}
-                  className="rounded"
-                />
-                <span className="text-sm">{option}</span>
-              </label>
-            ))}
-          </div>
-          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-        </div>
-      );
-
-    default:
-      return (
-        <div>
-          <label htmlFor={name} className="block text-sm font-medium mb-2">
-            {label} {required && '*'}
-          </label>
-          <input
-            id={name}
-            aria-required={required}
-            type="text"
-            value={value || ''}
-            onChange={(e) => onChange(name, e.target.value)}
-            className={baseClasses}
-            placeholder={placeholder || `Enter ${label.toLowerCase()}`}
-          />
-          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-        </div>
-      );
-  }
-});
-
-const ProgressSidebar = React.memo(({ steps, currentStep, completedSections, onStepClick, validateStep }) => (
-  <div className="bg-white rounded-lg shadow-sm p-6 sticky top-8">
-    <h2 className="text-lg font-semibold mb-4">Progress Overview</h2>
-    <div className="space-y-3">
-      {steps.map((step, index) => {
-        const isComplete = completedSections.has(index);
-        const isValid = validateStep(index);
-        const isCurrent = currentStep === index;
-        
-        return (
-          <div
-            key={index}
-            className={`flex items-start space-x-3 p-3 rounded-lg cursor-pointer transition-colors
-              ${isCurrent ? 'bg-blue-50 border border-blue-200' : 
-                isComplete ? 'bg-green-50 border border-green-200' : 'hover:bg-gray-50'}`}
-            onClick={() => onStepClick(index)}
-          >
-            <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center
-              ${isCurrent ? 'bg-blue-600 text-white' : 
-                isComplete ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-600'}`}>
-              {isComplete ? <CheckCircle className="w-4 h-4" /> : <step.icon className="w-4 h-4" />}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className={`text-sm font-medium ${
-                isCurrent ? 'text-blue-900' : isComplete ? 'text-green-900' : 'text-gray-900'
-              }`}>
-                {step.title}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">{step.description}</p>
-              <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mt-1 ${
-                CONFIG.categories[step.category].bg
-              }`}>
-                {step.category}
-              </span>
-            </div>
-            {!isValid && index !== currentStep && (
-              <AlertCircle className="w-4 h-4 text-orange-500 flex-shrink-0" />
-            )}
-          </div>
-        );
-      })}
-    </div>
-
-    <div className="mt-6 pt-4 border-t">
-      <div className="text-sm text-gray-600 mb-2">
-        Completion: {Math.round((completedSections.size / steps.length) * 100)}%
-      </div>
-      <div className="w-full bg-gray-200 rounded-full h-2">
-        <div 
-          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-          style={{ width: `${(completedSections.size / steps.length) * 100}%` }}
-        />
-      </div>
-    </div>
-
-    <div className="mt-4 pt-4 border-t">
-      <div className="text-xs text-gray-500 space-y-1">
-        {Object.keys(CONFIG.categories).map(category => (
-          <div key={category} className="flex justify-between">
-            <span>{category}:</span>
-            <span>
-              {steps.filter((s, i) => s.category === category && completedSections.has(i)).length}/
-              {steps.filter(s => s.category === category).length}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>
-));
 
 const EnhancedBepTypeSelector = ({ bepType, setBepType, onProceed }) => (
   <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -1738,11 +1068,6 @@ const ProfessionalBEPGenerator = ({ user }) => {
     setCurrentStep(0);
   };
 
-  // Helper function to reset data to initial values (useful for testing)
-  const resetToInitialData = () => {
-    setFormData(INITIAL_DATA);
-    localStorage.setItem(`bepData_${user.id}`, JSON.stringify(INITIAL_DATA));
-  };
 
   // Show BEP type selector if no type is selected
   if (showBepTypeSelector || !bepType) {
@@ -1815,6 +1140,42 @@ const ProfessionalBEPGenerator = ({ user }) => {
                     {CONFIG.steps[currentStep].category} Aspects
                   </span>
                 )}
+              </div>
+
+              {/* Top Navigation Bar */}
+              <div className="flex justify-between items-center mb-6 pb-4 border-b bg-gray-50 rounded-lg p-4">
+                <button
+                  onClick={prevStep}
+                  disabled={currentStep === 0}
+                  className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  <span>Previous</span>
+                </button>
+
+                <div className="text-sm text-gray-600 font-medium">
+                  Step {currentStep + 1} of {CONFIG.steps.length + (currentStep >= CONFIG.steps.length ? 1 : 0)}
+                </div>
+
+                <div className="flex space-x-3">
+                  {currentStep < CONFIG.steps.length - 1 ? (
+                    <button
+                      onClick={nextStep}
+                      className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
+                    >
+                      <span>Next</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  ) : currentStep === CONFIG.steps.length - 1 ? (
+                    <button
+                      onClick={goToPreview}
+                      className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
+                    >
+                      <span>Preview & Export</span>
+                      <Eye className="w-4 h-4" />
+                    </button>
+                  ) : null}
+                </div>
               </div>
 
               {currentStep < CONFIG.steps.length ? (
