@@ -98,6 +98,60 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('users', JSON.stringify(updatedUsers));
   };
 
+  const resetPassword = async (email) => {
+    try {
+      const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+      const user = existingUsers.find(u => u.email === email);
+
+      if (!user) {
+        throw new Error('No account found with that email address');
+      }
+
+      // Generate a temporary password
+      const tempPassword = Math.random().toString(36).substring(2, 10);
+
+      // Update user's password
+      const updatedUsers = existingUsers.map(u =>
+        u.email === email ? { ...u, password: tempPassword, passwordResetRequired: true } : u
+      );
+      localStorage.setItem('users', JSON.stringify(updatedUsers));
+
+      // In a real app, this would send an email. For demo purposes, we'll show the temp password
+      return {
+        success: true,
+        message: `Password reset successful! Your temporary password is: ${tempPassword}`,
+        tempPassword
+      };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  };
+
+  const changePassword = async (currentPassword, newPassword) => {
+    try {
+      if (!user) {
+        throw new Error('You must be logged in to change your password');
+      }
+
+      const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+      const currentUser = existingUsers.find(u => u.id === user.id);
+
+      if (!currentUser || currentUser.password !== currentPassword) {
+        throw new Error('Current password is incorrect');
+      }
+
+      // Update password
+      const updatedUsers = existingUsers.map(u =>
+        u.id === user.id ? { ...u, password: newPassword, passwordResetRequired: false } : u
+      );
+      localStorage.setItem('users', JSON.stringify(updatedUsers));
+
+      return { success: true, message: 'Password changed successfully!' };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  };
+
   const value = {
     user,
     loading,
@@ -105,6 +159,8 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     updateUserProjects,
+    resetPassword,
+    changePassword,
     isAuthenticated: !!user
   };
 

@@ -7,6 +7,7 @@ import DOMPurify from 'dompurify';
 // Import separated components
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Login from './components/Login';
+import Register from './components/Register';
 import InputField from './components/forms/InputField';
 import ProgressSidebar from './components/ui/ProgressSidebar';
 import CONFIG from './config/bepConfig';
@@ -99,6 +100,7 @@ const INITIAL_DATA = {
   alphanumericalInfo: 'All building elements must include material specifications, performance data, manufacturer information, maintenance requirements, and warranty details.',
   documentationInfo: 'Construction drawings, specifications, schedules, O&M manuals, warranty documents, and asset registers in digital format.',
   informationFormats: ['IFC 4', 'PDF', 'BCF 2.1', 'DWG', 'COBie'],
+  projectInformationRequirements: 'Project Information Requirements specify deliverable information to support asset management objectives: integrated 3D models with embedded property data for space management systems, energy consumption monitoring through IoT sensor integration, preventive maintenance scheduling with equipment lifecycle data, tenant fit-out guidelines with services capacity information, building performance analytics for continuous optimisation, digital twin connectivity for predictive maintenance, compliance monitoring systems for regulatory reporting, and structured data formats supporting client\'s existing CAFM systems and sustainability reporting requirements.',
   midpDescription: 'The MIDP coordinates all discipline-specific TIDPs into a unified delivery schedule aligned with RIBA stages and construction milestones. Information exchanges occur at stage gates with formal approval processes.',
   keyMilestones: [
     { 'Stage/Phase': 'Stage 2', 'Milestone Description': 'Concept Design Complete', 'Deliverables': 'Basic geometry and spatial coordination models', 'Due Date': 'Month 6' },
@@ -126,14 +128,14 @@ const INITIAL_DATA = {
     { 'Standard/Guideline': 'AIA LOD Specification', 'Version': '2019', 'Application Area': 'Level of development', 'Compliance Level': 'Mandatory' },
     { 'Standard/Guideline': 'Company Modeling Guide', 'Version': 'v3.2', 'Application Area': 'Internal procedures', 'Compliance Level': 'Required' }
   ],
-  namingConventions: 'Project code: NOC, Originator codes by discipline (ARC, STR, MEP), Volume/Level codes, Type classifications following BS 1192 naming convention.',
-  fileStructure: 'Organized by discipline and project phase with clear folder hierarchies, version control through file naming, and linked file management protocols.',
-  versionControl: [
-    { 'Document Type': 'Working Models', 'Version Format': 'P01, P02, P03...', 'Approval Process': 'Author approval only', 'Archive Location': 'WIP folder' },
-    { 'Document Type': 'Issued Drawings', 'Version Format': 'A, B, C, D...', 'Approval Process': 'Discipline lead + PM', 'Archive Location': 'Published folder' },
-    { 'Document Type': 'Coordination Models', 'Version Format': 'Weekly increments', 'Approval Process': 'BIM Coordinator', 'Archive Location': 'Shared folder' },
-    { 'Document Type': 'Final Deliverables', 'Version Format': 'Client approval code', 'Approval Process': 'Client sign-off', 'Archive Location': 'Client portal' }
+  namingConventions: [
+    { 'Element Type': 'Project Models', 'Naming Format': 'PP-OO-VV-DD-###', 'Example': 'GF-SAA-L02-ARC-001', 'Description': 'PP=Project, OO=Originator, VV=Volume/Level, DD=Discipline, ###=Sequential' },
+    { 'Element Type': 'Drawings', 'Naming Format': 'PP-OO-VV-DD-DR-T-####', 'Example': 'GF-SAA-ZZ-ARC-DR-A-1001', 'Description': 'Additional DR=Drawing, T=Type (A/S/M), ####=Drawing number' },
+    { 'Element Type': 'Documents', 'Naming Format': 'PP-OO-VV-DD-TT-###', 'Example': 'GF-SAA-ZZ-ARC-SP-001', 'Description': 'TT=Document type (SP=Specification, RP=Report, etc.)' },
+    { 'Element Type': 'MEP Equipment', 'Naming Format': 'PP-OO-VV-MEP-EQ-###', 'Example': 'GF-TSS-L03-MEP-EQ-001', 'Description': 'EQ=Equipment designation with sequential numbering' }
   ],
+  fileStructure: 'Organized by discipline and project phase with clear folder hierarchies, version control through file naming, and linked file management protocols.',
+  fileStructureDiagram: '📁 Project Root\n├── 📁 01_WIP (Work in Progress)\n│   ├── 📁 ARC (Architecture)\n│   │   ├── 📁 Models\n│   │   ├── 📁 Drawings\n│   │   └── 📁 Documents\n│   ├── 📁 STR (Structural)\n│   │   ├── 📁 Models\n│   │   ├── 📁 Analysis\n│   │   └── 📁 Calculations\n│   ├── 📁 MEP (MEP Services)\n│   │   ├── 📁 Models\n│   │   ├── 📁 Calculations\n│   │   └── 📁 Schedules\n│   └── 📁 QS (Quantity Surveying)\n│       ├── 📁 Take-offs\n│       └── 📁 Cost Plans\n├── 📁 02_SHARED (Shared for Coordination)\n│   ├── 📁 Federated Models\n│   ├── 📁 Clash Reports\n│   ├── 📁 Issue Lists\n│   └── 📁 Coordination Drawings\n├── 📁 03_PUBLISHED (Approved Information)\n│   ├── 📁 Drawings\n│   │   ├── 📁 Architectural\n│   │   ├── 📁 Structural\n│   │   └── 📁 MEP\n│   ├── 📁 Specifications\n│   ├── 📁 Reports\n│   └── 📁 Schedules\n└── 📁 04_ARCHIVE (Historical Versions)\n    ├── 📁 Superseded Models\n    ├── 📁 Previous Versions\n    └── 📁 Legacy Documents',
   dataExchangeProtocols: [
     { 'Exchange Type': 'IFC Coordination', 'Format': 'IFC 4.0', 'Frequency': 'Weekly', 'Delivery Method': 'BIM 360 upload' },
     { 'Exchange Type': 'Issue Management', 'Format': 'BCF 2.1', 'Frequency': 'Daily as needed', 'Delivery Method': 'BCF workflow' },
@@ -177,6 +179,8 @@ const INITIAL_DATA = {
   // Additional shared fields
   bimGoals: 'The BIM goals for this project are to enhance design coordination through clash detection reducing RFIs by 40%, improve construction sequencing through 4D modeling resulting in 20% schedule compression, enable accurate cost forecasting through 5D integration achieving ±2% budget variance, and deliver comprehensive digital asset information for lifecycle management supporting 25% reduction in operational costs over the first 5 years.',
   primaryObjectives: 'Primary objectives include: eliminating design conflicts before construction through rigorous clash detection protocols, optimising building performance through integrated analysis and simulation, enabling efficient construction through accurate quantity extraction and sequencing models, supporting sustainability targets through embedded carbon analysis and energy modeling, and facilitating seamless handover with structured asset data for predictive maintenance and space management.',
+  collaborativeProductionGoals: 'Collaborative production goals focus on establishing unified data standards across all disciplines, implementing real-time model coordination through federated workflows, ensuring consistent information delivery at all project milestones, maintaining version control integrity throughout design development, facilitating transparent communication through shared visualisation platforms, and creating comprehensive audit trails for decision-making accountability whilst adhering to ISO 19650 information management principles.',
+  alignmentStrategy: 'Our alignment strategy implements weekly coordination meetings with federated model reviews, establishes clear responsibility matrices for information production and validation, deploys standardised naming conventions and file structures across all disciplines, utilises automated quality checking workflows to ensure compliance, maintains continuous training programmes for team competency development, and implements performance monitoring through defined KPIs including model accuracy, delivery timeliness, and information completeness metrics.',
   cdeProvider: 'Autodesk Construction Cloud',
   cdePlatform: 'BIM 360 Design v2024.1',
   accessControl: 'Role-based access control with Project Administrator, Design Team, Review Team, and Client View permissions. Multi-factor authentication required for all users. Project folders restricted by discipline with read/write permissions assigned per project phase. Guest access limited to 30-day periods with approval workflows.',
@@ -207,11 +211,14 @@ const INITIAL_DATA = {
 
   // Appendices Data
   responsibilityMatrix: [
-    { 'Role/Task': 'Model Authoring - Architecture', 'Responsible': 'Lead Architect', 'Accountable': 'Project Director', 'Consulted': 'Planning Consultant', 'Informed': 'Client, Construction Team' },
-    { 'Role/Task': 'Model Authoring - Structure', 'Responsible': 'Structural Engineer', 'Accountable': 'Engineering Manager', 'Consulted': 'Architect, MEP Engineer', 'Informed': 'QS, Construction Team' },
-    { 'Role/Task': 'Model Authoring - MEP', 'Responsible': 'MEP Engineer', 'Accountable': 'MEP Manager', 'Consulted': 'Architect, Structural', 'Informed': 'FM Team, Client' },
-    { 'Role/Task': 'Clash Detection', 'Responsible': 'BIM Manager', 'Accountable': 'Information Manager', 'Consulted': 'All Disciplines', 'Informed': 'Project Team' },
-    { 'Role/Task': 'Model Federation', 'Responsible': 'Information Manager', 'Accountable': 'Project Director', 'Consulted': 'BIM Manager', 'Informed': 'Stakeholders' }
+    { 'Task/Activity': 'Model Authoring - Architecture', 'Responsible Party': 'Lead Architect (Emma Davis)', 'Accountable Party': 'Project Director (Michael Thompson)', 'Support/Input': 'Planning Consultant, Interior Designer' },
+    { 'Task/Activity': 'Model Authoring - Structural', 'Responsible Party': 'Structural Engineer (Robert Chen)', 'Accountable Party': 'Engineering Manager', 'Support/Input': 'Architect, MEP Engineer, Geotechnical' },
+    { 'Task/Activity': 'Model Authoring - MEP', 'Responsible Party': 'MEP Engineer (Lisa Rodriguez)', 'Accountable Party': 'MEP Manager', 'Support/Input': 'Architect, Structural, Commissioning' },
+    { 'Task/Activity': 'Clash Detection & Resolution', 'Responsible Party': 'BIM Manager (Sarah Johnson)', 'Accountable Party': 'Information Manager', 'Support/Input': 'All Discipline Leaders' },
+    { 'Task/Activity': 'Model Federation', 'Responsible Party': 'Information Manager (Sarah Johnson)', 'Accountable Party': 'Project Director', 'Support/Input': 'BIM Coordinator, Quality Controller' },
+    { 'Task/Activity': 'Quality Assurance', 'Responsible Party': 'Quality Controller', 'Accountable Party': 'Information Manager', 'Support/Input': 'Discipline Leads, Standards Compliance' },
+    { 'Task/Activity': 'Information Exchange', 'Responsible Party': 'CDE Administrator', 'Accountable Party': 'Information Manager', 'Support/Input': 'IT Support, Security Team' },
+    { 'Task/Activity': 'Client Reporting', 'Responsible Party': 'Project Manager', 'Accountable Party': 'Project Director', 'Support/Input': 'Information Manager, QS' }
   ],
   cobieRequirements: [
     { 'Component Type': 'Doors', 'Required Parameters': 'Fire Rating, U-Value, Warranty Period, Manufacturer, Model', 'Data Source': 'Architectural Model + Specification', 'Validation Method': 'Automated checking + Manual review' },
@@ -425,6 +432,7 @@ const PreviewExportPage = ({ generateBEPContent, exportFormat, setExportFormat, 
 
 const AppContent = () => {
   const { user, loading } = useAuth();
+  const [showRegister, setShowRegister] = useState(false);
 
   if (loading) {
     return (
@@ -438,7 +446,18 @@ const AppContent = () => {
   }
 
   if (!user) {
-    return <Login />;
+    if (showRegister) {
+      return (
+        <Register
+          onSwitchToLogin={() => setShowRegister(false)}
+        />
+      );
+    }
+    return (
+      <Login
+        onSwitchToRegister={() => setShowRegister(true)}
+      />
+    );
   }
 
   return <ProfessionalBEPGenerator user={user} />;
