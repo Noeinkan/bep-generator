@@ -61,7 +61,8 @@ const CONFIG = {
     { title: 'Quality Assurance', icon: CheckCircle, description: 'QA framework and validation processes', category: 'Management' },
     { title: 'Security & Privacy', icon: Shield, description: 'Information security and privacy measures', category: 'Management' },
     { title: 'Training & Competency', icon: BookOpen, description: 'Training requirements and competency levels', category: 'Management' },
-    { title: 'Coordination & Risk', icon: AlertCircle, description: 'Collaboration procedures and risk management', category: 'Management' }
+    { title: 'Coordination & Risk', icon: AlertCircle, description: 'Collaboration procedures and risk management', category: 'Management' },
+    { title: 'Appendices', icon: FileText, description: 'Supporting materials and templates', category: 'Management' }
   ],
 
   formFields: {
@@ -148,6 +149,9 @@ const CONFIG = {
         { name: 'bimGoals', label: 'BIM Goals', required: true, type: 'textarea', rows: 4, placeholder: 'The BIM goals for this project are to enhance design coordination through clash detection reducing RFIs by 40%, improve construction sequencing through 4D modeling resulting in 20% schedule compression, enable accurate cost forecasting through 5D integration achieving ±2% budget variance, and deliver comprehensive digital asset information for lifecycle management supporting 25% reduction in operational costs over the first 5 years.' },
         { name: 'primaryObjectives', label: 'Primary Objectives', type: 'textarea', rows: 3, placeholder: 'Primary objectives include: eliminating design conflicts before construction through rigorous clash detection protocols, optimising building performance through integrated analysis and simulation, enabling efficient construction through accurate quantity extraction and sequencing models, supporting sustainability targets through embedded carbon analysis and energy modeling, and facilitating seamless handover with structured asset data for predictive maintenance and space management.' },
         { name: 'bimUses', label: 'BIM Uses', required: true, type: 'checkbox', options: 'bimUses' },
+        { name: 'bimValueApplications', label: 'BIM Applications for Project Value', required: true, type: 'textarea', rows: 4, placeholder: 'BIM will maximize project value through: 4D scheduling for time optimization reducing construction duration by 15%, energy modeling for sustainability compliance achieving BREEAM Excellent rating, life-cycle costing analysis enabling informed material selections with 20-year cost projections, design alternative evaluations through parametric modeling supporting value engineering decisions, pre-fabrication coordination reducing on-site assembly time by 30%, stakeholder visualization for enhanced buy-in and reduced change orders, and comprehensive digital asset creation supporting £2M+ operational cost savings over building lifecycle.' },
+        { name: 'valueMetrics', label: 'Success Metrics and Value Measurement', required: true, type: 'table', columns: ['Value Area', 'Target Metric', 'Measurement Method', 'Baseline/Benchmark'] },
+        { name: 'strategicAlignment', label: 'Alignment with Client Strategic Objectives', type: 'textarea', rows: 3, placeholder: 'BIM strategy directly supports client objectives including: 15% reduction in total project delivery time through optimized sequencing, achievement of net-zero carbon targets through integrated energy modeling, enhanced asset performance through digital twin implementation, improved tenant satisfaction via optimized space planning and MEP design, future-proofing for smart building integration, and comprehensive data foundation for predictive maintenance reducing operational costs by 25% annually.' },
         { name: 'collaborativeProductionGoals', label: 'Objectives/Goals for the Collaborative Production of Information', type: 'textarea', rows: 4, placeholder: 'Collaborative production goals focus on establishing unified data standards across all disciplines, implementing real-time model coordination through federated workflows, ensuring consistent information delivery at all project milestones, maintaining version control integrity throughout design development, facilitating transparent communication through shared visualisation platforms, and creating comprehensive audit trails for decision-making accountability whilst adhering to ISO 19650 information management principles.' },
         { name: 'alignmentStrategy', label: 'Approach to Facilitating Information Management Goals', type: 'textarea', rows: 3, placeholder: 'Our alignment strategy implements weekly coordination meetings with federated model reviews, establishes clear responsibility matrices for information production and validation, deploys standardised naming conventions and file structures across all disciplines, utilises automated quality checking workflows to ensure compliance, maintains continuous training programmes for team competency development, and implements performance monitoring through defined KPIs including model accuracy, delivery timeliness, and information completeness metrics.' }
       ]
@@ -211,6 +215,9 @@ const CONFIG = {
         { name: 'modelingStandards', label: 'Modeling Standards', required: true, type: 'table', columns: ['Standard/Guideline', 'Version', 'Application Area', 'Compliance Level'] },
         { name: 'namingConventions', label: 'Naming Conventions', required: true, type: 'textarea', rows: 3 },
         { name: 'fileStructure', label: 'File Structure', type: 'textarea', rows: 3 },
+        { name: 'volumeStrategy', label: 'Volume Strategy and Model Breakdown', required: true, type: 'textarea', rows: 4, placeholder: 'Model breakdown strategy by building zones and disciplines: ARC (Architecture) models by floor levels (L00-L08), STR (Structural) models by structural zones (SZ01-SZ04), MEP (Mechanical/Electrical/Plumbing) models by service zones (MZ01-MZ03), Site models (SITE) for external works, and multi-zone models (ZZ) for coordination across boundaries. Each volume maintains consistent spatial relationships and coordinate systems for effective federation and clash detection.' },
+        { name: 'classificationSystems', label: 'Classification Systems and Coding', required: true, type: 'table', columns: ['Classification System', 'Application Area', 'Code Format', 'Responsibility'] },
+        { name: 'classificationStandards', label: 'Classification Standards Implementation', type: 'textarea', rows: 3, placeholder: 'Implementation of Uniclass 2015 classification system for all building elements and spaces. Element codes follow format: Ss_25_30_05 for structural concrete elements, Pr_35_31_26 for MEP equipment, and Ac_45_10_12 for architectural finishes. Space classification using SfB/Uniclass codes for consistent asset data preparation and facilities management integration. All team members trained on classification requirements with quality checking procedures to ensure compliance.' },
         { name: 'versionControl', label: 'Version Control', type: 'table', columns: ['Document Type', 'Version Format', 'Approval Process', 'Archive Location'] },
         { name: 'dataExchangeProtocols', label: 'Data Exchange Protocols', type: 'table', columns: ['Exchange Type', 'Format', 'Frequency', 'Delivery Method'] }
       ]
@@ -263,6 +270,18 @@ const CONFIG = {
         { name: 'updateProcesses', label: 'Update Processes', type: 'textarea', rows: 3 },
         { name: 'projectKpis', label: 'Project Key Performance Indicators (KPIs)', type: 'table', columns: ['KPI Name', 'Target Value', 'Measurement Method', 'Responsibility'] }
       ]
+    },
+    13: {
+      title: 'Appendices',
+      fields: [
+        { name: 'responsibilityMatrix', label: 'Appendix A: Responsibility Matrix Template', required: true, type: 'table', columns: ['Role/Task', 'Responsible', 'Accountable', 'Consulted', 'Informed'] },
+        { name: 'cobieRequirements', label: 'Appendix B: COBie Data Requirements', required: true, type: 'table', columns: ['Component Type', 'Required Parameters', 'Data Source', 'Validation Method'] },
+        { name: 'fileNamingExamples', label: 'Appendix C: File Naming Convention Examples', required: true, type: 'textarea', rows: 6, placeholder: 'Comprehensive file naming examples:\n\nProject Models:\nGF-SAA-L02-ARC-001 (Greenfield-Smith Associates-Level 02-Architecture-Model 001)\nGF-JEL-SZ1-STR-002 (Greenfield-Jones Engineering-Structural Zone 1-Structure-Model 002)\nGF-TSS-MZ2-MEP-003 (Greenfield-TechServ Solutions-MEP Zone 2-Services-Model 003)\n\nDrawings:\nGF-SAA-ZZ-ARC-DR-A-1001 (General Arrangement Plans)\nGF-JEL-ZZ-STR-DR-S-2001 (Structural General Arrangement)\nGF-TSS-L03-MEP-DR-M-3001 (Level 3 Mechanical Plans)\n\nDocuments:\nGF-SAA-ZZ-ARC-SP-001 (Architectural Specification)\nGF-CMP-ZZ-QS-RP-001 (Cost Report)\nGF-ALL-ZZ-PM-MR-001 (Project Meeting Minutes)' },
+        { name: 'exchangeWorkflow', label: 'Appendix D: Information Exchange Workflow Template', required: true, type: 'table', columns: ['Exchange Point', 'Information Required', 'Format', 'Quality Checks', 'Approval Process'] },
+        { name: 'modelCheckingCriteria', label: 'Appendix E: Model Quality Checking Criteria', type: 'table', columns: ['Check Type', 'Acceptance Criteria', 'Tools Used', 'Frequency'] },
+        { name: 'softwareVersionMatrix', label: 'Appendix F: Software Version Compatibility Matrix', type: 'table', columns: ['Software', 'Version', 'File Formats Supported', 'Interoperability Notes'] },
+        { name: 'deliverableTemplates', label: 'Appendix G: Information Deliverable Templates', type: 'textarea', rows: 4, placeholder: 'Standard templates and schedules for key deliverables:\n\n- Task Information Delivery Plan (TIDP) Template\n- Model Element Checklist Template\n- Quality Assurance Report Template\n- Clash Detection Report Template\n- Progress Report Template\n- Information Exchange Record Template\n- Asset Data Handover Template\n\nAll templates available in project CDE Templates folder with version control and approval workflows.' }
+      ]
     }
   },
 
@@ -272,7 +291,7 @@ const CONFIG = {
     if (stepIndex <= 2 && CONFIG.formFields[bepType] && CONFIG.formFields[bepType][stepIndex]) {
       return CONFIG.formFields[bepType][stepIndex];
     }
-    // For steps 3-12, use shared fields
+    // For steps 3-13, use shared fields
     if (stepIndex >= 3 && CONFIG.sharedFormFields[stepIndex]) {
       return CONFIG.sharedFormFields[stepIndex];
     }

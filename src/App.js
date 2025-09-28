@@ -76,14 +76,21 @@ const INITIAL_DATA = {
     { 'Role/Service': 'Specialist Facades', 'Company Name': 'Curtain Wall Experts Ltd.', 'Lead Contact': 'David Wilson - d.wilson@cwe.com', 'Contract Value': '£4.5M' }
   ],
   resourceAllocation: 'Project staffing confirmed: 2x Senior BIM Coordinators, 4x Discipline BIM Modelers, 1x Information Manager, 1x CDE Administrator. Weekly allocation: 40 hours coordination, 160 hours modeling, 20 hours QA/QC.',
+  informationManagementResponsibilities: 'Sarah Johnson, Information Manager, oversees all information production, validation, and exchange protocols in full compliance with ISO 19650-2:2018. Key responsibilities include establishing CDE governance structures, coordinating Task Information Delivery Plans (TIDPs) across all disciplines, ensuring model federation quality and consistency, implementing information security protocols including access controls and audit procedures, conducting weekly quality audits of information deliverables, facilitating cross-disciplinary coordination meetings, managing version control and approval workflows, monitoring compliance with established naming conventions and standards, coordinating client information exchanges and milestone reviews, and providing regular progress reports to project leadership on information delivery performance.',
+  organizationalStructure: 'The delivery team operates under a Lead Appointed Party structure with Smith & Associates Architects as the primary coordinator reporting directly to ABC Development Corporation. The organizational hierarchy includes: Project Director (Michael Thompson - overall project governance), Information Manager (Sarah Johnson - ISO 19650 compliance and data coordination), Design Team Coordinator (James Wilson - discipline coordination), and four Task Team Leaders representing Architecture (Emma Davis), Structural Engineering (Robert Chen), MEP Engineering (Lisa Rodriguez), and Quantity Surveying (David Kumar). Supporting specialists include Sustainability Consultant (Green Building Associates), Facade Engineer (Advanced Envelope Solutions), and Cost Manager (Value Engineering Partners). All parties maintain direct contractual relationships with the client while operating through established collaboration agreements, shared CDE protocols, and unified project communication channels to ensure seamless information exchange and coordinated delivery.',
+  taskTeamsBreakdown: [
+    { 'Task Team': 'Architecture', 'Leader': 'Emma Davis (Smith & Associates)', 'Members': '6 architects, 2 BIM specialists, 1 visualization expert', 'Responsibilities': 'Design development, spatial coordination, building envelope design, interior layouts, accessibility compliance, planning submission drawings, and architectural specification preparation' },
+    { 'Task Team': 'Structural Engineering', 'Leader': 'Robert Chen (Engineering Excellence)', 'Members': '4 structural engineers, 1 BIM coordinator, 1 analysis specialist', 'Responsibilities': 'Structural design and analysis, foundation design, steel/concrete detailing, connection design, loading calculations, construction sequence planning, and structural model coordination' },
+    { 'Task Team': 'MEP Engineering', 'Leader': 'Lisa Rodriguez (Advanced Systems)', 'Members': '5 MEP engineers, 2 BIM modelers, 1 sustainability engineer', 'Responsibilities': 'HVAC system design, electrical distribution, plumbing design, fire protection systems, building automation integration, energy modeling, and MEP coordination with architecture' },
+    { 'Task Team': 'Quantity Surveying', 'Leader': 'David Kumar (Cost Management Partners)', 'Members': '2 quantity surveyors, 1 cost planner, 1 data analyst', 'Responsibilities': 'Cost planning and control, quantity extraction from BIM models, value engineering analysis, tender documentation, contract administration, and lifecycle cost assessment' },
+    { 'Task Team': 'Information Management', 'Leader': 'Sarah Johnson (BIM Manager)', 'Members': '2 information coordinators, 1 CDE administrator, 1 quality controller', 'Responsibilities': 'CDE management, model federation, quality assurance, standards compliance, information delivery coordination, and client liaison for information requirements' }
+  ],
   confirmedBimGoals: 'The confirmed BIM goals include implementing collaborative workflows to achieve improved design coordination, reduced construction conflicts, optimized delivery timelines, and comprehensive digital asset creation for facility management.',
   implementationObjectives: 'Implementation objectives include zero design conflicts at construction, 40% reduction in RFIs, improved construction efficiency, and delivery of comprehensive FM data for operations.',
   finalBimUses: ['Design Authoring', '3D Coordination', 'Clash Detection', 'Quantity Take-off', '4D Planning'],
 
   // Legacy fields for backward compatibility
-  bimGoals: 'Implement a collaborative BIM workflow to improve design coordination, reduce construction conflicts, optimize project delivery timelines, and establish a comprehensive digital asset for facility management handover.',
   bimUses: ['Design Authoring', '3D Coordination', 'Clash Detection', 'Quantity Take-off', '4D Planning'],
-  primaryObjectives: 'Achieve zero design conflicts at construction stage, reduce RFIs by 40%, improve construction efficiency, and deliver comprehensive FM data for operations.',
   // Legacy fields for backward compatibility (converted from table format)
   taskTeamLeaders: 'Architecture: John Smith (Modern Design Associates)\nStructural: Emily Chen (Engineering Excellence Ltd.)\nMEP: Michael Rodriguez (Advanced Systems Group)\nFacades: David Wilson (Curtain Wall Experts Ltd.)',
   appointedParties: 'Architecture: Modern Design Associates\nStructural: Engineering Excellence Ltd.\nMEP: Advanced Systems Group\nQuantity Surveyor: Cost Management Partners\nSpecialist Facades: Curtain Wall Experts Ltd.',
@@ -102,17 +109,12 @@ const INITIAL_DATA = {
   ],
   deliverySchedule: 'Monthly model updates during design phases, weekly coordination cycles during construction documentation, and daily updates during critical construction phases.',
   tidpRequirements: 'Each task team must produce TIDPs detailing their information deliverables, responsibilities, quality requirements, and delivery schedules in alignment with project milestones.',
-  cdeProvider: 'Autodesk BIM 360',
-  cdePlatform: 'BIM 360 Design & Docs - Enterprise Version 2024',
   workflowStates: [
     { 'State Name': 'Work in Progress (WIP)', 'Description': 'Active development by task teams', 'Access Level': 'Author only', 'Next State': 'Shared' },
     { 'State Name': 'Shared', 'Description': 'Available for coordination and review', 'Access Level': 'Team members', 'Next State': 'Published' },
     { 'State Name': 'Published', 'Description': 'Approved for use by the project team', 'Access Level': 'All stakeholders', 'Next State': 'Archived' },
     { 'State Name': 'Archived', 'Description': 'Historical versions for reference', 'Access Level': 'Read-only access', 'Next State': 'N/A' }
   ],
-  accessControl: 'Role-based access with project administrator, discipline leads, team members, and read-only stakeholder levels. Multi-factor authentication required for all users.',
-  securityMeasures: 'ISO 27001 compliant platform with end-to-end encryption, regular security audits, data residency controls, and comprehensive audit logging.',
-  backupProcedures: 'Automated daily backups with 30-day retention, weekly full system backups, geographic redundancy, and quarterly disaster recovery testing.',
   bimSoftware: ['Autodesk Revit', 'Navisworks', 'Solibri Model Checker', 'BIM 360'],
   fileFormats: ['IFC 4', 'DWG', 'PDF', 'BCF 2.1', 'NWD'],
   hardwareRequirements: 'Minimum: Intel i7 or equivalent, 32GB RAM, dedicated graphics card (RTX 3060 or higher), 1TB SSD storage, dual monitors recommended.',
@@ -179,7 +181,52 @@ const INITIAL_DATA = {
   cdePlatform: 'BIM 360 Design v2024.1',
   accessControl: 'Role-based access control with Project Administrator, Design Team, Review Team, and Client View permissions. Multi-factor authentication required for all users. Project folders restricted by discipline with read/write permissions assigned per project phase. Guest access limited to 30-day periods with approval workflows.',
   securityMeasures: 'End-to-end encryption for data in transit and at rest using AES-256 standards. SSL/TLS certificates for secure connections. Regular security audits and penetration testing. ISO 27001 certified cloud infrastructure. Automated malware scanning for all uploads. Data residency compliance with UK GDPR requirements.',
-  backupProcedures: 'Automated daily backups with 30-day retention policy. Weekly full system backups with 12-month retention. Geo-redundant storage across multiple UK data centres. 99.9% uptime SLA with disaster recovery protocols. Regular backup integrity testing and documented restoration procedures. Monthly backup verification reports.'
+  backupProcedures: 'Automated daily backups with 30-day retention policy. Weekly full system backups with 12-month retention. Geo-redundant storage across multiple UK data centres. 99.9% uptime SLA with disaster recovery protocols. Regular backup integrity testing and documented restoration procedures. Monthly backup verification reports.',
+
+  // Volume Strategy and Classification Systems
+  volumeStrategy: 'Model breakdown strategy by building zones and disciplines: ARC (Architecture) models by floor levels (L00-L08), STR (Structural) models by structural zones (SZ01-SZ04), MEP (Mechanical/Electrical/Plumbing) models by service zones (MZ01-MZ03), Site models (SITE) for external works, and multi-zone models (ZZ) for coordination across boundaries. Each volume maintains consistent spatial relationships and coordinate systems for effective federation and clash detection.',
+  classificationSystems: [
+    { 'Classification System': 'Uniclass 2015', 'Application Area': 'Building Elements', 'Code Format': 'Ss_25_30_05', 'Responsibility': 'All Disciplines' },
+    { 'Classification System': 'Uniclass 2015', 'Application Area': 'MEP Equipment', 'Code Format': 'Pr_35_31_26', 'Responsibility': 'MEP Engineers' },
+    { 'Classification System': 'Uniclass 2015', 'Application Area': 'Architectural Elements', 'Code Format': 'Ac_45_10_12', 'Responsibility': 'Architects' },
+    { 'Classification System': 'SfB/Uniclass', 'Application Area': 'Space Classification', 'Code Format': '(21) Office Areas', 'Responsibility': 'Space Planning Team' },
+    { 'Classification System': 'COBie Classification', 'Application Area': 'Asset Data', 'Code Format': 'Type.Component.Asset', 'Responsibility': 'Information Manager' }
+  ],
+  classificationStandards: 'Implementation of Uniclass 2015 classification system for all building elements and spaces. Element codes follow format: Ss_25_30_05 for structural concrete elements, Pr_35_31_26 for MEP equipment, and Ac_45_10_12 for architectural finishes. Space classification using SfB/Uniclass codes for consistent asset data preparation and facilities management integration. All team members trained on classification requirements with quality checking procedures to ensure compliance.',
+
+  // BIM Value Applications
+  bimValueApplications: 'BIM will maximize project value through: 4D scheduling for time optimization reducing construction duration by 15%, energy modeling for sustainability compliance achieving BREEAM Excellent rating, life-cycle costing analysis enabling informed material selections with 20-year cost projections, design alternative evaluations through parametric modeling supporting value engineering decisions, pre-fabrication coordination reducing on-site assembly time by 30%, stakeholder visualization for enhanced buy-in and reduced change orders, and comprehensive digital asset creation supporting £2M+ operational cost savings over building lifecycle.',
+  valueMetrics: [
+    { 'Value Area': 'Schedule Optimization', 'Target Metric': '15% reduction in construction duration', 'Measurement Method': '4D model analysis vs baseline schedule', 'Baseline/Benchmark': '24-month traditional schedule' },
+    { 'Value Area': 'Cost Reduction', 'Target Metric': '£500k savings through clash elimination', 'Measurement Method': 'Clash detection reports and change order tracking', 'Baseline/Benchmark': 'Industry average 3% RFI costs' },
+    { 'Value Area': 'Sustainability Performance', 'Target Metric': 'BREEAM Excellent rating achievement', 'Measurement Method': 'Energy modeling validation', 'Baseline/Benchmark': 'Building Regulations Part L compliance' },
+    { 'Value Area': 'Operational Efficiency', 'Target Metric': '25% reduction in FM costs', 'Measurement Method': 'Digital twin performance monitoring', 'Baseline/Benchmark': 'Industry benchmark £150/m²/year' },
+    { 'Value Area': 'Quality Improvement', 'Target Metric': '40% reduction in RFIs', 'Measurement Method': 'Design coordination metrics', 'Baseline/Benchmark': 'Previous project average 120 RFIs' }
+  ],
+  strategicAlignment: 'BIM strategy directly supports client objectives including: 15% reduction in total project delivery time through optimized sequencing, achievement of net-zero carbon targets through integrated energy modeling, enhanced asset performance through digital twin implementation, improved tenant satisfaction via optimized space planning and MEP design, future-proofing for smart building integration, and comprehensive data foundation for predictive maintenance reducing operational costs by 25% annually.',
+
+  // Appendices Data
+  responsibilityMatrix: [
+    { 'Role/Task': 'Model Authoring - Architecture', 'Responsible': 'Lead Architect', 'Accountable': 'Project Director', 'Consulted': 'Planning Consultant', 'Informed': 'Client, Construction Team' },
+    { 'Role/Task': 'Model Authoring - Structure', 'Responsible': 'Structural Engineer', 'Accountable': 'Engineering Manager', 'Consulted': 'Architect, MEP Engineer', 'Informed': 'QS, Construction Team' },
+    { 'Role/Task': 'Model Authoring - MEP', 'Responsible': 'MEP Engineer', 'Accountable': 'MEP Manager', 'Consulted': 'Architect, Structural', 'Informed': 'FM Team, Client' },
+    { 'Role/Task': 'Clash Detection', 'Responsible': 'BIM Manager', 'Accountable': 'Information Manager', 'Consulted': 'All Disciplines', 'Informed': 'Project Team' },
+    { 'Role/Task': 'Model Federation', 'Responsible': 'Information Manager', 'Accountable': 'Project Director', 'Consulted': 'BIM Manager', 'Informed': 'Stakeholders' }
+  ],
+  cobieRequirements: [
+    { 'Component Type': 'Doors', 'Required Parameters': 'Fire Rating, U-Value, Warranty Period, Manufacturer, Model', 'Data Source': 'Architectural Model + Specification', 'Validation Method': 'Automated checking + Manual review' },
+    { 'Component Type': 'Windows', 'Required Parameters': 'U-Value, Solar Heat Gain, Acoustic Rating, Warranty, Installation Date', 'Data Source': 'Architectural Model + Product Data', 'Validation Method': 'IFC export validation + COBie reports' },
+    { 'Component Type': 'HVAC Equipment', 'Required Parameters': 'Capacity, Energy Rating, Maintenance Schedule, Serial Number, Commissioning Date', 'Data Source': 'MEP Model + Equipment Schedules', 'Validation Method': 'Equipment database validation' },
+    { 'Component Type': 'Lighting Fixtures', 'Required Parameters': 'Wattage, Light Output, Control System, Replacement Cycle, Warranty', 'Data Source': 'MEP Model + Lighting Schedules', 'Validation Method': 'Automated parameter checking' },
+    { 'Component Type': 'Structural Elements', 'Required Parameters': 'Material Grade, Load Capacity, Fire Rating, Installation Date, Inspection Schedule', 'Data Source': 'Structural Model + Material Data', 'Validation Method': 'Structural analysis integration' }
+  ],
+  fileNamingExamples: 'Comprehensive file naming examples:\n\nProject Models:\nGF-SAA-L02-ARC-001 (Greenfield-Smith Associates-Level 02-Architecture-Model 001)\nGF-JEL-SZ1-STR-002 (Greenfield-Jones Engineering-Structural Zone 1-Structure-Model 002)\nGF-TSS-MZ2-MEP-003 (Greenfield-TechServ Solutions-MEP Zone 2-Services-Model 003)\n\nDrawings:\nGF-SAA-ZZ-ARC-DR-A-1001 (General Arrangement Plans)\nGF-JEL-ZZ-STR-DR-S-2001 (Structural General Arrangement)\nGF-TSS-L03-MEP-DR-M-3001 (Level 3 Mechanical Plans)\n\nDocuments:\nGF-SAA-ZZ-ARC-SP-001 (Architectural Specification)\nGF-CMP-ZZ-QS-RP-001 (Cost Report)\nGF-ALL-ZZ-PM-MR-001 (Project Meeting Minutes)',
+  exchangeWorkflow: [
+    { 'Exchange Point': 'Design Development Review', 'Information Required': 'Coordinated discipline models, clash reports, design drawings', 'Format': 'IFC 4, BCF 2.1, PDF', 'Quality Checks': 'Model validation, clash detection, drawing coordination', 'Approval Process': 'Discipline lead review, IM approval, client sign-off' },
+    { 'Exchange Point': 'Technical Design Milestone', 'Information Required': 'Construction-ready models, specifications, quantities', 'Format': 'IFC 4, native files, schedules', 'Quality Checks': 'Construction readiness check, quantity validation', 'Approval Process': 'Technical review, QS validation, project director approval' },
+    { 'Exchange Point': 'Construction Handover', 'Information Required': 'As-built models, COBie data, O&M information', 'Format': 'IFC 4, COBie, PDF manuals', 'Quality Checks': 'As-built verification, data completeness check', 'Approval Process': 'Construction team verification, client acceptance' },
+    { 'Exchange Point': 'Facilities Management Handover', 'Information Required': 'Digital twin, asset data, maintenance schedules', 'Format': 'COBie, digital twin platform, maintenance systems', 'Quality Checks': 'Data integration testing, system functionality', 'Approval Process': 'FM team acceptance, operational readiness confirmation' }
+  ]
 };
 
 // Componenti riutilizzabili
