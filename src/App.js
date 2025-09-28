@@ -399,7 +399,7 @@ const FormStep = React.memo(({ stepIndex, formData, updateFormData, errors, bepT
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {stepConfig.fields.map(field => (
-          <div key={field.name} className={field.type === 'textarea' || field.type === 'checkbox' || field.type === 'table' ? 'md:col-span-2' : ''}>
+          <div key={field.name} className={field.type === 'textarea' || field.type === 'checkbox' || field.type === 'table' || field.type === 'fileStructure' || field.type === 'cdeDiagram' ? 'md:col-span-2' : ''}>
             <InputField
               field={field}
               value={formData[field.name]}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Users } from 'lucide-react';
+import FormattedTextEditor from './FormattedTextEditor';
 
 const EditableTable = React.memo(({ field, value, onChange, error }) => {
   const { name, label, required, columns = ['Role/Discipline', 'Name/Company', 'Experience/Notes'] } = field;
@@ -115,10 +116,10 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
                     </td>
                     {columns.map(column => (
                       <td key={column} className="px-1 py-2">
-                        <textarea
+                        <FormattedTextEditor
                           value={row[column] || ''}
-                          onChange={(e) => updateCell(rowIndex, column, e.target.value)}
-                          className="w-full min-h-[100px] p-2 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm resize-y"
+                          onChange={(newValue) => updateCell(rowIndex, column, newValue)}
+                          className="text-sm"
                           placeholder={`Enter ${column.toLowerCase()}...`}
                           rows={4}
                         />

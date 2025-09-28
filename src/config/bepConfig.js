@@ -216,9 +216,9 @@ const CONFIG = {
         { name: 'namingConventions', label: 'Naming Conventions', required: true, type: 'table', columns: ['Element Type', 'Naming Format', 'Example', 'Description'] },
         { name: 'fileStructure', label: 'File Structure', type: 'textarea', rows: 3 },
         { name: 'fileStructureDiagram', label: 'File Structure Diagram', type: 'fileStructure' },
-        { name: 'volumeStrategy', label: 'Volume Strategy and Model Breakdown', required: true, type: 'textarea', rows: 4, placeholder: 'Model breakdown strategy by building zones and disciplines: ARC (Architecture) models by floor levels (L00-L08), STR (Structural) models by structural zones (SZ01-SZ04), MEP (Mechanical/Electrical/Plumbing) models by service zones (MZ01-MZ03), Site models (SITE) for external works, and multi-zone models (ZZ) for coordination across boundaries. Each volume maintains consistent spatial relationships and coordinate systems for effective federation and clash detection.' },
+        { name: 'volumeStrategy', label: 'Volume Strategy and Model Breakdown', required: true, type: 'cdeDiagram' },
         { name: 'classificationSystems', label: 'Classification Systems and Coding', required: true, type: 'table', columns: ['Classification System', 'Application Area', 'Code Format', 'Responsibility'] },
-        { name: 'classificationStandards', label: 'Classification Standards Implementation', type: 'textarea', rows: 3, placeholder: 'Implementation of Uniclass 2015 classification system for all building elements and spaces. Element codes follow format: Ss_25_30_05 for structural concrete elements, Pr_35_31_26 for MEP equipment, and Ac_45_10_12 for architectural finishes. Space classification using SfB/Uniclass codes for consistent asset data preparation and facilities management integration. All team members trained on classification requirements with quality checking procedures to ensure compliance.' },
+        { name: 'classificationStandards', label: 'Classification Standards Implementation', type: 'table', columns: ['Element Category', 'Classification System', 'Code Format', 'Example Code', 'Description'] },
         { name: 'dataExchangeProtocols', label: 'Data Exchange Protocols', type: 'table', columns: ['Exchange Type', 'Format', 'Frequency', 'Delivery Method'] }
       ]
     },

@@ -253,7 +253,7 @@ const FileStructureDiagram = ({ field, value, onChange, error }) => {
                 >
                   {shouldShowLine && (
                     <div
-                      className="absolute left-2 top-0 w-px bg-gray-300"
+                      className="absolute left-2 top-0 w-px bg-gray-400"
                       style={{ height: '24px' }}
                     />
                   )}
@@ -265,20 +265,27 @@ const FileStructureDiagram = ({ field, value, onChange, error }) => {
                 {/* Vertical line from parent */}
                 {!isLast && (
                   <div
-                    className="absolute left-2 top-0 w-px bg-gray-300"
+                    className="absolute left-2 top-0 w-px bg-gray-400"
                     style={{ height: '24px' }}
                   />
                 )}
                 {/* Horizontal line to folder */}
                 <div
-                  className="absolute top-3 left-2 h-px bg-gray-300"
+                  className="absolute top-3 left-2 h-px bg-gray-400"
                   style={{ width: '10px' }}
                 />
                 {/* Vertical line up to parent */}
                 <div
-                  className="absolute left-2 top-0 w-px bg-gray-300"
+                  className="absolute left-2 top-0 w-px bg-gray-400"
                   style={{ height: '12px' }}
                 />
+                {/* Corner connector for last item */}
+                {isLast && (
+                  <div
+                    className="absolute left-2 top-0 w-px bg-gray-400"
+                    style={{ height: '12px' }}
+                  />
+                )}
               </div>
             </div>
           )}
@@ -382,7 +389,11 @@ const FileStructureDiagram = ({ field, value, onChange, error }) => {
         {/* Children */}
         {isExpanded && hasChildren && (
           <div>
-            {folder.children.map(child => renderFolder(child, level + 1, folder.id))}
+            {folder.children.map((child, index) => {
+              const isLastChild = index === folder.children.length - 1;
+              const newAncestorLines = [...ancestorLines, !isLast];
+              return renderFolder(child, level + 1, folder.id, isLastChild, newAncestorLines);
+            })}
           </div>
         )}
       </div>
@@ -390,12 +401,12 @@ const FileStructureDiagram = ({ field, value, onChange, error }) => {
   };
 
   return (
-    <div className="mb-8">
+    <div className="mb-8 w-full">
       <label className="block text-lg font-semibold mb-4 text-gray-800">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
 
-      <div className="border rounded-xl overflow-hidden shadow-sm bg-white">
+      <div className="w-full border rounded-xl overflow-hidden shadow-sm bg-white">
         <div className="bg-gradient-to-r from-blue-50 to-blue-100 px-6 py-4 border-b border-blue-200">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-3">
@@ -415,11 +426,14 @@ const FileStructureDiagram = ({ field, value, onChange, error }) => {
           </p>
         </div>
 
-        <div className="p-6 bg-gray-50 max-h-96 overflow-y-auto">
-          {structure.map(folder => renderFolder(folder))}
+        <div className="w-full p-6 bg-gray-50 min-h-80 max-h-[600px] overflow-y-auto">
+          {structure.map((folder, index) => {
+            const isLastRoot = index === structure.length - 1;
+            return renderFolder(folder, 0, null, isLastRoot, []);
+          })}
         </div>
 
-        <div className="bg-gray-100 px-6 py-3 border-t">
+        <div className="w-full bg-gray-100 px-6 py-3 border-t">
           <p className="text-xs text-gray-600">
             💡 Tip: Use the action buttons to add subfolders, rename, reorder, or delete folders.
             The text representation is automatically updated and saved to your BEP.

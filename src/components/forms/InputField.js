@@ -2,6 +2,8 @@ import React from 'react';
 import CONFIG from '../../config/bepConfig';
 import EditableTable from './EditableTable';
 import FileStructureDiagram from './FileStructureDiagram';
+import CDEDiagramBuilder from './CDEDiagramBuilder';
+import FormattedTextEditor from './FormattedTextEditor';
 
 const InputField = React.memo(({ field, value, onChange, error }) => {
   const { name, label, type, required, rows, placeholder, options: fieldOptions } = field;
@@ -38,19 +40,29 @@ const InputField = React.memo(({ field, value, onChange, error }) => {
         />
       );
 
+    case 'cdeDiagram':
+      return (
+        <CDEDiagramBuilder
+          field={field}
+          value={value}
+          onChange={onChange}
+          error={error}
+        />
+      );
+
     case 'textarea':
       return (
         <div>
           <label htmlFor={name} className="block text-sm font-medium mb-2">
             {label} {required && '*'}
           </label>
-          <textarea
+          <FormattedTextEditor
             id={name}
             aria-required={required}
             value={value || ''}
-            onChange={(e) => onChange(name, e.target.value)}
+            onChange={(newValue) => onChange(name, newValue)}
             rows={rows || 3}
-            className={baseClasses}
+            className=""
             placeholder={placeholder || `Enter ${label.toLowerCase()}...`}
           />
           {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
