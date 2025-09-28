@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { ChevronRight, ChevronLeft, Eye } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Eye, Zap } from 'lucide-react';
 import { Packer } from 'docx';
 import DOMPurify from 'dompurify';
 

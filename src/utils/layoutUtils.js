@@ -25,7 +25,7 @@ export const organizeNodesRadial = (mindmapData) => {
 
       // Position grandchildren in larger circles extending outward from their parents
       if (child.children && child.children.length > 0) {
-        const childAngleStep = (2 * Math.PI) / child.children.length;
+        // const childAngleStep = (2 * Math.PI) / child.children.length;
         const childRadius = 150; // Increased from 100 for more external positioning
 
         // Calculate base angle from root to parent to orient children outward
@@ -40,7 +40,7 @@ export const organizeNodesRadial = (mindmapData) => {
           // For great-grandchildren, continue the radial pattern even further out
           if (grandchild.children && grandchild.children.length > 0) {
             const greatChildRadius = 120;
-            const greatChildAngleStep = (2 * Math.PI) / grandchild.children.length;
+            // const greatChildAngleStep = (2 * Math.PI) / grandchild.children.length;
             const greatParentAngle = Math.atan2(grandchild.y - child.y, grandchild.x - child.x);
 
             grandchild.children.forEach((greatGrandchild, ggIndex) => {
@@ -64,55 +64,164 @@ export const organizeNodesTree = (mindmapData) => {
   result.x = 500;
   result.y = 100;
 
-  // Track occupied positions to detect collisions
+  // Track branch zones to prevent interference between different branches
+  const branchZones = new Map(); // key: branchId, value: { minX, maxX, maxY }
   const occupiedPositions = new Map(); // key: "x,y", value: node
+
+  // Calculate branch zones for root children to create non-interference corridors
+  const calculateBranchZones = (rootNode) => {
+    if (!rootNode.children || rootNode.children.length === 0) return;
+
+    const branchWidth = 300; // Width allocated to each main branch
+    const branchSpacing = 50; // Additional spacing between branches
+    const totalBranchWidth = branchWidth + branchSpacing;
+
+    // Calculate total width needed for all branches
+    const totalWidth = rootNode.children.length * totalBranchWidth - branchSpacing;
+    const startX = rootNode.x - totalWidth / 2;
+
+    rootNode.children.forEach((child, index) => {
+      const branchCenterX = startX + index * totalBranchWidth + branchWidth / 2;
+      const branchMinX = branchCenterX - branchWidth / 2;
+      const branchMaxX = branchCenterX + branchWidth / 2;
+
+      branchZones.set(child.id, {
+        minX: branchMinX,
+        maxX: branchMaxX,
+        maxY: rootNode.y + 120, // Start tracking from first level below root
+        centerX: branchCenterX
+      });
+    });
+  };
+
+  // Get the branch zone for a given node by traversing up to find the root child
+  const getBranchZone = (node, allNodes) => {
+    // Find which root child this node belongs to
+    const findRootBranch = (currentNode) => {
+      // Find parent of current node
+      for (const n of allNodes) {
+        if (n.children && n.children.some(child => child.id === currentNode.id)) {
+          if (n.id === result.id) {
+            // Parent is root, so currentNode is a root child
+            return currentNode.id;
+          } else {
+            // Continue traversing up
+            return findRootBranch(n);
+          }
+        }
+      }
+      return null;
+    };
+
+    const rootBranchId = findRootBranch(node);
+    return branchZones.get(rootBranchId);
+  };
+
+  // Collect all nodes for branch detection
+  const getAllNodes = (node, nodes = []) => {
+    nodes.push(node);
+    if (node.children) {
+      node.children.forEach(child => getAllNodes(child, nodes));
+    }
+    return nodes;
+  };
+
+  const allNodes = getAllNodes(result);
 
   const layoutTree = (node, level = 0) => {
     if (!node.children || node.children.length === 0) return;
 
-    // Calculate base vertical position - children are further down from their specific parent
-    const baseChildY = node.y + 180;
+    // Calculate vertical position - children are positioned directly below their parent
+    const verticalSpacing = 120; // Distance between parent and child vertically
+    const baseChildY = node.y + verticalSpacing;
 
-    // Calculate horizontal spacing based on number of children
-    const childSpacing = Math.max(180, 600 / node.children.length);
-    const totalWidth = (node.children.length - 1) * childSpacing;
-    const startX = node.x - totalWidth / 2;
+    // Get branch zone for this node's descendants
+    const branchZone = getBranchZone(node, allNodes);
 
     node.children.forEach((child, index) => {
-      child.x = startX + index * childSpacing;
-      child.y = baseChildY;
+      let proposedX, proposedY;
 
-      // Check for collisions with existing nodes at similar positions
-      const collisionRadius = 120; // Minimum distance between nodes
-      let yOffset = 0;
-      let attempts = 0;
-      const maxAttempts = 10;
+      if (level === 0) {
+        // For root children (main branches), get their specific branch zone
+        const childBranchZone = branchZones.get(child.id);
+        proposedX = childBranchZone ? childBranchZone.centerX : (node.x + (index - (node.children.length - 1) / 2) * 200);
+        proposedY = baseChildY; // All main branches at same vertical level
+      } else {
+        proposedY = baseChildY; // For deeper levels, use normal vertical spacing
+        // For deeper levels, distribute within the branch zone
+        if (branchZone) {
+          const branchWidth = branchZone.maxX - branchZone.minX;
+          const childSpacing = node.children.length > 1 ? branchWidth / (node.children.length + 1) : 0;
+          proposedX = branchZone.minX + (index + 1) * childSpacing;
 
-      while (attempts < maxAttempts) {
-        const currentY = baseChildY + yOffset;
-        let hasCollision = false;
+          // Ensure we stay within branch boundaries
+          proposedX = Math.max(branchZone.minX + 50, Math.min(branchZone.maxX - 50, proposedX));
+        } else {
+          // Fallback to centered distribution if no branch zone found
+          const horizontalSpacing = 150;
+          const totalWidth = (node.children.length - 1) * horizontalSpacing;
+          const startX = node.x - totalWidth / 2;
+          proposedX = startX + index * horizontalSpacing;
+        }
+      }
 
-        // Check all existing nodes for collision
-        for (const [posKey, existingNode] of occupiedPositions) {
-          const [existingX, existingY] = posKey.split(',').map(Number);
-          const distance = Math.sqrt(
-            Math.pow(child.x - existingX, 2) + Math.pow(currentY - existingY, 2)
-          );
+      child.x = proposedX;
 
-          if (distance < collisionRadius && existingNode.id !== child.id) {
-            hasCollision = true;
+      if (level === 0) {
+        // For root children (main branches), they stay on the same horizontal line
+        child.y = proposedY;
+      } else {
+        // For deeper levels, check for vertical collisions within the same branch zone
+        const collisionRadius = 80;
+        let yOffset = 0;
+        let attempts = 0;
+        const maxAttempts = 20;
+
+        while (attempts < maxAttempts) {
+          const currentY = proposedY + yOffset;
+          let hasCollision = false;
+
+          // Check for collisions only within the same branch zone or with nodes outside zones
+          for (const [posKey, existingNode] of occupiedPositions) {
+            const [existingX, existingY] = posKey.split(',').map(Number);
+
+            // Skip collision check if nodes are in different branch zones
+            if (branchZone) {
+              const existingNodeBranch = getBranchZone(existingNode, allNodes);
+              if (existingNodeBranch && existingNodeBranch !== branchZone) {
+                continue; // Different branches, no collision check needed
+              }
+            }
+
+            const distance = Math.sqrt(
+              Math.pow(child.x - existingX, 2) + Math.pow(currentY - existingY, 2)
+            );
+
+            if (distance < collisionRadius && existingNode.id !== child.id) {
+              hasCollision = true;
+              break;
+            }
+          }
+
+          if (!hasCollision) {
+            child.y = currentY;
             break;
           }
+
+          // Try offsetting down in smaller increments
+          yOffset += 35;
+          attempts++;
         }
 
-        if (!hasCollision) {
-          child.y = currentY;
-          break;
+        // If still colliding after max attempts, place it further down
+        if (attempts >= maxAttempts) {
+          child.y = proposedY + yOffset;
         }
+      }
 
-        // Try offsetting down in increments
-        yOffset += 60;
-        attempts++;
+      // Update branch zone max Y to track the extent of this branch
+      if (branchZone && child.y > branchZone.maxY) {
+        branchZone.maxY = child.y;
       }
 
       // Record this node's position
@@ -123,6 +232,9 @@ export const organizeNodesTree = (mindmapData) => {
       layoutTree(child, level + 1);
     });
   };
+
+  // Initialize branch zones for root children
+  calculateBranchZones(result);
 
   // Start the recursive layout from the root
   occupiedPositions.set(`${result.x},${result.y}`, result);
