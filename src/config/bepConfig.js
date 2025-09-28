@@ -236,7 +236,7 @@ const CONFIG = {
     10: {
       title: 'Information Security and Privacy',
       fields: [
-        { name: 'dataClassification', label: 'Data Classification', required: true, type: 'textarea', rows: 3 },
+        { name: 'dataClassification', label: 'Data Classification', required: true, type: 'table', columns: ['Classification Level', 'Description', 'Examples', 'Access Controls'] },
         { name: 'accessPermissions', label: 'Access Permissions', required: true, type: 'textarea', rows: 3 },
         { name: 'encryptionRequirements', label: 'Encryption Requirements', type: 'textarea', rows: 3 },
         { name: 'dataTransferProtocols', label: 'Data Transfer Protocols', type: 'textarea', rows: 3 },

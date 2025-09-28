@@ -172,7 +172,14 @@ const INITIAL_DATA = {
   reviewProcesses: 'Stage gate reviews at each RIBA stage, weekly coordination reviews, monthly progress reviews, and formal design freeze approvals.',
   approvalWorkflows: 'Task team lead approval, discipline coordination review, project manager authorization, and client sign-off for major milestones.',
   complianceVerification: 'Regular audits against ISO 19650 requirements, BIM standards compliance checks, and quality metrics monitoring.',
-  dataClassification: 'Public: Marketing materials\nInternal: Design development work\nConfidential: Commercial information\nRestricted: Security-sensitive building systems',
+  dataClassification: [
+    { 'Classification Level': 'Public', 'Description': 'Information that can be freely shared with external parties', 'Examples': 'Marketing materials, project brochures, general site photos', 'Access Controls': 'No access restrictions, publicly available' },
+    { 'Classification Level': 'Internal', 'Description': 'Information for internal project team use only', 'Examples': 'Design development work, meeting minutes, progress reports', 'Access Controls': 'Project team members only, authenticated access required' },
+    { 'Classification Level': 'Confidential', 'Description': 'Sensitive business information requiring protection', 'Examples': 'Commercial pricing, tender information, contractual details', 'Access Controls': 'Senior team members only, need-to-know basis, encryption required' },
+    { 'Classification Level': 'Restricted', 'Description': 'Highly sensitive information with security implications', 'Examples': 'Security-sensitive building systems, access control details, critical infrastructure plans', 'Access Controls': 'Authorized personnel only, enhanced security measures, audit trails mandatory' },
+    { 'Classification Level': 'Commercial-in-Confidence', 'Description': 'Commercially sensitive information affecting business operations', 'Examples': 'Cost breakdowns, supplier agreements, procurement strategies', 'Access Controls': 'Commercial team only, encrypted storage, controlled distribution' },
+    { 'Classification Level': 'Technical-Confidential', 'Description': 'Technical information requiring specialized protection', 'Examples': 'Detailed BIM models, structural calculations, MEP system designs', 'Access Controls': 'Discipline experts only, version control, watermarked documents' }
+  ],
   accessPermissions: 'Granular permissions based on project roles, need-to-know basis for sensitive information, regular access reviews, and immediate revocation upon project completion.',
   encryptionRequirements: 'AES-256 encryption for data at rest, TLS 1.3 for data in transit, encrypted email for sensitive communications, and secure file transfer protocols.',
   dataTransferProtocols: 'Secure cloud transfer through approved CDE, encrypted email for sensitive documents, secure FTP for large files, and audit trails for all transfers.',
@@ -219,9 +226,19 @@ const INITIAL_DATA = {
     { 'Classification System': 'Uniclass 2015', 'Application Area': 'MEP Equipment', 'Code Format': 'Pr_35_31_26', 'Responsibility': 'MEP Engineers' },
     { 'Classification System': 'Uniclass 2015', 'Application Area': 'Architectural Elements', 'Code Format': 'Ac_45_10_12', 'Responsibility': 'Architects' },
     { 'Classification System': 'SfB/Uniclass', 'Application Area': 'Space Classification', 'Code Format': '(21) Office Areas', 'Responsibility': 'Space Planning Team' },
-    { 'Classification System': 'COBie Classification', 'Application Area': 'Asset Data', 'Code Format': 'Type.Component.Asset', 'Responsibility': 'Information Manager' }
+    { 'Classification System': 'COBie', 'Application Area': 'Asset Data', 'Code Format': 'Type.Component.Asset', 'Responsibility': 'Information Manager' }
   ],
-  classificationStandards: 'Implementation of Uniclass 2015 classification system for all building elements and spaces. Element codes follow format: Ss_25_30_05 for structural concrete elements, Pr_35_31_26 for MEP equipment, and Ac_45_10_12 for architectural finishes. Space classification using SfB/Uniclass codes for consistent asset data preparation and facilities management integration. All team members trained on classification requirements with quality checking procedures to ensure compliance.',
+  classificationStandards: [
+    { 'Element Category': 'Structural Elements', 'Classification System': 'Uniclass 2015', 'Code Format': 'Ss_25_30_05', 'Example Code': 'Ss_25_30_05', 'Description': 'Structural concrete elements' },
+    { 'Element Category': 'MEP Equipment', 'Classification System': 'Uniclass 2015', 'Code Format': 'Pr_35_31_26', 'Example Code': 'Pr_35_31_26', 'Description': 'MEP equipment systems' },
+    { 'Element Category': 'Architectural Elements', 'Classification System': 'Uniclass 2015', 'Code Format': 'Ac_45_10_12', 'Example Code': 'Ac_45_10_12', 'Description': 'Architectural finishes' },
+    { 'Element Category': 'Space Classification', 'Classification System': 'SfB/Uniclass', 'Code Format': '(21) Office Areas', 'Example Code': '(21) Office Areas', 'Description': 'Space classification codes' },
+    { 'Element Category': 'Asset Data', 'Classification System': 'COBie', 'Code Format': 'Type.Component.Asset', 'Example Code': 'Type.Component.Asset', 'Description': 'Asset management data' },
+    { 'Element Category': 'Building Services', 'Classification System': 'Uniclass 2015', 'Code Format': 'Ss_25_40_20', 'Example Code': 'Ss_25_40_20', 'Description': 'HVAC distribution systems' },
+    { 'Element Category': 'Construction Products', 'Classification System': 'Uniclass 2015', 'Code Format': 'Pr_20_93_45', 'Example Code': 'Pr_20_93_45', 'Description': 'Insulation materials and products' },
+    { 'Element Category': 'Work Results', 'Classification System': 'Uniclass 2015', 'Code Format': 'Zz_25_10_35', 'Example Code': 'Zz_25_10_35', 'Description': 'Concrete work execution standards' }
+  ],
+
 
   // BIM Value Applications
   bimValueApplications: 'BIM will maximize project value through: 4D scheduling for time optimization reducing construction duration by 15%, energy modeling for sustainability compliance achieving BREEAM Excellent rating, life-cycle costing analysis enabling informed material selections with 20-year cost projections, design alternative evaluations through parametric modeling supporting value engineering decisions, pre-fabrication coordination reducing on-site assembly time by 30%, stakeholder visualization for enhanced buy-in and reduced change orders, and comprehensive digital asset creation supporting £2M+ operational cost savings over building lifecycle.',

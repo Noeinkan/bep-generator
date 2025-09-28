@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { ChevronRight, ChevronLeft, Eye, Zap } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Eye, Zap, FolderOpen, Save } from 'lucide-react';
 import { Packer } from 'docx';
 import DOMPurify from 'dompurify';
 
@@ -13,6 +13,7 @@ import INITIAL_DATA from './data/initialData';
 import FormStep from './components/steps/FormStep';
 import PreviewExportPage from './components/pages/PreviewExportPage';
 import EnhancedBepTypeSelector from './components/pages/EnhancedBepTypeSelector';
+import DraftManager from './components/pages/DraftManager';
 import { generateBEPContent } from './services/bepFormatter';
 import { generatePDF } from './services/pdfGenerator';
 import { generateDocx } from './services/docxGenerator';
@@ -64,6 +65,9 @@ const ProfessionalBEPGenerator = ({ user }) => {
   const [errors, setErrors] = useState({});
   const [isExporting, setIsExporting] = useState(false);
   const [showBepTypeSelector, setShowBepTypeSelector] = useState(true);
+  const [showDraftManager, setShowDraftManager] = useState(false);
+  const [showSaveDraftDialog, setShowSaveDraftDialog] = useState(false);
+  const [saveDraftName, setSaveDraftName] = useState('');
 
   useEffect(() => {
     const savedData = localStorage.getItem(`bepData_${user.id}`);
@@ -71,7 +75,21 @@ const ProfessionalBEPGenerator = ({ user }) => {
       try {
         const parsedData = JSON.parse(savedData);
         // Merge saved data with INITIAL_DATA to ensure new fields have example values
-        setFormData({ ...INITIAL_DATA, ...parsedData });
+        // Don't overwrite initial data arrays if saved data has empty arrays
+        const mergedData = { ...INITIAL_DATA };
+        Object.keys(parsedData).forEach(key => {
+          const savedValue = parsedData[key];
+          const initialValue = INITIAL_DATA[key];
+
+          // If both are arrays and saved is empty but initial has data, keep initial
+          if (Array.isArray(savedValue) && Array.isArray(initialValue) &&
+              savedValue.length === 0 && initialValue.length > 0) {
+            mergedData[key] = initialValue;
+          } else {
+            mergedData[key] = savedValue;
+          }
+        });
+        setFormData(mergedData);
       } catch (error) {
         console.error('Error parsing saved data:', error);
         // If there's an error, use INITIAL_DATA
@@ -219,9 +237,65 @@ const ProfessionalBEPGenerator = ({ user }) => {
     setCurrentStep(0);
   };
 
+  const handleLoadDraft = (draftData, draftBepType) => {
+    setFormData(draftData);
+    setBepType(draftBepType);
+    setShowDraftManager(false);
+    setShowBepTypeSelector(false);
+    setCurrentStep(0);
+    setCompletedSections(new Set());
+  };
+
+  const handleSaveDraft = () => {
+    if (!bepType) {
+      alert('Seleziona prima il tipo di BEP prima di salvare un draft.');
+      return;
+    }
+    setShowSaveDraftDialog(true);
+  };
+
+  const saveDraft = (name) => {
+    if (!name.trim()) return;
+
+    const draftsKey = `bepDrafts_${user.id}`;
+    const existingDrafts = JSON.parse(localStorage.getItem(draftsKey) || '{}');
+
+    const draftId = Date.now().toString();
+    const draft = {
+      id: draftId,
+      name: name.trim(),
+      data: formData,
+      bepType: bepType,
+      lastModified: new Date().toISOString(),
+      projectName: formData.projectName || 'Progetto senza nome'
+    };
+
+    existingDrafts[draftId] = draft;
+    localStorage.setItem(draftsKey, JSON.stringify(existingDrafts));
+
+    setSaveDraftName('');
+    setShowSaveDraftDialog(false);
+
+    // Show success message
+    alert(`Draft "${name}" salvato con successo!`);
+  };
+
   // Wrapper functions for the services
   const generateBEPContentWrapper = () => generateBEPContent(formData, bepType);
 
+
+  // Show Draft Manager if requested
+  if (showDraftManager) {
+    return (
+      <DraftManager
+        user={user}
+        currentFormData={formData}
+        onLoadDraft={handleLoadDraft}
+        onClose={() => setShowDraftManager(false)}
+        bepType={bepType}
+      />
+    );
+  }
 
   // Show BEP type selector if no type is selected
   if (showBepTypeSelector || !bepType) {
@@ -253,6 +327,22 @@ const ProfessionalBEPGenerator = ({ user }) => {
                 </span>
               </div>
               <div className="flex items-center space-x-3">
+                <button
+                  onClick={handleSaveDraft}
+                  className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg transition-colors"
+                  title="Salva Draft"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>Save Draft</span>
+                </button>
+                <button
+                  onClick={() => setShowDraftManager(true)}
+                  className="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg transition-colors"
+                  title="Gestisci Draft"
+                >
+                  <FolderOpen className="w-4 h-4" />
+                  <span>Draft</span>
+                </button>
                 <span className="text-sm text-gray-600">
                   Welcome, {user.name}
                 </span>
@@ -389,6 +479,48 @@ const ProfessionalBEPGenerator = ({ user }) => {
           </div>
         </div>
       </div>
+
+      {/* Save Draft Dialog */}
+      {showSaveDraftDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">Salva Draft</h3>
+            <p className="text-gray-600 mb-4">Dai un nome al tuo draft per poterlo recuperare in seguito.</p>
+            <input
+              type="text"
+              value={saveDraftName}
+              onChange={(e) => setSaveDraftName(e.target.value)}
+              placeholder="Nome del draft..."
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4"
+              autoFocus
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' && saveDraftName.trim()) {
+                  saveDraft(saveDraftName);
+                }
+              }}
+            />
+            <div className="flex space-x-3">
+              <button
+                onClick={() => saveDraft(saveDraftName)}
+                disabled={!saveDraftName.trim()}
+                className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition-colors flex items-center justify-center space-x-2"
+              >
+                <Save className="w-4 h-4" />
+                <span>Salva</span>
+              </button>
+              <button
+                onClick={() => {
+                  setShowSaveDraftDialog(false);
+                  setSaveDraftName('');
+                }}
+                className="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                Annulla
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
