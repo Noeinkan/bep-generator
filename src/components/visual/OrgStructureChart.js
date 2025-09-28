@@ -1,50 +1,88 @@
 import React, { useState } from 'react';
 import { Tree, TreeNode } from 'react-organizational-chart';
 
-// Example data structure for the org chart
-const orgData = {
-  name: 'Project Manager',
-  role: 'Delivery Lead',
-  children: [
-    {
-      name: 'Alice Smith',
-      role: 'Design Lead',
-      children: [
-        { name: 'Bob Brown', role: 'Designer' },
-        { name: 'Carol White', role: 'Designer' },
-      ],
-    },
-    {
-      name: 'David Green',
-      role: 'Engineering Lead',
-      children: [
-        { name: 'Eve Black', role: 'Engineer' },
-        { name: 'Frank Blue', role: 'Engineer' },
-      ],
-    },
-    {
-      name: 'Grace Red',
-      role: 'QA Lead',
-      children: [
-        { name: 'Heidi Yellow', role: 'QA Tester' },
-      ],
-    },
-  ],
-};
+// Helper to build org chart data from real project data
+function buildOrgChartData(data) {
+  if (!data) return null;
+  const appointingParty = data.appointingParty || 'Appointing Party';
+
+  // Support multiple lead appointed parties and mapping appointed parties to each
+  // Accepts:
+  // - data.leadAppointedParty: string or array of strings
+  // - data.finalizedParties: array of objects, each with a 'Lead' or 'Lead Appointed Party' or 'Parent Lead' field
+
+  // Normalize leads
+  let leads = [];
+  if (Array.isArray(data.leadAppointedParty)) {
+    leads = data.leadAppointedParty;
+  } else if (typeof data.leadAppointedParty === 'string') {
+    leads = [data.leadAppointedParty];
+  }
+
+  // If finalizedParties is an object with mapping, use it; else, try to group by 'Parent Lead' or similar
+  let appointedMap = {};
+  if (Array.isArray(data.finalizedParties) && data.finalizedParties.length > 0) {
+    // If any party has a 'Parent Lead' or 'Lead Appointed Party' field, group by it
+    if (data.finalizedParties.some(p => p['Parent Lead'] || p['Lead Appointed Party'] || p['Lead'])) {
+      data.finalizedParties.forEach(party => {
+        const parent = party['Parent Lead'] || party['Lead Appointed Party'] || party['Lead'] || leads[0] || 'Lead Appointed Party';
+        if (!appointedMap[parent]) appointedMap[parent] = [];
+        appointedMap[parent].push(party);
+      });
+    } else if (leads.length > 1) {
+      // If no mapping, but multiple leads, split finalizedParties evenly
+      const perLead = Math.ceil(data.finalizedParties.length / leads.length);
+      leads.forEach((lead, i) => {
+        appointedMap[lead] = data.finalizedParties.slice(i * perLead, (i + 1) * perLead);
+      });
+    } else {
+      // Single lead, all parties under it
+      appointedMap[leads[0] || 'Lead Appointed Party'] = data.finalizedParties;
+    }
+  } else {
+    // No finalizedParties, just show leads
+    leads.forEach(lead => {
+      appointedMap[lead] = [];
+    });
+  }
+
+  return {
+    name: appointingParty,
+    role: 'Appointing Party',
+    children: leads.map(lead => ({
+      name: lead,
+      role: 'Lead Appointed Party',
+      children: (appointedMap[lead] || []).map(party => ({
+        name: party['Company Name'] || party['Role/Service'] || 'Appointed Party',
+        role: party['Role/Service'] || 'Appointed Party',
+        contact: party['Lead Contact'] || '',
+      }))
+    }))
+  };
+}
 
 
-function EditableNode({ node, parent, onNodeChange, onDelete, editable }) {
+function EditableNode({ node, parent, onNodeChange, onDelete, editable, onAddSibling }) {
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(node.name);
   const [role, setRole] = useState(node.role);
 
   const handleSave = () => {
     setIsEditing(false);
-    onNodeChange({ ...node, name, role });
+    const updatedNode = { ...node, name, role };
+    // preserve contact where applicable
+    if (node.contact !== undefined) updatedNode.contact = node.contact;
+    onNodeChange(updatedNode);
   };
 
   const handleAddChild = () => {
-    const newChild = { name: 'New Member', role: 'Role', children: [] };
+    // Default new child role depends on current node's role
+    let newChild = { name: 'New Member', role: 'Role', children: [] };
+    if (node.role && node.role.toLowerCase().includes('appointing')) {
+      newChild = { name: 'New Lead', role: 'Lead Appointed Party', children: [] };
+    } else if (node.role && node.role.toLowerCase().includes('lead')) {
+      newChild = { name: 'New Appointed Party', role: 'Appointed Party', contact: '', children: [] };
+    }
     const updated = {
       ...node,
       children: node.children ? [...node.children, newChild] : [newChild],
@@ -81,6 +119,15 @@ function EditableNode({ node, parent, onNodeChange, onDelete, editable }) {
                 onChange={e => setRole(e.target.value)}
                 placeholder="Role"
               />
+              {/* Contact for appointed parties */}
+              {(node.contact !== undefined || (role && role.toLowerCase().includes('appoint'))) && (
+                <input
+                  className="border rounded px-1 py-0.5 text-xs w-full mt-1"
+                  value={node.contact || ''}
+                  onChange={e => onNodeChange({ ...node, contact: e.target.value, name, role })}
+                  placeholder="Contact"
+                />
+              )}
               <div className="flex gap-1 mt-1">
                 <button className="text-xs px-2 py-0.5 bg-green-500 text-white rounded" onClick={handleSave}>Save</button>
                 <button className="text-xs px-2 py-0.5 bg-gray-300 rounded" onClick={() => setIsEditing(false)}>Cancel</button>
@@ -90,11 +137,29 @@ function EditableNode({ node, parent, onNodeChange, onDelete, editable }) {
             <div>
               <strong>{node.name}</strong><br />
               <span style={{ fontSize: '0.85em', color: '#555' }}>{node.role}</span>
+              {node.contact && <div style={{ fontSize: '0.8em', color: '#666' }}>{node.contact}</div>}
               {editable && (
                 <div className="flex gap-1 mt-1">
                   <button className="text-xs px-2 py-0.5 bg-blue-500 text-white rounded" onClick={() => setIsEditing(true)}>Edit</button>
                   <button className="text-xs px-2 py-0.5 bg-red-500 text-white rounded" onClick={onDelete} disabled={!parent}>Delete</button>
-                  <button className="text-xs px-2 py-0.5 bg-yellow-500 text-white rounded" onClick={handleAddChild}>Add</button>
+                  {/* If this is a Lead node, offer Add Appointed Party (child) and Add Lead (sibling under parent) */}
+                  {node.role && node.role.toLowerCase().includes('lead') ? (
+                    <>
+                      <button className="text-xs px-2 py-0.5 bg-yellow-500 text-white rounded" onClick={handleAddChild}>Add Appointed</button>
+                      <button
+                        className="text-xs px-2 py-0.5 bg-indigo-500 text-white rounded"
+                        onClick={() => {
+                          // If parent exists, add a sibling by calling parent's onChange via onAddSibling
+                          if (onAddSibling) onAddSibling({ name: 'New Lead', role: 'Lead Appointed Party', children: [] });
+                        }}
+                      >
+                        Add Lead
+                      </button>
+                    </>
+                  ) : (
+                    // Default add behaviour: add child under this node
+                    <button className="text-xs px-2 py-0.5 bg-yellow-500 text-white rounded" onClick={handleAddChild}>Add</button>
+                  )}
                 </div>
               )}
             </div>
@@ -110,6 +175,12 @@ function EditableNode({ node, parent, onNodeChange, onDelete, editable }) {
           onNodeChange={updatedChild => handleChildChange(idx, updatedChild)}
           onDelete={() => handleDeleteChild(idx)}
           editable={editable}
+          onAddSibling={(newSibling) => {
+            // Insert the new sibling after this child
+            const updatedChildren = [...(node.children || [])];
+            updatedChildren.splice(idx + 1, 0, newSibling);
+            onNodeChange({ ...node, children: updatedChildren });
+          }}
         />
       ))}
     </TreeNode>
@@ -117,17 +188,37 @@ function EditableNode({ node, parent, onNodeChange, onDelete, editable }) {
 }
 
 
-const OrgStructureChart = ({ data = orgData, onChange, editable = false }) => {
-  // Only allow editing if onChange is provided
-  const [tree, setTree] = useState(data);
+
+const OrgStructureChart = ({ data, onChange, editable = false }) => {
+  // If data is the full project object, build the org chart structure from it
+  const treeData = data && data.appointingParty && data.leadAppointedParty && data.finalizedParties
+    ? buildOrgChartData(data)
+    : data;
+
+  const [tree, setTree] = useState(treeData);
 
   React.useEffect(() => {
-    setTree(data);
-  }, [data]);
+    setTree(treeData);
+  }, [data, treeData]);
 
   const handleRootChange = updatedRoot => {
     setTree(updatedRoot);
-    if (onChange) onChange(updatedRoot);
+    if (onChange) {
+      // Build leadAppointedParty array and finalizedParties array from tree
+      const leads = (updatedRoot.children || []).map(c => c.name);
+      const finalized = [];
+      (updatedRoot.children || []).forEach(leadNode => {
+        (leadNode.children || []).forEach(p => {
+          finalized.push({
+            'Role/Service': p.role || 'Appointed Party',
+            'Company Name': p.name,
+            'Lead Contact': p.contact || '',
+            'Parent Lead': leadNode.name,
+          });
+        });
+      });
+      onChange({ tree: updatedRoot, leadAppointedParty: leads, finalizedParties: finalized });
+    }
   };
 
   return (

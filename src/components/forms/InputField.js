@@ -8,7 +8,7 @@ import CDEDiagramBuilder from './CDEDiagramBuilder';
 import VolumeStrategyMindmap from './VolumeStrategyMindmap';
 import FormattedTextEditor from './FormattedTextEditor';
 
-const InputField = React.memo(({ field, value, onChange, error }) => {
+const InputField = React.memo(({ field, value, onChange, error, formData }) => {
   const { name, label, type, required, rows, placeholder, options: fieldOptions } = field;
   const optionsList = fieldOptions ? CONFIG.options[fieldOptions] : null;
 
@@ -24,16 +24,33 @@ const InputField = React.memo(({ field, value, onChange, error }) => {
 
   switch (type) {
     case 'orgchart':
-      // Use a default intro or from field.placeholder
       return (
         <OrgStructureField
           field={field}
           value={value}
-          onChange={(v) => onChange(name, v)}
-          intro={field.placeholder || 'The delivery team operates under a Lead Appointed Party structure with Smith & Associates Architects as the primary coordinator reporting directly to ABC Development Corporation.'}
+          onChange={(v) => {
+            // If the org chart component emits an object with leadAppointedParty and finalizedParties,
+            // persist those into separate form fields expected elsewhere in the app.
+            if (v && typeof v === 'object') {
+              if (v.leadAppointedParty !== undefined) {
+                onChange('leadAppointedParty', v.leadAppointedParty);
+              }
+              if (v.finalizedParties !== undefined) {
+                onChange('finalizedParties', v.finalizedParties);
+              }
+              // Also keep the organizationalStructure field (the org tree) for compatibility
+              if (v.tree !== undefined) {
+                onChange(name, v.tree);
+              } else {
+                onChange(name, v);
+              }
+            } else {
+              onChange(name, v);
+            }
+          }}
+          formData={formData}
         />
       );
-    case 'orgchart':
     case 'table':
       return (
         <EditableTable

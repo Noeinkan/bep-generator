@@ -7,8 +7,7 @@ import {
   addNodeToTree,
   removeNodeFromTree,
   updateNodeInTree,
-  searchNodes,
-  findNodeById
+  searchNodes
 } from '../../utils/mindmapUtils';
 import { organizeNodes, snapToGrid } from '../../utils/layoutUtils';
 import MindmapControls from './MindmapControls';
@@ -36,8 +35,7 @@ const VolumeStrategyMindmap = ({ field, value, onChange, error }) => {
     canRedo,
     undo,
     redo,
-    pushToHistory,
-    getCurrentState
+    pushToHistory
   } = useUndoRedo(parseValue(value));
 
   const updateValue = useCallback((newData, skipHistory = false) => {
@@ -105,19 +103,19 @@ const VolumeStrategyMindmap = ({ field, value, onChange, error }) => {
     setEditingText('');
   };
 
-  const handleUndo = () => {
+  const handleUndo = useCallback(() => {
     const previousState = undo();
     if (previousState) {
       updateValue(previousState, true); // Skip history to prevent infinite loop
     }
-  };
+  }, [undo, updateValue]);
 
-  const handleRedo = () => {
+  const handleRedo = useCallback(() => {
     const nextState = redo();
     if (nextState) {
       updateValue(nextState, true); // Skip history to prevent infinite loop
     }
-  };
+  }, [redo, updateValue]);
 
   // Handle keyboard shortcuts
   useEffect(() => {

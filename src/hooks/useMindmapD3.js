@@ -248,7 +248,7 @@ export const useMindmapD3 = (svgRef, mindmapData, selectedNode, setSelectedNode,
       renderText(nodeGroup, d);
     });
 
-  }, [mindmapData, selectedNode, updateValue, getPreorderNodes, getAllLinks, setSelectedNode, setEditingNode, setEditingText, setZoom, renderText, highlightedNodes]);
+  }, [mindmapData, selectedNode, updateValue, getPreorderNodes, getAllLinks, setSelectedNode, setEditingNode, setEditingText, setZoom, renderText, highlightedNodes, svgRef]);
 
   useEffect(() => {
     drawMindmap();

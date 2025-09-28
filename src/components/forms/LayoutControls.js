@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Grid, Shuffle, TreePine, Target, MoreHorizontal } from 'lucide-react';
+import { Grid, TreePine, Target, MoreHorizontal } from 'lucide-react';
 import { LAYOUT_TYPES } from '../../utils/layoutUtils';
 
 const LayoutControls = ({ onOrganizeNodes, onSnapToGrid }) => {

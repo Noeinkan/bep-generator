@@ -6,8 +6,9 @@ export const sanitizeText = (text) => {
     .replace(/<[^>]*>/g, '')
     // Remove potentially dangerous characters
     .replace(/[<>"'&]/g, '')
-    // Remove control characters except newline and tab
-    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+  // Remove control characters excluding common whitespace (tab/newline) to avoid accidental unprintable chars
+  // eslint-disable-next-line no-control-regex
+  .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '')
     // Remove zero-width characters
     .replace(/[\u200B-\u200D\uFEFF]/g, '')
     // Normalize whitespace

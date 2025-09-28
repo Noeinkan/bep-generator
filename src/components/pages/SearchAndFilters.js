@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Filter, X, SortAsc, SortDesc } from 'lucide-react';
+import { Search, X, SortAsc, SortDesc } from 'lucide-react';
 
 const SearchAndFilters = ({
   searchQuery,

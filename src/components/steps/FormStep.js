@@ -18,6 +18,7 @@ const FormStep = React.memo(({ stepIndex, formData, updateFormData, errors, bepT
               value={formData[field.name]}
               onChange={updateFormData}
               error={errors[field.name]}
+              formData={formData}
             />
           </div>
         ))}
