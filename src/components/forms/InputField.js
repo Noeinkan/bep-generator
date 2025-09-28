@@ -64,6 +64,7 @@ const InputField = React.memo(({ field, value, onChange, error }) => {
             rows={rows || 3}
             className=""
             placeholder={placeholder || `Enter ${label.toLowerCase()}...`}
+            autoGrow={true}
           />
           {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
         </div>

@@ -121,7 +121,9 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
                           onChange={(newValue) => updateCell(rowIndex, column, newValue)}
                           className="text-sm"
                           placeholder={`Enter ${column.toLowerCase()}...`}
-                          rows={4}
+                          rows={2}
+                          showToolbar={false}
+                          autoGrow={true}
                         />
                       </td>
                     ))}

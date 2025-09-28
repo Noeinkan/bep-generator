@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import FormattingToolbar from './FormattingToolbar';
 import DOMPurify from 'dompurify';
 
@@ -9,14 +9,14 @@ const FormattedTextEditor = ({
   rows = 3,
   className = '',
   id,
-  'aria-required': ariaRequired
+  'aria-required': ariaRequired,
+  showToolbar = true,
+  autoGrow = false
 }) => {
-  const [showToolbar, setShowToolbar] = useState(false);
-  const [toolbarPosition, setToolbarPosition] = useState({ top: 0, left: 0 });
-  const [isRichText, setIsRichText] = useState(true);
-  const [isEditing, setIsEditing] = useState(false);
+  const [currentFont, setCurrentFont] = useState('default');
+  const [currentFontSize, setCurrentFontSize] = useState('16');
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const textareaRef = useRef(null);
-  const editorRef = useRef(null);
   const containerRef = useRef(null);
 
   const getFontClass = (fontValue) => {
@@ -31,30 +31,21 @@ const FormattedTextEditor = ({
     return fontMap[fontValue] || '';
   };
 
-  const handleTextSelection = useCallback(() => {
-    const textarea = textareaRef.current;
-    if (!textarea || !containerRef.current) return;
+  const calculateRows = () => {
+    if (!autoGrow) return rows;
 
-    const selection = textarea.selectionStart !== textarea.selectionEnd;
+    const text = value || '';
+    const lineCount = text.split('\n').length;
 
-    if (selection) {
-      // Calculate position for toolbar based on selection
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const textareaRect = textarea.getBoundingClientRect();
+    // Se non c'è testo, mostra almeno il minimo (rows)
+    if (!text.trim()) return rows;
 
-      setToolbarPosition({
-        top: textareaRect.top - containerRect.top - 60, // Above the selection
-        left: textareaRect.left - containerRect.left
-      });
-      setShowToolbar(true);
-    }
-  }, []);
+    // Altrimenti, numero di righe del testo + 2
+    return Math.max(lineCount + 2, rows);
+  };
 
-  const handleClickOutside = useCallback((event) => {
-    if (containerRef.current && !containerRef.current.contains(event.target)) {
-      setShowToolbar(false);
-    }
-  }, []);
+  const dynamicRows = calculateRows();
+
 
   const wrapSelection = (startTag, endTag) => {
     const textarea = textareaRef.current;
@@ -69,33 +60,16 @@ const FormattedTextEditor = ({
     const newValue = beforeText + startTag + selectedText + endTag + afterText;
     onChange(newValue);
 
-    // Restore selection
-    setTimeout(() => {
+    // Use requestAnimationFrame instead of setTimeout for better performance
+    requestAnimationFrame(() => {
       textarea.focus();
       textarea.setSelectionRange(
         start + startTag.length,
         end + startTag.length
       );
-    }, 0);
+    });
   };
 
-  const insertAtCursor = (text) => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const beforeText = value.substring(0, start);
-    const afterText = value.substring(start);
-
-    const newValue = beforeText + text + afterText;
-    onChange(newValue);
-
-    // Position cursor after inserted text
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + text.length, start + text.length);
-    }, 0);
-  };
 
   const handleFormat = (type, formatValue) => {
     switch (type) {
@@ -116,135 +90,120 @@ const FormattedTextEditor = ({
         wrapSelection(alignTag, alignEndTag);
         break;
       case 'list':
-        const textarea = textareaRef.current;
-        if (!textarea) return;
-
-        const lines = value.split('\n');
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-
-        // Find line numbers for selection
-        let charCount = 0;
-        let startLine = 0;
-        let endLine = 0;
-
-        for (let i = 0; i < lines.length; i++) {
-          if (charCount <= start && start <= charCount + lines[i].length) {
-            startLine = i;
-          }
-          if (charCount <= end && end <= charCount + lines[i].length) {
-            endLine = i;
-          }
-          charCount += lines[i].length + 1; // +1 for newline
-        }
-
-        // Apply list formatting
-        const newLines = lines.map((line, index) => {
-          if (index >= startLine && index <= endLine && line.trim()) {
-            if (formatValue === 'bullet') {
-              return line.startsWith('• ') ? line : '• ' + line.replace(/^\d+\.\s*/, '');
-            } else {
-              const listNumber = index - startLine + 1;
-              return line.match(/^\d+\.\s/) ? line : `${listNumber}. ` + line.replace(/^•\s*/, '');
-            }
-          }
-          return line;
-        });
-
-        onChange(newLines.join('\n'));
+        handleListFormat(formatValue);
         break;
       case 'font':
-        // For font changes, we'll apply a CSS class
+        setCurrentFont(formatValue);
+        break;
+      case 'fontSize':
+        setCurrentFontSize(formatValue);
         break;
       default:
         break;
     }
   };
 
-  const processDisplayValue = (text) => {
-    if (!isRichText) return text;
+  const handleListFormat = (listType) => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
 
-    // Basic markdown-like processing for display
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+
+    // Get selected text or current line if no selection
+    let selectedText;
+    let newStart, newEnd;
+
+    if (start === end) {
+      // No selection - format current line
+      const lines = value.split('\n');
+      const beforeCursor = value.substring(0, start);
+      const currentLineIndex = beforeCursor.split('\n').length - 1;
+      const currentLine = lines[currentLineIndex];
+
+      const lineStart = beforeCursor.lastIndexOf('\n') + 1;
+      const lineEnd = lineStart + currentLine.length;
+
+      selectedText = currentLine;
+      newStart = lineStart;
+      newEnd = lineEnd;
+    } else {
+      // Format selected text
+      selectedText = value.substring(start, end);
+      newStart = start;
+      newEnd = end;
+    }
+
+    const lines = selectedText.split('\n');
+    const formattedLines = lines.map((line, index) => {
+      if (!line.trim()) return line;
+
+      // Remove existing list markers
+      const cleanLine = line.replace(/^(\s*)(•|\d+\.)\s*/, '$1');
+
+      if (listType === 'bullet') {
+        return cleanLine.replace(/^(\s*)/, '$1• ');
+      } else {
+        return cleanLine.replace(/^(\s*)/, `$1${index + 1}. `);
+      }
+    });
+
+    const beforeText = value.substring(0, newStart);
+    const afterText = value.substring(newEnd);
+    const newValue = beforeText + formattedLines.join('\n') + afterText;
+
+    onChange(newValue);
+
+    requestAnimationFrame(() => {
+      textarea.focus();
+      textarea.setSelectionRange(newStart, newStart + formattedLines.join('\n').length);
+    });
+  };
+
+  const processDisplayValue = (text) => {
+    // Se non c'è testo reale, non mostrare niente nel preview
+    if (!text || !text.trim()) {
+      return '';
+    }
+
+    // Enhanced markdown-like processing for display
     return DOMPurify.sanitize(
       text
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/<u>(.*?)<\/u>/g, '<u>$1</u>')
+        .replace(/^• (.+)$/gm, '<li style="list-style-type: disc; margin-left: 20px;">$1</li>')
+        .replace(/^\d+\. (.+)$/gm, '<li style="list-style-type: decimal; margin-left: 20px;">$1</li>')
         .replace(/\n/g, '<br/>')
     );
   };
 
-  const baseClasses = "w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-y";
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [handleClickOutside]);
+  const baseClasses = `w-full p-3 border border-gray-300 ${showToolbar ? 'rounded-b-lg' : 'rounded-lg'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-y ${getFontClass(currentFont)}`;
+  const fontSizeStyle = { fontSize: `${currentFontSize}px` };
 
   return (
     <div ref={containerRef} className="relative">
-      {/* Rich Text Toggle */}
-      <div className="mb-2 flex items-center justify-end">
-        <label className="flex items-center space-x-1 text-sm text-gray-600">
-          <input
-            type="checkbox"
-            checked={isRichText}
-            onChange={(e) => setIsRichText(e.target.checked)}
-            className="rounded"
-          />
-          <span>Rich Text Preview</span>
-        </label>
-      </div>
+      {/* Compact Toolbar - only show if showToolbar is true */}
+      {showToolbar && (
+        <FormattingToolbar
+          onFormat={handleFormat}
+          currentFont={currentFont}
+          compact={true}
+        />
+      )}
 
-      {/* Floating Formatting Toolbar */}
-      <FormattingToolbar
-        show={showToolbar}
-        onFormat={handleFormat}
-        onClose={() => setShowToolbar(false)}
-        position={toolbarPosition}
-      />
-
-      {/* Text Editor */}
+      {/* Rich Text Editor */}
       <div className="relative">
-        {isRichText ? (
-          <div className="relative">
-            {!isEditing && (
-              <div
-                ref={editorRef}
-                className={`${baseClasses} ${className} min-h-[120px] overflow-y-auto bg-gray-50 cursor-text`}
-                style={{ minHeight: `${rows * 24}px` }}
-                dangerouslySetInnerHTML={{ __html: processDisplayValue(value) }}
-                onClick={() => {
-                  setIsEditing(true);
-                  setTimeout(() => {
-                    if (textareaRef.current) {
-                      textareaRef.current.focus();
-                    }
-                  }, 0);
-                }}
-              />
-            )}
-            {isEditing && (
-              <textarea
-                ref={textareaRef}
-                id={id}
-                aria-required={ariaRequired}
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-                rows={rows}
-                className={`${baseClasses} ${className}`}
-                placeholder={placeholder}
-                style={{ minHeight: `${rows * 24}px` }}
-                onMouseUp={handleTextSelection}
-                onKeyUp={handleTextSelection}
-                onBlur={() => {
-                  setTimeout(() => setIsEditing(false), 150);
-                }}
-                autoFocus
-              />
-            )}
-          </div>
+        {isPreviewMode && value && value.trim() ? (
+          <div
+            className={`${baseClasses} ${className} min-h-[120px] overflow-y-auto bg-gray-50 cursor-pointer`}
+            style={{ minHeight: `${dynamicRows * 24}px`, ...fontSizeStyle }}
+            dangerouslySetInnerHTML={{ __html: processDisplayValue(value) }}
+            onClick={() => {
+              setIsPreviewMode(false);
+              setTimeout(() => textareaRef.current?.focus(), 0);
+            }}
+          />
         ) : (
           <textarea
             ref={textareaRef}
@@ -252,22 +211,17 @@ const FormattedTextEditor = ({
             aria-required={ariaRequired}
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            rows={rows}
+            rows={dynamicRows}
             className={`${baseClasses} ${className}`}
             placeholder={placeholder}
-            style={{ minHeight: `${rows * 24}px` }}
-            onMouseUp={handleTextSelection}
-            onKeyUp={handleTextSelection}
+            style={{ minHeight: `${dynamicRows * 24}px`, ...fontSizeStyle }}
+            onBlur={() => {
+              // Passa a preview mode quando perde il focus (con delay per permettere click toolbar)
+              setTimeout(() => setIsPreviewMode(true), 150);
+            }}
           />
         )}
       </div>
-
-      {/* Help Text */}
-      {showToolbar && (
-        <div className="mt-2 text-xs text-gray-500">
-          <p>Select text and use toolbar buttons to format. Use ** for bold, * for italic.</p>
-        </div>
-      )}
     </div>
   );
 };

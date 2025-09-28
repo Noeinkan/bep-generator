@@ -5,7 +5,8 @@
       "Bash(PORT=3001 npm start)",
       "Bash(mkdir:*)",
       "Bash(PORT=3006 npm start)",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

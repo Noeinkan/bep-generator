@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
 import {
   Bold,
   Italic,
@@ -9,135 +9,270 @@ import {
   List,
   ListOrdered,
   Type,
-  X
+  X,
 } from 'lucide-react';
 
-const FormattingToolbar = ({ onFormat, show, onClose, position = { top: 0, left: 0 } }) => {
-  const [selectedFont, setSelectedFont] = useState('default');
+// Reusable ToolbarButton component
+const ToolbarButton = ({ icon: Icon, onClick, title, isActive = false }) => (
+  <button
+    onClick={onClick}
+    className={`p-2 rounded border border-gray-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+      isActive ? 'bg-blue-100 text-blue-600' : ''
+    }`}
+    title={title}
+    aria-label={title}
+    type="button"
+  >
+    <Icon size={16} />
+  </button>
+);
 
+const FormattingToolbar = ({
+  onFormat,
+  show = true,
+  onClose,
+  position = { top: 0, left: 0 },
+  currentFont = 'default',
+  currentAlignment = 'left',
+  activeFormats = { bold: false, italic: false, underline: false },
+  compact = false,
+}) => {
   const fontOptions = [
     { value: 'default', label: 'Default' },
     { value: 'arial', label: 'Arial' },
     { value: 'times', label: 'Times New Roman' },
     { value: 'courier', label: 'Courier New' },
     { value: 'georgia', label: 'Georgia' },
-    { value: 'verdana', label: 'Verdana' }
+    { value: 'verdana', label: 'Verdana' },
   ];
 
-  const handleFormat = (type, value = null) => {
+  const fontSizeOptions = [
+    { value: '12', label: '12px' },
+    { value: '14', label: '14px' },
+    { value: '16', label: '16px' },
+    { value: '18', label: '18px' },
+    { value: '24', label: '24px' },
+    { value: '32', label: '32px' },
+  ];
+
+  const handleFormat = useCallback((type, value = null) => {
     onFormat(type, value);
-  };
+  }, [onFormat]);
 
   if (!show) return null;
 
+  if (compact) {
+    return (
+      <div
+        className="bg-gray-100 border border-gray-300 border-b-0 rounded-t-lg p-2"
+        role="toolbar"
+        aria-label="Text formatting toolbar"
+      >
+        <div className="flex items-center justify-between space-x-2">
+          {/* Left side - Font controls */}
+          <div className="flex items-center space-x-2">
+            <select
+              value={currentFont}
+              onChange={(e) => handleFormat('font', e.target.value)}
+              className="text-xs border border-gray-300 rounded px-1 py-1 bg-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              aria-label="Font"
+            >
+              {fontOptions.map((font) => (
+                <option key={font.value} value={font.value}>
+                  {font.label}
+                </option>
+              ))}
+            </select>
+            <select
+              onChange={(e) => handleFormat('fontSize', e.target.value)}
+              className="text-xs border border-gray-300 rounded px-1 py-1 bg-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              aria-label="Size"
+            >
+              <option value="">Size</option>
+              {fontSizeOptions.map((size) => (
+                <option key={size.value} value={size.value}>
+                  {size.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Center - Text Style Buttons */}
+          <div className="flex items-center space-x-1">
+            <ToolbarButton
+              icon={Bold}
+              onClick={() => handleFormat('bold')}
+              title="Bold"
+              isActive={activeFormats.bold}
+            />
+            <ToolbarButton
+              icon={Italic}
+              onClick={() => handleFormat('italic')}
+              title="Italic"
+              isActive={activeFormats.italic}
+            />
+            <ToolbarButton
+              icon={Underline}
+              onClick={() => handleFormat('underline')}
+              title="Underline"
+              isActive={activeFormats.underline}
+            />
+          </div>
+
+          {/* Right side - Alignment and Lists */}
+          <div className="flex items-center space-x-1">
+            <ToolbarButton
+              icon={AlignLeft}
+              onClick={() => handleFormat('align', 'left')}
+              title="Align Left"
+              isActive={currentAlignment === 'left'}
+            />
+            <ToolbarButton
+              icon={AlignCenter}
+              onClick={() => handleFormat('align', 'center')}
+              title="Align Center"
+              isActive={currentAlignment === 'center'}
+            />
+            <ToolbarButton
+              icon={AlignRight}
+              onClick={() => handleFormat('align', 'right')}
+              title="Align Right"
+              isActive={currentAlignment === 'right'}
+            />
+            <div className="w-px h-4 bg-gray-300 mx-1"></div>
+            <ToolbarButton
+              icon={List}
+              onClick={() => handleFormat('list', 'bullet')}
+              title="Bullet List"
+            />
+            <ToolbarButton
+              icon={ListOrdered}
+              onClick={() => handleFormat('list', 'numbered')}
+              title="Numbered List"
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
-      className="absolute z-50 bg-white border border-gray-300 rounded-lg shadow-lg p-3 w-80 max-w-sm"
-      style={{
-        top: position.top,
-        left: position.left,
-        display: show ? 'block' : 'none'
-      }}
+      className="absolute z-50 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg p-3 w-80 max-w-sm"
+      style={{ top: position.top, left: position.left }}
+      role="toolbar"
+      aria-label="Text formatting toolbar"
     >
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-medium text-gray-700">Text Formatting</span>
+        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+          Text Formatting
+        </span>
         <button
           onClick={onClose}
-          className="p-1 hover:bg-gray-100 rounded"
+          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
           title="Close toolbar"
+          aria-label="Close toolbar"
+          type="button"
         >
-          <X size={16} />
+          <X size={16} className="text-gray-600 dark:text-gray-200" />
         </button>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-3">
         {/* Font Selection */}
         <div className="flex items-center space-x-2">
-          <Type size={16} className="text-gray-600" />
+          <Type size={16} className="text-gray-600 dark:text-gray-200" />
           <select
-            value={selectedFont}
-            onChange={(e) => {
-              setSelectedFont(e.target.value);
-              handleFormat('font', e.target.value);
-            }}
-            className="text-sm border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            value={currentFont}
+            onChange={(e) => handleFormat('font', e.target.value)}
+            className="text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            aria-label="Select font"
           >
-            {fontOptions.map(font => (
-              <option key={font.value} value={font.value}>{font.label}</option>
+            {fontOptions.map((font) => (
+              <option key={font.value} value={font.value}>
+                {font.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Font Size Selection */}
+        <div className="flex items-center space-x-2">
+          <Type size={16} className="text-gray-600 dark:text-gray-200" />
+          <select
+            onChange={(e) => handleFormat('fontSize', e.target.value)}
+            className="text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            aria-label="Select font size"
+          >
+            {fontSizeOptions.map((size) => (
+              <option key={size.value} value={size.value}>
+                {size.label}
+              </option>
             ))}
           </select>
         </div>
 
         {/* Text Style Buttons */}
         <div className="flex items-center space-x-1">
-          <button
+          <ToolbarButton
+            icon={Bold}
             onClick={() => handleFormat('bold')}
-            className="p-2 hover:bg-gray-100 rounded border border-gray-300"
             title="Bold"
-          >
-            <Bold size={16} />
-          </button>
-          <button
+            isActive={activeFormats.bold}
+          />
+          <ToolbarButton
+            icon={Italic}
             onClick={() => handleFormat('italic')}
-            className="p-2 hover:bg-gray-100 rounded border border-gray-300"
             title="Italic"
-          >
-            <Italic size={16} />
-          </button>
-          <button
+            isActive={activeFormats.italic}
+          />
+          <ToolbarButton
+            icon={Underline}
             onClick={() => handleFormat('underline')}
-            className="p-2 hover:bg-gray-100 rounded border border-gray-300"
             title="Underline"
-          >
-            <Underline size={16} />
-          </button>
+            isActive={activeFormats.underline}
+          />
         </div>
 
         {/* Alignment Buttons */}
         <div className="flex items-center space-x-1">
-          <button
+          <ToolbarButton
+            icon={AlignLeft}
             onClick={() => handleFormat('align', 'left')}
-            className="p-2 hover:bg-gray-100 rounded border border-gray-300"
             title="Align Left"
-          >
-            <AlignLeft size={16} />
-          </button>
-          <button
+            isActive={currentAlignment === 'left'}
+          />
+          <ToolbarButton
+            icon={AlignCenter}
             onClick={() => handleFormat('align', 'center')}
-            className="p-2 hover:bg-gray-100 rounded border border-gray-300"
             title="Align Center"
-          >
-            <AlignCenter size={16} />
-          </button>
-          <button
+            isActive={currentAlignment === 'center'}
+          />
+          <ToolbarButton
+            icon={AlignRight}
             onClick={() => handleFormat('align', 'right')}
-            className="p-2 hover:bg-gray-100 rounded border border-gray-300"
             title="Align Right"
-          >
-            <AlignRight size={16} />
-          </button>
+            isActive={currentAlignment === 'right'}
+          />
         </div>
 
         {/* List Buttons */}
         <div className="flex items-center space-x-1">
-          <button
+          <ToolbarButton
+            icon={List}
             onClick={() => handleFormat('list', 'bullet')}
-            className="p-2 hover:bg-gray-100 rounded border border-gray-300"
             title="Bullet List"
-          >
-            <List size={16} />
-          </button>
-          <button
+          />
+          <ToolbarButton
+            icon={ListOrdered}
             onClick={() => handleFormat('list', 'numbered')}
-            className="p-2 hover:bg-gray-100 rounded border border-gray-300"
             title="Numbered List"
-          >
-            <ListOrdered size={16} />
-          </button>
+          />
         </div>
       </div>
     </div>
   );
 };
 
-export default FormattingToolbar;
+// Optional: Add React.memo to prevent unnecessary re-renders
+export default React.memo(FormattingToolbar);
