@@ -15,7 +15,6 @@ import EnhancedBepTypeSelector from './components/pages/EnhancedBepTypeSelector'
 import DraftManager from './components/pages/DraftManager';
 import { generateBEPContent } from './services/bepFormatter';
 import { generatePDF } from './services/pdfGenerator';
-import { generateDocx } from './services/docxGenerator';
 
 
 

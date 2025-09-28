@@ -293,9 +293,10 @@ class ApiService {
   // Export Services
   // ======================
 
-  async exportTIDPToExcel(id) {
+  async exportTIDPToExcel(id, template = null) {
     try {
-      const response = await apiClient.post(`/export/tidp/${id}/excel`, {}, {
+      const body = template ? { template } : {};
+      const response = await apiClient.post(`/export/tidp/${id}/excel`, body, {
         responseType: 'blob'
       });
       return this.downloadFile(response, `TIDP_${id}.xlsx`);
@@ -304,9 +305,10 @@ class ApiService {
     }
   }
 
-  async exportTIDPToPDF(id) {
+  async exportTIDPToPDF(id, template = null) {
     try {
-      const response = await apiClient.post(`/export/tidp/${id}/pdf`, {}, {
+      const body = template ? { template } : {};
+      const response = await apiClient.post(`/export/tidp/${id}/pdf`, body, {
         responseType: 'blob'
       });
       return this.downloadFile(response, `TIDP_${id}.pdf`);
@@ -315,9 +317,10 @@ class ApiService {
     }
   }
 
-  async exportMIDPToExcel(id) {
+  async exportMIDPToExcel(id, template = null) {
     try {
-      const response = await apiClient.post(`/export/midp/${id}/excel`, {}, {
+      const body = template ? { template } : {};
+      const response = await apiClient.post(`/export/midp/${id}/excel`, body, {
         responseType: 'blob'
       });
       return this.downloadFile(response, `MIDP_${id}.xlsx`);
@@ -326,9 +329,10 @@ class ApiService {
     }
   }
 
-  async exportMIDPToPDF(id) {
+  async exportMIDPToPDF(id, template = null) {
     try {
-      const response = await apiClient.post(`/export/midp/${id}/pdf`, {}, {
+      const body = template ? { template } : {};
+      const response = await apiClient.post(`/export/midp/${id}/pdf`, body, {
         responseType: 'blob'
       });
       return this.downloadFile(response, `MIDP_${id}.pdf`);
@@ -367,18 +371,20 @@ class ApiService {
     }
   }
 
-  async getTIDPExportPreview(id, format) {
+  async getTIDPExportPreview(id, format, template = null) {
     try {
-      const response = await apiClient.post(`/export/preview/tidp/${id}`, { format });
+      const body = template ? { format, template } : { format };
+      const response = await apiClient.post(`/export/preview/tidp/${id}`, body);
       return response.data;
     } catch (error) {
       throw this.handleError(error, `Failed to get TIDP ${id} export preview`);
     }
   }
 
-  async getMIDPExportPreview(id, format) {
+  async getMIDPExportPreview(id, format, template = null) {
     try {
-      const response = await apiClient.post(`/export/preview/midp/${id}`, { format });
+      const body = template ? { format, template } : { format };
+      const response = await apiClient.post(`/export/preview/midp/${id}`, body);
       return response.data;
     } catch (error) {
       throw this.handleError(error, `Failed to get MIDP ${id} export preview`);

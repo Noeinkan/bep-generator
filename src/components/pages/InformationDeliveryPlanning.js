@@ -1,35 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Calendar, Plus, FileText, Download, RefreshCw, AlertCircle, CheckCircle, Users, Target } from 'lucide-react';
 import ApiService from '../../services/apiService';
+import TidpMidpManager from './TidpMidpManager';
 
 const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType }) => {
   const [tidps, setTidps] = useState([]);
   const [midps, setMidps] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
-  const [selectedTidp, setSelectedTidp] = useState(null);
-  const [selectedMidp, setSelectedMidp] = useState(null);
+  // selection state is handled inside the inline manager; remove unused local state
   const [serverConnected, setServerConnected] = useState(false);
+  const [showManager, setShowManager] = useState(false);
 
   // Check server connection on mount
-  const checkServerConnection = useCallback(async () => {
-    try {
-      await ApiService.healthCheck();
-      setServerConnected(true);
-      loadTidpsAndMidps();
-    } catch (error) {
-      console.log('TIDP/MIDP server not available - showing basic form interface');
-      setServerConnected(false);
-    }
-  } );
-
-  useEffect(() => {
-    checkServerConnection();
-  }, [checkServerConnection]);
-
-  // ...existing code...
-
-  const loadTidpsAndMidps = async () => {
+  const loadTidpsAndMidps = useCallback(async () => {
     if (!serverConnected) return;
 
     setLoading(true);
@@ -45,16 +29,37 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
     } finally {
       setLoading(false);
     }
-  };
+  }, [serverConnected, formData.projectName]);
+
+  const checkServerConnection = useCallback(async () => {
+    try {
+      await ApiService.healthCheck();
+      setServerConnected(true);
+      loadTidpsAndMidps();
+    } catch (error) {
+      console.log('TIDP/MIDP server not available - showing basic form interface');
+      setServerConnected(false);
+    }
+  }, [loadTidpsAndMidps]);
+
+  useEffect(() => {
+    checkServerConnection();
+  }, [checkServerConnection]);
+
+  // ...existing code...
+
+  // loadTidpsAndMidps is defined above using useCallback
 
   const createNewTidp = () => {
     setActiveTab('tidp-form');
-    setSelectedTidp(null);
+    // Open inline manager for creation
+    setShowManager(true);
   };
 
   const createNewMidp = () => {
     setActiveTab('midp-form');
-    setSelectedMidp(null);
+    // Open inline manager for creation
+    setShowManager(true);
   };
 
   const BasicFormInterface = () => (
@@ -71,7 +76,7 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
             </div>
           </div>
           <button
-            onClick={() => window.open('http://localhost:3004/tidp-midp-manager', '_blank', 'width=1400,height=900')}
+            onClick={() => setShowManager(true)}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors flex items-center space-x-2 font-medium"
           >
             <Calendar className="w-5 h-5" />
@@ -329,7 +334,7 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {tidps.map((tidp) => (
-            <TidpCard key={tidp.id} tidp={tidp} onSelect={setSelectedTidp} />
+            <TidpCard key={tidp.id} tidp={tidp} onSelect={() => setShowManager(true)} />
           ))}
         </div>
       )}
@@ -358,7 +363,7 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {midps.map((midp) => (
-            <MidpCard key={midp.id} midp={midp} onSelect={setSelectedMidp} />
+            <MidpCard key={midp.id} midp={midp} onSelect={() => setShowManager(true)} />
           ))}
         </div>
       )}
@@ -488,7 +493,11 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
         )}
       </div>
 
-      {serverConnected ? <AdvancedInterface /> : <BasicFormInterface />}
+      {showManager ? (
+        <TidpMidpManager onClose={() => setShowManager(false)} />
+      ) : (
+        serverConnected ? <AdvancedInterface /> : <BasicFormInterface />
+      )}
     </div>
   );
 };
