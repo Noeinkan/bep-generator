@@ -66,15 +66,15 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
   useEffect(() => {
     if (!data) return;
     const newTree = buildOrgChartData(data);
+
+    const currentLeadNames = orgData?.leadGroups ? orgData.leadGroups.map(g => g.name) : [];
+    const newLeadNames = newTree?.leadGroups ? newTree.leadGroups.map(g => g.name) : [];
+
     // Only update if the appointingParty or leadAppointedParty changed
-    if (
-      newTree &&
-      (newTree.name !== orgData?.name ||
-        JSON.stringify(newTree.leadGroups.map(g => g.name)) !== JSON.stringify(orgData?.leadGroups.map(g => g.name)))
-    ) {
+    if (newTree && (newTree.name !== orgData?.name || JSON.stringify(newLeadNames) !== JSON.stringify(currentLeadNames))) {
       setOrgData(newTree);
     }
-  }, [data]);
+  }, [data, orgData?.name, orgData?.leadGroups]);
 
   // Helper to notify parent of changes
   const notifyChange = (newData) => {

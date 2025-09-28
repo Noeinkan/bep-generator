@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Calendar, Plus, FileText, Download, Upload, RefreshCw, AlertCircle, CheckCircle, Clock, Users, Target } from 'lucide-react';
+import { Calendar, Plus, FileText, Download, RefreshCw, AlertCircle, CheckCircle, Users, Target } from 'lucide-react';
 import ApiService from '../../services/apiService';
 
 const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType }) => {
@@ -12,11 +12,7 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
   const [serverConnected, setServerConnected] = useState(false);
 
   // Check server connection on mount
-  useEffect(() => {
-    checkServerConnection();
-  }, []);
-
-  const checkServerConnection = async () => {
+  const checkServerConnection = useCallback(async () => {
     try {
       await ApiService.healthCheck();
       setServerConnected(true);
@@ -25,7 +21,13 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
       console.log('TIDP/MIDP server not available - showing basic form interface');
       setServerConnected(false);
     }
-  };
+  } );
+
+  useEffect(() => {
+    checkServerConnection();
+  }, [checkServerConnection]);
+
+  // ...existing code...
 
   const loadTidpsAndMidps = async () => {
     if (!serverConnected) return;

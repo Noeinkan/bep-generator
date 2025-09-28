@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { ChevronRight, ChevronLeft, Eye, Zap, FolderOpen, Save } from 'lucide-react';
-import { Packer } from 'docx';
 import DOMPurify from 'dompurify';
 
 // Import separated components
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import Login from './components/Login';
-import Register from './components/Register';
+// Login/Register are intentionally not imported during development to avoid
+// unused auth UI while authentication is temporarily bypassed.
 import ProgressSidebar from './components/ui/ProgressSidebar';
 import CONFIG from './config/bepConfig';
 import INITIAL_DATA from './data/initialData';
@@ -24,7 +23,7 @@ import { generateDocx } from './services/docxGenerator';
 
 const AppContent = () => {
   const { user, loading } = useAuth();
-  const [showRegister, setShowRegister] = useState(false);
+  // Authentication UI currently bypassed in development/demo mode
 
   if (loading) {
     return (
@@ -37,23 +36,8 @@ const AppContent = () => {
     );
   }
 
-  // Temporarily bypass authentication - comment out to re-enable
-  /*
-  if (!user) {
-    if (showRegister) {
-      return (
-        <Register
-          onSwitchToLogin={() => setShowRegister(false)}
-        />
-      );
-    }
-    return (
-      <Login
-        onSwitchToRegister={() => setShowRegister(true)}
-      />
-    );
-  }
-  */
+  // Temporarily bypass authentication - re-enable the block below to restore
+  // the login/register flow.
 
   // Use a mock user when authentication is disabled
   const mockUser = user || { id: 'demo-user', name: 'Demo User', email: 'demo@example.com' };
@@ -197,7 +181,7 @@ const ProfessionalBEPGenerator = ({ user }) => {
 
   const downloadBEP = async () => {
     setIsExporting(true);
-    const content = generateBEPContent(formData, bepType);
+  const content = generateBEPContent(formData, bepType);
     const currentDate = new Date().toISOString().split('T')[0];
     const fileName = `Professional_BEP_${formData.projectName || 'Project'}_${currentDate}`;
 
@@ -214,6 +198,10 @@ const ProfessionalBEPGenerator = ({ user }) => {
         const pdf = generatePDF(formData, bepType);
         pdf.save(`${fileName}.pdf`);
       } else if (exportFormat === 'word') {
+        // Lazily load the docx generator and Packer so the heavy `docx`
+        // dependency isn't included in the initial bundle.
+        const { generateDocx } = await import('./services/docxGenerator');
+        const { Packer } = await import('docx');
         const doc = await generateDocx(formData, bepType);
         const blob = await Packer.toBlob(doc);
         const url = URL.createObjectURL(blob);
