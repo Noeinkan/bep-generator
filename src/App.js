@@ -169,7 +169,7 @@ const INITIAL_DATA = {
     { 'Element Type': 'MEP Equipment', 'Naming Format': 'PP-OO-VV-MEP-EQ-###', 'Example': 'GF-TSS-L03-MEP-EQ-001', 'Description': 'EQ=Equipment designation with sequential numbering' }
   ],
   fileStructure: 'Organized by discipline and project phase with clear folder hierarchies, version control through file naming, and linked file management protocols.',
-  fileStructureDiagram: '📁 Project Root\n├── 📁 01_WIP (Work in Progress)\n│   ├── 📁 ARC (Architecture)\n│   │   ├── 📁 Models\n│   │   ├── 📁 Drawings\n│   │   └── 📁 Documents\n│   ├── 📁 STR (Structural)\n│   │   ├── 📁 Models\n│   │   ├── 📁 Analysis\n│   │   └── 📁 Calculations\n│   ├── 📁 MEP (MEP Services)\n│   │   ├── 📁 Models\n│   │   ├── 📁 Calculations\n│   │   └── 📁 Schedules\n│   └── 📁 QS (Quantity Surveying)\n│       ├── 📁 Take-offs\n│       └── 📁 Cost Plans\n├── 📁 02_SHARED (Shared for Coordination)\n│   ├── 📁 Federated Models\n│   ├── 📁 Clash Reports\n│   ├── 📁 Issue Lists\n│   └── 📁 Coordination Drawings\n├── 📁 03_PUBLISHED (Approved Information)\n│   ├── 📁 Drawings\n│   │   ├── 📁 Architectural\n│   │   ├── 📁 Structural\n│   │   └── 📁 MEP\n│   ├── 📁 Specifications\n│   ├── 📁 Reports\n│   └── 📁 Schedules\n└── 📁 04_ARCHIVE (Historical Versions)\n    ├── 📁 Superseded Models\n    ├── 📁 Previous Versions\n    └── 📁 Legacy Documents',
+  fileStructureDiagram: '📁 WIP (Work in Progress)\n📁 SHARED (Coordination)\n📁 PUBLISHED (Approved)',
   dataExchangeProtocols: [
     { 'Exchange Type': 'IFC Coordination', 'Format': 'IFC 4.0', 'Frequency': 'Weekly', 'Delivery Method': 'BIM 360 upload' },
     { 'Exchange Type': 'Issue Management', 'Format': 'BCF 2.1', 'Frequency': 'Daily as needed', 'Delivery Method': 'BCF workflow' },
@@ -399,7 +399,7 @@ const FormStep = React.memo(({ stepIndex, formData, updateFormData, errors, bepT
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {stepConfig.fields.map(field => (
-          <div key={field.name} className={field.type === 'textarea' || field.type === 'checkbox' || field.type === 'table' || field.type === 'fileStructure' || field.type === 'cdeDiagram' ? 'md:col-span-2' : ''}>
+          <div key={field.name} className={field.type === 'textarea' || field.type === 'checkbox' || field.type === 'table' || field.type === 'fileStructure' || field.type === 'cdeDiagram' || field.type === 'mindmap' ? 'md:col-span-2' : ''}>
             <InputField
               field={field}
               value={formData[field.name]}

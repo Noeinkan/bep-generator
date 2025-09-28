@@ -216,7 +216,7 @@ const CONFIG = {
         { name: 'namingConventions', label: 'Naming Conventions', required: true, type: 'table', columns: ['Element Type', 'Naming Format', 'Example', 'Description'] },
         { name: 'fileStructure', label: 'File Structure', type: 'textarea', rows: 3 },
         { name: 'fileStructureDiagram', label: 'File Structure Diagram', type: 'fileStructure' },
-        { name: 'volumeStrategy', label: 'Volume Strategy and Model Breakdown', required: true, type: 'cdeDiagram' },
+        { name: 'volumeStrategy', label: 'Volume Strategy and Model Breakdown', required: true, type: 'mindmap' },
         { name: 'classificationSystems', label: 'Classification Systems and Coding', required: true, type: 'table', columns: ['Classification System', 'Application Area', 'Code Format', 'Responsibility'] },
         { name: 'classificationStandards', label: 'Classification Standards Implementation', type: 'table', columns: ['Element Category', 'Classification System', 'Code Format', 'Example Code', 'Description'] },
         { name: 'dataExchangeProtocols', label: 'Data Exchange Protocols', type: 'table', columns: ['Exchange Type', 'Format', 'Frequency', 'Delivery Method'] }

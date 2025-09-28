@@ -3,6 +3,7 @@ import CONFIG from '../../config/bepConfig';
 import EditableTable from './EditableTable';
 import FileStructureDiagram from './FileStructureDiagram';
 import CDEDiagramBuilder from './CDEDiagramBuilder';
+import VolumeStrategyMindmap from './VolumeStrategyMindmap';
 import FormattedTextEditor from './FormattedTextEditor';
 
 const InputField = React.memo(({ field, value, onChange, error }) => {
@@ -43,6 +44,16 @@ const InputField = React.memo(({ field, value, onChange, error }) => {
     case 'cdeDiagram':
       return (
         <CDEDiagramBuilder
+          field={field}
+          value={value}
+          onChange={onChange}
+          error={error}
+        />
+      );
+
+    case 'mindmap':
+      return (
+        <VolumeStrategyMindmap
           field={field}
           value={value}
           onChange={onChange}

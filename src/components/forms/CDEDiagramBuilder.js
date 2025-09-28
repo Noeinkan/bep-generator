@@ -1,35 +1,23 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Plus,
-  Minus,
   ChevronUp,
   ChevronDown,
-  Edit3,
   Trash2,
   Database,
   FileText,
   Box,
-  Move,
-  Save,
-  Upload,
-  Download,
-  RotateCcw,
   ZoomIn,
   ZoomOut,
   Layers,
-  Link,
   X
 } from 'lucide-react';
 
 const CDEDiagramBuilder = ({ field, value, onChange, error }) => {
   const { name, label, required } = field;
-  const canvasRef = useRef(null);
-  const [dragState, setDragState] = useState(null);
   const [zoom, setZoom] = useState(1);
   const [selectedModel, setSelectedModel] = useState(null);
   const [editingText, setEditingText] = useState(null);
-  const [connectionMode, setConnectionMode] = useState(false);
-  const [tempConnection, setTempConnection] = useState(null);
 
   // Initialize with default CDE structure or parse existing value
   const getDefaultStructure = () => ({
@@ -200,22 +188,6 @@ const CDEDiagramBuilder = ({ field, value, onChange, error }) => {
     updateValue(newData);
   };
 
-  const updateModelPosition = (layerId, modelId, x, y) => {
-    const newData = {
-      ...diagramData,
-      layers: diagramData.layers.map(layer =>
-        layer.id === layerId
-          ? {
-              ...layer,
-              models: layer.models.map(model =>
-                model.id === modelId ? { ...model, x, y } : model
-              )
-            }
-          : layer
-      )
-    };
-    updateValue(newData);
-  };
 
   // Helper Functions
   const findModelById = (modelId) => {
@@ -245,28 +217,6 @@ const CDEDiagramBuilder = ({ field, value, onChange, error }) => {
   };
 
   // Connection Functions
-  const addConnection = (fromId, toId) => {
-    if (fromId === toId) return;
-
-    const existingConnection = diagramData.connections.find(conn =>
-      (conn.from === fromId && conn.to === toId) ||
-      (conn.from === toId && conn.to === fromId)
-    );
-
-    if (existingConnection) return;
-
-    const newConnection = {
-      id: `conn-${Date.now()}`,
-      from: fromId,
-      to: toId
-    };
-
-    const newData = {
-      ...diagramData,
-      connections: [...diagramData.connections, newConnection]
-    };
-    updateValue(newData);
-  };
 
   const removeConnection = (connectionId) => {
     const newData = {

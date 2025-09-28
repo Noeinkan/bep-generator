@@ -55,49 +55,25 @@ const FileStructureDiagram = ({ field, value, onChange, error }) => {
   const getDefaultStructure = () => [
     {
       id: 1,
-      name: 'Project Root',
-      children: [
-        {
-          id: 2,
-          name: '01_WIP (Work in Progress)',
-          children: [
-            { id: 3, name: 'ARC (Architecture)', children: [] },
-            { id: 4, name: 'STR (Structural)', children: [] },
-            { id: 5, name: 'MEP (MEP Services)', children: [] },
-            { id: 6, name: 'QS (Quantity Surveying)', children: [] }
-          ]
-        },
-        {
-          id: 7,
-          name: '02_SHARED (Shared for Coordination)',
-          children: [
-            { id: 8, name: 'Federated Models', children: [] },
-            { id: 9, name: 'Clash Reports', children: [] },
-            { id: 10, name: 'Issue Lists', children: [] }
-          ]
-        },
-        {
-          id: 11,
-          name: '03_PUBLISHED (Approved Information)',
-          children: [
-            { id: 12, name: 'Drawings', children: [] },
-            { id: 13, name: 'Specifications', children: [] },
-            { id: 14, name: 'Reports', children: [] }
-          ]
-        },
-        {
-          id: 15,
-          name: '04_ARCHIVE (Historical Versions)',
-          children: []
-        }
-      ]
+      name: 'WIP (Work in Progress)',
+      children: []
+    },
+    {
+      id: 2,
+      name: 'SHARED (Coordination)',
+      children: []
+    },
+    {
+      id: 3,
+      name: 'PUBLISHED (Approved)',
+      children: []
     }
   ];
 
   const [structure, setStructure] = useState(() => parseStructure(value));
   const [editingId, setEditingId] = useState(null);
   const [editingName, setEditingName] = useState('');
-  const [expandedNodes, setExpandedNodes] = useState(new Set([1, 2, 7, 11]));
+  const [expandedNodes, setExpandedNodes] = useState(new Set([1, 2, 3]));
 
   const generateTextDiagram = useCallback((folders, level = 0) => {
     let result = '';
@@ -371,7 +347,7 @@ const FileStructureDiagram = ({ field, value, onChange, error }) => {
                     <ChevronDown className="w-3 h-3" />
                   </button>
 
-                  {folder.id !== 1 && (
+                  {(folder.id !== 1 && folder.id !== 2 && folder.id !== 3) && (
                     <button
                       onClick={() => removeFolder(folder.id)}
                       className="w-6 h-6 flex items-center justify-center text-red-600 hover:bg-red-50 rounded"
@@ -414,11 +390,21 @@ const FileStructureDiagram = ({ field, value, onChange, error }) => {
               <span className="text-base font-semibold text-blue-800">Interactive File Structure</span>
             </div>
             <button
-              onClick={() => addFolder(1)}
+              onClick={() => {
+                const newFolder = {
+                  id: Date.now() + Math.random(),
+                  name: 'New CDE Level',
+                  children: []
+                };
+                const newStructure = [...structure, newFolder];
+                updateValue(newStructure);
+                setEditingId(newFolder.id);
+                setEditingName('New CDE Level');
+              }}
               className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-105 shadow-md"
             >
               <FolderPlus className="w-4 h-4" />
-              <span>Add Folder</span>
+              <span>Add CDE Level</span>
             </button>
           </div>
           <p className="text-sm text-blue-700 mt-2">
