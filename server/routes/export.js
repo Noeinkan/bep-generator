@@ -1,0 +1,426 @@
+const express = require('express');
+const router = express.Router();
+const path = require('path');
+const fs = require('fs');
+const exportService = require('../services/exportService');
+const tidpService = require('../services/tidpService');
+const midpService = require('../services/midpService');
+
+/**
+ * POST /api/export/tidp/:id/excel
+ * Export TIDP to Excel
+ */
+router.post('/tidp/:id/excel', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const tidp = tidpService.getTIDP(id);
+
+    const filepath = await exportService.exportTIDPToExcel(tidp);
+    const filename = path.basename(filepath);
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+    const fileStream = fs.createReadStream(filepath);
+    fileStream.pipe(res);
+
+    fileStream.on('end', () => {
+      // Clean up temp file after sending
+      setTimeout(() => exportService.cleanupFile(filepath), 5000);
+    });
+
+    fileStream.on('error', (error) => {
+      next(error);
+    });
+  } catch (error) {
+    if (error.message.includes('not found')) {
+      return res.status(404).json({
+        success: false,
+        error: error.message
+      });
+    }
+    next(error);
+  }
+});
+
+/**
+ * POST /api/export/tidp/:id/pdf
+ * Export TIDP to PDF
+ */
+router.post('/tidp/:id/pdf', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const tidp = tidpService.getTIDP(id);
+
+    const filepath = await exportService.exportTIDPToPDF(tidp);
+    const filename = path.basename(filepath);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+    const fileStream = fs.createReadStream(filepath);
+    fileStream.pipe(res);
+
+    fileStream.on('end', () => {
+      // Clean up temp file after sending
+      setTimeout(() => exportService.cleanupFile(filepath), 5000);
+    });
+
+    fileStream.on('error', (error) => {
+      next(error);
+    });
+  } catch (error) {
+    if (error.message.includes('not found')) {
+      return res.status(404).json({
+        success: false,
+        error: error.message
+      });
+    }
+    next(error);
+  }
+});
+
+/**
+ * POST /api/export/midp/:id/excel
+ * Export MIDP to Excel
+ */
+router.post('/midp/:id/excel', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const midp = midpService.getMIDP(id);
+
+    const filepath = await exportService.exportMIDPToExcel(midp);
+    const filename = path.basename(filepath);
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+    const fileStream = fs.createReadStream(filepath);
+    fileStream.pipe(res);
+
+    fileStream.on('end', () => {
+      // Clean up temp file after sending
+      setTimeout(() => exportService.cleanupFile(filepath), 5000);
+    });
+
+    fileStream.on('error', (error) => {
+      next(error);
+    });
+  } catch (error) {
+    if (error.message.includes('not found')) {
+      return res.status(404).json({
+        success: false,
+        error: error.message
+      });
+    }
+    next(error);
+  }
+});
+
+/**
+ * POST /api/export/midp/:id/pdf
+ * Export MIDP to PDF
+ */
+router.post('/midp/:id/pdf', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const midp = midpService.getMIDP(id);
+
+    const filepath = await exportService.exportMIDPToPDF(midp);
+    const filename = path.basename(filepath);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+    const fileStream = fs.createReadStream(filepath);
+    fileStream.pipe(res);
+
+    fileStream.on('end', () => {
+      // Clean up temp file after sending
+      setTimeout(() => exportService.cleanupFile(filepath), 5000);
+    });
+
+    fileStream.on('error', (error) => {
+      next(error);
+    });
+  } catch (error) {
+    if (error.message.includes('not found')) {
+      return res.status(404).json({
+        success: false,
+        error: error.message
+      });
+    }
+    next(error);
+  }
+});
+
+/**
+ * POST /api/export/project/:projectId/consolidated-excel
+ * Export consolidated project data to Excel (all TIDPs + MIDP)
+ */
+router.post('/project/:projectId/consolidated-excel', async (req, res, next) => {
+  try {
+    const { projectId } = req.params;
+    const { midpId } = req.body;
+
+    if (!midpId) {
+      return res.status(400).json({
+        success: false,
+        error: 'MIDP ID is required for consolidated export'
+      });
+    }
+
+    const midp = midpService.getMIDP(midpId);
+    const tidps = tidpService.getTIDPsByProject(projectId);
+
+    // Create consolidated workbook with all data
+    const ExcelJS = require('exceljs');
+    const workbook = new ExcelJS.Workbook();
+
+    workbook.creator = 'BEP Generator';
+    workbook.created = new Date();
+
+    // Add MIDP sheets
+    const midpFilepath = await exportService.exportMIDPToExcel(midp);
+    const midpWorkbook = new ExcelJS.Workbook();
+    await midpWorkbook.xlsx.readFile(midpFilepath);
+
+    // Copy MIDP worksheets
+    midpWorkbook.eachSheet((worksheet) => {
+      const newSheet = workbook.addWorksheet(`MIDP_${worksheet.name}`);
+      worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+        const newRow = newSheet.getRow(rowNumber);
+        row.eachCell({ includeEmpty: false }, (cell, colNumber) => {
+          newRow.getCell(colNumber).value = cell.value;
+          newRow.getCell(colNumber).style = cell.style;
+        });
+        newRow.commit();
+      });
+    });
+
+    // Add individual TIDP sheets
+    for (let i = 0; i < tidps.length; i++) {
+      const tidp = tidps[i];
+      const tidpFilepath = await exportService.exportTIDPToExcel(tidp);
+      const tidpWorkbook = new ExcelJS.Workbook();
+      await tidpWorkbook.xlsx.readFile(tidpFilepath);
+
+      tidpWorkbook.eachSheet((worksheet) => {
+        const sheetName = `TIDP_${tidp.discipline}_${worksheet.name}`.substring(0, 31); // Excel sheet name limit
+        const newSheet = workbook.addWorksheet(sheetName);
+        worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+          const newRow = newSheet.getRow(rowNumber);
+          row.eachCell({ includeEmpty: false }, (cell, colNumber) => {
+            newRow.getCell(colNumber).value = cell.value;
+            newRow.getCell(colNumber).style = cell.style;
+          });
+          newRow.commit();
+        });
+      });
+
+      // Clean up individual TIDP file
+      exportService.cleanupFile(tidpFilepath);
+    }
+
+    // Save consolidated workbook
+    const consolidatedFilename = `Consolidated_Project_${projectId}_${new Date().toISOString().split('T')[0]}.xlsx`;
+    const consolidatedPath = path.join(exportService.tempDir, consolidatedFilename);
+    await workbook.xlsx.writeFile(consolidatedPath);
+
+    // Send file
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="${consolidatedFilename}"`);
+
+    const fileStream = fs.createReadStream(consolidatedPath);
+    fileStream.pipe(res);
+
+    fileStream.on('end', () => {
+      // Clean up temp files
+      setTimeout(() => {
+        exportService.cleanupFile(consolidatedPath);
+        exportService.cleanupFile(midpFilepath);
+      }, 5000);
+    });
+
+    fileStream.on('error', (error) => {
+      next(error);
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * GET /api/export/formats
+ * Get available export formats
+ */
+router.get('/formats', (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      tidp: {
+        formats: ['excel', 'pdf'],
+        descriptions: {
+          excel: 'Comprehensive Excel workbook with multiple sheets for containers, dependencies, and quality requirements',
+          pdf: 'Professional PDF document suitable for formal submissions and reviews'
+        }
+      },
+      midp: {
+        formats: ['excel', 'pdf'],
+        descriptions: {
+          excel: 'Detailed Excel workbook with aggregated data, schedules, risks, and resource planning',
+          pdf: 'Executive summary PDF with key metrics, milestones, and risk register'
+        }
+      },
+      consolidated: {
+        formats: ['excel'],
+        descriptions: {
+          excel: 'Complete project documentation combining MIDP and all TIDPs in a single workbook'
+        }
+      }
+    }
+  });
+});
+
+/**
+ * GET /api/export/templates
+ * Get export templates and examples
+ */
+router.get('/templates', (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      tidp: {
+        sections: [
+          'Task Team Information',
+          'Information Containers',
+          'Dependencies',
+          'Quality Requirements'
+        ],
+        requiredFields: [
+          'teamName',
+          'discipline',
+          'leader',
+          'company',
+          'containers'
+        ]
+      },
+      midp: {
+        sections: [
+          'Project Summary',
+          'Delivery Schedule',
+          'All Information Containers',
+          'Milestones',
+          'Dependency Matrix',
+          'Risk Register',
+          'Resource Plan'
+        ],
+        aggregatedFields: [
+          'totalContainers',
+          'totalEstimatedHours',
+          'disciplines',
+          'milestones',
+          'riskSummary'
+        ]
+      }
+    }
+  });
+});
+
+/**
+ * POST /api/export/preview/tidp/:id
+ * Generate preview data for TIDP export
+ */
+router.post('/preview/tidp/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { format } = req.body;
+
+    const tidp = tidpService.getTIDP(id);
+
+    const preview = {
+      metadata: {
+        teamName: tidp.teamName,
+        discipline: tidp.discipline,
+        containerCount: tidp.containers?.length || 0,
+        estimatedPages: format === 'pdf' ? Math.ceil((tidp.containers?.length || 0) / 5) + 3 : null,
+        estimatedSize: format === 'excel' ? '~50KB' : '~200KB'
+      },
+      sections: []
+    };
+
+    // Add sections based on available data
+    if (tidp.teamName) {
+      preview.sections.push('Task Team Information');
+    }
+    if (tidp.containers && tidp.containers.length > 0) {
+      preview.sections.push(`Information Containers (${tidp.containers.length} items)`);
+    }
+    if (tidp.predecessors && tidp.predecessors.length > 0) {
+      preview.sections.push(`Dependencies (${tidp.predecessors.length} items)`);
+    }
+    if (tidp.qualityChecks || tidp.reviewProcess) {
+      preview.sections.push('Quality Requirements');
+    }
+
+    res.json({
+      success: true,
+      data: preview
+    });
+  } catch (error) {
+    if (error.message.includes('not found')) {
+      return res.status(404).json({
+        success: false,
+        error: error.message
+      });
+    }
+    next(error);
+  }
+});
+
+/**
+ * POST /api/export/preview/midp/:id
+ * Generate preview data for MIDP export
+ */
+router.post('/preview/midp/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { format } = req.body;
+
+    const midp = midpService.getMIDP(id);
+
+    const preview = {
+      metadata: {
+        projectName: midp.projectName,
+        totalContainers: midp.aggregatedData.totalContainers,
+        milestones: midp.aggregatedData.milestones.length,
+        includedTIDPs: midp.includedTIDPs.length,
+        estimatedPages: format === 'pdf' ? Math.ceil(midp.aggregatedData.totalContainers / 10) + 5 : null,
+        estimatedSize: format === 'excel' ? '~150KB' : '~500KB'
+      },
+      sections: [
+        'Project Summary',
+        `Delivery Schedule (${midp.deliverySchedule?.phases?.length || 0} phases)`,
+        `All Information Containers (${midp.aggregatedData.totalContainers} items)`,
+        `Milestones (${midp.aggregatedData.milestones.length} items)`,
+        `Risk Register (${midp.riskRegister?.summary?.total || 0} risks)`,
+        'Resource Planning'
+      ]
+    };
+
+    res.json({
+      success: true,
+      data: preview
+    });
+  } catch (error) {
+    if (error.message.includes('not found')) {
+      return res.status(404).json({
+        success: false,
+        error: error.message
+      });
+    }
+    next(error);
+  }
+});
+
+module.exports = router;

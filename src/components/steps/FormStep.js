@@ -1,8 +1,21 @@
 import React from 'react';
 import InputField from '../forms/InputField';
 import CONFIG from '../../config/bepConfig';
+import InformationDeliveryPlanning from '../pages/InformationDeliveryPlanning';
 
 const FormStep = React.memo(({ stepIndex, formData, updateFormData, errors, bepType }) => {
+  // Step 5 is Information Delivery Planning - use specialized component
+  if (stepIndex === 5) {
+    return (
+      <InformationDeliveryPlanning
+        formData={formData}
+        updateFormData={updateFormData}
+        errors={errors}
+        bepType={bepType}
+      />
+    );
+  }
+
   const stepConfig = CONFIG.getFormFields(bepType, stepIndex);
   if (!stepConfig) return null;
 
