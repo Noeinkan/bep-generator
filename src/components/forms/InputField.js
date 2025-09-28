@@ -1,3 +1,5 @@
+import OrgStructureField from './OrgStructureField';
+// ...existing code...
 import React from 'react';
 import CONFIG from '../../config/bepConfig';
 import EditableTable from './EditableTable';
@@ -21,6 +23,17 @@ const InputField = React.memo(({ field, value, onChange, error }) => {
   };
 
   switch (type) {
+    case 'orgchart':
+      // Use a default intro or from field.placeholder
+      return (
+        <OrgStructureField
+          field={field}
+          value={value}
+          onChange={(v) => onChange(name, v)}
+          intro={field.placeholder || 'The delivery team operates under a Lead Appointed Party structure with Smith & Associates Architects as the primary coordinator reporting directly to ABC Development Corporation.'}
+        />
+      );
+    case 'orgchart':
     case 'table':
       return (
         <EditableTable

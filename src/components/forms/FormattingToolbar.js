@@ -10,6 +10,15 @@ import {
   ListOrdered,
   Type,
   X,
+  Heading,
+  Link as LinkIcon,
+  Code,
+  Quote,
+  Image as ImageIcon,
+  RotateCcw,
+  RotateCw,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
 // Reusable ToolbarButton component
@@ -36,6 +45,10 @@ const FormattingToolbar = ({
   currentAlignment = 'left',
   activeFormats = { bold: false, italic: false, underline: false },
   compact = false,
+  onPreviewToggle,
+  isPreviewMode,
+  onUndo,
+  onRedo,
 }) => {
   const fontOptions = [
     { value: 'default', label: 'Default' },
@@ -119,37 +132,22 @@ const FormattingToolbar = ({
             />
           </div>
 
-          {/* Right side - Alignment and Lists */}
+          {/* Right side - Alignment, Lists, and More */}
           <div className="flex items-center space-x-1">
-            <ToolbarButton
-              icon={AlignLeft}
-              onClick={() => handleFormat('align', 'left')}
-              title="Align Left"
-              isActive={currentAlignment === 'left'}
-            />
-            <ToolbarButton
-              icon={AlignCenter}
-              onClick={() => handleFormat('align', 'center')}
-              title="Align Center"
-              isActive={currentAlignment === 'center'}
-            />
-            <ToolbarButton
-              icon={AlignRight}
-              onClick={() => handleFormat('align', 'right')}
-              title="Align Right"
-              isActive={currentAlignment === 'right'}
-            />
+            <ToolbarButton icon={AlignLeft} onClick={() => handleFormat('align', 'left')} title="Align Left" isActive={currentAlignment === 'left'} />
+            <ToolbarButton icon={AlignCenter} onClick={() => handleFormat('align', 'center')} title="Align Center" isActive={currentAlignment === 'center'} />
+            <ToolbarButton icon={AlignRight} onClick={() => handleFormat('align', 'right')} title="Align Right" isActive={currentAlignment === 'right'} />
             <div className="w-px h-4 bg-gray-300 mx-1"></div>
-            <ToolbarButton
-              icon={List}
-              onClick={() => handleFormat('list', 'bullet')}
-              title="Bullet List"
-            />
-            <ToolbarButton
-              icon={ListOrdered}
-              onClick={() => handleFormat('list', 'numbered')}
-              title="Numbered List"
-            />
+            <ToolbarButton icon={List} onClick={() => handleFormat('list', 'bullet')} title="Bullet List" />
+            <ToolbarButton icon={ListOrdered} onClick={() => handleFormat('list', 'numbered')} title="Numbered List" />
+            <ToolbarButton icon={Heading} onClick={() => handleFormat('heading')} title="Heading" />
+            <ToolbarButton icon={LinkIcon} onClick={() => handleFormat('link')} title="Insert Link" />
+            <ToolbarButton icon={Code} onClick={() => handleFormat('code')} title="Inline Code" />
+            <ToolbarButton icon={Quote} onClick={() => handleFormat('blockquote')} title="Blockquote" />
+            <ToolbarButton icon={ImageIcon} onClick={() => handleFormat('image')} title="Insert Image" />
+            <ToolbarButton icon={RotateCcw} onClick={onUndo} title="Undo (Ctrl+Z)" />
+            <ToolbarButton icon={RotateCw} onClick={onRedo} title="Redo (Ctrl+Y)" />
+            <ToolbarButton icon={isPreviewMode ? EyeOff : Eye} onClick={onPreviewToggle} title={isPreviewMode ? 'Edit Mode' : 'Preview Mode'} />
           </div>
         </div>
       </div>
