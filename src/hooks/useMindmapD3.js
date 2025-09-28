@@ -194,12 +194,17 @@ export const useMindmapD3 = (svgRef, mindmapData, selectedNode, setSelectedNode,
           .attr('stroke-width', isSelected ? 3 : isHighlighted ? 2 : 1)
           .attr('cursor', 'pointer')
           .on('click', (event) => {
-            event.stopPropagation();
-            console.log('Node clicked:', d.id, d.name);
-            console.log('Current selection:', selectedNode);
-            const newSelection = selectedNode === d.id ? null : d.id;
-            console.log('Setting selection to:', newSelection);
-            setSelectedNode(newSelection);
+            // Only handle click if we weren't dragging
+            if (!isDragging) {
+              event.stopPropagation();
+              console.log('Node clicked:', d.id, d.name);
+              console.log('Current selection:', selectedNode);
+              const newSelection = selectedNode === d.id ? null : d.id;
+              console.log('Setting selection to:', newSelection);
+              setSelectedNode(newSelection);
+            } else {
+              console.log('Click ignored - was dragging');
+            }
           })
           .on('dblclick', (event) => {
             event.stopPropagation();
@@ -220,12 +225,17 @@ export const useMindmapD3 = (svgRef, mindmapData, selectedNode, setSelectedNode,
           .attr('stroke-width', isSelected ? 3 : isHighlighted ? 2 : 1)
           .attr('cursor', 'pointer')
           .on('click', (event) => {
-            event.stopPropagation();
-            console.log('Node clicked:', d.id, d.name);
-            console.log('Current selection:', selectedNode);
-            const newSelection = selectedNode === d.id ? null : d.id;
-            console.log('Setting selection to:', newSelection);
-            setSelectedNode(newSelection);
+            // Only handle click if we weren't dragging
+            if (!isDragging) {
+              event.stopPropagation();
+              console.log('Node clicked:', d.id, d.name);
+              console.log('Current selection:', selectedNode);
+              const newSelection = selectedNode === d.id ? null : d.id;
+              console.log('Setting selection to:', newSelection);
+              setSelectedNode(newSelection);
+            } else {
+              console.log('Click ignored - was dragging');
+            }
           })
           .on('dblclick', (event) => {
             event.stopPropagation();
