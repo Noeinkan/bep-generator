@@ -1,6 +1,7 @@
 import React from 'react';
 import CONFIG from '../../config/bepConfig';
 import EditableTable from './EditableTable';
+import FileStructureDiagram from './FileStructureDiagram';
 
 const InputField = React.memo(({ field, value, onChange, error }) => {
   const { name, label, type, required, rows, placeholder, options: fieldOptions } = field;
@@ -20,6 +21,16 @@ const InputField = React.memo(({ field, value, onChange, error }) => {
     case 'table':
       return (
         <EditableTable
+          field={field}
+          value={value}
+          onChange={onChange}
+          error={error}
+        />
+      );
+
+    case 'fileStructure':
+      return (
+        <FileStructureDiagram
           field={field}
           value={value}
           onChange={onChange}
