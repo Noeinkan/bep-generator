@@ -3,7 +3,7 @@ import { Plus, Calendar, Users, Download } from 'lucide-react';
 import ApiService from '../../services/apiService';
 import Toast from '../common/Toast';
 
-const TidpMidpManager = ({ onClose }) => {
+const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidpForm = false }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [tidps, setTidps] = useState([]);
   const [midps, setMidps] = useState([]);
@@ -13,13 +13,32 @@ const TidpMidpManager = ({ onClose }) => {
   const [detailsForm, setDetailsForm] = useState({ taskTeam: '', description: '', containers: [] });
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
-  const [showTidpForm, setShowTidpForm] = useState(false);
-  const [showMidpForm, setShowMidpForm] = useState(false);
+  const [showTidpForm, setShowTidpForm] = useState(initialShowTidpForm);
+  const [showMidpForm, setShowMidpForm] = useState(initialShowMidpForm);
   // Toast state
   const [toast, setToast] = useState({ open: false, message: '', type: 'info' });
 
-  // Forms state
-  const [tidpForm, setTidpForm] = useState({ taskTeam: '', description: '' });
+  const [tidpForm, setTidpForm] = useState({
+    taskTeam: '',
+    discipline: '',
+    teamLeader: '',
+    description: '',
+    containers: [
+      {
+        id: `c-${Date.now()}`,
+        'Container Name': 'Initial deliverable',
+        'Type': 'Model',
+        'Format': 'IFC',
+        'LOI Level': 'LOD 300',
+        'Author': '',
+        'Dependencies': [],
+        'Est. Time': '1 day',
+        'Milestone': 'Initial',
+        'Due Date': new Date().toISOString().slice(0,10),
+        'Status': 'Planned'
+      }
+    ]
+  });
   const [midpForm, setMidpForm] = useState({ projectName: '', description: '' });
 
   // Bulk export state
@@ -391,30 +410,279 @@ const TidpMidpManager = ({ onClose }) => {
     </div>
   );
 
-  const TIDPForm = () => (
-    <div className="space-y-6">
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Create New TIDP</h2>
-          <button type="button" onClick={() => setShowTidpForm(false)} className="text-gray-500 hover:text-gray-700">✕</button>
+  const TIDPForm = () => {
+    const addContainer = () => {
+      const newContainer = {
+        id: `c-${Date.now()}`,
+        'Container Name': '',
+        'Type': 'Model',
+        'Format': 'IFC',
+        'LOI Level': 'LOD 200',
+        'Author': '',
+        'Dependencies': [],
+        'Est. Time': '1 day',
+        'Milestone': '',
+        'Due Date': '',
+        'Status': 'Planned'
+      };
+      setTidpForm(prev => ({
+        ...prev,
+        containers: [...prev.containers, newContainer]
+      }));
+    };
+
+    const updateContainer = (index, field, value) => {
+      setTidpForm(prev => ({
+        ...prev,
+        containers: prev.containers.map((container, i) =>
+          i === index ? { ...container, [field]: value } : container
+        )
+      }));
+    };
+
+    const removeContainer = (index) => {
+      if (tidpForm.containers.length > 1) {
+        setTidpForm(prev => ({
+          ...prev,
+          containers: prev.containers.filter((_, i) => i !== index)
+        }));
+      }
+    };
+
+    return (
+      <div className="space-y-6">
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Create New TIDP</h2>
+            <button type="button" onClick={() => setShowTidpForm(false)} className="text-gray-500 hover:text-gray-700">✕</button>
+          </div>
+          <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); handleCreateTidp(); }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Task Team</label>
+                <input
+                  value={tidpForm.taskTeam}
+                  onChange={(e) => setTidpForm((s) => ({ ...s, taskTeam: e.target.value }))}
+                  type="text"
+                  className="w-full p-3 border border-gray-300 rounded-lg"
+                  placeholder="Architecture Team"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Discipline</label>
+                <select
+                  value={tidpForm.discipline}
+                  onChange={(e) => setTidpForm((s) => ({ ...s, discipline: e.target.value }))}
+                  className="w-full p-3 border border-gray-300 rounded-lg"
+                  required
+                >
+                  <option value="">Select Discipline</option>
+                  <option value="architecture">Architecture</option>
+                  <option value="structural">Structural Engineering</option>
+                  <option value="mep">MEP Engineering</option>
+                  <option value="civil">Civil Engineering</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Team Leader</label>
+                <input
+                  value={tidpForm.teamLeader}
+                  onChange={(e) => setTidpForm((s) => ({ ...s, teamLeader: e.target.value }))}
+                  type="text"
+                  className="w-full p-3 border border-gray-300 rounded-lg"
+                  placeholder="John Smith"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+              <textarea
+                value={tidpForm.description}
+                onChange={(e) => setTidpForm((s) => ({ ...s, description: e.target.value }))}
+                className="w-full p-3 border border-gray-300 rounded-lg resize-none"
+                rows={4}
+                placeholder="Describe the task information delivery plan..."
+              />
+            </div>
+
+            <div>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Information Containers</h3>
+                <button
+                  type="button"
+                  onClick={addContainer}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Container</span>
+                </button>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="min-w-full border border-gray-300 rounded-lg">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Container Name</th>
+                      <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Type</th>
+                      <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Format</th>
+                      <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">LOI Level</th>
+                      <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Author</th>
+                      <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Est. Time</th>
+                      <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Milestone</th>
+                      <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Due Date</th>
+                      <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Status</th>
+                      <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tidpForm.containers.map((container, index) => (
+                      <tr key={container.id} className="border-b">
+                        <td className="px-4 py-2">
+                          <input
+                            type="text"
+                            value={container['Container Name']}
+                            onChange={(e) => updateContainer(index, 'Container Name', e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded"
+                            placeholder="Federated Model"
+                          />
+                        </td>
+                        <td className="px-4 py-2">
+                          <select
+                            value={container['Type']}
+                            onChange={(e) => updateContainer(index, 'Type', e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded"
+                          >
+                            <option value="Model">Model</option>
+                            <option value="Drawing">Drawing</option>
+                            <option value="Document">Document</option>
+                            <option value="Report">Report</option>
+                          </select>
+                        </td>
+                        <td className="px-4 py-2">
+                          <select
+                            value={container['Format']}
+                            onChange={(e) => updateContainer(index, 'Format', e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded"
+                          >
+                            <option value="IFC">IFC</option>
+                            <option value="DWG">DWG</option>
+                            <option value="PDF">PDF</option>
+                            <option value="XLSX">XLSX</option>
+                          </select>
+                        </td>
+                        <td className="px-4 py-2">
+                          <select
+                            value={container['LOI Level']}
+                            onChange={(e) => updateContainer(index, 'LOI Level', e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded"
+                          >
+                            <option value="LOD 100">LOD 100</option>
+                            <option value="LOD 200">LOD 200</option>
+                            <option value="LOD 300">LOD 300</option>
+                            <option value="LOD 350">LOD 350</option>
+                            <option value="LOD 400">LOD 400</option>
+                          </select>
+                        </td>
+                        <td className="px-4 py-2">
+                          <input
+                            type="text"
+                            value={container['Author']}
+                            onChange={(e) => updateContainer(index, 'Author', e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded"
+                            placeholder="John Smith"
+                          />
+                        </td>
+                        <td className="px-4 py-2">
+                          <input
+                            type="text"
+                            value={container['Est. Time']}
+                            onChange={(e) => updateContainer(index, 'Est. Time', e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded"
+                            placeholder="2 days"
+                          />
+                        </td>
+                        <td className="px-4 py-2">
+                          <input
+                            type="text"
+                            value={container['Milestone']}
+                            onChange={(e) => updateContainer(index, 'Milestone', e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded"
+                            placeholder="Stage 3"
+                          />
+                        </td>
+                        <td className="px-4 py-2">
+                          <input
+                            type="date"
+                            value={container['Due Date']}
+                            onChange={(e) => updateContainer(index, 'Due Date', e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded"
+                          />
+                        </td>
+                        <td className="px-4 py-2">
+                          <select
+                            value={container['Status']}
+                            onChange={(e) => updateContainer(index, 'Status', e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded"
+                          >
+                            <option value="Planned">Planned</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Delayed">Delayed</option>
+                          </select>
+                        </td>
+                        <td className="px-4 py-2">
+                          <button
+                            type="button"
+                            onClick={() => removeContainer(index)}
+                            className="text-red-600 hover:text-red-800"
+                            disabled={tidpForm.containers.length === 1}
+                          >
+                            Remove
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="flex space-x-4">
+              <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">Create TIDP</button>
+              <button type="button" onClick={() => { setShowTidpForm(false); setTidpForm({
+                taskTeam: '',
+                discipline: '',
+                teamLeader: '',
+                description: '',
+                containers: [
+                  {
+                    id: `c-${Date.now()}`,
+                    'Container Name': 'Initial deliverable',
+                    'Type': 'Model',
+                    'Format': 'IFC',
+                    'LOI Level': 'LOD 300',
+                    'Author': '',
+                    'Dependencies': [],
+                    'Est. Time': '1 day',
+                    'Milestone': 'Initial',
+                    'Due Date': new Date().toISOString().slice(0,10),
+                    'Status': 'Planned'
+                  }
+                ]
+              }); }} className="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-lg">Cancel</button>
+            </div>
+          </form>
         </div>
-        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleCreateTidp(); }}>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Task Team</label>
-            <input value={tidpForm.taskTeam} onChange={(e) => setTidpForm((s) => ({ ...s, taskTeam: e.target.value }))} type="text" className="w-full p-3 border border-gray-300 rounded-lg" placeholder="Architecture Team" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-            <input value={tidpForm.description} onChange={(e) => setTidpForm((s) => ({ ...s, description: e.target.value }))} type="text" className="w-full p-3 border border-gray-300 rounded-lg" placeholder="Brief description" />
-          </div>
-          <div className="flex space-x-4">
-            <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">Create TIDP</button>
-            <button type="button" onClick={() => { setShowTidpForm(false); setTidpForm({ taskTeam: '', description: '' }); }} className="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-lg">Cancel</button>
-          </div>
-        </form>
       </div>
-    </div>
-  );
+    );
+  };
 
   const MIDPForm = () => (
     <div className="space-y-6">
@@ -448,16 +716,35 @@ const TidpMidpManager = ({ onClose }) => {
       setToast({ open: true, message: 'Task team is required', type: 'error' });
       return;
     }
+    if (!tidpForm.discipline) {
+      setToast({ open: true, message: 'Discipline is required', type: 'error' });
+      return;
+    }
+    if (!tidpForm.teamLeader || tidpForm.teamLeader.trim().length < 2) {
+      setToast({ open: true, message: 'Team leader is required', type: 'error' });
+      return;
+    }
+
     try {
       // The server validator expects specific fields: teamName, discipline, leader, company, responsibilities, containers
       // Provide minimal defaults so the TIDP can be created and the user can edit details in the UI.
       const payload = {
         teamName: tidpForm.taskTeam,
-        discipline: 'Architecture',
-        leader: 'TBD',
+        discipline: tidpForm.discipline,
+        leader: tidpForm.teamLeader,
         company: 'TBD',
         responsibilities: tidpForm.description || 'TBD',
         description: tidpForm.description,
+        containers: tidpForm.containers
+      };
+      const created = await ApiService.createTIDP(payload);
+      setToast({ open: true, message: 'TIDP created', type: 'success' });
+      setShowTidpForm(false);
+      setTidpForm({
+        taskTeam: '',
+        discipline: '',
+        teamLeader: '',
+        description: '',
         containers: [
           {
             id: `c-${Date.now()}`,
@@ -465,7 +752,7 @@ const TidpMidpManager = ({ onClose }) => {
             'Type': 'Model',
             'Format': 'IFC',
             'LOI Level': 'LOD 300',
-            'Author': 'TBD',
+            'Author': '',
             'Dependencies': [],
             'Est. Time': '1 day',
             'Milestone': 'Initial',
@@ -473,11 +760,7 @@ const TidpMidpManager = ({ onClose }) => {
             'Status': 'Planned'
           }
         ]
-      };
-      const created = await ApiService.createTIDP(payload);
-      setToast({ open: true, message: 'TIDP created', type: 'success' });
-      setShowTidpForm(false);
-      setTidpForm({ taskTeam: '', description: '' });
+      });
       // reload list and open details editor for the new TIDP (server returns { success: true, data: tidp })
       await loadData();
       const createdTidp = (created && (created.data || created.tidp)) || created;

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Calendar, Plus, FileText, Download, RefreshCw, AlertCircle, CheckCircle, Users, Target } from 'lucide-react';
 import ApiService from '../../services/apiService';
 import TidpMidpManager from './TidpMidpManager';
+import ExcelTIDPEditor from '../ExcelTIDPEditor';
 
 const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType }) => {
   const [tidps, setTidps] = useState([]);
@@ -370,23 +371,36 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
     </div>
   );
 
-  const TidpFormTab = () => (
-    <div className="max-w-2xl">
-      <h3 className="text-lg font-semibold mb-4">Create New TIDP</h3>
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-        <p className="text-gray-600 mb-4">
-          Use the dedicated TIDP creation form in the advanced interface. This will open in a new window with full TIDP management capabilities.
-        </p>
-        <button
-          onClick={() => window.open('/tidp-manager', '_blank', 'width=1200,height=800')}
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
-        >
-          <FileText className="w-4 h-4" />
-          <span>Open TIDP Manager</span>
-        </button>
+  const TidpFormTab = () => {
+    const [showExcelEditor, setShowExcelEditor] = useState(false);
+
+    if (showExcelEditor) {
+      return <ExcelTIDPEditor onClose={() => setShowExcelEditor(false)} onSave={(tidpData) => {
+        // Handle save logic here
+        console.log('TIDP saved:', tidpData);
+        setShowExcelEditor(false);
+        // You could call an API to save the TIDP
+      }} />;
+    }
+
+    return (
+      <div className="max-w-2xl">
+        <h3 className="text-lg font-semibold mb-4">Create New TIDP</h3>
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+          <p className="text-gray-600 mb-4">
+            Open the Excel-style TIDP editor for intuitive creation and management of Task Information Delivery Plans.
+          </p>
+          <button
+            onClick={() => setShowExcelEditor(true)}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+          >
+            <FileText className="w-4 h-4" />
+            <span>Open Excel TIDP Editor</span>
+          </button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const MidpFormTab = () => (
     <div className="max-w-2xl">
@@ -396,7 +410,7 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
           Use the dedicated MIDP creation form in the advanced interface. This will open in a new window with full MIDP management capabilities.
         </p>
         <button
-          onClick={() => window.open('/midp-manager', '_blank', 'width=1200,height=800')}
+          onClick={() => window.open('/tidp-midp-manager', '_blank', 'width=1200,height=800')}
           className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2"
         >
           <Calendar className="w-4 h-4" />
@@ -494,7 +508,11 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
       </div>
 
       {showManager ? (
-        <TidpMidpManager onClose={() => setShowManager(false)} />
+        <TidpMidpManager 
+          onClose={() => setShowManager(false)} 
+          initialShowTidpForm={activeTab === 'tidp-form'} 
+          initialShowMidpForm={activeTab === 'midp-form'} 
+        />
       ) : (
         serverConnected ? <AdvancedInterface /> : <BasicFormInterface />
       )}
