@@ -15,11 +15,54 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
+    const autoLogin = async () => {
+      try {
+        // Check if user is already logged in
+        const storedUser = localStorage.getItem('currentUser');
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+          setLoading(false);
+          return;
+        }
+
+        // Auto-login with default credentials
+        const email = 'nome.cognome@libero.it';
+        const password = 'Password1234';
+        const name = 'Nome Cognome';
+
+        const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+        let user = existingUsers.find(u => u.email === email);
+
+        // If user doesn't exist, create it
+        if (!user) {
+          user = {
+            id: Date.now().toString(),
+            email,
+            name,
+            password,
+            createdAt: new Date().toISOString(),
+            projects: []
+          };
+          const updatedUsers = [...existingUsers, user];
+          localStorage.setItem('users', JSON.stringify(updatedUsers));
+        }
+
+        // Check password and login
+        if (user.password === password) {
+          const userForStorage = { ...user };
+          delete userForStorage.password;
+
+          setUser(userForStorage);
+          localStorage.setItem('currentUser', JSON.stringify(userForStorage));
+        }
+      } catch (error) {
+        console.error('Auto-login failed:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    autoLogin();
   }, []);
 
   const register = async (userData) => {

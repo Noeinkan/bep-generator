@@ -12,7 +12,9 @@
       "Bash(findstr:*)",
       "Bash(taskkill:*)",
       "Bash(npx kill-port:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(find:*)",
+      "Bash(uniq -c echo \"2. Checking ProtectedRoute usage:\" grep -r \"ProtectedRoute\" ./src --exclude-dir=node_modules)"
     ],
     "deny": [],
     "ask": []

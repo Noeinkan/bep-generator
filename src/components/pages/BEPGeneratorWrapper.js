@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, Eye, Zap, FolderOpen, Save, ExternalLink } from 'lucide-react';
 import DOMPurify from 'dompurify';
@@ -11,13 +11,18 @@ import FormStep from '../steps/FormStep';
 import PreviewExportPage from './PreviewExportPage';
 import EnhancedBepTypeSelector from './EnhancedBepTypeSelector';
 import DraftManager from './DraftManager';
+import SaveDraftDialog from './SaveDraftDialog';
 import { generateBEPContent } from '../../services/bepFormatter';
 import { generatePDF } from '../../services/pdfGenerator';
+import { useDraftOperations } from '../../hooks/useDraftOperations';
+import { useAuth } from '../../contexts/AuthContext';
+import { validateDraftName } from '../../utils/validationUtils';
 
 const BEPGeneratorWrapper = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
+  const { user } = useAuth();
 
   // Check if we should show TIDP creation form
   const shouldShowTidpForm = searchParams.get('createTidp') === 'true';
@@ -29,9 +34,30 @@ const BEPGeneratorWrapper = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [showPreview, setShowPreview] = useState(false);
   const [showDraftManager, setShowDraftManager] = useState(false);
+  const [showSaveDraftDialog, setShowSaveDraftDialog] = useState(false);
+  const [newDraftName, setNewDraftName] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [exportFormat, setExportFormat] = useState('pdf');
   const [completedSections, setCompletedSections] = useState(new Set());
+
+  // Draft operations
+  const { saveDraft, isLoading: savingDraft, error: draftError } = useDraftOperations(user, formData, bepType, (loadedData, loadedType) => {
+    setFormData(loadedData);
+    setBepType(loadedType);
+  }, () => {});
+
+  // Close draft manager if user logs out
+  React.useEffect(() => {
+    if (!user && showDraftManager) {
+      setShowDraftManager(false);
+    }
+  }, [user, showDraftManager]);
+
+  // Draft name validation
+  const newDraftNameValidation = React.useMemo(() => {
+    if (!newDraftName) return { isValid: false, error: null, sanitized: '' };
+    return validateDraftName(newDraftName);
+  }, [newDraftName]);
 
   // Navigation functions
   const goToTidpManager = () => {
@@ -133,6 +159,37 @@ const BEPGeneratorWrapper = () => {
     setShowPreview(true);
   }, [currentStep, formData, validateStep]);
 
+  const handleSaveDraft = useCallback(async () => {
+    if (!user) {
+      alert('Please log in to save drafts');
+      return;
+    }
+    if (!bepType) {
+      alert('Please select a BEP type first');
+      return;
+    }
+    setNewDraftName('');
+    setShowSaveDraftDialog(true);
+  }, [user, bepType]);
+
+  const handleSaveDraftConfirm = useCallback(async () => {
+    if (!newDraftNameValidation.isValid) return;
+
+    try {
+      await saveDraft(newDraftNameValidation.sanitized, formData);
+      setShowSaveDraftDialog(false);
+      setNewDraftName('');
+      alert('Draft saved successfully!');
+    } catch (error) {
+      alert('Failed to save draft: ' + error.message);
+    }
+  }, [newDraftNameValidation, formData, saveDraft]);
+
+  const handleSaveDraftCancel = useCallback(() => {
+    setShowSaveDraftDialog(false);
+    setNewDraftName('');
+  }, []);
+
   const generateContent = useCallback(async () => {
     setIsGenerating(true);
     try {
@@ -162,12 +219,6 @@ const BEPGeneratorWrapper = () => {
       setIsGenerating(false);
     }
   }, [exportFormat, formData, bepType, generateContent]);
-
-  const progress = useMemo(() => {
-    if (!bepType) return 0;
-    const totalSteps = CONFIG.steps.length;
-    return Math.round(((currentStep + 1) / totalSteps) * 100);
-  }, [currentStep, bepType]);
 
   // If no BEP type selected, show type selector
   if (!bepType) {
@@ -224,16 +275,19 @@ const BEPGeneratorWrapper = () => {
     );
   }
 
-  // Show draft manager if requested
-  if (showDraftManager) {
+  // Show draft manager if requested and user is logged in
+  if (showDraftManager && user) {
     return (
       <DraftManager
-        onClose={() => setShowDraftManager(false)}
-        onLoad={(loadedData, loadedType) => {
+        user={user}
+        currentFormData={formData}
+        onLoadDraft={(loadedData, loadedType) => {
           setFormData(loadedData);
           setBepType(loadedType);
           setShowDraftManager(false);
         }}
+        onClose={() => setShowDraftManager(false)}
+        bepType={bepType}
       />
     );
   }
@@ -267,23 +321,11 @@ const BEPGeneratorWrapper = () => {
             </div>
           </div>
 
-          <div className="mb-4">
-            <div className="flex items-center justify-between text-sm mb-2">
-              <span className="text-gray-600">Progress</span>
-              <span className="font-medium text-gray-900">{progress}%</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
-
           <div className="flex space-x-2">
             <button
               onClick={() => setShowDraftManager(true)}
-              className="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              disabled={!user}
+              className="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FolderOpen className="w-4 h-4 mr-2" />
               Drafts
@@ -321,6 +363,25 @@ const BEPGeneratorWrapper = () => {
             </div>
 
             <div className="flex items-center space-x-3">
+              {/* Navigation arrows */}
+              <button
+                onClick={handlePrevious}
+                disabled={currentStep === 0}
+                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-4 h-4 mr-1" />
+                Previous
+              </button>
+
+              <button
+                onClick={handleNext}
+                disabled={currentStep >= (CONFIG.steps?.length || 0) - 1}
+                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+                <ChevronRight className="w-4 h-4 ml-1" />
+              </button>
+
               {/* TIDP/MIDP Integration */}
               <button
                 onClick={goToTidpManager}
@@ -328,6 +389,15 @@ const BEPGeneratorWrapper = () => {
               >
                 <ExternalLink className="w-4 h-4 mr-2" />
                 TIDP/MIDP Manager
+              </button>
+
+              <button
+                onClick={handleSaveDraft}
+                disabled={savingDraft || !user}
+                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                {savingDraft ? 'Saving...' : 'Save Draft'}
               </button>
 
               <button
@@ -388,6 +458,20 @@ const BEPGeneratorWrapper = () => {
         </div>
       </div>
     </div>
+  );
+
+  return (
+    <>
+      <SaveDraftDialog
+        show={showSaveDraftDialog}
+        newDraftName={newDraftName}
+        isNewDraftNameValid={newDraftNameValidation.isValid}
+        newDraftNameValidation={newDraftNameValidation}
+        onNewDraftNameChange={setNewDraftName}
+        onSave={handleSaveDraftConfirm}
+        onCancel={handleSaveDraftCancel}
+      />
+    </>
   );
 };
 
