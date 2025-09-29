@@ -183,6 +183,15 @@ const BEPGeneratorWrapper = () => {
     setShowPreview(true);
   }, [currentStep, formData, validateStep]);
 
+  const handlePreviewBEP = useCallback(() => {
+    const content = generateBEPContent(formData, bepType);
+    const newWindow = window.open('', '_blank');
+    if (newWindow) {
+      newWindow.document.write(content);
+      newWindow.document.close();
+    }
+  }, [formData, bepType]);
+
   const handleSaveDraft = useCallback(async () => {
     if (!user) {
       alert('Please log in to save drafts');
@@ -236,7 +245,7 @@ const BEPGeneratorWrapper = () => {
 
       if (exportFormat === 'pdf') {
         try {
-          const pdf = generatePDF(formData, bepType);
+          const pdf = await generatePDF(formData, bepType);
           pdf.save(`BEP_${bepType}_${new Date().toISOString().split('T')[0]}.pdf`);
         } catch (error) {
           console.error('PDF generation failed:', error);
@@ -331,7 +340,7 @@ const BEPGeneratorWrapper = () => {
         isGenerating={isGenerating}
         exportFormat={exportFormat}
         setExportFormat={setExportFormat}
-        previewBEP={() => {}}
+        previewBEP={handlePreviewBEP}
         downloadBEP={handleExport}
         isExporting={isGenerating}
       />
@@ -426,7 +435,7 @@ const BEPGeneratorWrapper = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-4 bg-gradient-to-r from-white to-gray-50 sticky top-0 z-10">
+  <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-4 bg-gradient-to-r from-white to-gray-50 sticky top-0 z-10">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div>
@@ -504,7 +513,7 @@ const BEPGeneratorWrapper = () => {
         </div>
 
         {/* Form Content */}
-        <div className="flex-1 overflow-y-auto bg-gray-50">
+  <div className="flex-1 overflow-y-auto bg-gray-50">
           <div className="max-w-4xl mx-auto px-6 py-8">
             <div className={`bg-white rounded-xl shadow-sm border border-gray-200 p-8 transition-all duration-300 ease-in-out ${isTransitioning ? 'opacity-50 transform scale-95' : 'opacity-100 transform scale-100'}`}>
               {formData && bepType ? (
@@ -530,7 +539,7 @@ const BEPGeneratorWrapper = () => {
         </div>
 
         {/* Footer Navigation */}
-        <div className="bg-white border-t border-gray-200 px-6 py-4 shadow-lg flex-shrink-0">
+  <div className="bg-white border-t border-gray-200 px-6 py-4 shadow-lg flex-shrink-0">
           <div className="flex items-center justify-between">
             <button
               onClick={handlePrevious}
