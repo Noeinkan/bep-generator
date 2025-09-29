@@ -389,4 +389,73 @@ router.get('/:id/dashboard', async (req, res, next) => {
   }
 });
 
+/**
+ * POST /api/midp/auto-generate/:projectId
+ * Auto-generate MIDP from all TIDPs in a project
+ */
+router.post('/auto-generate/:projectId', async (req, res, next) => {
+  try {
+    const { projectId } = req.params;
+    const midpData = req.body;
+
+    const createdMidp = midpService.autoGenerateMIDPFromProject(projectId, midpData);
+
+    res.status(201).json({
+      success: true,
+      data: createdMidp,
+      message: `MIDP auto-generated from ${createdMidp.includedTIDPs.length} TIDPs`
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * GET /api/midp/:id/evolution
+ * Get MIDP evolution over time
+ */
+router.get('/:id/evolution', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const evolution = midpService.getMIDPEvolution(id);
+
+    res.json({
+      success: true,
+      data: evolution
+    });
+  } catch (error) {
+    if (error.message.includes('not found')) {
+      return res.status(404).json({
+        success: false,
+        error: error.message
+      });
+    }
+    next(error);
+  }
+});
+
+/**
+ * GET /api/midp/:id/deliverables-dashboard
+ * Get deliverables dashboard with spreadsheet-like view
+ */
+router.get('/:id/deliverables-dashboard', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const dashboard = midpService.getDeliverablesDashboard(id);
+
+    res.json({
+      success: true,
+      data: dashboard
+    });
+  } catch (error) {
+    if (error.message.includes('not found')) {
+      return res.status(404).json({
+        success: false,
+        error: error.message
+      });
+    }
+    next(error);
+  }
+});
+
 module.exports = router;

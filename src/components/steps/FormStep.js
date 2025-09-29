@@ -3,7 +3,12 @@ import InputField from '../forms/InputField';
 import CONFIG from '../../config/bepConfig';
 import InformationDeliveryPlanning from '../pages/InformationDeliveryPlanning';
 
-const FormStep = React.memo(({ stepIndex, formData, updateFormData, errors, bepType }) => {
+const FormStep = ({ stepIndex, formData, updateFormData, errors, bepType }) => {
+  // Safety check - ensure we have the required props
+  if (!formData || !bepType) {
+    return <div>Loading...</div>;
+  }
+
   // Step 5 is Information Delivery Planning - use specialized component
   if (stepIndex === 5) {
     return (
@@ -17,7 +22,14 @@ const FormStep = React.memo(({ stepIndex, formData, updateFormData, errors, bepT
   }
 
   const stepConfig = CONFIG.getFormFields(bepType, stepIndex);
-  if (!stepConfig) return null;
+
+  if (!stepConfig) {
+    return <div>No configuration found for step {stepIndex}</div>;
+  }
+
+  if (!stepConfig.fields) {
+    return <div>No fields configured for this step</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -28,16 +40,16 @@ const FormStep = React.memo(({ stepIndex, formData, updateFormData, errors, bepT
           <div key={field.name} className={field.type === 'textarea' || field.type === 'checkbox' || field.type === 'table' || field.type === 'fileStructure' || field.type === 'cdeDiagram' || field.type === 'mindmap' || field.type === 'orgchart' ? 'md:col-span-2' : ''}>
             <InputField
               field={field}
-              value={formData[field.name]}
+              value={formData ? formData[field.name] : ''}
               onChange={updateFormData}
-              error={errors[field.name]}
-              formData={formData}
+              error={errors ? errors[field.name] : ''}
+              formData={formData || {}}
             />
           </div>
         ))}
       </div>
     </div>
   );
-});
+};
 
 export default FormStep;

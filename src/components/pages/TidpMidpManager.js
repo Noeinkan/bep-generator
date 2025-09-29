@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Calendar, Users, Download } from 'lucide-react';
+import { Plus, Calendar, Users, Download, Upload, TrendingUp, BarChart3 } from 'lucide-react';
 import ApiService from '../../services/apiService';
 import Toast from '../common/Toast';
+import TIDPImportDialog from '../TIDPImportDialog';
+import MIDPEvolutionDashboard from '../MIDPEvolutionDashboard';
 
 const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidpForm = false }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -15,6 +17,8 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [showTidpForm, setShowTidpForm] = useState(initialShowTidpForm);
   const [showMidpForm, setShowMidpForm] = useState(initialShowMidpForm);
+  const [showImportDialog, setShowImportDialog] = useState(false);
+  const [showEvolutionDashboard, setShowEvolutionDashboard] = useState(null);
   // Toast state
   const [toast, setToast] = useState({ open: false, message: '', type: 'info' });
 
@@ -231,106 +235,44 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
         </div>
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900">Task Information Delivery Plans</h2>
-          {activeTab === 'dashboard' && (
-            <div className="space-y-4">
-              <div className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-lg font-semibold mb-3">Bulk exports</h3>
-                <div className="flex items-center space-x-3">
-                  <button onClick={async () => { await exportAllTidpPdfs(3); }} disabled={bulkExportRunning} className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-60">
-                    {bulkExportRunning ? `${bulkProgress.done}/${bulkProgress.total} exporting...` : 'Export all TIDP PDFs'}
-                  </button>
+          <div className="flex space-x-3">
+            <button
+              onClick={() => setShowImportDialog(true)}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+            >
+              <Upload className="w-4 h-4" />
+              <span>Import TIDPs</span>
+            </button>
+            <button
+              onClick={() => setShowTidpForm(true)}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              <span>New TIDP</span>
+            </button>
+          </div>
+        </div>
 
-                  <button onClick={async () => {
-                    if (midps.length === 0) { setToast({ open: true, message: 'No MIDP available to consolidate', type: 'info' }); return; }
-                    const projectId = 'project-1';
-                    try {
-                      await ApiService.exportConsolidatedProject(projectId, midps[0].id);
-                      setToast({ open: true, message: 'Consolidated project export downloaded', type: 'success' });
-                    } catch (err) {
-                      console.error(err);
-                      setToast({ open: true, message: 'Failed consolidated export: ' + (err.message || err), type: 'error' });
-                    }
-                  }} className="bg-purple-600 text-white px-4 py-2 rounded">Export consolidated project</button>
-                </div>
-              </div>
-            </div>
-          )}
-          <button
-            onClick={() => setShowTidpForm(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            <span>New TIDP</span>
-          </button>
-          {/* Details panel - moved outside of the create button so it renders correctly */}
-          {detailsItem && (
-            <div className="fixed right-6 top-20 w-96 bg-white border rounded-lg shadow-lg p-4 z-50">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="font-semibold">{detailsItem.type === 'tidp' ? 'TIDP Details' : 'MIDP Details'}</h4>
-                <button type="button" onClick={() => setDetailsItem(null)} className="text-sm text-gray-600">Close</button>
-              </div>
-              <div className="text-sm text-gray-700">
-                {detailsItem.type === 'tidp' ? (
-                  <div>
-                    <label className="block text-xs font-medium mb-1">Task Team</label>
-                    <input value={detailsForm.taskTeam} onChange={(e) => setDetailsForm((s) => ({ ...s, taskTeam: e.target.value }))} className="w-full p-2 border rounded mb-2 text-sm" />
-                    <label className="block text-xs font-medium mb-1">Description</label>
-                    <input value={detailsForm.description} onChange={(e) => setDetailsForm((s) => ({ ...s, description: e.target.value }))} className="w-full p-2 border rounded mb-3 text-sm" />
+        {/* Bulk Export Section */}
+        <div className="bg-gray-50 rounded-lg p-4 mb-6">
+          <h3 className="text-lg font-semibold mb-3">Bulk Operations</h3>
+          <div className="flex items-center space-x-3">
+            <button onClick={async () => { await exportAllTidpPdfs(3); }} disabled={bulkExportRunning} className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-60">
+              {bulkExportRunning ? `${bulkProgress.done}/${bulkProgress.total} exporting...` : 'Export all TIDP PDFs'}
+            </button>
 
-                    <div className="mb-3">
-                      <label className="block text-xs font-medium mb-2">Deliverables</label>
-                      <div className="space-y-2 max-h-48 overflow-auto">
-                        {(detailsForm.containers || []).map((c, ci) => (
-                          <div key={c.id || ci} className="flex items-center space-x-2">
-                            <input value={c['Container Name'] || c.name || ''} onChange={(e) => {
-                              const updated = [...(detailsForm.containers || [])];
-                              updated[ci] = { ...updated[ci], 'Container Name': e.target.value };
-                              setDetailsForm((s) => ({ ...s, containers: updated }));
-                            }} className="flex-1 p-2 border rounded text-sm" placeholder="Container Name" />
-                            <input value={c['Due Date'] || c.dueDate || ''} onChange={(e) => {
-                              const updated = [...(detailsForm.containers || [])];
-                              updated[ci] = { ...updated[ci], 'Due Date': e.target.value };
-                              setDetailsForm((s) => ({ ...s, containers: updated }));
-                            }} type="date" className="p-2 border rounded text-sm" />
-                            <button type="button" onClick={() => {
-                              const updated = (detailsForm.containers || []).filter((_, idx) => idx !== ci);
-                              setDetailsForm((s) => ({ ...s, containers: updated }));
-                            }} className="text-red-600 text-sm">Remove</button>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="mt-2">
-                        <button type="button" onClick={() => {
-                          const updated = [...(detailsForm.containers || []), { id: `c-${Date.now()}`, 'Container Name': '', 'Due Date': '' }];
-                          setDetailsForm((s) => ({ ...s, containers: updated }));
-                        }} className="bg-gray-100 px-2 py-1 rounded text-sm">Add deliverable</button>
-                      </div>
-                    </div>
-
-                    <div className="flex space-x-2">
-                      <button type="button" onClick={() => {
-                        const updated = {
-                          taskTeam: detailsForm.taskTeam,
-                          description: detailsForm.description,
-                          containers: detailsForm.containers
-                        };
-                        handleUpdateTidp(detailsItem.data.id, updated);
-                      }} className="bg-blue-600 text-white px-3 py-1 rounded text-sm">Save</button>
-                      <button type="button" onClick={() => handleDeleteTidp(detailsItem.data.id)} className="bg-red-600 text-white px-3 py-1 rounded text-sm">Delete</button>
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    <h5 className="font-medium mb-2">{detailsItem.data.projectName}</h5>
-                    <p className="text-xs text-gray-600 mb-3">{detailsItem.data.description}</p>
-                    <div className="flex space-x-2">
-                      <button type="button" onClick={() => setDetailsItem(null)} className="bg-gray-200 px-3 py-1 rounded text-sm">Close</button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+            <button onClick={async () => {
+              if (midps.length === 0) { setToast({ open: true, message: 'No MIDP available to consolidate', type: 'info' }); return; }
+              const projectId = 'project-1';
+              try {
+                await ApiService.exportConsolidatedProject(projectId, midps[0].id);
+                setToast({ open: true, message: 'Consolidated project export downloaded', type: 'success' });
+              } catch (err) {
+                console.error(err);
+                setToast({ open: true, message: 'Failed consolidated export: ' + (err.message || err), type: 'error' });
+              }
+            }} className="bg-purple-600 text-white px-4 py-2 rounded">Export consolidated project</button>
+          </div>
         </div>
 
         {tidps.length === 0 ? (
@@ -354,6 +296,76 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Details panel */}
+        {detailsItem && (
+          <div className="fixed right-6 top-20 w-96 bg-white border rounded-lg shadow-lg p-4 z-50">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-semibold">{detailsItem.type === 'tidp' ? 'TIDP Details' : 'MIDP Details'}</h4>
+              <button type="button" onClick={() => setDetailsItem(null)} className="text-sm text-gray-600">Close</button>
+            </div>
+            <div className="text-sm text-gray-700">
+              {detailsItem.type === 'tidp' ? (
+                <div>
+                  <label className="block text-xs font-medium mb-1">Task Team</label>
+                  <input value={detailsForm.taskTeam} onChange={(e) => setDetailsForm((s) => ({ ...s, taskTeam: e.target.value }))} className="w-full p-2 border rounded mb-2 text-sm" />
+                  <label className="block text-xs font-medium mb-1">Description</label>
+                  <input value={detailsForm.description} onChange={(e) => setDetailsForm((s) => ({ ...s, description: e.target.value }))} className="w-full p-2 border rounded mb-3 text-sm" />
+
+                  <div className="mb-3">
+                    <label className="block text-xs font-medium mb-2">Deliverables</label>
+                    <div className="space-y-2 max-h-48 overflow-auto">
+                      {(detailsForm.containers || []).map((c, ci) => (
+                        <div key={c.id || ci} className="flex items-center space-x-2">
+                          <input value={c['Container Name'] || c.name || ''} onChange={(e) => {
+                            const updated = [...(detailsForm.containers || [])];
+                            updated[ci] = { ...updated[ci], 'Container Name': e.target.value };
+                            setDetailsForm((s) => ({ ...s, containers: updated }));
+                          }} className="flex-1 p-2 border rounded text-sm" placeholder="Container Name" />
+                          <input value={c['Due Date'] || c.dueDate || ''} onChange={(e) => {
+                            const updated = [...(detailsForm.containers || [])];
+                            updated[ci] = { ...updated[ci], 'Due Date': e.target.value };
+                            setDetailsForm((s) => ({ ...s, containers: updated }));
+                          }} type="date" className="p-2 border rounded text-sm" />
+                          <button type="button" onClick={() => {
+                            const updated = (detailsForm.containers || []).filter((_, idx) => idx !== ci);
+                            setDetailsForm((s) => ({ ...s, containers: updated }));
+                          }} className="text-red-600 text-sm">Remove</button>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-2">
+                      <button type="button" onClick={() => {
+                        const updated = [...(detailsForm.containers || []), { id: `c-${Date.now()}`, 'Container Name': '', 'Due Date': '' }];
+                        setDetailsForm((s) => ({ ...s, containers: updated }));
+                      }} className="bg-gray-100 px-2 py-1 rounded text-sm">Add deliverable</button>
+                    </div>
+                  </div>
+
+                  <div className="flex space-x-2">
+                    <button type="button" onClick={() => {
+                      const updated = {
+                        taskTeam: detailsForm.taskTeam,
+                        description: detailsForm.description,
+                        containers: detailsForm.containers
+                      };
+                      handleUpdateTidp(detailsItem.data.id, updated);
+                    }} className="bg-blue-600 text-white px-3 py-1 rounded text-sm">Save</button>
+                    <button type="button" onClick={() => handleDeleteTidp(detailsItem.data.id)} className="bg-red-600 text-white px-3 py-1 rounded text-sm">Delete</button>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <h5 className="font-medium mb-2">{detailsItem.data.projectName}</h5>
+                  <p className="text-xs text-gray-600 mb-3">{detailsItem.data.description}</p>
+                  <div className="flex space-x-2">
+                    <button type="button" onClick={() => setDetailsItem(null)} className="bg-gray-200 px-3 py-1 rounded text-sm">Close</button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
@@ -397,6 +409,13 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
                 <p className="text-gray-600 text-sm mb-3">{midp.description || 'Master information delivery plan'}</p>
                 <div className="flex space-x-2">
                   <button onClick={() => setDetailsItem({ type: 'midp', data: midp })} className="flex-1 bg-green-50 text-green-700 py-2 px-3 rounded text-sm hover:bg-green-100 transition-colors">View</button>
+                  <button
+                    onClick={() => setShowEvolutionDashboard(midp.id)}
+                    className="bg-blue-50 text-blue-700 py-2 px-3 rounded text-sm hover:bg-blue-100 transition-colors flex items-center"
+                    title="Evolution Dashboard"
+                  >
+                    <TrendingUp className="w-4 h-4" />
+                  </button>
                   <button disabled={!!exportLoading[midp.id]} onClick={() => exportMidpPdf(midp.id)} className="bg-gray-50 text-gray-700 py-2 px-3 rounded text-sm hover:bg-gray-100 transition-colors">
                     {exportLoading[midp.id] ? '...' : <Download className="w-4 h-4" />}
                   </button>
@@ -782,9 +801,23 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
       return;
     }
     try {
-  // There is no direct createMIDP; we'll use createMIDPFromTIDPs with empty tidpIds
-  await ApiService.createMIDPFromTIDPs({ projectName: midpForm.projectName, description: midpForm.description }, []);
-      setToast({ open: true, message: 'MIDP created', type: 'success' });
+      // Try to auto-generate MIDP from existing TIDPs first
+      const projectId = 'project-1'; // In a real app, this would be dynamic
+      try {
+        await ApiService.autoGenerateMIDP(projectId, {
+          projectName: midpForm.projectName,
+          description: midpForm.description
+        });
+        setToast({ open: true, message: 'MIDP auto-generated from existing TIDPs', type: 'success' });
+      } catch (autoError) {
+        // If auto-generation fails (no TIDPs), create empty MIDP
+        await ApiService.createMIDPFromTIDPs({
+          projectName: midpForm.projectName,
+          description: midpForm.description
+        }, []);
+        setToast({ open: true, message: 'MIDP created (add TIDPs to populate)', type: 'success' });
+      }
+
       setShowMidpForm(false);
       setMidpForm({ projectName: '', description: '' });
       await loadData();
@@ -792,6 +825,16 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
       console.error('Create MIDP failed', err);
       setToast({ open: true, message: err.message || 'Failed to create MIDP', type: 'error' });
     }
+  };
+
+  const handleImportComplete = async (importResults) => {
+    setToast({
+      open: true,
+      message: `Imported ${importResults.successful.length} TIDPs successfully`,
+      type: 'success'
+    });
+    setShowImportDialog(false);
+    await loadData();
   };
 
   // Details edit/update/delete
@@ -929,6 +972,21 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
     </div>
     {/* Toast Notification */}
     <Toast open={toast.open} message={toast.message} type={toast.type} onClose={() => setToast((t) => ({ ...t, open: false }))} />
+
+    {/* Import Dialog */}
+    <TIDPImportDialog
+      open={showImportDialog}
+      onClose={() => setShowImportDialog(false)}
+      onImportComplete={handleImportComplete}
+    />
+
+    {/* Evolution Dashboard */}
+    {showEvolutionDashboard && (
+      <MIDPEvolutionDashboard
+        midpId={showEvolutionDashboard}
+        onClose={() => setShowEvolutionDashboard(null)}
+      />
+    )}
     </>
   );
 };

@@ -290,4 +290,75 @@ router.put('/batch', async (req, res, next) => {
   }
 });
 
+/**
+ * POST /api/tidp/import/excel
+ * Import TIDPs from Excel/CSV data
+ */
+router.post('/import/excel', async (req, res, next) => {
+  try {
+    const { data, projectId } = req.body;
+
+    if (!Array.isArray(data)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Expected array of TIDP data from Excel/CSV'
+      });
+    }
+
+    const importResults = tidpService.importTIDPsFromExcel(data, projectId);
+
+    res.status(201).json({
+      success: true,
+      data: importResults,
+      message: `Imported ${importResults.successful.length} TIDPs, ${importResults.failed.length} failed`
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * POST /api/tidp/import/csv
+ * Import TIDPs from CSV data
+ */
+router.post('/import/csv', async (req, res, next) => {
+  try {
+    const { data, projectId } = req.body;
+
+    if (!Array.isArray(data)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Expected array of TIDP data from CSV'
+      });
+    }
+
+    const importResults = tidpService.importTIDPsFromCSV(data, projectId);
+
+    res.status(201).json({
+      success: true,
+      data: importResults,
+      message: `Imported ${importResults.successful.length} TIDPs, ${importResults.failed.length} failed`
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * GET /api/tidp/template/excel
+ * Get Excel template for TIDP import
+ */
+router.get('/template/excel', async (req, res, next) => {
+  try {
+    const template = tidpService.getExcelImportTemplate();
+
+    res.json({
+      success: true,
+      data: template
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;

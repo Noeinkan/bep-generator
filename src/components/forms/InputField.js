@@ -8,7 +8,7 @@ import CDEDiagramBuilder from './CDEDiagramBuilder';
 import VolumeStrategyMindmap from './VolumeStrategyMindmap';
 import FormattedTextEditor from './FormattedTextEditor';
 
-const InputField = React.memo(({ field, value, onChange, error, formData }) => {
+const InputField = React.memo(({ field, value, onChange, error, formData = {} }) => {
   const { name, label, type, required, rows, placeholder, options: fieldOptions } = field;
   const optionsList = fieldOptions ? CONFIG.options[fieldOptions] : null;
 
