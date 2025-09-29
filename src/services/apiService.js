@@ -88,6 +88,34 @@ class ApiService {
     }
   }
 
+  // New TIDP import methods
+  async importTIDPsFromExcel(excelData, projectId) {
+    try {
+      const response = await apiClient.post('/tidp/import/excel', { data: excelData, projectId });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to import TIDPs from Excel');
+    }
+  }
+
+  async importTIDPsFromCSV(csvData, projectId) {
+    try {
+      const response = await apiClient.post('/tidp/import/csv', { data: csvData, projectId });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to import TIDPs from CSV');
+    }
+  }
+
+  async getTIDPImportTemplate() {
+    try {
+      const response = await apiClient.get('/tidp/template/excel');
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to fetch TIDP import template');
+    }
+  }
+
   async updateTIDP(id, updateData) {
     try {
       const response = await apiClient.put(`/tidp/${id}`, updateData);
@@ -188,6 +216,34 @@ class ApiService {
       return response.data;
     } catch (error) {
       throw this.handleError(error, 'Failed to create MIDP from TIDPs');
+    }
+  }
+
+  // New MIDP methods
+  async autoGenerateMIDP(projectId, midpData = {}) {
+    try {
+      const response = await apiClient.post(`/midp/auto-generate/${projectId}`, midpData);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to auto-generate MIDP');
+    }
+  }
+
+  async getMIDPEvolution(id) {
+    try {
+      const response = await apiClient.get(`/midp/${id}/evolution`);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to fetch MIDP evolution');
+    }
+  }
+
+  async getMIDPDeliverablesDashboard(id) {
+    try {
+      const response = await apiClient.get(`/midp/${id}/deliverables-dashboard`);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to fetch MIDP deliverables dashboard');
     }
   }
 

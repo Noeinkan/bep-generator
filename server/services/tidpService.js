@@ -312,6 +312,161 @@ class TIDPService {
       status: tidp.status
     };
   }
+
+  /**
+   * Import TIDPs from Excel data
+   * @param {Array} excelData - Array of rows from Excel
+   * @param {string} projectId - Project ID to associate with
+   * @returns {Object} Import results
+   */
+  importTIDPsFromExcel(excelData, projectId) {
+    const successful = [];
+    const failed = [];
+
+    excelData.forEach((row, index) => {
+      try {
+        const tidp = this.parseExcelRowToTIDP(row, projectId);
+        const created = this.createTIDP(tidp);
+        successful.push(created);
+      } catch (error) {
+        failed.push({
+          row: index + 1,
+          error: error.message,
+          data: row
+        });
+      }
+    });
+
+    return { successful, failed, total: excelData.length };
+  }
+
+  /**
+   * Import TIDPs from CSV data
+   * @param {Array} csvData - Array of rows from CSV
+   * @param {string} projectId - Project ID to associate with
+   * @returns {Object} Import results
+   */
+  importTIDPsFromCSV(csvData, projectId) {
+    return this.importTIDPsFromExcel(csvData, projectId); // Same logic
+  }
+
+  /**
+   * Parse Excel row to TIDP object
+   * @param {Object} row - Excel row data
+   * @param {string} projectId - Project ID
+   * @returns {Object} TIDP object
+   */
+  parseExcelRowToTIDP(row, projectId) {
+    // Expected Excel columns: Team Name, Discipline, Leader, Company, Container Name, Type, Format, LOI Level, Author, Est. Time, Milestone, Due Date, Status
+    const tidp = {
+      teamName: row['Team Name'] || row.teamName || 'Imported Team',
+      discipline: row['Discipline'] || row.discipline || 'General',
+      leader: row['Leader'] || row.leader || 'TBD',
+      company: row['Company'] || row.company || 'TBD',
+      responsibilities: row['Responsibilities'] || row.responsibilities || 'Imported from external source',
+      projectId: projectId || 'imported-project',
+      containers: []
+    };
+
+    // If there's container data in the row, create a container
+    if (row['Container Name'] || row.containerName) {
+      const container = {
+        id: uuidv4(),
+        'Container Name': row['Container Name'] || row.containerName,
+        'Type': row['Type'] || row.type || 'Model',
+        'Format': row['Format'] || row.format || 'IFC',
+        'LOI Level': row['LOI Level'] || row.loiLevel || 'LOD 300',
+        'Author': row['Author'] || row.author || tidp.leader,
+        'Est. Time': row['Est. Time'] || row.estimatedTime || '1 week',
+        'Milestone': row['Milestone'] || row.milestone || 'Stage 1',
+        'Due Date': row['Due Date'] || row.dueDate || new Date().toISOString().slice(0, 10),
+        'Status': row['Status'] || row.status || 'Planned',
+        'Dependencies': []
+      };
+      tidp.containers.push(container);
+    }
+
+    return tidp;
+  }
+
+  /**
+   * Get Excel import template
+   * @returns {Object} Template structure
+   */
+  getExcelImportTemplate() {
+    return {
+      headers: [
+        'Team Name',
+        'Discipline',
+        'Leader',
+        'Company',
+        'Responsibilities',
+        'Container Name',
+        'Type',
+        'Format',
+        'LOI Level',
+        'Author',
+        'Est. Time',
+        'Milestone',
+        'Due Date',
+        'Status'
+      ],
+      sampleData: [
+        {
+          'Team Name': 'Architecture Team',
+          'Discipline': 'architecture',
+          'Leader': 'John Smith',
+          'Company': 'ABC Architects',
+          'Responsibilities': 'Architectural design and coordination',
+          'Container Name': 'Architectural Model',
+          'Type': 'Model',
+          'Format': 'IFC',
+          'LOI Level': 'LOD 300',
+          'Author': 'John Smith',
+          'Est. Time': '2 weeks',
+          'Milestone': 'Design Development',
+          'Due Date': '2024-12-31',
+          'Status': 'Planned'
+        }
+      ],
+      notes: [
+        'Each row can represent either a complete TIDP with one container, or just container data for an existing team',
+        'If Team Name is repeated, containers will be grouped under the same TIDP',
+        'Discipline options: architecture, structural, mep, civil',
+        'Type options: Model, Drawing, Document, Report',
+        'Format options: IFC, DWG, PDF, XLSX',
+        'LOI Level options: LOD 100, LOD 200, LOD 300, LOD 350, LOD 400',
+        'Status options: Planned, In Progress, Completed, Delayed'
+      ]
+    };
+  }
+
+  /**
+   * Create server-side TIDP directly (for external integrations)
+   * @param {Object} tidpData - TIDP data from external source
+   * @returns {Object} Created TIDP
+   */
+  createServerTIDP(tidpData) {
+    // Enhanced validation for server-side creation
+    if (!tidpData.teamName || tidpData.teamName.trim().length < 2) {
+      throw new Error('Team name is required and must be at least 2 characters');
+    }
+
+    if (!tidpData.discipline) {
+      throw new Error('Discipline is required');
+    }
+
+    const validDisciplines = ['architecture', 'structural', 'mep', 'civil', 'general'];
+    if (!validDisciplines.includes(tidpData.discipline.toLowerCase())) {
+      throw new Error(`Invalid discipline. Must be one of: ${validDisciplines.join(', ')}`);
+    }
+
+    return this.createTIDP({
+      ...tidpData,
+      source: 'server',
+      createdVia: 'api'
+    });
+  }
 }
 
 module.exports = new TIDPService();
