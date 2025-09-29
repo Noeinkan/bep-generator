@@ -1,8 +1,9 @@
 import React from 'react';
 import { Download, FileText, Eye, FileType, Printer } from 'lucide-react';
+import { generateBEPContent } from '../../services/bepFormatter';
 
-const PreviewExportPage = ({ generateBEPContent, exportFormat, setExportFormat, previewBEP, downloadBEP, isExporting }) => {
-  const content = generateBEPContent();
+const PreviewExportPage = ({ formData, bepType, exportFormat, setExportFormat, previewBEP, downloadBEP, isExporting }) => {
+  const content = generateBEPContent(formData, bepType);
   return (
     <div className="space-y-6">
       <h3 className="text-xl font-semibold">Preview & Export</h3>

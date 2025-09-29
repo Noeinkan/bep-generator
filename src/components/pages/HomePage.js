@@ -31,8 +31,10 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+      <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 relative overflow-hidden">
+        <div className="absolute inset-0 bg-black opacity-10"></div>
+        <div className="absolute inset-0" style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")'}}></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
               BEP Suite
@@ -40,22 +42,6 @@ const HomePage = () => {
             <p className="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto">
               Complete solution for BIM Execution Plans and Information Delivery Planning
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                to="/bep-generator"
-                className="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-700 bg-white hover:bg-gray-50 transition-colors"
-              >
-                Create BEP
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Link>
-              <Link
-                to="/tidp-midp"
-                className="inline-flex items-center px-8 py-3 border border-white text-base font-medium rounded-md text-white hover:bg-blue-600 transition-colors"
-              >
-                Manage TIDP/MIDP
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Link>
-            </div>
           </div>
         </div>
       </div>
@@ -73,7 +59,7 @@ const HomePage = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* BEP Generator */}
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1 transition-transform duration-300">
             <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-8">
               <div className="flex items-center text-white">
                 <FileText className="w-8 h-8 mr-3" />
@@ -109,7 +95,7 @@ const HomePage = () => {
 
               <Link
                 to="/bep-generator"
-                className="inline-flex items-center justify-center w-full px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+                className="inline-flex items-center justify-center w-full px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg"
               >
                 Start Creating BEP
                 <ArrowRight className="ml-2 w-4 h-4" />
@@ -118,7 +104,7 @@ const HomePage = () => {
           </div>
 
           {/* TIDP/MIDP Manager */}
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1 transition-transform duration-300">
             <div className="bg-gradient-to-r from-green-500 to-green-600 px-6 py-8">
               <div className="flex items-center text-white">
                 <BarChart3 className="w-8 h-8 mr-3" />
@@ -154,7 +140,7 @@ const HomePage = () => {
 
               <Link
                 to="/tidp-midp"
-                className="inline-flex items-center justify-center w-full px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors"
+                className="inline-flex items-center justify-center w-full px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg"
               >
                 Manage Information Delivery
                 <ArrowRight className="ml-2 w-4 h-4" />
