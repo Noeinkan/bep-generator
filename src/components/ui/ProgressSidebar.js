@@ -3,7 +3,7 @@ import { CheckCircle, AlertCircle } from 'lucide-react';
 import CONFIG from '../../config/bepConfig';
 
 const ProgressSidebar = React.memo(({ steps, currentStep, completedSections, onStepClick, validateStep }) => (
-  <div className="bg-white rounded-lg shadow-sm p-6 sticky top-8">
+  <div className="bg-white rounded-lg shadow-sm p-6">
     <h2 className="text-lg font-semibold mb-4">Progress Overview</h2>
     <div className="space-y-3">
       {steps.map((step, index) => {

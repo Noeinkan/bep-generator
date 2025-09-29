@@ -1,4 +1,4 @@
-import { Document, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, AlignmentType } from 'docx';
+import { Document, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, AlignmentType, Packer } from 'docx';
 import CONFIG from '../config/bepConfig';
 
 export const generateDocx = async (formData, bepType) => {
@@ -211,5 +211,5 @@ export const generateDocx = async (formData, bepType) => {
     }],
   });
 
-  return doc;
+  return Packer.toBlob(doc);
 };
