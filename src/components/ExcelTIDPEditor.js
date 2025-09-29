@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Save, X, Plus, Trash2, FileText } from 'lucide-react';
+import FormattedTextEditor from './forms/FormattedTextEditor';
 
 const ExcelTIDPEditor = ({ onClose, onSave }) => {
   const [tidpData, setTidpData] = useState({
@@ -27,17 +28,24 @@ const ExcelTIDPEditor = ({ onClose, onSave }) => {
   const [selectedCell, setSelectedCell] = useState(null);
   const [editingCell, setEditingCell] = useState(null);
 
+  const handleTidpDataChange = useCallback((field, value) => {
+    setTidpData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  }, []);
+
   const columns = [
-    { key: 'Container Name', width: '200px' },
-    { key: 'Type', width: '100px' },
-    { key: 'Format', width: '80px' },
-    { key: 'LOI Level', width: '100px' },
-    { key: 'Author', width: '120px' },
-    { key: 'Dependencies', width: '150px' },
-    { key: 'Est. Time', width: '100px' },
-    { key: 'Milestone', width: '120px' },
-    { key: 'Due Date', width: '120px' },
-    { key: 'Status', width: '100px' }
+    { key: 'Container Name', width: '20%' },
+    { key: 'Type', width: '10%' },
+    { key: 'Format', width: '8%' },
+    { key: 'LOI Level', width: '10%' },
+    { key: 'Author', width: '12%' },
+    { key: 'Dependencies', width: '15%' },
+    { key: 'Est. Time', width: '8%' },
+    { key: 'Milestone', width: '10%' },
+    { key: 'Due Date', width: '10%' },
+    { key: 'Status', width: '7%' }
   ];
 
   const typeOptions = ['Model', 'Drawing', 'Document', 'Report'];
@@ -52,13 +60,16 @@ const ExcelTIDPEditor = ({ onClose, onSave }) => {
     }
   };
 
-  const handleCellChange = (rowIndex, colKey, value) => {
-    const updatedContainers = [...tidpData.containers];
-    updatedContainers[rowIndex][colKey] = value;
-    setTidpData({ ...tidpData, containers: updatedContainers });
-  };
+  const handleCellChange = useCallback((rowIndex, colKey, value) => {
+    setTidpData(prev => ({
+      ...prev,
+      containers: prev.containers.map((container, index) =>
+        index === rowIndex ? { ...container, [colKey]: value } : container
+      )
+    }));
+  }, []);
 
-  const addRow = () => {
+  const addRow = useCallback(() => {
     const newRow = {
       id: `c-${Date.now()}`,
       'Container Name': '',
@@ -72,20 +83,18 @@ const ExcelTIDPEditor = ({ onClose, onSave }) => {
       'Due Date': '',
       'Status': 'Planned'
     };
-    setTidpData({
-      ...tidpData,
-      containers: [...tidpData.containers, newRow]
-    });
-  };
+    setTidpData(prev => ({
+      ...prev,
+      containers: [...prev.containers, newRow]
+    }));
+  }, []);
 
-  const deleteRow = (index) => {
-    if (tidpData.containers.length > 1) {
-      setTidpData({
-        ...tidpData,
-        containers: tidpData.containers.filter((_, i) => i !== index)
-      });
-    }
-  };
+  const deleteRow = useCallback((index) => {
+    setTidpData(prev => ({
+      ...prev,
+      containers: prev.containers.filter((_, i) => i !== index)
+    }));
+  }, []);
 
   const handleSave = () => {
     onSave(tidpData);
@@ -103,7 +112,7 @@ const ExcelTIDPEditor = ({ onClose, onSave }) => {
             onChange={(e) => handleCellChange(rowIndex, colKey, e.target.value)}
             onBlur={() => setEditingCell(null)}
             autoFocus
-            className="w-full h-full border-none outline-none bg-white"
+            className="w-full h-[40px] p-2 border-none outline-none bg-white text-sm"
           >
             {typeOptions.map(option => (
               <option key={option} value={option}>{option}</option>
@@ -118,7 +127,7 @@ const ExcelTIDPEditor = ({ onClose, onSave }) => {
             onChange={(e) => handleCellChange(rowIndex, colKey, e.target.value)}
             onBlur={() => setEditingCell(null)}
             autoFocus
-            className="w-full h-full border-none outline-none bg-white"
+            className="w-full h-[40px] p-2 border-none outline-none bg-white text-sm"
           >
             {formatOptions.map(option => (
               <option key={option} value={option}>{option}</option>
@@ -133,7 +142,7 @@ const ExcelTIDPEditor = ({ onClose, onSave }) => {
             onChange={(e) => handleCellChange(rowIndex, colKey, e.target.value)}
             onBlur={() => setEditingCell(null)}
             autoFocus
-            className="w-full h-full border-none outline-none bg-white"
+            className="w-full h-[40px] p-2 border-none outline-none bg-white text-sm"
           >
             {loiOptions.map(option => (
               <option key={option} value={option}>{option}</option>
@@ -148,7 +157,7 @@ const ExcelTIDPEditor = ({ onClose, onSave }) => {
             onChange={(e) => handleCellChange(rowIndex, colKey, e.target.value)}
             onBlur={() => setEditingCell(null)}
             autoFocus
-            className="w-full h-full border-none outline-none bg-white"
+            className="w-full h-[40px] p-2 border-none outline-none bg-white text-sm"
           >
             {statusOptions.map(option => (
               <option key={option} value={option}>{option}</option>
@@ -164,7 +173,7 @@ const ExcelTIDPEditor = ({ onClose, onSave }) => {
             onChange={(e) => handleCellChange(rowIndex, colKey, e.target.value)}
             onBlur={() => setEditingCell(null)}
             autoFocus
-            className="w-full h-full border-none outline-none bg-white"
+            className="w-full h-[40px] p-2 border-none outline-none bg-white text-sm"
           />
         );
       }
@@ -175,7 +184,7 @@ const ExcelTIDPEditor = ({ onClose, onSave }) => {
           onChange={(e) => handleCellChange(rowIndex, colKey, e.target.value)}
           onBlur={() => setEditingCell(null)}
           autoFocus
-          className="w-full h-full border-none outline-none bg-white"
+          className="w-full h-[40px] p-2 border-none outline-none bg-white text-sm"
         />
       );
     }
@@ -195,29 +204,29 @@ const ExcelTIDPEditor = ({ onClose, onSave }) => {
   return (
     <div className="fixed inset-0 bg-white z-50 flex flex-col">
       {/* Header */}
-      <div className="bg-blue-600 text-white p-4 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <FileText className="w-6 h-6" />
-          <h1 className="text-xl font-bold">TIDP Excel Editor</h1>
+      <div className="bg-blue-600 text-white p-3 flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <FileText className="w-5 h-5" />
+          <h1 className="text-lg font-bold">TIDP Excel Editor</h1>
         </div>
         <div className="flex items-center space-x-2">
           <button
             onClick={addRow}
-            className="bg-blue-700 hover:bg-blue-800 px-3 py-1 rounded flex items-center space-x-1"
+            className="bg-blue-700 hover:bg-blue-800 px-2 py-1 rounded flex items-center space-x-1 text-sm"
           >
             <Plus className="w-4 h-4" />
             <span>Add Row</span>
           </button>
           <button
             onClick={handleSave}
-            className="bg-green-600 hover:bg-green-700 px-4 py-1 rounded flex items-center space-x-1"
+            className="bg-green-600 hover:bg-green-700 px-3 py-1 rounded flex items-center space-x-1 text-sm"
           >
             <Save className="w-4 h-4" />
             <span>Save TIDP</span>
           </button>
           <button
             onClick={onClose}
-            className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded flex items-center space-x-1"
+            className="bg-red-600 hover:bg-red-700 px-2 py-1 rounded flex items-center space-x-1 text-sm"
           >
             <X className="w-4 h-4" />
             <span>Close</span>
@@ -226,24 +235,26 @@ const ExcelTIDPEditor = ({ onClose, onSave }) => {
       </div>
 
       {/* TIDP Info */}
-      <div className="bg-gray-50 p-4 border-b">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="bg-gray-50 p-3 border-b">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Task Team</label>
-            <input
-              type="text"
+            <label className="block text-xs font-medium text-gray-700 mb-1">Task Team</label>
+            <FormattedTextEditor
               value={tidpData.taskTeam}
-              onChange={(e) => setTidpData({ ...tidpData, taskTeam: e.target.value })}
-              className="w-full p-2 border border-gray-300 rounded"
+              onChange={(value) => handleTidpDataChange('taskTeam', value)}
               placeholder="Architecture Team"
+              rows={1}
+              showToolbar={false}
+              autoGrow={false}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Discipline</label>
+            <label className="block text-xs font-medium text-gray-700 mb-1">Discipline</label>
             <select
+              key="discipline-select"
               value={tidpData.discipline}
-              onChange={(e) => setTidpData({ ...tidpData, discipline: e.target.value })}
-              className="w-full p-2 border border-gray-300 rounded"
+              onChange={(e) => handleTidpDataChange('discipline', e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded text-sm"
             >
               <option value="">Select Discipline</option>
               <option value="architecture">Architecture</option>
@@ -253,90 +264,92 @@ const ExcelTIDPEditor = ({ onClose, onSave }) => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Team Leader</label>
-            <input
-              type="text"
+            <label className="block text-xs font-medium text-gray-700 mb-1">Team Leader</label>
+            <FormattedTextEditor
               value={tidpData.teamLeader}
-              onChange={(e) => setTidpData({ ...tidpData, teamLeader: e.target.value })}
-              className="w-full p-2 border border-gray-300 rounded"
+              onChange={(value) => handleTidpDataChange('teamLeader', value)}
               placeholder="John Smith"
+              rows={1}
+              showToolbar={false}
+              autoGrow={false}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-            <input
-              type="text"
+            <label className="block text-xs font-medium text-gray-700 mb-1">Description</label>
+            <FormattedTextEditor
               value={tidpData.description}
-              onChange={(e) => setTidpData({ ...tidpData, description: e.target.value })}
-              className="w-full p-2 border border-gray-300 rounded"
+              onChange={(value) => handleTidpDataChange('description', value)}
               placeholder="TIDP description"
+              rows={2}
+              showToolbar={false}
+              autoGrow={true}
             />
           </div>
         </div>
       </div>
 
       {/* Excel-like Table */}
-      <div className="flex-1 overflow-auto">
-        <div className="p-4">
-          <div className="bg-white border border-gray-300 rounded-lg shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="bg-gray-100 border-b border-gray-300">
-                    <th className="w-12 p-2 border-r border-gray-300 text-center">#</th>
-                    {columns.map(col => (
-                      <th
-                        key={col.key}
-                        className="p-2 border-r border-gray-300 text-left font-semibold text-gray-700"
-                        style={{ minWidth: col.width }}
-                      >
-                        {col.key}
-                      </th>
-                    ))}
-                    <th className="w-16 p-2 text-center">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tidpData.containers.map((container, rowIndex) => (
-                    <tr key={container.id} className="border-b border-gray-200 hover:bg-gray-50">
-                      <td className="p-2 border-r border-gray-300 text-center text-gray-500">
-                        {rowIndex + 1}
-                      </td>
-                      {columns.map(col => (
-                        <td
-                          key={col.key}
-                          className="border-r border-gray-300 p-0"
-                          style={{ minWidth: col.width }}
-                        >
-                          {renderCell(rowIndex, col.key, container[col.key])}
-                        </td>
-                      ))}
-                      <td className="p-2 text-center">
-                        <button
-                          onClick={() => deleteRow(rowIndex)}
-                          disabled={tidpData.containers.length === 1}
-                          className="text-red-500 hover:text-red-700 disabled:opacity-50"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
+      <div className="flex-1 overflow-auto p-2">
+        <div className="bg-white border border-gray-300 rounded-lg shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full table-fixed border-collapse">
+              <thead>
+                <tr className="bg-gray-100 border-b border-gray-300">
+                  <th className="w-10 p-2 border-r border-gray-300 text-center text-sm font-semibold text-gray-700">
+                    #
+                  </th>
+                  {columns.map(col => (
+                    <th
+                      key={col.key}
+                      className="p-2 border-r border-gray-300 text-left text-sm font-semibold text-gray-700"
+                      style={{ width: col.width }}
+                    >
+                      {col.key}
+                    </th>
                   ))}
-                </tbody>
-              </table>
-            </div>
+                  <th className="w-12 p-2 text-center text-sm font-semibold text-gray-700">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tidpData.containers.map((container, rowIndex) => (
+                  <tr key={container.id} className="border-b border-gray-200 hover:bg-gray-50">
+                    <td className="p-2 border-r border-gray-300 text-center text-gray-500 text-sm">
+                      {rowIndex + 1}
+                    </td>
+                    {columns.map(col => (
+                      <td
+                        key={col.key}
+                        className="border-r border-gray-300 p-0"
+                        style={{ width: col.width }}
+                      >
+                        {renderCell(rowIndex, col.key, container[col.key])}
+                      </td>
+                    ))}
+                    <td className="p-2 text-center">
+                      <button
+                        onClick={() => deleteRow(rowIndex)}
+                        disabled={tidpData.containers.length === 1}
+                        className="text-red-500 hover:text-red-700 disabled:opacity-50"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
 
       {/* Footer with instructions */}
-      <div className="bg-gray-100 p-3 border-t text-sm text-gray-600">
+      <div className="bg-gray-100 p-2 border-t text-xs text-gray-600">
         <div className="flex items-center justify-between">
           <div>
             <strong>Excel-like navigation:</strong> Click cells to select, double-click to edit.
             Use arrow keys, Tab, Enter to navigate.
           </div>
-          <div className="text-xs">
+          <div>
             {selectedCell ? `Selected: Row ${selectedCell.row + 1}, Column ${selectedCell.col}` : 'No cell selected'}
           </div>
         </div>
