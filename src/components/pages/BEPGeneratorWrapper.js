@@ -38,6 +38,8 @@ const BEPGeneratorWrapper = () => {
   const [newDraftName, setNewDraftName] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [exportFormat, setExportFormat] = useState('pdf');
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [completedSections, setCompletedSections] = useState(new Set());
 
   // Draft operations
@@ -115,14 +117,22 @@ const BEPGeneratorWrapper = () => {
 
     const totalSteps = CONFIG.steps?.length || 0;
     if (currentStep < totalSteps - 1) {
-      setCurrentStep(prev => prev + 1);
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentStep(prev => prev + 1);
+        setIsTransitioning(false);
+      }, 150);
     }
   }, [currentStep, formData, validateStep, bepType]);
 
   const handlePrevious = useCallback(() => {
     if (currentStep > 0) {
-      setCurrentStep(prev => prev - 1);
-      setValidationErrors({});
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentStep(prev => prev - 1);
+        setValidationErrors({});
+        setIsTransitioning(false);
+      }, 150);
     }
   }, [currentStep]);
 
@@ -179,7 +189,8 @@ const BEPGeneratorWrapper = () => {
       await saveDraft(newDraftNameValidation.sanitized, formData);
       setShowSaveDraftDialog(false);
       setNewDraftName('');
-      alert('Draft saved successfully!');
+      setShowSuccessToast(true);
+      setTimeout(() => setShowSuccessToast(false), 3000);
     } catch (error) {
       alert('Failed to save draft: ' + error.message);
     }
@@ -223,38 +234,46 @@ const BEPGeneratorWrapper = () => {
   // If no BEP type selected, show type selector
   if (!bepType) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
         {/* Header with navigation */}
-        <div className="bg-white shadow-sm border-b">
+        <div className="bg-white shadow-lg border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">BEP Generator</h1>
-              <p className="text-gray-600">Create professional BIM Execution Plans</p>
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                <Zap className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">BEP Generator</h1>
+                <p className="text-gray-600">Create professional BIM Execution Plans</p>
+              </div>
             </div>
             <div className="flex items-center space-x-4">
               <button
                 onClick={goToTidpManager}
-                className="inline-flex items-center text-gray-600 hover:text-gray-900"
+                className="inline-flex items-center px-4 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
               >
-                <ExternalLink className="w-4 h-4 mr-1" />
+                <ExternalLink className="w-4 h-4 mr-2" />
                 TIDP/MIDP Manager
               </button>
               <button
                 onClick={goHome}
-                className="text-gray-600 hover:text-gray-900"
+                className="inline-flex items-center px-4 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
               >
+                <Zap className="w-4 h-4 mr-2" />
                 Home
               </button>
             </div>
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <EnhancedBepTypeSelector
-            bepType={bepType}
-            setBepType={setBepType}
-            onProceed={() => handleTypeSelect(bepType)}
-          />
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          <div className="bg-transparent rounded-xl p-0">
+            <EnhancedBepTypeSelector
+              bepType={bepType}
+              setBepType={setBepType}
+              onProceed={(selectedType) => handleTypeSelect(selectedType)}
+            />
+          </div>
         </div>
       </div>
     );
@@ -296,24 +315,27 @@ const BEPGeneratorWrapper = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
-      <div className="w-80 bg-white shadow-lg">
-        <div className="p-6 border-b border-gray-200">
+      <div className="w-80 bg-white shadow-xl border-r border-gray-200 flex flex-col">
+        <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-xl font-bold text-gray-900">BEP Generator</h1>
-              <p className="text-sm text-gray-600">{CONFIG.bepTypeDefinitions[bepType]?.title}</p>
+              <h1 className="text-xl font-bold text-gray-900 flex items-center">
+                <Zap className="w-5 h-5 text-blue-600 mr-2" />
+                BEP Generator
+              </h1>
+              <p className="text-sm text-gray-600 mt-1">{CONFIG.bepTypeDefinitions[bepType]?.title}</p>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1">
               <button
                 onClick={goToTidpManager}
-                className="p-2 text-gray-400 hover:text-gray-600"
+                className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
                 title="TIDP/MIDP Manager"
               >
                 <ExternalLink className="w-4 h-4" />
               </button>
               <button
                 onClick={goHome}
-                className="p-2 text-gray-400 hover:text-gray-600"
+                className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
                 title="Home"
               >
                 <Zap className="w-4 h-4" />
@@ -325,41 +347,64 @@ const BEPGeneratorWrapper = () => {
             <button
               onClick={() => setShowDraftManager(true)}
               disabled={!user}
-              className="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 hover:border-blue-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
               <FolderOpen className="w-4 h-4 mr-2" />
               Drafts
             </button>
             <button
               onClick={() => setBepType('')}
-              className="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              className="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 hover:border-blue-300 transition-all duration-200"
             >
               Change Type
             </button>
           </div>
         </div>
 
-        <ProgressSidebar
-          steps={CONFIG.steps || []}
-          currentStep={currentStep}
-          completedSections={completedSections}
-          onStepClick={(stepIndex) => setCurrentStep(stepIndex)}
-          validateStep={validateStep}
-        />
+        <div className="flex-1 overflow-y-auto">
+          <ProgressSidebar
+            steps={CONFIG.steps || []}
+            currentStep={currentStep}
+            completedSections={completedSections}
+            onStepClick={(stepIndex) => {
+              setIsTransitioning(true);
+              setTimeout(() => {
+                setCurrentStep(stepIndex);
+                setValidationErrors({});
+                setIsTransitioning(false);
+              }, 150);
+            }}
+            validateStep={validateStep}
+          />
+        </div>
       </div>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <div className="bg-white shadow-sm border-b px-6 py-4">
+        <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-4 bg-gradient-to-r from-white to-gray-50">
           <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">
-                {CONFIG.steps[currentStep]?.title}
-              </h2>
-              <p className="text-sm text-gray-600">
-                Step {currentStep + 1} of {CONFIG.steps?.length || 0}
-              </p>
+            <div className="flex items-center space-x-4">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  {CONFIG.steps[currentStep]?.title}
+                </h2>
+                <p className="text-sm text-gray-600">
+                  Step {currentStep + 1} of {CONFIG.steps?.length || 0}
+                </p>
+              </div>
+              {/* Progress indicator */}
+              <div className="hidden md:flex items-center space-x-2">
+                <div className="w-32 bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-blue-600 h-2 rounded-full transition-all duration-500 ease-out"
+                    style={{ width: `${((currentStep + 1) / (CONFIG.steps?.length || 1)) * 100}%` }}
+                  ></div>
+                </div>
+                <span className="text-xs text-gray-500 font-medium">
+                  {Math.round(((currentStep + 1) / (CONFIG.steps?.length || 1)) * 100)}%
+                </span>
+              </div>
             </div>
 
             <div className="flex items-center space-x-3">
@@ -367,7 +412,7 @@ const BEPGeneratorWrapper = () => {
               <button
                 onClick={handlePrevious}
                 disabled={currentStep === 0}
-                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 hover:border-blue-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
               >
                 <ChevronLeft className="w-4 h-4 mr-1" />
                 Previous
@@ -376,7 +421,7 @@ const BEPGeneratorWrapper = () => {
               <button
                 onClick={handleNext}
                 disabled={currentStep >= (CONFIG.steps?.length || 0) - 1}
-                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 hover:border-blue-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
               >
                 Next
                 <ChevronRight className="w-4 h-4 ml-1" />
@@ -385,16 +430,16 @@ const BEPGeneratorWrapper = () => {
               {/* TIDP/MIDP Integration */}
               <button
                 onClick={goToTidpManager}
-                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-blue-50 hover:border-blue-300 transition-all duration-200"
               >
                 <ExternalLink className="w-4 h-4 mr-2" />
-                TIDP/MIDP Manager
+                TIDP/MIDP
               </button>
 
               <button
                 onClick={handleSaveDraft}
                 disabled={savingDraft || !user}
-                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-green-50 hover:border-green-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
               >
                 <Save className="w-4 h-4 mr-2" />
                 {savingDraft ? 'Saving...' : 'Save Draft'}
@@ -402,7 +447,7 @@ const BEPGeneratorWrapper = () => {
 
               <button
                 onClick={handlePreview}
-                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 hover:shadow-md transition-all duration-200 transform hover:scale-105"
               >
                 <Eye className="w-4 h-4 mr-2" />
                 Preview
@@ -412,43 +457,52 @@ const BEPGeneratorWrapper = () => {
         </div>
 
         {/* Form Content */}
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-auto bg-gray-50">
           <div className="max-w-4xl mx-auto px-6 py-8">
-            {formData && bepType ? (
-              <FormStep
-                stepIndex={currentStep}
-                formData={formData}
-                updateFormData={updateFormData}
-                errors={validationErrors}
-                bepType={bepType}
-              />
-            ) : (
-              <div>Loading form data...</div>
-            )}
+            <div className={`bg-white rounded-xl shadow-sm border border-gray-200 p-8 transition-all duration-300 ease-in-out ${isTransitioning ? 'opacity-50 transform scale-95' : 'opacity-100 transform scale-100'}`}>
+              {formData && bepType ? (
+                <FormStep
+                  stepIndex={currentStep}
+                  formData={formData}
+                  updateFormData={updateFormData}
+                  errors={validationErrors}
+                  bepType={bepType}
+                />
+              ) : (
+                <div className="flex items-center justify-center py-12">
+                  <div className="text-center">
+                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <div className="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                    <p className="text-gray-600">Loading form data...</p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Footer Navigation */}
-        <div className="bg-white border-t px-6 py-4">
+        <div className="bg-white border-t border-gray-200 px-6 py-4 shadow-lg">
           <div className="flex items-center justify-between">
             <button
               onClick={handlePrevious}
               disabled={currentStep === 0}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center px-6 py-3 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 hover:border-blue-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
               <ChevronLeft className="w-4 h-4 mr-2" />
               Previous
             </button>
 
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-500">
-                {currentStep + 1} of {CONFIG.steps?.length || 0}
+              <span className="text-sm text-gray-500 font-medium">
+                Step {currentStep + 1} of {CONFIG.steps?.length || 0}
               </span>
 
               <button
                 onClick={handleNext}
                 disabled={currentStep >= (CONFIG.steps?.length || 0) - 1}
-                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center px-6 py-3 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105"
               >
                 Next
                 <ChevronRight className="w-4 h-4 ml-2" />
@@ -462,6 +516,20 @@ const BEPGeneratorWrapper = () => {
 
   return (
     <>
+      {/* Success Toast */}
+      {showSuccessToast && (
+        <div className="fixed top-4 right-4 z-50">
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg flex items-center">
+            <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center mr-3">
+              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <span className="font-medium">Draft saved successfully!</span>
+          </div>
+        </div>
+      )}
+
       <SaveDraftDialog
         show={showSaveDraftDialog}
         newDraftName={newDraftName}
