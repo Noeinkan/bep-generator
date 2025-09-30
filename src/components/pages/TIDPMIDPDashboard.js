@@ -14,6 +14,7 @@ import {
   Filter,
   Search
 } from 'lucide-react';
+import Papa from 'papaparse';
 import ApiService from '../../services/apiService';
 import Toast from '../common/Toast';
 import TIDPImportDialog from '../TIDPImportDialog';
@@ -135,6 +136,73 @@ const TIDPMIDPDashboard = () => {
       }
     } catch (err) {
       console.warn('Failed to load export templates', err);
+    }
+  };
+
+  // CSV Template Export function
+  const exportTidpCsvTemplate = () => {
+    try {
+      const csvData = [
+        {
+          'Information Container ID': 'IC-ARCH-001',
+          'Information Container Name/Title': 'Federated Architectural Model',
+          'Description': 'Complete architectural model including all building elements',
+          'Task Name': 'Architectural Modeling',
+          'Responsible Task Team/Party': 'Architecture Team',
+          'Author': 'John Smith',
+          'Dependencies/Predecessors': 'Site Survey, Structural Grid',
+          'Level of Information Need (LOIN)': 'LOD 300',
+          'Classification': 'Pr_20_30_60 - Building model',
+          'Estimated Production Time': '3 days',
+          'Delivery Milestone': 'Stage 3 - Developed Design',
+          'Due Date': '2025-12-31',
+          'Format/Type': 'IFC 4.0',
+          'Purpose': 'Coordination and visualization',
+          'Acceptance Criteria': 'Model validation passed, no clashes',
+          'Review and Authorization Process': 'S4 - Issue for approval',
+          'Status': 'Planned'
+        },
+        {
+          'Information Container ID': 'IC-STRUC-001',
+          'Information Container Name/Title': 'Structural Model',
+          'Description': 'Complete structural model with foundations, columns, beams, and slabs',
+          'Task Name': 'Structural Modeling',
+          'Responsible Task Team/Party': 'Structural Engineering Team',
+          'Author': 'Jane Doe',
+          'Dependencies/Predecessors': 'Architectural Model',
+          'Level of Information Need (LOIN)': 'LOD 350',
+          'Classification': 'Pr_20_30_60 - Building model',
+          'Estimated Production Time': '5 days',
+          'Delivery Milestone': 'Stage 4 - Technical Design',
+          'Due Date': '2026-01-15',
+          'Format/Type': 'IFC 4.0',
+          'Purpose': 'Structural analysis and coordination',
+          'Acceptance Criteria': 'Structural analysis completed, coordination resolved',
+          'Review and Authorization Process': 'S4 - Issue for approval',
+          'Status': 'Planned'
+        }
+      ];
+
+      const csv = Papa.unparse(csvData);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.href = url;
+      link.download = 'tidp-deliverables-template.csv';
+      link.style.display = 'none';
+
+      // Add to DOM, click, and remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Clean up the URL object
+      URL.revokeObjectURL(url);
+
+      setToast({ open: true, message: 'TIDP CSV template downloaded successfully!', type: 'success' });
+    } catch (error) {
+      console.error('Download failed:', error);
+      setToast({ open: true, message: 'Failed to download CSV template', type: 'error' });
     }
   };
 
@@ -467,6 +535,15 @@ const TIDPMIDPDashboard = () => {
                   >
                     <Plus className="w-5 h-5 mr-3" />
                     New TIDP
+                  </button>
+
+                  <button
+                    onClick={exportTidpCsvTemplate}
+                    className="inline-flex items-center px-8 py-3 border border-purple-600 rounded-lg shadow-sm text-base font-semibold text-purple-600 bg-white hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 hover:shadow-md"
+                    title="Download a CSV template with sample TIDP deliverables to fill and import"
+                  >
+                    <Download className="w-5 h-5 mr-3" />
+                    Download CSV Template
                   </button>
                 </div>
               </div>
