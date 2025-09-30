@@ -26,7 +26,9 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-    "start": "cross-env NODE_OPTIONS=--max-old-space-size=8192 react-scripts start",
+    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
+    "start:frontend": "cross-env NODE_OPTIONS=--max-old-space-size=8192 react-scripts start",
+    "start:backend": "node server/server.js",
     "start:3000": "cross-env NODE_OPTIONS=--max-old-space-size=8192 react-scripts start",
     "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 react-scripts build",
     "test": "react-scripts test",
@@ -52,6 +54,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.21",
+    "concurrently": "^9.2.1",
     "cross-env": "^7.0.3",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17"

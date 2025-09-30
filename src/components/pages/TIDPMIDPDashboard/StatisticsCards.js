@@ -47,24 +47,58 @@ const StatisticsCards = ({ stats, loading }) => {
     }
   ];
 
+  const colorStyles = {
+    blue: {
+      border: 'border-blue-200',
+      hoverBorder: 'hover:border-blue-400',
+      bg: 'bg-blue-50',
+      text: 'text-blue-600',
+      hoverShadow: 'hover:shadow-blue-100/50'
+    },
+    green: {
+      border: 'border-green-200',
+      hoverBorder: 'hover:border-green-400',
+      bg: 'bg-green-50',
+      text: 'text-green-600',
+      hoverShadow: 'hover:shadow-green-100/50'
+    },
+    purple: {
+      border: 'border-purple-200',
+      hoverBorder: 'hover:border-purple-400',
+      bg: 'bg-purple-50',
+      text: 'text-purple-600',
+      hoverShadow: 'hover:shadow-purple-100/50'
+    },
+    orange: {
+      border: 'border-orange-200',
+      hoverBorder: 'hover:border-orange-400',
+      bg: 'bg-orange-50',
+      text: 'text-orange-600',
+      hoverShadow: 'hover:shadow-orange-100/50'
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {cards.map(({ icon: Icon, value, label, colorClass }) => (
-        <div
-          key={label}
-          className={`bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 p-6 hover:border-${colorClass}-300`}
-        >
-          <div className="flex items-center">
-            <div className={`p-3 bg-${colorClass}-50 rounded-lg`}>
-              <Icon className={`w-8 h-8 text-${colorClass}-600`} />
-            </div>
-            <div className="ml-4">
-              <p className="text-3xl font-bold text-gray-900">{value}</p>
-              <p className="text-gray-600 font-medium">{label}</p>
+      {cards.map(({ icon: Icon, value, label, colorClass }) => {
+        const styles = colorStyles[colorClass];
+        return (
+          <div
+            key={label}
+            className={`bg-white rounded-xl border-2 ${styles.border} ${styles.hoverBorder} shadow-md hover:shadow-xl ${styles.hoverShadow} transition-all duration-300 p-6 transform hover:-translate-y-1`}
+          >
+            <div className="flex items-center">
+              <div className={`p-4 ${styles.bg} rounded-xl shadow-sm`}>
+                <Icon className={`w-8 h-8 ${styles.text}`} />
+              </div>
+              <div className="ml-5">
+                <p className="text-3xl font-bold text-gray-900 tracking-tight">{value}</p>
+                <p className="text-base text-gray-600 font-semibold mt-1">{label}</p>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
