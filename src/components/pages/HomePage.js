@@ -396,11 +396,11 @@ const HomePage = () => {
               Professional BIM execution planning tools designed for modern construction teams.
             </p>
             <div className="flex items-center justify-center space-x-6 text-sm text-gray-400">
-              <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+              <span className="hover:text-white transition-colors cursor-pointer">Privacy Policy</span>
               <span>•</span>
-              <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+              <span className="hover:text-white transition-colors cursor-pointer">Terms of Service</span>
               <span>•</span>
-              <a href="#" className="hover:text-white transition-colors">Support</a>
+              <span className="hover:text-white transition-colors cursor-pointer">Support</span>
             </div>
             <div className="mt-6 pt-6 border-t border-gray-800">
               <p className="text-gray-500 text-sm">

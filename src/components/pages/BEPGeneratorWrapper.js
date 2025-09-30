@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, Eye, Zap, FolderOpen, Save, ExternalLink } from 'lucide-react';
 
 // Import all the existing BEP components
@@ -22,7 +21,7 @@ import { usePage } from '../../contexts/PageContext';
 import { validateDraftName } from '../../utils/validationUtils';
 
 const BEPGeneratorWrapper = () => {
-  const [searchParams] = useSearchParams();
+  // const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const { navigateTo } = usePage();
 
@@ -42,14 +41,14 @@ const BEPGeneratorWrapper = () => {
   const [exportFormat, setExportFormat] = useState('pdf');
 
   // Check if we should show TIDP creation form
-  const shouldShowTidpForm = searchParams.get('createTidp') === 'true';
+  // const shouldShowTidpForm = searchParams.get('createTidp') === 'true';
 
   // TIDP and MIDP data
-  const { tidps, loading: tidpLoading } = useTidpData();
-  const { midps, loading: midpLoading } = useMidpData();
+  const { tidps, loading: _tidpLoading } = useTidpData();
+  const { midps, loading: _midpLoading } = useMidpData();
 
   // Draft operations
-  const { saveDraft, isLoading: savingDraft, error: draftError } = useDraftOperations(user, formData, bepType, (loadedData, loadedType) => {
+  const { saveDraft, isLoading: savingDraft, error: _draftError } = useDraftOperations(user, formData, bepType, (loadedData, loadedType) => {
     setFormData(loadedData);
     setBepType(loadedType);
   }, () => {});
@@ -132,7 +131,7 @@ const BEPGeneratorWrapper = () => {
       // Last step reached, go to preview
       setShowPreview(true);
     }
-  }, [currentStep, formData, validateStep, bepType]);
+  }, [currentStep, formData, validateStep]);
 
   const handlePrevious = useCallback(() => {
     if (currentStep > 0) {
@@ -286,7 +285,7 @@ const BEPGeneratorWrapper = () => {
     } finally {
       setIsGenerating(false);
     }
-  }, [exportFormat, formData, bepType, generateContent]);
+  }, [exportFormat, formData, bepType, generateContent, tidps, midps]);
 
   // If no BEP type selected, show type selector
   if (!bepType) {
@@ -375,7 +374,7 @@ const BEPGeneratorWrapper = () => {
 
   // Main BEP Generator interface
   return (
-    <div className="h-screen bg-gray-50 flex">
+    <div className="h-screen bg-gray-50 flex relative">
       {/* Sidebar */}
       <div className="w-80 bg-white shadow-xl border-r border-gray-200 flex flex-col">
         <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
@@ -578,11 +577,7 @@ const BEPGeneratorWrapper = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
 
-  return (
-    <>
       {/* Success Toast */}
       {showSuccessToast && (
         <div className="fixed top-4 right-4 z-50">
@@ -606,7 +601,7 @@ const BEPGeneratorWrapper = () => {
         onSave={handleSaveDraftConfirm}
         onCancel={handleSaveDraftCancel}
       />
-    </>
+    </div>
   );
 };
 
