@@ -15,7 +15,9 @@
       "Bash(curl:*)",
       "Bash(find:*)",
       "Bash(uniq -c echo \"2. Checking ProtectedRoute usage:\" grep -r \"ProtectedRoute\" ./src --exclude-dir=node_modules)",
-      "Bash(tasklist)"
+      "Bash(tasklist)",
+      "Bash(node server.js)",
+      "Bash(PORT=3000 npm start)"
     ],
     "deny": [],
     "ask": []
