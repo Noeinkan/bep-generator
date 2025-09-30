@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Calendar, Users, Download, Upload, TrendingUp, ArrowLeft } from 'lucide-react';
+import Papa from 'papaparse';
 import ApiService from '../../services/apiService';
 import Toast from '../common/Toast';
 import TIDPImportDialog from '../TIDPImportDialog';
@@ -168,6 +169,135 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
     }
   };
 
+  // CSV Template Export/Import functions
+  const exportTidpCsvTemplate = () => {
+    try {
+      const csvData = [
+        {
+          'Information Container ID': 'IC-ARCH-001',
+          'Information Container Name/Title': 'Federated Architectural Model',
+          'Description': 'Complete architectural model including all building elements',
+          'Task Name': 'Architectural Modeling',
+          'Responsible Task Team/Party': 'Architecture Team',
+          'Author': 'John Smith',
+          'Dependencies/Predecessors': 'Site Survey, Structural Grid',
+          'Level of Information Need (LOIN)': 'LOD 300',
+          'Classification': 'Pr_20_30_60 - Building model',
+          'Estimated Production Time': '3 days',
+          'Delivery Milestone': 'Stage 3 - Developed Design',
+          'Due Date': '2025-12-31',
+          'Format/Type': 'IFC 4.0',
+          'Purpose': 'Coordination and visualization',
+          'Acceptance Criteria': 'Model validation passed, no clashes',
+          'Review and Authorization Process': 'S4 - Issue for approval',
+          'Status': 'Planned'
+        },
+        {
+          'Information Container ID': 'IC-STRUC-001',
+          'Information Container Name/Title': 'Structural Model',
+          'Description': 'Complete structural model with foundations, columns, beams, and slabs',
+          'Task Name': 'Structural Modeling',
+          'Responsible Task Team/Party': 'Structural Engineering Team',
+          'Author': 'Jane Doe',
+          'Dependencies/Predecessors': 'Architectural Model',
+          'Level of Information Need (LOIN)': 'LOD 350',
+          'Classification': 'Pr_20_30_60 - Building model',
+          'Estimated Production Time': '5 days',
+          'Delivery Milestone': 'Stage 4 - Technical Design',
+          'Due Date': '2026-01-15',
+          'Format/Type': 'IFC 4.0',
+          'Purpose': 'Structural analysis and coordination',
+          'Acceptance Criteria': 'Structural analysis completed, coordination resolved',
+          'Review and Authorization Process': 'S4 - Issue for approval',
+          'Status': 'Planned'
+        }
+      ];
+
+      const csv = Papa.unparse(csvData);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.href = url;
+      link.download = 'tidp-deliverables-template.csv';
+      link.style.display = 'none';
+
+      // Add to DOM, click, and remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Clean up the URL object
+      URL.revokeObjectURL(url);
+
+      setToast({ open: true, message: 'TIDP CSV template downloaded successfully!', type: 'success' });
+    } catch (error) {
+      console.error('Download failed:', error);
+      setToast({ open: true, message: 'Failed to download CSV template', type: 'error' });
+    }
+  };
+
+  const importTidpFromCsv = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        try {
+          const containers = results.data.map((row, index) => ({
+            id: `IC-${Date.now()}-${index}`,
+            'Information Container ID': row['Information Container ID'] || `IC-${Date.now()}-${index}`,
+            'Information Container Name/Title': row['Information Container Name/Title'] || '',
+            'Description': row['Description'] || '',
+            'Task Name': row['Task Name'] || '',
+            'Responsible Task Team/Party': row['Responsible Task Team/Party'] || '',
+            'Author': row['Author'] || '',
+            'Dependencies/Predecessors': row['Dependencies/Predecessors'] || '',
+            'Level of Information Need (LOIN)': row['Level of Information Need (LOIN)'] || 'LOD 200',
+            'Classification': row['Classification'] || '',
+            'Estimated Production Time': row['Estimated Production Time'] || '1 day',
+            'Delivery Milestone': row['Delivery Milestone'] || '',
+            'Due Date': row['Due Date'] || '',
+            'Format/Type': row['Format/Type'] || 'IFC 4.0',
+            'Purpose': row['Purpose'] || '',
+            'Acceptance Criteria': row['Acceptance Criteria'] || '',
+            'Review and Authorization Process': row['Review and Authorization Process'] || 'S1 - Work in progress',
+            'Status': row['Status'] || 'Planned'
+          })).filter(container => container['Information Container Name/Title'].trim() !== '');
+
+          if (containers.length === 0) {
+            setToast({ open: true, message: 'No valid deliverables found in CSV', type: 'error' });
+            return;
+          }
+
+          // Create TIDP with imported containers
+          setTidpForm(prev => ({
+            ...prev,
+            containers: containers
+          }));
+          
+          setShowTidpForm(true);
+          setToast({ 
+            open: true, 
+            message: `Imported ${containers.length} deliverables from CSV. Please fill in TIDP details and save.`, 
+            type: 'success' 
+          });
+        } catch (error) {
+          console.error('CSV import error:', error);
+          setToast({ open: true, message: 'Failed to import CSV: ' + error.message, type: 'error' });
+        }
+      },
+      error: (error) => {
+        console.error('CSV parsing error:', error);
+        setToast({ open: true, message: 'Failed to parse CSV file', type: 'error' });
+      }
+    });
+
+    // Reset file input
+    event.target.value = '';
+  };
+
   // Bulk export helpers with limited concurrency
   const runConcurrent = async (items, worker, concurrency = 3, progressCb) => {
     let i = 0;
@@ -237,7 +367,7 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
         </div>
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900">Task Information Delivery Plans</h2>
-          <div className="flex space-x-3">
+          <div className="flex flex-wrap gap-3">
             <button
               onClick={() => setShowImportDialog(true)}
               className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
@@ -252,6 +382,27 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
               <Plus className="w-4 h-4" />
               <span>New TIDP</span>
             </button>
+            <button
+              onClick={exportTidpCsvTemplate}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors"
+              title="Download a CSV template with sample TIDP deliverables to fill and import"
+            >
+              <Download className="w-4 h-4" />
+              <span>Download CSV Template</span>
+            </button>
+            <div className="relative">
+              <input
+                type="file"
+                accept=".csv"
+                onChange={importTidpFromCsv}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                id="csv-import-tidp"
+              />
+              <label htmlFor="csv-import-tidp" className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 cursor-pointer transition-colors">
+                <Upload className="w-4 h-4" />
+                <span>Import CSV</span>
+              </label>
+            </div>
           </div>
         </div>
 
@@ -1090,7 +1241,7 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
                     </div>
                   </div>
 
-                  <div className="flex space-x-4">
+                  <div className="flex flex-wrap gap-4">
                     <button onClick={() => setShowTidpForm(true)} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2">
                       <Plus className="w-4 h-4" />
                       <span>Create New TIDP</span>
@@ -1099,6 +1250,23 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
                       <Plus className="w-4 h-4" />
                       <span>Create New MIDP</span>
                     </button>
+                    <button onClick={exportTidpCsvTemplate} className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2">
+                      <Download className="w-4 h-4" />
+                      <span>Download TIDP CSV Template</span>
+                    </button>
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept=".csv"
+                        onChange={importTidpFromCsv}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        id="csv-import"
+                      />
+                      <label htmlFor="csv-import" className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 cursor-pointer">
+                        <Upload className="w-4 h-4" />
+                        <span>Import TIDP from CSV</span>
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
