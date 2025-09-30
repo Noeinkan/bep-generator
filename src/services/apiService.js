@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Default API URL: use 3001 for the local backend (can be overridden with REACT_APP_API_URL)
-const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 
 // Create axios instance with default configuration
 const apiClient = axios.create({

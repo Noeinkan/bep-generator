@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Upload, Download, FileText, AlertCircle, CheckCircle } from 'lucide-react';
 import Papa from 'papaparse';
+import * as XLSX from 'xlsx';
 import ApiService from '../services/apiService';
 
 const TIDPImportDialog = ({ open, onClose, onImportComplete }) => {
@@ -95,8 +96,65 @@ const TIDPImportDialog = ({ open, onClose, onImportComplete }) => {
           }
         });
       } else {
-        // For Excel files, show error message
-        throw new Error('Excel import not yet implemented. Please use CSV format or convert your Excel file to CSV.');
+        // For Excel files, parse using xlsx library
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            
+            // Get the first worksheet
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            
+            // Convert to JSON with header row
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            
+            if (jsonData.length === 0) {
+              throw new Error('No data found in Excel file');
+            }
+            
+            // Convert array of arrays to array of objects (first row as headers)
+            const headers = jsonData[0];
+            const rows = jsonData.slice(1);
+            
+            const excelData = rows.map(row => {
+              const obj = {};
+              headers.forEach((header, index) => {
+                obj[header] = row[index] || '';
+              });
+              return obj;
+            });
+            
+            // Import the data using Excel endpoint
+            const apiResults = await ApiService.importTIDPsFromExcel(excelData, projectId);
+            setImportResults(apiResults.data);
+
+            if (onImportComplete) {
+              onImportComplete(apiResults.data);
+            }
+          } catch (error) {
+            console.error('Excel parsing error:', error);
+            setImportResults({
+              successful: [],
+              failed: [{ error: 'Failed to parse Excel file: ' + error.message }],
+              total: 0
+            });
+          } finally {
+            setLoading(false);
+          }
+        };
+        
+        reader.onerror = () => {
+          setImportResults({
+            successful: [],
+            failed: [{ error: 'Failed to read Excel file' }],
+            total: 0
+          });
+          setLoading(false);
+        };
+        
+        reader.readAsArrayBuffer(file);
       }
     } catch (error) {
       console.error('Import failed:', error);
