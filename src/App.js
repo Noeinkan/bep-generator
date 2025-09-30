@@ -8,6 +8,7 @@ import MainLayout from './components/layout/MainLayout';
 import HomePage from './components/pages/HomePage';
 import BEPGeneratorWrapper from './components/pages/BEPGeneratorWrapper';
 import TIDPMIDPDashboard from './components/pages/TIDPMIDPDashboard';
+import TidpEditorPage from './components/pages/TidpEditorPage';
 
 const AppContent = () => {
   const { currentPage } = usePage();
@@ -23,6 +24,8 @@ const AppContent = () => {
         return <BEPGeneratorWrapper />;
       case 'tidp-midp':
         return <TIDPMIDPDashboard />;
+      case 'tidp-editor':
+        return <TidpEditorPage />;
       default:
         return <HomePage />;
     }
