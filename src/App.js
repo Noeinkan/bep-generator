@@ -13,7 +13,7 @@ const AppContent = () => {
   const { currentPage } = usePage();
 
   // Use a mock user when authentication is disabled
-  const mockUser = { id: 'demo-user', name: 'Demo User', email: 'demo@example.com' };
+  // const mockUser = { id: 'demo-user', name: 'Demo User', email: 'demo@example.com' };
 
   const renderCurrentPage = () => {
     switch (currentPage) {

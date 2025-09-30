@@ -10,8 +10,6 @@ import {
   BarChart3,
   ArrowLeft,
   FileText,
-  Settings,
-  Filter,
   Search,
   CheckCircle
 } from 'lucide-react';
@@ -38,9 +36,9 @@ const TIDPMIDPDashboard = () => {
   const [tidps, setTidps] = useState([]);
   const [midps, setMidps] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [exportLoading, setExportLoading] = useState({});
-  const [templates, setTemplates] = useState([]);
-  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [_exportLoading, _setExportLoading] = useState({});
+  const [_templates, _setTemplates] = useState([]);
+  const [_selectedTemplate, _setSelectedTemplate] = useState(null);
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [showEvolutionDashboard, setShowEvolutionDashboard] = useState(null);
   const [showHelp, setShowHelp] = useState(false);
@@ -125,16 +123,16 @@ const TIDPMIDPDashboard = () => {
     try {
       const resp = await ApiService.getExportTemplates();
       if (resp && Array.isArray(resp)) {
-        setTemplates(resp);
+        _setTemplates(resp);
       } else if (resp && resp.templates && Array.isArray(resp.templates)) {
-        setTemplates(resp.templates);
+        _setTemplates(resp.templates);
       } else if (resp && resp.data && typeof resp.data === 'object') {
         const normalized = Object.keys(resp.data).map(key => ({
           id: key,
           name: key.toUpperCase(),
           ...resp.data[key]
         }));
-        setTemplates(normalized);
+        _setTemplates(normalized);
       }
     } catch (err) {
       console.warn('Failed to load export templates', err);

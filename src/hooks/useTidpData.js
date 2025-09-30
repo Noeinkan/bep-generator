@@ -36,7 +36,7 @@ export const useTidpData = () => {
     };
     const created = await ApiService.createTIDP(payload);
     await loadTidps();
-    return created && (created.data || created.tidp) || created;
+    return (created && (created.data || created.tidp)) || created;
   };
 
   const updateTidp = async (id, update) => {

@@ -68,7 +68,7 @@ export const generatePDF = async (formData, bepType, options = {}) => {
     const marginTop = margin[0];
     const marginBottom = margin[2];
     const contentWidth = pageWidth - marginLeft - marginRight;
-    const contentHeight = pageHeight - marginTop - marginBottom;
+    // const contentHeight = pageHeight - marginTop - marginBottom;
 
     // Split text into lines that fit the page width
     const lines = doc.splitTextToSize(textContent, contentWidth);

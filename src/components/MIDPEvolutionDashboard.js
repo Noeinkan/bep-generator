@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { TrendingUp, Calendar, Users, Clock, BarChart3, AlertTriangle } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { TrendingUp, Users, Clock, BarChart3, AlertTriangle } from 'lucide-react';
 import ApiService from '../services/apiService';
 
 const MIDPEvolutionDashboard = ({ midpId, onClose }) => {
@@ -9,11 +9,7 @@ const MIDPEvolutionDashboard = ({ midpId, onClose }) => {
   const [activeView, setActiveView] = useState('overview');
   const [alerts, setAlerts] = useState([]);
 
-  useEffect(() => {
-    loadDashboardData();
-  }, [midpId]);
-
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     setLoading(true);
     try {
       const [evolutionData, deliverablesData, midpData] = await Promise.all([
@@ -41,7 +37,11 @@ const MIDPEvolutionDashboard = ({ midpId, onClose }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [midpId]);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, [loadDashboardData]);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
