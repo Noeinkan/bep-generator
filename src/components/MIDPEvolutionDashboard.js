@@ -7,6 +7,7 @@ const MIDPEvolutionDashboard = ({ midpId, onClose }) => {
   const [deliverables, setDeliverables] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeView, setActiveView] = useState('overview');
+  const [alerts, setAlerts] = useState([]);
 
   useEffect(() => {
     loadDashboardData();
@@ -15,13 +16,26 @@ const MIDPEvolutionDashboard = ({ midpId, onClose }) => {
   const loadDashboardData = async () => {
     setLoading(true);
     try {
-      const [evolutionData, deliverablesData] = await Promise.all([
+      const [evolutionData, deliverablesData, midpData] = await Promise.all([
         ApiService.getMIDPEvolution(midpId),
-        ApiService.getMIDPDeliverablesDashboard(midpId)
+        ApiService.getMIDPDeliverablesDashboard(midpId),
+        ApiService.getMIDP(midpId)
       ]);
 
       setEvolution(evolutionData.data);
       setDeliverables(deliverablesData.data);
+
+      // Check for delay alerts
+      const midp = midpData.data;
+      const newAlerts = [];
+      if (midp.aggregatedData?.milestones) {
+        midp.aggregatedData.milestones.forEach(milestone => {
+          if (milestone.delayImpact) {
+            newAlerts.push(`Delay detected in milestone: ${milestone.name}`);
+          }
+        });
+      }
+      setAlerts(newAlerts);
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
     } finally {
@@ -44,6 +58,21 @@ const MIDPEvolutionDashboard = ({ midpId, onClose }) => {
 
   const OverviewView = () => (
     <div className="space-y-6">
+      {/* Delay Alerts */}
+      {alerts.length > 0 && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex items-center">
+            <AlertTriangle className="w-5 h-5 text-red-600 mr-2" />
+            <h3 className="text-lg font-semibold text-red-800">Delay Alerts</h3>
+          </div>
+          <ul className="mt-2 list-disc list-inside text-red-700">
+            {alerts.map((alert, index) => (
+              <li key={index}>{alert}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {/* Evolution Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white rounded-lg shadow p-6">

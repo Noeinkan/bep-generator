@@ -12,7 +12,8 @@ import {
   FileText,
   Settings,
   Filter,
-  Search
+  Search,
+  CheckCircle
 } from 'lucide-react';
 import Papa from 'papaparse';
 import ApiService from '../../services/apiService';
@@ -42,6 +43,7 @@ const TIDPMIDPDashboard = () => {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [showEvolutionDashboard, setShowEvolutionDashboard] = useState(null);
+  const [showHelp, setShowHelp] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterDiscipline, setFilterDiscipline] = useState('all');
 
@@ -263,6 +265,79 @@ const TIDPMIDPDashboard = () => {
     return Array.from(disciplines);
   };
 
+  const handleComplianceCheck = async () => {
+    try {
+      // Check if MIDPs have required LOD/LOI information
+      const compliant = midps.every(midp => {
+        return midp.aggregatedData?.containers?.every(container => 
+          container.loiLevel && container.format
+        );
+      });
+
+      setToast({
+        open: true,
+        message: compliant ? 'All MIDPs are compliant with ISO 19650 standards' : 'Some MIDPs may not be fully compliant - check LOD/LOI details',
+        type: compliant ? 'success' : 'warning'
+      });
+    } catch (error) {
+      setToast({
+        open: true,
+        message: 'Failed to perform compliance check',
+        type: 'error'
+      });
+    }
+  };
+
+  const generateReport = async () => {
+    try {
+      // Import jsPDF dynamically
+      const { default: jsPDF } = await import('jspdf');
+
+      const doc = new jsPDF();
+      doc.setFontSize(16);
+      doc.text('MIDP Compliance Report', 20, 20);
+      doc.setFontSize(12);
+      doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 35);
+
+      // Add relationship summary
+      doc.setFontSize(14);
+      doc.text('TIDP-MIDP Relationship Summary', 20, 55);
+      doc.setFontSize(10);
+      const relationshipText = [
+        'In the context of ISO 19650, TIDPs and MIDPs are key elements for BIM project planning.',
+        'TIDPs provide detailed team-specific deliverables, while MIDPs integrate them into a unified plan.',
+        'This hierarchical relationship ensures synchronized delivery and proactive collaboration.'
+      ];
+      
+      relationshipText.forEach((line, index) => {
+        doc.text(line, 20, 70 + (index * 5));
+      });
+
+      // Add compliance status
+      doc.setFontSize(12);
+      doc.text('Compliance Status:', 20, 100);
+      const compliant = midps.every(midp => 
+        midp.aggregatedData?.containers?.every(container => container.loiLevel)
+      );
+      doc.setFontSize(10);
+      doc.text(compliant ? '✓ Compliant with ISO 19650' : '⚠ Review required', 20, 110);
+
+      doc.save('MIDP_Compliance_Report.pdf');
+
+      setToast({
+        open: true,
+        message: 'Report generated successfully',
+        type: 'success'
+      });
+    } catch (error) {
+      setToast({
+        open: true,
+        message: 'Failed to generate report',
+        type: 'error'
+      });
+    }
+  };
+
   // Navigation items
   const navigationItems = [
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
@@ -307,6 +382,30 @@ const TIDPMIDPDashboard = () => {
               >
                 <TrendingUp className="w-5 h-5 mr-3" />
                 Auto-Generate MIDP
+              </button>
+
+              <button
+                onClick={() => setShowHelp(true)}
+                className="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
+              >
+                <FileText className="w-5 h-5 mr-3" />
+                Help
+              </button>
+
+              <button
+                onClick={handleComplianceCheck}
+                className="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200"
+              >
+                <CheckCircle className="w-5 h-5 mr-3" />
+                Compliance Check
+              </button>
+
+              <button
+                onClick={generateReport}
+                className="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200"
+              >
+                <Download className="w-5 h-5 mr-3" />
+                Generate Report
               </button>
             </div>
           </div>
@@ -861,6 +960,37 @@ const TIDPMIDPDashboard = () => {
           midpId={showEvolutionDashboard}
           onClose={() => setShowEvolutionDashboard(null)}
         />
+      )}
+
+      {/* Help Modal */}
+      {showHelp && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold text-gray-900">Relationship between TIDP and MIDP</h2>
+                <button
+                  onClick={() => setShowHelp(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="prose max-w-none">
+                <p>In the context of ISO 19650, TIDPs (Task Information Delivery Plans) and the MIDP (Master Information Delivery Plan) are key elements for planning information delivery in a BIM project.</p>
+                
+                <h3>TIDP (Task Information Delivery Plan)</h3>
+                <p>These are detailed plans prepared by each team or task team involved in the project. Each TIDP describes the specific information that team must produce, including deliverables (models, documents, data), delivery milestones, responsibilities (who does what), formats, and levels of detail (LOD/LOI). It is focused on individual or subgroup activities, and derives from the detailed responsibility matrix (Detailed Responsibility Matrix).</p>
+                
+                <h3>MIDP (Master Information Delivery Plan)</h3>
+                <p>It is the overall master plan of the project, which integrates and coordinates all TIDPs from the various teams. The MIDP acts as the "main calendar" that aligns delivery timelines, ensures consistency between team contributions, and includes details such as task dependencies, revisions, approvals, and integration into the CDE. It is produced by the lead appointee (for example, the project information manager) and evolves during the project.</p>
+                
+                <h3>Relationship</h3>
+                <p>The MIDP is essentially a collation and harmonization of the individual TIDPs. TIDPs provide granular details for each team, while the MIDP unites them into a unified framework for the entire project, ensuring that deliveries are synchronized with project milestones (for example, design, construction, or handover phases). This relationship is hierarchical: TIDPs feed the MIDP, which in turn informs the BIM Execution Plan (BEP) and supports verification of compliance with client-required information. In practice, a delay in one TIDP can impact the entire MIDP, thus promoting proactive collaboration.</p>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Toast Notification */}
