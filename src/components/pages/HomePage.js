@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { usePage } from '../../contexts/PageContext';
 import {
   FileText,
   BarChart3,
@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 
 const HomePage = () => {
+  const { navigateTo } = usePage();
   const [isVisible, setIsVisible] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
 
@@ -95,22 +96,22 @@ const HomePage = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-              <Link
-                to="/bep-generator"
+              <button
+                onClick={() => navigateTo('bep-generator')}
                 className="group inline-flex items-center px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 <Play className="w-5 h-5 mr-2" />
                 Start Creating BEP
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
+              </button>
 
-              <Link
-                to="/tidp-midp"
+              <button
+                onClick={() => navigateTo('tidp-midp')}
                 className="group inline-flex items-center px-8 py-4 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-600 transform hover:scale-105 transition-all duration-200"
               >
                 Manage Information Delivery
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
+              </button>
             </div>
 
             {/* Stats */}
@@ -194,13 +195,13 @@ const HomePage = () => {
                 })}
               </div>
 
-              <Link
-                to="/bep-generator"
+              <button
+                onClick={() => navigateTo('bep-generator')}
                 className="group inline-flex items-center justify-center w-full px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 <span className="text-lg">Start Creating BEP</span>
                 <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
+              </button>
             </div>
           </div>
 
@@ -244,13 +245,13 @@ const HomePage = () => {
                 })}
               </div>
 
-              <Link
-                to="/tidp-midp"
+              <button
+                onClick={() => navigateTo('tidp-midp')}
                 className="group inline-flex items-center justify-center w-full px-8 py-4 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold rounded-xl hover:from-green-700 hover:to-green-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 <span className="text-lg">Manage Information Delivery</span>
                 <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -363,20 +364,20 @@ const HomePage = () => {
             Join thousands of BIM professionals who trust BEP Suite for their execution planning needs.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              to="/bep-generator"
+            <button
+              onClick={() => navigateTo('bep-generator')}
               className="inline-flex items-center px-8 py-4 bg-white text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transform hover:scale-105 transition-all duration-200 shadow-lg"
             >
               <FileText className="w-5 h-5 mr-2" />
               Start Free Trial
-            </Link>
-            <Link
-              to="/tidp-midp"
+            </button>
+            <button
+              onClick={() => navigateTo('tidp-midp')}
               className="inline-flex items-center px-8 py-4 border-2 border-white text-white font-semibold rounded-xl hover:bg-white hover:text-blue-600 transform hover:scale-105 transition-all duration-200"
             >
               <BarChart3 className="w-5 h-5 mr-2" />
               Explore Features
-            </Link>
+            </button>
           </div>
         </div>
       </div>

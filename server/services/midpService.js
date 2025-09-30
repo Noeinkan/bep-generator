@@ -193,7 +193,8 @@ class MIDPService {
         ...ms,
         teams: Array.from(ms.teams),
         reviewDuration: this.calculateReviewDuration(ms.containers.length),
-        riskLevel: this.assessMilestoneRisk(ms)
+        riskLevel: this.assessMilestoneRisk(ms),
+        delayImpact: this.checkDelayImpact(ms, tidps) // Enhanced: Check for delay impacts
       })),
       disciplines: Array.from(disciplines),
       totalContainers: containers.length,
@@ -830,6 +831,25 @@ class MIDPService {
       }
     };
   }
+
+  /**
+   * Check for delay impact on milestone
+   * @param {Object} milestone - Milestone object
+   * @param {Array} allTidps - All TIDPs for comparison
+   * @returns {boolean} Whether there's a delay impact
+   */
+  checkDelayImpact(milestone, allTidps) {
+    // Check if any TIDP due dates exceed the milestone's latest date
+    return milestone.containers.some(container => {
+      if (!container.dueDate || !milestone.latestDate) return false;
+      return new Date(container.dueDate) > new Date(milestone.latestDate);
+    });
+  }
 }
 
-module.exports = new MIDPService();
+const midpServiceInstance = new MIDPService();
+
+// Export methods for testing
+module.exports = midpServiceInstance;
+module.exports.aggregateTIDPs = midpServiceInstance.aggregateTIDPs.bind(midpServiceInstance);
+module.exports.checkDelayImpact = midpServiceInstance.checkDelayImpact.bind(midpServiceInstance);
