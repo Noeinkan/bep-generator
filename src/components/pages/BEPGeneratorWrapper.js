@@ -25,6 +25,21 @@ const BEPGeneratorWrapper = () => {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
 
+  // State variables
+  const [formData, setFormData] = useState(INITIAL_DATA);
+  const [bepType, setBepType] = useState('');
+  const [currentStep, setCurrentStep] = useState(0);
+  const [validationErrors, setValidationErrors] = useState({});
+  const [completedSections, setCompletedSections] = useState(new Set());
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [showDraftManager, setShowDraftManager] = useState(false);
+  const [newDraftName, setNewDraftName] = useState('');
+  const [showSaveDraftDialog, setShowSaveDraftDialog] = useState(false);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [exportFormat, setExportFormat] = useState('pdf');
+
   // Check if we should show TIDP creation form
   const shouldShowTidpForm = searchParams.get('createTidp') === 'true';
 

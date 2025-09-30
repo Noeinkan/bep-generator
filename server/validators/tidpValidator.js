@@ -3,19 +3,26 @@ const Joi = require('joi');
 // Container schema
 const containerSchema = Joi.object({
   id: Joi.string().optional(),
-  'Container Name': Joi.string().required().min(1).max(200),
-  'Type': Joi.string().valid('Model', 'Drawing', 'Schedule', 'Specification', 'Report', 'Analysis', 'Documentation').required(),
-  'Format': Joi.string().required(),
-  'LOI Level': Joi.string().valid('LOD 100', 'LOD 200', 'LOD 300', 'LOD 350', 'LOD 400', 'LOD 500', 'As-Built').required(),
+  'Information Container ID': Joi.string().required().min(1).max(50),
+  'Information Container Name/Title': Joi.string().required().min(1).max(200),
+  'Description': Joi.string().required().min(1).max(500),
+  'Task Name': Joi.string().required().min(1).max(100),
+  'Responsible Task Team/Party': Joi.string().required().min(1).max(100),
   'Author': Joi.string().required().min(1).max(100),
-  'Dependencies': Joi.alternatives().try(
+  'Dependencies/Predecessors': Joi.alternatives().try(
     Joi.array().items(Joi.string()),
     Joi.string().allow('')
   ).optional(),
-  'Est. Time': Joi.string().required(),
-  'Milestone': Joi.string().required(),
+  'Level of Information Need (LOIN)': Joi.string().valid('LOD 100', 'LOD 200', 'LOD 300', 'LOD 350', 'LOD 400', 'LOD 500', 'As-Built').required(),
+  'Classification': Joi.string().allow('').optional(),
+  'Estimated Production Time': Joi.string().required(),
+  'Delivery Milestone': Joi.string().required(),
   'Due Date': Joi.date().iso().required(),
-  'Status': Joi.string().valid('Planned', 'In Progress', 'Under Review', 'Approved', 'Delivered', 'On Hold').required()
+  'Format/Type': Joi.string().required(),
+  'Purpose': Joi.string().required().min(1).max(200),
+  'Acceptance Criteria': Joi.string().required().min(1).max(500),
+  'Review and Authorization Process': Joi.string().required(),
+  'Status': Joi.string().valid('Planned', 'In Progress', 'Under Review', 'Approved', 'Completed', 'Delayed').required()
 });
 
 // Team member schema
