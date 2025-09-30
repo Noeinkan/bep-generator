@@ -1,11 +1,11 @@
 const { v4: uuidv4 } = require('uuid');
 const { format, addDays, parseISO } = require('date-fns');
 const _ = require('lodash');
+const db = require('../db/database');
 
 class TIDPService {
   constructor() {
-    // In-memory storage for development. Replace with database in production.
-    this.tidps = new Map();
+    // SQLite database for persistent storage
   }
 
   /**
@@ -24,18 +24,73 @@ class TIDPService {
     };
 
     // Validate and process information containers
-    if (tidp.containers) {
-      tidp.containers = tidp.containers.map(container => ({
-        id: container.id || uuidv4(),
-        ...container,
-        createdAt: new Date().toISOString()
-      }));
-    }
+    const containers = tidpData.containers || [];
+    const processedContainers = containers.map(container => ({
+      id: container.id || uuidv4(),
+      ...container,
+      createdAt: new Date().toISOString()
+    }));
 
     // Process dependencies
-    tidp.dependencies = this.processDependencies(tidp.dependencies || []);
+    tidp.dependencies = this.processDependencies(tidpData.dependencies || []);
 
-    this.tidps.set(tidp.id, tidp);
+    // Insert TIDP into database
+    const insertTidp = db.prepare(`
+      INSERT INTO tidps (id, teamName, discipline, leader, company, responsibilities, projectId, createdAt, updatedAt, version, status, source, createdVia)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    insertTidp.run(
+      tidp.id,
+      tidp.teamName,
+      tidp.discipline,
+      tidp.leader || null,
+      tidp.company || null,
+      tidp.responsibilities || null,
+      tidp.projectId || null,
+      tidp.createdAt,
+      tidp.updatedAt,
+      tidp.version,
+      tidp.status,
+      tidp.source || null,
+      tidp.createdVia || null
+    );
+
+    // Insert containers
+    const insertContainer = db.prepare(`
+      INSERT INTO containers (
+        id, tidp_id, information_container_id, container_name, description, task_name,
+        responsible_party, author, dependencies, loin, classification, estimated_time,
+        delivery_milestone, due_date, format_type, purpose, acceptance_criteria, review_process, status, createdAt
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    processedContainers.forEach(container => {
+      insertContainer.run(
+        container.id,
+        tidp.id,
+        container['Information Container ID'] || null,
+        container['Information Container Name/Title'] || container['Container Name'] || null,
+        container['Description'] || null,
+        container['Task Name'] || null,
+        container['Responsible Task Team/Party'] || null,
+        container['Author'] || null,
+        JSON.stringify(container.dependencies || []),
+        container['Level of Information Need (LOIN)'] || container['LOI Level'] || null,
+        container['Classification'] || null,
+        container['Estimated Production Time'] || container['Est. Time'] || null,
+        container['Delivery Milestone'] || container.Milestone || null,
+        container['Due Date'] || null,
+        container['Format/Type'] || container.Format || container.Type || null,
+        container['Purpose'] || null,
+        container['Acceptance Criteria'] || null,
+        container['Review and Authorization Process'] || null,
+        container['Status'] || null,
+        container.createdAt
+      );
+    });
+
+    tidp.containers = processedContainers;
     return tidp;
   }
 
@@ -46,21 +101,74 @@ class TIDPService {
    * @returns {Object} Updated TIDP
    */
   updateTIDP(id, updateData) {
-    const existingTidp = this.tidps.get(id);
+    const existingTidp = this.getTIDP(id);
     if (!existingTidp) {
       throw new Error(`TIDP with ID ${id} not found`);
     }
 
-    const updatedTidp = {
-      ...existingTidp,
-      ...updateData,
-      id, // Ensure ID doesn't change
-      updatedAt: new Date().toISOString(),
-      version: this.incrementVersion(existingTidp.version)
-    };
+    const updatedAt = new Date().toISOString();
+    const version = this.incrementVersion(existingTidp.version);
 
-    this.tidps.set(id, updatedTidp);
-    return updatedTidp;
+    // Update TIDP
+    const updateStmt = db.prepare(`
+      UPDATE tidps
+      SET teamName = ?, discipline = ?, leader = ?, company = ?, responsibilities = ?,
+          projectId = ?, updatedAt = ?, version = ?, status = ?
+      WHERE id = ?
+    `);
+
+    updateStmt.run(
+      updateData.teamName || existingTidp.teamName,
+      updateData.discipline || existingTidp.discipline,
+      updateData.leader || existingTidp.leader,
+      updateData.company || existingTidp.company,
+      updateData.responsibilities || existingTidp.responsibilities,
+      updateData.projectId || existingTidp.projectId,
+      updatedAt,
+      version,
+      updateData.status || existingTidp.status,
+      id
+    );
+
+    // If containers are updated, delete old ones and insert new ones
+    if (updateData.containers) {
+      db.prepare('DELETE FROM containers WHERE tidp_id = ?').run(id);
+
+      const insertContainer = db.prepare(`
+        INSERT INTO containers (
+          id, tidp_id, information_container_id, container_name, description, task_name,
+          responsible_party, author, dependencies, loin, classification, estimated_time,
+          delivery_milestone, due_date, format_type, purpose, acceptance_criteria, review_process, status, createdAt
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `);
+
+      updateData.containers.forEach(container => {
+        insertContainer.run(
+          container.id || uuidv4(),
+          id,
+          container['Information Container ID'] || null,
+          container['Information Container Name/Title'] || container['Container Name'] || null,
+          container['Description'] || null,
+          container['Task Name'] || null,
+          container['Responsible Task Team/Party'] || null,
+          container['Author'] || null,
+          JSON.stringify(container.dependencies || []),
+          container['Level of Information Need (LOIN)'] || container['LOI Level'] || null,
+          container['Classification'] || null,
+          container['Estimated Production Time'] || container['Est. Time'] || null,
+          container['Delivery Milestone'] || container.Milestone || null,
+          container['Due Date'] || null,
+          container['Format/Type'] || container.Format || container.Type || null,
+          container['Purpose'] || null,
+          container['Acceptance Criteria'] || null,
+          container['Review and Authorization Process'] || null,
+          container['Status'] || null,
+          new Date().toISOString()
+        );
+      });
+    }
+
+    return this.getTIDP(id);
   }
 
   /**
@@ -69,10 +177,43 @@ class TIDPService {
    * @returns {Object} TIDP data
    */
   getTIDP(id) {
-    const tidp = this.tidps.get(id);
+    const tidp = db.prepare('SELECT * FROM tidps WHERE id = ?').get(id);
     if (!tidp) {
       throw new Error(`TIDP with ID ${id} not found`);
     }
+
+    // Get containers
+    const containers = db.prepare('SELECT * FROM containers WHERE tidp_id = ?').all(id);
+
+    // Convert containers to original format
+    tidp.containers = containers.map(c => ({
+      id: c.id,
+      'Information Container ID': c.information_container_id,
+      'Container Name': c.container_name,
+      'Information Container Name/Title': c.container_name,
+      'Description': c.description,
+      'Task Name': c.task_name,
+      'Responsible Task Team/Party': c.responsible_party,
+      'Author': c.author,
+      'dependencies': JSON.parse(c.dependencies || '[]'),
+      'Level of Information Need (LOIN)': c.loin,
+      'LOI Level': c.loin,
+      'Classification': c.classification,
+      'Estimated Production Time': c.estimated_time,
+      'Est. Time': c.estimated_time,
+      'Delivery Milestone': c.delivery_milestone,
+      'Milestone': c.delivery_milestone,
+      'Due Date': c.due_date,
+      'Format/Type': c.format_type,
+      'Format': c.format_type,
+      'Type': c.format_type,
+      'Purpose': c.purpose,
+      'Acceptance Criteria': c.acceptance_criteria,
+      'Review and Authorization Process': c.review_process,
+      'Status': c.status,
+      'createdAt': c.createdAt
+    }));
+
     return tidp;
   }
 
@@ -81,7 +222,8 @@ class TIDPService {
    * @returns {Array} Array of all TIDPs
    */
   getAllTIDPs() {
-    return Array.from(this.tidps.values());
+    const tidps = db.prepare('SELECT * FROM tidps').all();
+    return tidps.map(tidp => this.getTIDP(tidp.id));
   }
 
   /**
@@ -90,8 +232,8 @@ class TIDPService {
    * @returns {Array} Array of TIDPs for the project
    */
   getTIDPsByProject(projectId) {
-    return Array.from(this.tidps.values())
-      .filter(tidp => tidp.projectId === projectId);
+    const tidps = db.prepare('SELECT * FROM tidps WHERE projectId = ?').all(projectId);
+    return tidps.map(tidp => this.getTIDP(tidp.id));
   }
 
   /**
@@ -100,10 +242,14 @@ class TIDPService {
    * @returns {boolean} Success status
    */
   deleteTIDP(id) {
-    if (!this.tidps.has(id)) {
+    const tidp = db.prepare('SELECT * FROM tidps WHERE id = ?').get(id);
+    if (!tidp) {
       throw new Error(`TIDP with ID ${id} not found`);
     }
-    return this.tidps.delete(id);
+
+    // Containers will be deleted automatically due to CASCADE
+    const result = db.prepare('DELETE FROM tidps WHERE id = ?').run(id);
+    return result.changes > 0;
   }
 
   /**
@@ -122,8 +268,11 @@ class TIDPService {
       }
 
       // Check if predecessor exists
-      if (dep.predecessorId && !this.tidps.has(dep.predecessorId)) {
-        warnings.push(`Predecessor TIDP ${dep.predecessorId} not found for dependency ${index + 1}`);
+      if (dep.predecessorId) {
+        const exists = db.prepare('SELECT id FROM tidps WHERE id = ?').get(dep.predecessorId);
+        if (!exists) {
+          warnings.push(`Predecessor TIDP ${dep.predecessorId} not found for dependency ${index + 1}`);
+        }
       }
 
       // Validate dates
@@ -323,16 +472,50 @@ class TIDPService {
     const successful = [];
     const failed = [];
 
+    // Group rows by Team Name to create one TIDP per team
+    const groupedByTeam = {};
+
     excelData.forEach((row, index) => {
       try {
-        const tidp = this.parseExcelRowToTIDP(row, projectId);
-        const created = this.createTIDP(tidp);
-        successful.push(created);
+        const teamName = row['Team Name'] || row.teamName || row['Responsible Task Team/Party'] || 'Imported Team';
+
+        if (!groupedByTeam[teamName]) {
+          groupedByTeam[teamName] = {
+            teamName: teamName,
+            discipline: row['Discipline'] || row.discipline || 'General',
+            leader: row['Leader'] || row.leader || row['Team Leader'] || 'TBD',
+            company: row['Company'] || row.company || 'TBD',
+            responsibilities: row['Responsibilities'] || row.responsibilities || row['Description'] || 'Imported from external source',
+            projectId: projectId || 'imported-project',
+            containers: []
+          };
+        }
+
+        // Parse container from row
+        const container = this.parseExcelRowToContainer(row, groupedByTeam[teamName].leader);
+        if (container) {
+          groupedByTeam[teamName].containers.push(container);
+        }
       } catch (error) {
         failed.push({
-          row: index + 1,
+          row: index + 2, // +2 because Excel is 1-indexed and has header row
           error: error.message,
           data: row
+        });
+      }
+    });
+
+    // Create TIDPs from grouped data
+    Object.values(groupedByTeam).forEach((tidpData) => {
+      try {
+        if (tidpData.containers.length > 0) {
+          const created = this.createTIDP(tidpData);
+          successful.push(created);
+        }
+      } catch (error) {
+        failed.push({
+          team: tidpData.teamName,
+          error: error.message
         });
       }
     });
@@ -351,42 +534,43 @@ class TIDPService {
   }
 
   /**
-   * Parse Excel row to TIDP object
+   * Parse Excel row to Container object
    * @param {Object} row - Excel row data
-   * @param {string} projectId - Project ID
-   * @returns {Object} TIDP object
+   * @param {string} defaultAuthor - Default author name
+   * @returns {Object} Container object
    */
-  parseExcelRowToTIDP(row, projectId) {
-    // Expected Excel columns: Team Name, Discipline, Leader, Company, Container Name, Type, Format, LOI Level, Author, Est. Time, Milestone, Due Date, Status
-    const tidp = {
-      teamName: row['Team Name'] || row.teamName || 'Imported Team',
-      discipline: row['Discipline'] || row.discipline || 'General',
-      leader: row['Leader'] || row.leader || 'TBD',
-      company: row['Company'] || row.company || 'TBD',
-      responsibilities: row['Responsibilities'] || row.responsibilities || 'Imported from external source',
-      projectId: projectId || 'imported-project',
-      containers: []
-    };
+  parseExcelRowToContainer(row, defaultAuthor) {
+    // Support multiple column name formats
+    const containerName = row['Information Container Name/Title'] ||
+                         row['Container Name'] ||
+                         row['Deliverable'] ||
+                         row.containerName ||
+                         row['Information Container ID'];
 
-    // If there's container data in the row, create a container
-    if (row['Container Name'] || row.containerName) {
-      const container = {
-        id: uuidv4(),
-        'Container Name': row['Container Name'] || row.containerName,
-        'Type': row['Type'] || row.type || 'Model',
-        'Format': row['Format'] || row.format || 'IFC',
-        'LOI Level': row['LOI Level'] || row.loiLevel || 'LOD 300',
-        'Author': row['Author'] || row.author || tidp.leader,
-        'Est. Time': row['Est. Time'] || row.estimatedTime || '1 week',
-        'Milestone': row['Milestone'] || row.milestone || 'Stage 1',
-        'Due Date': row['Due Date'] || row.dueDate || new Date().toISOString().slice(0, 10),
-        'Status': row['Status'] || row.status || 'Planned',
-        'Dependencies': []
-      };
-      tidp.containers.push(container);
+    if (!containerName) {
+      return null; // Skip rows without a container name
     }
 
-    return tidp;
+    return {
+      id: uuidv4(),
+      'Information Container ID': row['Information Container ID'] || row.containerId || `IC-${Date.now()}`,
+      'Information Container Name/Title': containerName,
+      'Description': row['Description'] || row.description || '',
+      'Task Name': row['Task Name'] || row.taskName || '',
+      'Responsible Task Team/Party': row['Responsible Task Team/Party'] || row['Team Name'] || row.teamName || defaultAuthor,
+      'Author': row['Author'] || row.author || defaultAuthor,
+      'Dependencies/Predecessors': row['Dependencies/Predecessors'] || row.dependencies || '',
+      'Level of Information Need (LOIN)': row['Level of Information Need (LOIN)'] || row['LOI Level'] || row.loiLevel || 'LOD 300',
+      'Classification': row['Classification'] || row.classification || '',
+      'Estimated Production Time': row['Estimated Production Time'] || row['Est. Time'] || row.estimatedTime || '1 week',
+      'Delivery Milestone': row['Delivery Milestone'] || row['Milestone'] || row.milestone || 'Stage 1',
+      'Due Date': row['Due Date'] || row.dueDate || new Date().toISOString().slice(0, 10),
+      'Format/Type': row['Format/Type'] || row['Format'] || row.format || row['Type'] || row.type || 'IFC',
+      'Purpose': row['Purpose'] || row.purpose || '',
+      'Acceptance Criteria': row['Acceptance Criteria'] || row.acceptanceCriteria || '',
+      'Review and Authorization Process': row['Review and Authorization Process'] || row.reviewProcess || '',
+      'Status': row['Status'] || row.status || 'Planned'
+    };
   }
 
   /**

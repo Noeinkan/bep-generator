@@ -14,6 +14,7 @@ export const PageProvider = ({ children }) => {
   // Initialize page based on current URL path
   const getInitialPage = () => {
     const path = window.location.pathname;
+    if (path.startsWith('/tidp-editor')) return 'tidp-editor';
     if (path.startsWith('/tidp-midp')) return 'tidp-midp';
     if (path.startsWith('/bep-generator')) return 'bep-generator';
     return 'home';
@@ -33,7 +34,8 @@ export const PageProvider = ({ children }) => {
   useEffect(() => {
     const handlePopState = () => {
       const path = window.location.pathname;
-      if (path.startsWith('/tidp-midp')) setCurrentPage('tidp-midp');
+      if (path.startsWith('/tidp-editor')) setCurrentPage('tidp-editor');
+      else if (path.startsWith('/tidp-midp')) setCurrentPage('tidp-midp');
       else if (path.startsWith('/bep-generator')) setCurrentPage('bep-generator');
       else setCurrentPage('home');
     };

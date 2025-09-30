@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import {
   Plus,
   Calendar,
@@ -18,9 +18,10 @@ import ApiService from '../../services/apiService';
 import Toast from '../common/Toast';
 import TIDPImportDialog from '../TIDPImportDialog';
 import MIDPEvolutionDashboard from '../MIDPEvolutionDashboard';
+import { usePage } from '../../contexts/PageContext';
 
 const TIDPMIDPDashboard = () => {
-  const navigate = useNavigate();
+  const { navigateTo } = usePage();
   const location = useLocation();
 
   // Parse current view from URL
@@ -69,9 +70,9 @@ const TIDPMIDPDashboard = () => {
     // Update URL when view changes
     const newPath = activeView === 'dashboard' ? '/tidp-midp' : `/tidp-midp/${activeView}`;
     if (location.pathname !== newPath) {
-      navigate(newPath, { replace: true });
+      window.history.replaceState(null, '', newPath);
     }
-  }, [activeView, navigate, location.pathname]);
+  }, [activeView, location.pathname]);
 
   const loadData = async () => {
     setLoading(true);
@@ -352,7 +353,7 @@ const TIDPMIDPDashboard = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-6">
               <button
-                onClick={() => navigate('/')}
+                onClick={() => navigateTo('home')}
                 className="inline-flex items-center text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-md p-2 transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />
@@ -627,7 +628,7 @@ const TIDPMIDPDashboard = () => {
                   </div>
 
                   <button
-                    onClick={() => navigate('/tidp-editor')}
+                    onClick={() => navigateTo('tidp-editor')}
                     className="inline-flex items-center px-8 py-3 border border-transparent rounded-lg shadow-sm text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 hover:shadow-md"
                   >
                     <Plus className="w-5 h-5 mr-3" />
@@ -731,7 +732,7 @@ const TIDPMIDPDashboard = () => {
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">No TIDPs found</h3>
                 <p className="text-gray-600 text-lg mb-8 max-w-md mx-auto">Try adjusting your search terms or filters, or create a new TIDP to get started.</p>
                 <button
-                  onClick={() => navigate('/tidp-editor')}
+                  onClick={() => navigateTo('tidp-editor')}
                   className="inline-flex items-center px-8 py-4 bg-blue-600 text-white font-semibold text-lg rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 hover:shadow-lg"
                 >
                   <Plus className="w-6 h-6 mr-3" />

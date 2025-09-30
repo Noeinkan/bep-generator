@@ -17,7 +17,10 @@
       "Bash(uniq -c echo \"2. Checking ProtectedRoute usage:\" grep -r \"ProtectedRoute\" ./src --exclude-dir=node_modules)",
       "Bash(tasklist)",
       "Bash(node server.js)",
-      "Bash(PORT=3000 npm start)"
+      "Bash(PORT=3000 npm start)",
+      "Bash(npm install:*)",
+      "Bash(timeout:*)",
+      "Bash(node -e \"const db = require(''./db/database''); console.log(''Database initialized successfully''); const tidps = db.prepare(''SELECT COUNT(*) as count FROM tidps'').get(); console.log(''TIDP count:'', tidps.count);\")"
     ],
     "deny": [],
     "ask": []
