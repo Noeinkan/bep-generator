@@ -547,6 +547,19 @@ class ApiService {
   }
 
   // ======================
+  // Migration
+  // ======================
+
+  async migrateTIDPsToDatabase(tidps) {
+    try {
+      const response = await apiClient.post('/migrate/tidps', { tidps });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to migrate TIDPs to database');
+    }
+  }
+
+  // ======================
   // Health Check
   // ======================
 

@@ -217,6 +217,133 @@ const TIDPMIDPDashboard = () => {
     await loadData();
   };
 
+  const handleViewTidpDetails = (tidpId) => {
+    navigateTo(`/tidp-editor/${tidpId}`);
+  };
+
+  const handleDownloadTidp = async (tidp) => {
+    try {
+      // Create CSV data from TIDP containers
+      const csvData = tidp.containers?.map(container => ({
+        'Information Container ID': container['Information Container ID'] || '',
+        'Container Name': container['Container Name'] || container['Information Container Name/Title'] || '',
+        'Description': container['Description'] || '',
+        'Task Name': container['Task Name'] || '',
+        'Responsible Party': container['Responsible Task Team/Party'] || '',
+        'Author': container['Author'] || '',
+        'Dependencies': container['Dependencies/Predecessors'] || '',
+        'LOIN': container['Level of Information Need (LOIN)'] || container['LOI Level'] || '',
+        'Classification': container['Classification'] || '',
+        'Estimated Time': container['Estimated Production Time'] || container['Est. Time'] || '',
+        'Milestone': container['Delivery Milestone'] || container['Milestone'] || '',
+        'Due Date': container['Due Date'] || '',
+        'Format': container['Format/Type'] || container['Format'] || '',
+        'Purpose': container['Purpose'] || '',
+        'Acceptance Criteria': container['Acceptance Criteria'] || '',
+        'Review Process': container['Review and Authorization Process'] || '',
+        'Status': container['Status'] || ''
+      })) || [];
+
+      const csv = Papa.unparse(csvData);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.href = url;
+      link.download = `TIDP-${tidp.teamName?.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.csv`;
+      link.style.display = 'none';
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      setToast({ open: true, message: 'TIDP downloaded successfully!', type: 'success' });
+    } catch (error) {
+      console.error('Download failed:', error);
+      setToast({ open: true, message: 'Failed to download TIDP', type: 'error' });
+    }
+  };
+
+  const handleViewMidpDetails = (midpId) => {
+    // For now, show evolution dashboard - can be enhanced later
+    setShowEvolutionDashboard(midpId);
+  };
+
+  const handleDownloadMidp = async (midp) => {
+    try {
+      setToast({ open: true, message: 'Downloading MIDP report...', type: 'info' });
+
+      // Create comprehensive MIDP report data
+      const reportData = {
+        'Project Name': midp.projectName || '',
+        'Description': midp.description || '',
+        'Total TIDPs': midp.includedTIDPs?.length || 0,
+        'Total Containers': midp.aggregatedData?.totalContainers || 0,
+        'Total Estimated Hours': midp.aggregatedData?.totalEstimatedHours || 0,
+        'Status': midp.status || '',
+        'Version': midp.version || '',
+        'Created': midp.createdAt || '',
+        'Last Updated': midp.updatedAt || ''
+      };
+
+      const csv = Papa.unparse([reportData]);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.href = url;
+      link.download = `MIDP-${midp.projectName?.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.csv`;
+      link.style.display = 'none';
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      setToast({ open: true, message: 'MIDP report downloaded successfully!', type: 'success' });
+    } catch (error) {
+      console.error('Download failed:', error);
+      setToast({ open: true, message: 'Failed to download MIDP report', type: 'error' });
+    }
+  };
+
+  const migrateLocalStorageToDatabase = async () => {
+    try {
+      // Get current user
+      const userId = localStorage.getItem('userId') || 'user';
+      const draftsKey = `bepDrafts_${userId}`;
+      const draftsData = localStorage.getItem(draftsKey);
+
+      if (!draftsData) {
+        setToast({ open: true, message: 'No local TIDPs found to migrate', type: 'info' });
+        return;
+      }
+
+      const drafts = JSON.parse(draftsData);
+      const tidpsToMigrate = Object.values(drafts);
+
+      if (tidpsToMigrate.length === 0) {
+        setToast({ open: true, message: 'No TIDPs to migrate', type: 'info' });
+        return;
+      }
+
+      setToast({ open: true, message: `Migrating ${tidpsToMigrate.length} TIDPs...`, type: 'info' });
+
+      const result = await ApiService.migrateTIDPsToDatabase(tidpsToMigrate);
+
+      setToast({
+        open: true,
+        message: `Migration complete! ${result.results.migrated.length} migrated, ${result.results.skipped.length} skipped`,
+        type: 'success'
+      });
+
+      // Reload data
+      await loadData();
+    } catch (error) {
+      console.error('Migration failed:', error);
+      setToast({ open: true, message: 'Migration failed: ' + error.message, type: 'error' });
+    }
+  };
+
   const autoGenerateMIDP = async () => {
     if (tidps.length === 0) {
       setToast({ open: true, message: 'No TIDPs available to generate MIDP', type: 'info' });
@@ -711,10 +838,17 @@ const TIDPMIDPDashboard = () => {
                       </div>
 
                       <div className="flex space-x-3">
-                        <button className="flex-1 bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 hover:shadow-md">
+                        <button
+                          onClick={() => handleViewTidpDetails(tidp.id)}
+                          className="flex-1 bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 hover:shadow-md"
+                        >
                           View Details
                         </button>
-                        <button className="bg-gray-100 text-gray-700 p-3 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200">
+                        <button
+                          onClick={() => handleDownloadTidp(tidp)}
+                          className="bg-gray-100 text-gray-700 p-3 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200"
+                          title="Download TIDP as CSV"
+                        >
                           <Download className="w-5 h-5" />
                         </button>
                       </div>
@@ -833,7 +967,10 @@ const TIDPMIDPDashboard = () => {
                       </div>
 
                       <div className="flex space-x-3">
-                        <button className="flex-1 bg-green-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 hover:shadow-md">
+                        <button
+                          onClick={() => handleViewMidpDetails(midp.id)}
+                          className="flex-1 bg-green-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 hover:shadow-md"
+                        >
                           View Details
                         </button>
                         <button
@@ -843,7 +980,11 @@ const TIDPMIDPDashboard = () => {
                         >
                           <TrendingUp className="w-5 h-5" />
                         </button>
-                        <button className="bg-gray-100 text-gray-700 p-3 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200">
+                        <button
+                          onClick={() => handleDownloadMidp(midp)}
+                          className="bg-gray-100 text-gray-700 p-3 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200"
+                          title="Download MIDP Report"
+                        >
                           <Download className="w-5 h-5" />
                         </button>
                       </div>

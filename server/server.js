@@ -50,10 +50,12 @@ app.get('/tidp-midp-manager', (req, res) => {
 });
 
 // API routes
+const migrateRoutes = require('./routes/migrate');
 app.use('/api/tidp', tidpRoutes);
 app.use('/api/midp', midpRoutes);
 app.use('/api/export', exportRoutes);
 app.use('/api/validation', validationRoutes);
+app.use('/api/migrate', migrateRoutes);
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
