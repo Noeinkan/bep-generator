@@ -245,8 +245,10 @@ const BEPGeneratorWrapper = () => {
 
       if (exportFormat === 'pdf') {
         try {
-          const pdf = await generatePDF(formData, bepType);
-          pdf.save(`BEP_${bepType}_${new Date().toISOString().split('T')[0]}.pdf`);
+          const result = await generatePDF(formData, bepType);
+          if (result.success) {
+            console.log(`PDF generated successfully: ${result.filename} (${result.size} bytes)`);
+          }
         } catch (error) {
           console.error('PDF generation failed:', error);
           alert('PDF generation failed: ' + error.message);
