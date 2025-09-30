@@ -1,7 +1,8 @@
 import DOMPurify from 'dompurify';
 import CONFIG from '../config/bepConfig';
 
-export const generateBEPContent = (formData, bepType) => {
+export const generateBEPContent = (formData, bepType, options = {}) => {
+  const { tidpData = [], midpData = [] } = options;
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString();
   const formattedTime = currentDate.toLocaleTimeString();
@@ -76,6 +77,202 @@ export const generateBEPContent = (formData, bepType) => {
       </div>
     `;
   };
+
+  // ISO 19650 Compliance Section
+  const iso19650ComplianceSection = `
+    <section class="iso-compliance-section">
+      <div class="iso-header">
+        <div class="iso-badge">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span>ISO 19650-2:2018</span>
+        </div>
+        <h2 class="iso-title">ISO 19650 Compliance Statement</h2>
+      </div>
+
+      <div class="iso-content">
+        <div class="iso-declaration">
+          <h3>Formal Declaration of Conformity</h3>
+          <p>This BIM Execution Plan (BEP) has been prepared in accordance with <strong>ISO 19650-2:2018</strong>
+          "Organization and digitization of information about buildings and civil engineering works, including
+          building information modelling (BIM) — Information management using building information modelling —
+          Part 2: Delivery phase of the assets."</p>
+          <p>The document establishes a framework for managing information throughout the project delivery phase,
+          ensuring consistent information exchange between all project participants and supporting effective
+          collaboration in accordance with the ISO 19650 series standards.</p>
+        </div>
+
+        <div class="iso-coverage">
+          <h3>ISO 19650-2 Requirements Coverage</h3>
+          <div class="coverage-grid">
+            <div class="coverage-item completed">
+              <span class="coverage-icon">✓</span>
+              <div>
+                <strong>5.1 Information Management</strong>
+                <p>Information management function and responsibilities defined</p>
+              </div>
+            </div>
+            <div class="coverage-item completed">
+              <span class="coverage-icon">✓</span>
+              <div>
+                <strong>5.2 Planning Approach</strong>
+                <p>Master Information Delivery Plan (MIDP) and Task Information Delivery Plans (TIDPs)</p>
+              </div>
+            </div>
+            <div class="coverage-item completed">
+              <span class="coverage-icon">✓</span>
+              <div>
+                <strong>5.3 Information Requirements</strong>
+                <p>Exchange information requirements and level of information need defined</p>
+              </div>
+            </div>
+            <div class="coverage-item completed">
+              <span class="coverage-icon">✓</span>
+              <div>
+                <strong>5.4 Collaborative Production</strong>
+                <p>Common Data Environment (CDE) workflows and federation strategy</p>
+              </div>
+            </div>
+            <div class="coverage-item completed">
+              <span class="coverage-icon">✓</span>
+              <div>
+                <strong>5.5 Quality Assurance</strong>
+                <p>Information validation, review and approval processes</p>
+              </div>
+            </div>
+            <div class="coverage-item completed">
+              <span class="coverage-icon">✓</span>
+              <div>
+                <strong>5.6 Information Security</strong>
+                <p>Information security protocols and access control procedures</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="iso-deliverables">
+          <h3>Key ISO 19650 Deliverables</h3>
+          <ul class="deliverables-list">
+            <li><strong>BIM Execution Plan (BEP):</strong> This document defining information management approach</li>
+            <li><strong>Task Information Delivery Plans (TIDPs):</strong> Discipline-specific delivery schedules and responsibilities</li>
+            <li><strong>Master Information Delivery Plan (MIDP):</strong> Consolidated project-wide information delivery schedule</li>
+            <li><strong>Information Protocol:</strong> Standards, procedures and naming conventions</li>
+            <li><strong>Responsibility Matrix:</strong> RACI matrix defining roles and accountabilities</li>
+            <li><strong>Risk Register:</strong> Information-related risks and mitigation strategies</li>
+          </ul>
+        </div>
+
+        <div class="iso-references">
+          <h3>Referenced Standards and Guidelines</h3>
+          <ul class="references-list">
+            <li>ISO 19650-1:2018 — Concepts and principles</li>
+            <li>ISO 19650-2:2018 — Delivery phase of the assets</li>
+            <li>ISO 19650-5:2020 — Security-minded approach to information management</li>
+            <li>BS 1192:2007+A2:2016 — Collaborative production of information</li>
+            <li>PAS 1192-2:2013 — Capital/delivery phase</li>
+            <li>PAS 1192-3:2014 — Operational phase</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  `;
+
+  // Information Delivery Plan Section
+  const informationDeliverySection = `
+    <section class="information-delivery-section">
+      <div class="idp-header">
+        <div class="idp-badge">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <span>Information Delivery Plan</span>
+        </div>
+        <h2 class="idp-title">TIDP/MIDP Integration</h2>
+      </div>
+
+      <div class="idp-content">
+        ${tidpData.length > 0 ? `
+          <div class="tidp-overview">
+            <h3>Task Information Delivery Plans (TIDPs)</h3>
+            <p>The following TIDPs have been created for this project, defining specific information delivery requirements for each task team:</p>
+
+            <div class="tidp-grid">
+              ${tidpData.map((tidp, index) => `
+                <div class="tidp-card">
+                  <div class="tidp-header">
+                    <h4>${tidp.teamName || tidp.taskTeam || `Task Team ${index + 1}`}</h4>
+                    <span class="tidp-discipline">${tidp.discipline || 'N/A'}</span>
+                  </div>
+                  <div class="tidp-details">
+                    <div class="tidp-field">
+                      <strong>Team Leader:</strong> ${tidp.leader || tidp.teamLeader || 'TBD'}
+                    </div>
+                    <div class="tidp-field">
+                      <strong>Responsibilities:</strong> ${tidp.responsibilities || tidp.description || 'TBD'}
+                    </div>
+                    ${tidp.containers && tidp.containers.length > 0 ? `
+                      <div class="tidp-containers">
+                        <strong>Information Containers:</strong>
+                        <ul>
+                          ${tidp.containers.map(container => `<li>${container.name || container}</li>`).join('')}
+                        </ul>
+                      </div>
+                    ` : ''}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : `
+          <div class="no-tidp-notice">
+            <p><em>No TIDPs have been created yet. Use the TIDP/MIDP Manager to define task team information delivery requirements.</em></p>
+          </div>
+        `}
+
+        ${midpData.length > 0 ? `
+          <div class="midp-overview">
+            <h3>Master Information Delivery Plan (MIDP)</h3>
+            <p>The consolidated MIDP provides a project-wide view of all information delivery milestones:</p>
+
+            <div class="midp-summary">
+              ${midpData.map((midp, index) => `
+                <div class="midp-item">
+                  <div class="midp-header">
+                    <h4>${midp.name || `MIDP ${index + 1}`}</h4>
+                    <span class="midp-status">${midp.status || 'Active'}</span>
+                  </div>
+                  <div class="midp-details">
+                    <div class="midp-field">
+                      <strong>Description:</strong> ${midp.description || 'Consolidated information delivery plan'}
+                    </div>
+                    ${midp.milestones && midp.milestones.length > 0 ? `
+                      <div class="midp-milestones">
+                        <strong>Key Milestones:</strong>
+                        <ul>
+                          ${midp.milestones.slice(0, 5).map(milestone => `<li>${milestone.name || milestone.title || milestone} - ${milestone.date || 'TBD'}</li>`).join('')}
+                        </ul>
+                        ${midp.milestones.length > 5 ? `<p><em>... and ${midp.milestones.length - 5} more milestones</em></p>` : ''}
+                      </div>
+                    ` : ''}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : `
+          <div class="no-midp-notice">
+            <p><em>No MIDP has been generated yet. Create TIDPs first, then use the MIDP Manager to generate a consolidated plan.</em></p>
+          </div>
+        `}
+
+        <div class="idp-integration-note">
+          <h3>Integration with BEP</h3>
+          <p>The TIDPs and MIDP defined above are integral components of this BIM Execution Plan, providing the detailed information delivery framework required by ISO 19650-2:2018. The BEP establishes the overarching information management strategy, while the TIDPs and MIDP provide the specific implementation details for each task team and the project as a whole.</p>
+        </div>
+      </div>
+    </section>
+  `;
 
   const sectionsHtml = Object.entries(groupedSteps).map(([cat, items]) => `
     <section class="category-section">
@@ -444,7 +641,337 @@ export const generateBEPContent = (formData, bepType) => {
           border-left-color: #60a5fa;
         }
 
-        /* Print styles */
+        /* ISO 19650 Compliance Section Styles */
+        .iso-compliance-section {
+          background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+          border: 3px solid #10b981;
+          border-radius: 16px;
+          padding: 35px;
+          margin: 40px 0;
+          box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
+        }
+
+        .iso-header {
+          text-align: center;
+          margin-bottom: 35px;
+        }
+
+        .iso-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 12px;
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+          color: white;
+          padding: 14px 28px;
+          border-radius: 30px;
+          font-size: 1.2rem;
+          font-weight: 700;
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+          margin-bottom: 20px;
+        }
+
+        .iso-badge svg {
+          stroke-width: 2.5;
+        }
+
+        .iso-title {
+          font-size: 2rem;
+          font-weight: 700;
+          color: #065f46;
+          margin: 0;
+        }
+
+        .iso-content {
+          background: white;
+          border-radius: 12px;
+          padding: 30px;
+        }
+
+        .iso-declaration,
+        .iso-coverage,
+        .iso-deliverables,
+        .iso-references {
+          margin-bottom: 30px;
+        }
+
+        .iso-declaration h3,
+        .iso-coverage h3,
+        .iso-deliverables h3,
+        .iso-references h3 {
+          color: #065f46;
+          font-size: 1.3rem;
+          font-weight: 600;
+          margin-bottom: 15px;
+          padding-bottom: 10px;
+          border-bottom: 2px solid #10b981;
+        }
+
+        .iso-declaration p {
+          line-height: 1.8;
+          color: #374151;
+          margin-bottom: 12px;
+        }
+
+        .coverage-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 16px;
+          margin-top: 20px;
+        }
+
+        .coverage-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+          padding: 16px;
+          background: #f0fdf4;
+          border-radius: 10px;
+          border-left: 4px solid #10b981;
+        }
+
+        .coverage-item.completed .coverage-icon {
+          background: #10b981;
+          color: white;
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          font-size: 1.1rem;
+          flex-shrink: 0;
+        }
+
+        .coverage-item strong {
+          color: #065f46;
+          display: block;
+          margin-bottom: 4px;
+          font-size: 0.95rem;
+        }
+
+        .coverage-item p {
+          color: #6b7280;
+          font-size: 0.9rem;
+          margin: 0;
+          line-height: 1.5;
+        }
+
+        .deliverables-list,
+        .references-list {
+          list-style: none;
+          padding: 0;
+        }
+
+        .deliverables-list li,
+        .references-list li {
+          padding: 12px 16px;
+          margin-bottom: 10px;
+          background: #f9fafb;
+          border-left: 4px solid #10b981;
+          border-radius: 6px;
+          line-height: 1.6;
+        }
+
+        .deliverables-list li strong {
+          color: #065f46;
+        }
+
+        /* Information Delivery Plan Section Styles */
+        .information-delivery-section {
+          background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+          border: 3px solid #f59e0b;
+          border-radius: 16px;
+          padding: 35px;
+          margin: 40px 0;
+          box-shadow: 0 8px 20px rgba(245, 158, 11, 0.15);
+        }
+
+        .idp-header {
+          text-align: center;
+          margin-bottom: 35px;
+        }
+
+        .idp-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 12px;
+          background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+          color: white;
+          padding: 14px 28px;
+          border-radius: 30px;
+          font-size: 1.2rem;
+          font-weight: 700;
+          box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+          margin-bottom: 20px;
+        }
+
+        .idp-badge svg {
+          stroke-width: 2.5;
+        }
+
+        .idp-title {
+          font-size: 2rem;
+          font-weight: 700;
+          color: #92400e;
+          margin: 0;
+        }
+
+        .idp-content {
+          background: white;
+          border-radius: 12px;
+          padding: 30px;
+        }
+
+        .tidp-overview h3,
+        .midp-overview h3,
+        .idp-integration-note h3 {
+          color: #92400e;
+          font-size: 1.3rem;
+          font-weight: 600;
+          margin-bottom: 15px;
+          padding-bottom: 10px;
+          border-bottom: 2px solid #f59e0b;
+        }
+
+        .tidp-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 20px;
+          margin-top: 20px;
+        }
+
+        .tidp-card {
+          background: #fef3c7;
+          border: 2px solid #fde68a;
+          border-radius: 12px;
+          padding: 20px;
+          box-shadow: 0 2px 8px rgba(245, 158, 11, 0.1);
+        }
+
+        .tidp-card .tidp-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 15px;
+          padding-bottom: 10px;
+          border-bottom: 1px solid #fde68a;
+        }
+
+        .tidp-card h4 {
+          color: #92400e;
+          font-size: 1.1rem;
+          font-weight: 600;
+          margin: 0;
+        }
+
+        .tidp-discipline {
+          background: #f59e0b;
+          color: white;
+          padding: 4px 12px;
+          border-radius: 20px;
+          font-size: 0.8rem;
+          font-weight: 600;
+        }
+
+        .tidp-field {
+          margin-bottom: 10px;
+          line-height: 1.5;
+        }
+
+        .tidp-field strong {
+          color: #92400e;
+        }
+
+        .tidp-containers ul {
+          margin-top: 5px;
+          padding-left: 20px;
+        }
+
+        .tidp-containers li {
+          margin-bottom: 3px;
+          color: #6b7280;
+        }
+
+        .midp-summary {
+          margin-top: 20px;
+        }
+
+        .midp-item {
+          background: #fef3c7;
+          border: 2px solid #fde68a;
+          border-radius: 12px;
+          padding: 20px;
+          margin-bottom: 15px;
+          box-shadow: 0 2px 8px rgba(245, 158, 11, 0.1);
+        }
+
+        .midp-item .midp-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 15px;
+          padding-bottom: 10px;
+          border-bottom: 1px solid #fde68a;
+        }
+
+        .midp-item h4 {
+          color: #92400e;
+          font-size: 1.1rem;
+          font-weight: 600;
+          margin: 0;
+        }
+
+        .midp-status {
+          background: #10b981;
+          color: white;
+          padding: 4px 12px;
+          border-radius: 20px;
+          font-size: 0.8rem;
+          font-weight: 600;
+        }
+
+        .midp-field {
+          margin-bottom: 10px;
+          line-height: 1.5;
+        }
+
+        .midp-field strong {
+          color: #92400e;
+        }
+
+        .midp-milestones ul {
+          margin-top: 5px;
+          padding-left: 20px;
+        }
+
+        .midp-milestones li {
+          margin-bottom: 3px;
+          color: #6b7280;
+        }
+
+        .no-tidp-notice,
+        .no-midp-notice {
+          background: #f3f4f6;
+          border: 1px solid #d1d5db;
+          border-radius: 8px;
+          padding: 20px;
+          text-align: center;
+          color: #6b7280;
+          font-style: italic;
+          margin: 20px 0;
+        }
+
+        .idp-integration-note {
+          margin-top: 30px;
+          padding-top: 20px;
+          border-top: 1px solid #fde68a;
+        }
+
+        .idp-integration-note p {
+          line-height: 1.8;
+          color: #374151;
+        }
         @media print {
           body {
             background: white !important;
@@ -460,13 +987,18 @@ export const generateBEPContent = (formData, bepType) => {
           .category-header,
           .content-section,
           .document-info,
-          .document-footer {
+          .document-footer,
+          .iso-compliance-section {
             box-shadow: none !important;
             break-inside: avoid;
           }
 
           .data-table {
             page-break-inside: avoid;
+          }
+
+          .coverage-grid {
+            grid-template-columns: repeat(2, 1fr);
           }
         }
 
@@ -550,9 +1082,19 @@ export const generateBEPContent = (formData, bepType) => {
           </div>
         </section>
 
+        ${iso19650ComplianceSection}
+
+        ${informationDeliverySection}
+
         ${sectionsHtml}
 
         <footer class="document-footer">
+          <div style="text-align: center; margin-bottom: 25px;">
+            <div style="display: inline-block; background: rgba(16, 185, 129, 0.15); padding: 12px 24px; border-radius: 20px; border: 2px solid rgba(16, 185, 129, 0.3);">
+              <span style="font-size: 1.1rem; font-weight: 600;">✓ Generated in compliance with ISO 19650-2:2018</span>
+            </div>
+          </div>
+
           <h3>Document Control Information</h3>
           <div class="footer-table">
             <div class="field-pair">
@@ -560,12 +1102,20 @@ export const generateBEPContent = (formData, bepType) => {
               <span class="field-value">BIM Execution Plan (BEP)</span>
             </div>
             <div class="field-pair">
-              <span class="field-label">ISO Standard:</span>
-              <span class="field-value">ISO 19650-2:2018</span>
+              <span class="field-label">Compliance Standard:</span>
+              <span class="field-value">ISO 19650-2:2018 — Information management using building information modelling</span>
             </div>
             <div class="field-pair">
               <span class="field-label">Document Status:</span>
-              <span class="field-value">Work in Progress</span>
+              <span class="field-value">${bepType === 'pre-appointment' ? 'Tender Submission' : 'Working Document'}</span>
+            </div>
+            <div class="field-pair">
+              <span class="field-label">Project Name:</span>
+              <span class="field-value">${formData.projectName || 'Not specified'}</span>
+            </div>
+            <div class="field-pair">
+              <span class="field-label">Document Version:</span>
+              <span class="field-value">1.0</span>
             </div>
             <div class="field-pair">
               <span class="field-label">Generated By:</span>
@@ -579,6 +1129,11 @@ export const generateBEPContent = (formData, bepType) => {
               <span class="field-label">Generated Time:</span>
               <span class="field-value">${formattedTime}</span>
             </div>
+          </div>
+
+          <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); text-align: center; font-size: 0.9rem; opacity: 0.8;">
+            <p style="margin: 0;">This document follows the information management principles established in ISO 19650 series standards.</p>
+            <p style="margin: 8px 0 0 0;">For any questions regarding compliance or implementation, consult with a qualified ISO 19650 practitioner.</p>
           </div>
         </footer>
       </div>

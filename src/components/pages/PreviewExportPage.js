@@ -10,7 +10,9 @@ const PreviewExportPage = ({
   setExportFormat,
   previewBEP,
   downloadBEP,
-  isExporting
+  isExporting,
+  tidpData = [],
+  midpData = []
 }) => {
   const [isPreviewLoading, setIsPreviewLoading] = useState(true);
   const [previewError, setPreviewError] = useState(null);
@@ -18,7 +20,7 @@ const PreviewExportPage = ({
   const [pdfQuality, setPdfQuality] = useState('standard'); // 'standard' or 'high'
   const [pdfOrientation, setPdfOrientation] = useState('portrait'); // 'portrait' or 'landscape'
 
-  const content = generateBEPContent(formData, bepType);
+  const content = generateBEPContent(formData, bepType, { tidpData, midpData });
 
   const exportFormats = [
     {
@@ -64,7 +66,9 @@ const PreviewExportPage = ({
     try {
       await generatePDF(formData, bepType, {
         orientation: pdfOrientation,
-        filename: `BEP_${bepType}_${new Date().toISOString().split('T')[0]}.pdf`
+        filename: `BEP_${bepType}_${new Date().toISOString().split('T')[0]}.pdf`,
+        tidpData,
+        midpData
       });
     } catch (error) {
       console.error('Advanced PDF export failed:', error);

@@ -1,7 +1,8 @@
 import { Document, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, AlignmentType, Packer } from 'docx';
 import CONFIG from '../config/bepConfig';
 
-export const generateDocx = async (formData, bepType) => {
+export const generateDocx = async (formData, bepType, options = {}) => {
+  const { tidpData = [], midpData = [] } = options;
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString();
   const formattedTime = currentDate.toLocaleTimeString();
@@ -78,6 +79,146 @@ export const generateDocx = async (formData, bepType) => {
       ]
     })
   );
+
+  // Information Delivery Plan Section
+  if (tidpData.length > 0 || midpData.length > 0) {
+    sections.push(
+      new Paragraph({
+        text: "INFORMATION DELIVERY PLAN",
+        heading: HeadingLevel.HEADING_2,
+        pageBreakBefore: true
+      })
+    );
+
+    if (tidpData.length > 0) {
+      sections.push(
+        new Paragraph({
+          text: "Task Information Delivery Plans (TIDPs)",
+          heading: HeadingLevel.HEADING_3
+        }),
+        new Paragraph({
+          text: "The following TIDPs have been created for this project, defining specific information delivery requirements for each task team:"
+        })
+      );
+
+      tidpData.forEach((tidp, index) => {
+        sections.push(
+          new Paragraph({
+            text: `${tidp.teamName || tidp.taskTeam || `Task Team ${index + 1}`}`,
+            heading: HeadingLevel.HEADING_4
+          }),
+          new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: "Team Leader:", bold: true })] })] }),
+                  new TableCell({ children: [new Paragraph(tidp.leader || tidp.teamLeader || 'TBD')] })
+                ]
+              }),
+              new TableRow({
+                children: [
+                  new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: "Responsibilities:", bold: true })] })] }),
+                  new TableCell({ children: [new Paragraph(tidp.responsibilities || tidp.description || 'TBD')] })
+                ]
+              })
+            ]
+          })
+        );
+
+        if (tidp.containers && tidp.containers.length > 0) {
+          sections.push(
+            new Paragraph({
+              text: "Information Containers:",
+              bold: true
+            })
+          );
+          tidp.containers.forEach(container => {
+            sections.push(
+              new Paragraph({
+                text: `• ${container.name || container}`,
+                indent: { left: 720 } // 0.5 inch indent
+              })
+            );
+          });
+        }
+      });
+    }
+
+    if (midpData.length > 0) {
+      sections.push(
+        new Paragraph({
+          text: "Master Information Delivery Plan (MIDP)",
+          heading: HeadingLevel.HEADING_3
+        }),
+        new Paragraph({
+          text: "The consolidated MIDP provides a project-wide view of all information delivery milestones:"
+        })
+      );
+
+      midpData.forEach((midp, index) => {
+        sections.push(
+          new Paragraph({
+            text: `${midp.name || `MIDP ${index + 1}`}`,
+            heading: HeadingLevel.HEADING_4
+          }),
+          new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: "Description:", bold: true })] })] }),
+                  new TableCell({ children: [new Paragraph(midp.description || 'Consolidated information delivery plan')] })
+                ]
+              }),
+              new TableRow({
+                children: [
+                  new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: "Status:", bold: true })] })] }),
+                  new TableCell({ children: [new Paragraph(midp.status || 'Active')] })
+                ]
+              })
+            ]
+          })
+        );
+
+        if (midp.milestones && midp.milestones.length > 0) {
+          sections.push(
+            new Paragraph({
+              text: "Key Milestones:",
+              bold: true
+            })
+          );
+          midp.milestones.slice(0, 5).forEach(milestone => {
+            sections.push(
+              new Paragraph({
+                text: `• ${milestone.name || milestone.title || milestone} - ${milestone.date || 'TBD'}`,
+                indent: { left: 720 }
+              })
+            );
+          });
+          if (midp.milestones.length > 5) {
+            sections.push(
+              new Paragraph({
+                text: `... and ${midp.milestones.length - 5} more milestones`,
+                indent: { left: 720 },
+                italics: true
+              })
+            );
+          }
+        }
+      });
+    }
+
+    sections.push(
+      new Paragraph({
+        text: "Integration with BEP",
+        heading: HeadingLevel.HEADING_4
+      }),
+      new Paragraph({
+        text: "The TIDPs and MIDP defined above are integral components of this BIM Execution Plan, providing the detailed information delivery framework required by ISO 19650-2:2018. The BEP establishes the overarching information management strategy, while the TIDPs and MIDP provide the specific implementation details for each task team and the project as a whole."
+      })
+    );
+  }
 
   // Group steps by category
   const groupedSteps = CONFIG.steps.reduce((acc, step, index) => {

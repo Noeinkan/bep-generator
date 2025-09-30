@@ -5,7 +5,7 @@ const MIDPForm = ({ midpForm, onMidpFormChange, onSubmit, onCancel }) => {
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow p-6">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Create New MIDP</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Generate MIDP</h2>
           <button
             type="button"
             onClick={onCancel}
@@ -46,7 +46,7 @@ const MIDPForm = ({ midpForm, onMidpFormChange, onSubmit, onCancel }) => {
               type="submit"
               className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg"
             >
-              Create MIDP
+              Generate MIDP
             </button>
             <button
               type="button"

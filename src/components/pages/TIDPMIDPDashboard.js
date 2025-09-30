@@ -429,8 +429,8 @@ const TIDPMIDPDashboard = () => {
                     <Calendar className="w-6 h-6 text-green-600" />
                   </div>
                   <div className="ml-4 text-left">
-                    <p className="font-bold text-gray-900 text-lg">View MIDPs</p>
-                    <p className="text-gray-600 mt-1">Monitor master plans</p>
+                    <p className="font-bold text-gray-900 text-lg">View MIDP</p>
+                    <p className="text-gray-600 mt-1">Monitor master plan</p>
                   </div>
                 </button>
 

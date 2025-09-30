@@ -10,9 +10,6 @@ import {
   Download,
   TrendingUp,
   CheckCircle,
-  Star,
-  Shield,
-  Clock,
   Sparkles,
   ChevronDown,
   Play
