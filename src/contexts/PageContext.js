@@ -24,9 +24,12 @@ export const PageProvider = ({ children }) => {
 
   // Update URL when page changes
   useEffect(() => {
-    const path = `/${currentPage}`;
-    if (window.location.pathname !== path) {
-      window.history.replaceState(null, '', path);
+    // Only update if currentPage is a simple page name (not a full path)
+    if (!currentPage.startsWith('/')) {
+      const path = `/${currentPage}`;
+      if (window.location.pathname !== path) {
+        window.history.replaceState(null, '', path);
+      }
     }
   }, [currentPage]);
 
@@ -46,7 +49,25 @@ export const PageProvider = ({ children }) => {
 
   const navigateTo = (page) => {
     console.log(`Navigating from ${currentPage} to ${page}`);
-    setCurrentPage(page);
+
+    // If page is a full path (starts with /), use it directly
+    if (page.startsWith('/')) {
+      // Extract the base page from the path
+      if (page.startsWith('/tidp-editor')) {
+        setCurrentPage('tidp-editor');
+        window.history.pushState(null, '', page);
+      } else if (page.startsWith('/tidp-midp')) {
+        setCurrentPage('tidp-midp');
+        window.history.pushState(null, '', page);
+      } else if (page.startsWith('/bep-generator')) {
+        setCurrentPage('bep-generator');
+        window.history.pushState(null, '', page);
+      } else {
+        setCurrentPage(page.substring(1)); // Remove leading /
+      }
+    } else {
+      setCurrentPage(page);
+    }
   };
 
   return (

@@ -1,26 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm start)",
-      "Bash(PORT=3001 npm start)",
-      "Bash(mkdir:*)",
-      "Bash(PORT=3006 npm start)",
-      "mcp__ide__getDiagnostics",
-      "Bash(npm run build:*)",
-      "Bash(npm run start:*)",
-      "Bash(netstat:*)",
-      "Bash(findstr:*)",
-      "Bash(taskkill:*)",
-      "Bash(npx kill-port:*)",
-      "Bash(curl:*)",
-      "Bash(find:*)",
-      "Bash(uniq -c echo \"2. Checking ProtectedRoute usage:\" grep -r \"ProtectedRoute\" ./src --exclude-dir=node_modules)",
-      "Bash(tasklist)",
-      "Bash(node server.js)",
-      "Bash(PORT=3000 npm start)",
-      "Bash(npm install:*)",
-      "Bash(timeout:*)",
-      "Bash(node -e \"const db = require(''./db/database''); console.log(''Database initialized successfully''); const tidps = db.prepare(''SELECT COUNT(*) as count FROM tidps'').get(); console.log(''TIDP count:'', tidps.count);\")"
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []
