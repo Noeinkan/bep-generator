@@ -1,73 +1,50 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 
 // Import layout and page components
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthProvider } from './contexts/AuthContext';
+import { PageProvider, usePage } from './contexts/PageContext';
 import MainLayout from './components/layout/MainLayout';
 import HomePage from './components/pages/HomePage';
 import BEPGeneratorWrapper from './components/pages/BEPGeneratorWrapper';
 import TIDPMIDPDashboard from './components/pages/TIDPMIDPDashboard';
-import TidpEditorPage from './components/pages/TidpEditorPage';
-
-
 
 const AppContent = () => {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-            <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-          </div>
-          <p className="text-gray-600">Loading BEP Suite...</p>
-        </div>
-      </div>
-    );
-  }
+  const { currentPage } = usePage();
 
   // Use a mock user when authentication is disabled
-  const mockUser = user || { id: 'demo-user', name: 'Demo User', email: 'demo@example.com' };
+  const mockUser = { id: 'demo-user', name: 'Demo User', email: 'demo@example.com' };
+
+  const renderCurrentPage = () => {
+    switch (currentPage) {
+      case 'home':
+        return <HomePage />;
+      case 'bep-generator':
+        return <BEPGeneratorWrapper />;
+      case 'tidp-midp':
+        return <TIDPMIDPDashboard />;
+      default:
+        return <HomePage />;
+    }
+  };
 
   return (
-    <Router>
+    <BrowserRouter>
       <MainLayout>
-        <Routes>
-          {/* Home Page */}
-          <Route path="/" element={<HomePage />} />
-
-          {/* BEP Generator Routes */}
-          <Route path="/bep-generator" element={<BEPGeneratorWrapper />} />
-          <Route path="/bep-generator/*" element={<BEPGeneratorWrapper />} />
-
-          {/* TIDP/MIDP Dashboard Routes */}
-          <Route path="/tidp-midp" element={<TIDPMIDPDashboard />} />
-          <Route path="/tidp-midp/dashboard" element={<TIDPMIDPDashboard />} />
-          <Route path="/tidp-midp/tidps" element={<TIDPMIDPDashboard />} />
-          <Route path="/tidp-midp/midps" element={<TIDPMIDPDashboard />} />
-          <Route path="/tidp-midp/import" element={<TIDPMIDPDashboard />} />
-          <Route path="/tidp-midp/evolution/:midpId" element={<TIDPMIDPDashboard />} />
-
-          {/* TIDP Editor Route */}
-          <Route path="/tidp-editor" element={<TidpEditorPage />} />
-
-          {/* Fallback redirect */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        {renderCurrentPage()}
       </MainLayout>
-    </Router>
+    </BrowserRouter>
   );
 };
 
-// Main App Component
-
-const App = () => {
+function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <PageProvider>
+        <AppContent />
+      </PageProvider>
     </AuthProvider>
   );
-};
+}
 
 export default App;

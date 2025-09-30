@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Upload, Download, FileText, AlertCircle, CheckCircle } from 'lucide-react';
+import Papa from 'papaparse';
 import ApiService from '../services/apiService';
 
 const TIDPImportDialog = ({ open, onClose, onImportComplete }) => {
@@ -46,25 +47,6 @@ const TIDPImportDialog = ({ open, onClose, onImportComplete }) => {
     window.URL.revokeObjectURL(url);
   };
 
-  const parseCSV = (csvText) => {
-    const lines = csvText.split('\n').filter(line => line.trim());
-    if (lines.length < 2) return [];
-
-    const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
-    const data = [];
-
-    for (let i = 1; i < lines.length; i++) {
-      const values = lines[i].split(',').map(v => v.replace(/"/g, '').trim());
-      const row = {};
-      headers.forEach((header, index) => {
-        row[header] = values[index] || '';
-      });
-      data.push(row);
-    }
-
-    return data;
-  };
-
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -73,30 +55,48 @@ const TIDPImportDialog = ({ open, onClose, onImportComplete }) => {
     setImportResults(null);
 
     try {
-      const text = await file.text();
-      let data;
-
+      // Use Papa Parse for CSV files
       if (file.name.endsWith('.csv') || importType === 'csv') {
-        data = parseCSV(text);
+        Papa.parse(file, {
+          header: true,
+          skipEmptyLines: true,
+          complete: async (results) => {
+            try {
+              if (!results.data || results.data.length === 0) {
+                throw new Error('No data found in CSV file');
+              }
+
+              // Import the data
+              const apiResults = await ApiService.importTIDPsFromCSV(results.data, projectId);
+              setImportResults(apiResults.data);
+
+              if (onImportComplete) {
+                onImportComplete(apiResults.data);
+              }
+            } catch (error) {
+              console.error('Import failed:', error);
+              setImportResults({
+                successful: [],
+                failed: [{ error: error.message || 'Import failed' }],
+                total: 0
+              });
+            } finally {
+              setLoading(false);
+            }
+          },
+          error: (error) => {
+            console.error('CSV parsing error:', error);
+            setImportResults({
+              successful: [],
+              failed: [{ error: 'Failed to parse CSV file: ' + error.message }],
+              total: 0
+            });
+            setLoading(false);
+          }
+        });
       } else {
-        // For Excel files, we'll parse as CSV for now
-        // In a real implementation, you'd use a library like xlsx
-        data = parseCSV(text);
-      }
-
-      if (data.length === 0) {
-        throw new Error('No data found in file');
-      }
-
-      // Import the data
-      const results = importType === 'excel'
-        ? await ApiService.importTIDPsFromExcel(data, projectId)
-        : await ApiService.importTIDPsFromCSV(data, projectId);
-
-      setImportResults(results.data);
-
-      if (onImportComplete) {
-        onImportComplete(results.data);
+        // For Excel files, show error message
+        throw new Error('Excel import not yet implemented. Please use CSV format or convert your Excel file to CSV.');
       }
     } catch (error) {
       console.error('Import failed:', error);
@@ -105,7 +105,6 @@ const TIDPImportDialog = ({ open, onClose, onImportComplete }) => {
         failed: [{ error: error.message || 'Import failed' }],
         total: 0
       });
-    } finally {
       setLoading(false);
     }
   };

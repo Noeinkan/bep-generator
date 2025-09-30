@@ -1,28 +1,28 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
 import { FileText, BarChart3, Home, Settings } from 'lucide-react';
+import { usePage } from '../../contexts/PageContext';
 
 const MainLayout = ({ children }) => {
-  const location = useLocation();
+  const { currentPage, navigateTo } = usePage();
 
   const navigation = [
     {
       name: 'Home',
-      href: '/',
+      href: 'home',
       icon: Home,
-      current: location.pathname === '/'
+      current: currentPage === 'home'
     },
     {
       name: 'BEP Generator',
-      href: '/bep-generator',
+      href: 'bep-generator',
       icon: FileText,
-      current: location.pathname.startsWith('/bep-generator')
+      current: currentPage === 'bep-generator'
     },
     {
       name: 'TIDP/MIDP Manager',
-      href: '/tidp-midp',
+      href: 'tidp-midp',
       icon: BarChart3,
-      current: location.pathname.startsWith('/tidp-midp')
+      current: currentPage === 'tidp-midp'
     }
   ];
 
@@ -48,9 +48,9 @@ const MainLayout = ({ children }) => {
                 {navigation.map((item) => {
                   const IconComponent = item.icon;
                   return (
-                    <Link
+                    <button
                       key={item.name}
-                      to={item.href}
+                      onClick={() => navigateTo(item.href)}
                       className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
                         item.current
                           ? 'border-blue-500 text-blue-600'
@@ -59,7 +59,7 @@ const MainLayout = ({ children }) => {
                     >
                       <IconComponent className="w-4 h-4 mr-2" />
                       {item.name}
-                    </Link>
+                    </button>
                   );
                 })}
               </div>
@@ -108,9 +108,9 @@ const MainLayout = ({ children }) => {
             {navigation.map((item) => {
               const IconComponent = item.icon;
               return (
-                <Link
+                <button
                   key={item.name}
-                  to={item.href}
+                  onClick={() => navigateTo(item.href)}
                   className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${
                     item.current
                       ? 'bg-blue-50 border-blue-500 text-blue-700'
@@ -121,7 +121,7 @@ const MainLayout = ({ children }) => {
                     <IconComponent className="w-4 h-4 mr-3" />
                     {item.name}
                   </div>
-                </Link>
+                </button>
               );
             })}
           </div>

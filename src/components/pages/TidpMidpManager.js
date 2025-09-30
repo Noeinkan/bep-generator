@@ -313,7 +313,7 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
               {[
                 { id: 'dashboard', label: 'Dashboard' },
                 { id: 'tidps', label: 'TIDPs' },
-                { id: 'midps', label: 'MIDPs' }
+                { id: 'midps', label: 'MIDP' }
               ].map(({ id, label }) => (
                 <button
                   key={id}

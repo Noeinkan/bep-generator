@@ -5,7 +5,9 @@ export const generatePDF = async (formData, bepType, options = {}) => {
     orientation = 'portrait',
     format = 'a4',
     margin = [20, 20, 20, 20], // [top, right, bottom, left] in mm
-    filename = `BEP_${bepType}_${new Date().toISOString().split('T')[0]}.pdf`
+    filename = `BEP_${bepType}_${new Date().toISOString().split('T')[0]}.pdf`,
+    tidpData = [],
+    midpData = []
   } = options;
 
   try {
@@ -14,7 +16,7 @@ export const generatePDF = async (formData, bepType, options = {}) => {
     });
 
     // Generate the HTML content using the same formatter as the HTML export
-    const htmlContent = generateBEPContent(formData, bepType);
+    const htmlContent = generateBEPContent(formData, bepType, { tidpData, midpData });
     console.log('HTML content generated, length:', htmlContent.length);
 
     // Validate that we have content
@@ -43,12 +45,15 @@ export const generatePDF = async (formData, bepType, options = {}) => {
 
     console.log('Extracted text length:', textContent.length);
 
-    // Set up document properties
+    // Set up document properties with ISO 19650 metadata
     doc.setProperties({
-      title: `BIM Execution Plan - ${bepType}`,
-      subject: 'BIM Execution Plan Document',
-      author: 'BEP Generator',
-      creator: 'BEP Generator'
+      title: `BIM Execution Plan - ${bepType} - ISO 19650-2:2018 Compliant`,
+      subject: 'BIM Execution Plan Document - Information Management using Building Information Modelling',
+      author: formData.informationManager || formData.proposedInfoManager || 'BEP Generator',
+      creator: 'Professional BEP Generator Tool',
+      keywords: 'BIM, BEP, ISO 19650, ISO 19650-2:2018, Information Management, TIDP, MIDP, Building Information Modelling',
+      producer: `BEP Generator v1.0 - ISO 19650 Compliant`,
+      description: `${bepType === 'pre-appointment' ? 'Pre-Appointment' : 'Post-Appointment'} BIM Execution Plan prepared in accordance with ISO 19650-2:2018 for ${formData.projectName || 'project'}`
     });
 
     // Set font and size
@@ -73,10 +78,10 @@ export const generatePDF = async (formData, bepType, options = {}) => {
     let y = marginTop;
     let pageCount = 1;
 
-    // Add title
+    // Add title with ISO compliance
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
-    const title = `BIM Execution Plan - ${bepType.toUpperCase()}`;
+    const title = `BIM EXECUTION PLAN`;
     const titleLines = doc.splitTextToSize(title, contentWidth);
     titleLines.forEach(line => {
       if (y + 10 > pageHeight - marginBottom) {
@@ -87,6 +92,20 @@ export const generatePDF = async (formData, bepType, options = {}) => {
       doc.text(line, marginLeft, y);
       y += 8;
     });
+
+    // Add ISO compliance badge
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'italic');
+    doc.setTextColor(16, 185, 129); // Green color
+    doc.text('ISO 19650-2:2018 Compliant', marginLeft, y);
+    doc.setTextColor(0, 0, 0); // Reset to black
+    y += 7;
+
+    // Add BEP type
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text(`${bepType === 'pre-appointment' ? 'Pre-Appointment BEP' : 'Post-Appointment BEP'}`, marginLeft, y);
+    y += 7;
 
     // Add date
     doc.setFontSize(10);
