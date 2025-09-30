@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Calendar, Users, Download, Upload, TrendingUp, BarChart3 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Calendar, Users, Download, Upload, TrendingUp, BarChart3, ArrowLeft } from 'lucide-react';
 import ApiService from '../../services/apiService';
 import Toast from '../common/Toast';
 import TIDPImportDialog from '../TIDPImportDialog';
 import MIDPEvolutionDashboard from '../MIDPEvolutionDashboard';
 
 const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidpForm = false }) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [tidps, setTidps] = useState([]);
   const [midps, setMidps] = useState([]);
@@ -872,14 +874,32 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
-      <h1 className="text-2xl font-bold text-gray-900">TIDP/MIDP Manager</h1>
-      <p className="text-gray-600">Manage Task and Master Information Delivery Plans</p>
-
-  
+            {onClose ? (
+              <>
+                <h1 className="text-2xl font-bold text-gray-900">TIDP/MIDP Manager</h1>
+                <p className="text-gray-600">Manage Task and Master Information Delivery Plans</p>
+              </>
+            ) : (
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={() => navigate('/tidp-midp-dashboard')}
+                  className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+                >
+                  <ArrowLeft className="w-5 h-5 mr-2" />
+                  Back to Dashboard
+                </button>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">TIDP Editor</h1>
+                  <p className="text-gray-600">Create and edit Task Information Delivery Plans</p>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="flex items-center space-x-3">
-            <button onClick={onClose} className="text-sm text-gray-600 hover:text-gray-800 underline">Back to BEP</button>
-          </div>
+          {onClose && (
+            <div className="flex items-center space-x-3">
+              <button onClick={onClose} className="text-sm text-gray-600 hover:text-gray-800 underline">Back to BEP</button>
+            </div>
+          )}
         </div>
       </div>
 

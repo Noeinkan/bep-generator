@@ -7,6 +7,7 @@ import MainLayout from './components/layout/MainLayout';
 import HomePage from './components/pages/HomePage';
 import BEPGeneratorWrapper from './components/pages/BEPGeneratorWrapper';
 import TIDPMIDPDashboard from './components/pages/TIDPMIDPDashboard';
+import TidpEditorPage from './components/pages/TidpEditorPage';
 
 
 
@@ -47,6 +48,9 @@ const AppContent = () => {
           <Route path="/tidp-midp/midps" element={<TIDPMIDPDashboard />} />
           <Route path="/tidp-midp/import" element={<TIDPMIDPDashboard />} />
           <Route path="/tidp-midp/evolution/:midpId" element={<TIDPMIDPDashboard />} />
+
+          {/* TIDP Editor Route */}
+          <Route path="/tidp-editor" element={<TidpEditorPage />} />
 
           {/* Fallback redirect */}
           <Route path="*" element={<Navigate to="/" replace />} />

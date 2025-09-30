@@ -28,21 +28,6 @@ const BEPGeneratorWrapper = () => {
   // Check if we should show TIDP creation form
   const shouldShowTidpForm = searchParams.get('createTidp') === 'true';
 
-  // All the existing BEP Generator state (copied from App.js)
-  const [currentStep, setCurrentStep] = useState(0);
-  const [bepType, setBepType] = useState('');
-  const [formData, setFormData] = useState(INITIAL_DATA);
-  const [validationErrors, setValidationErrors] = useState({});
-  const [showPreview, setShowPreview] = useState(false);
-  const [showDraftManager, setShowDraftManager] = useState(false);
-  const [showSaveDraftDialog, setShowSaveDraftDialog] = useState(false);
-  const [newDraftName, setNewDraftName] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [exportFormat, setExportFormat] = useState('pdf');
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
-  const [completedSections, setCompletedSections] = useState(new Set());
-
   // Draft operations
   const { saveDraft, isLoading: savingDraft, error: draftError } = useDraftOperations(user, formData, bepType, (loadedData, loadedType) => {
     setFormData(loadedData);

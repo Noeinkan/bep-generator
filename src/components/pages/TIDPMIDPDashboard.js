@@ -206,39 +206,38 @@ const TIDPMIDPDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-6">
               <button
                 onClick={() => navigate('/')}
-                className="inline-flex items-center text-gray-500 hover:text-gray-700"
+                className="inline-flex items-center text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-md p-2 transition-colors"
               >
-                <ArrowLeft className="w-4 h-4 mr-1" />
-                Back to Home
+                <ArrowLeft className="w-5 h-5" />
               </button>
-              <div className="h-6 border-l border-gray-300"></div>
+              <div className="h-8 border-l border-gray-300"></div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">TIDP/MIDP Manager</h1>
-                <p className="text-gray-600">Information Delivery Planning & Management</p>
+                <h1 className="text-3xl font-bold text-gray-900">TIDP/MIDP Manager</h1>
+                <p className="text-gray-600 text-lg mt-1">Information Delivery Planning & Management</p>
               </div>
             </div>
 
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-4">
               {/* Quick Actions */}
               <button
                 onClick={() => setShowImportDialog(true)}
-                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                className="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
               >
-                <Upload className="w-4 h-4 mr-2" />
+                <Upload className="w-5 h-5 mr-3" />
                 Import
               </button>
 
               <button
                 onClick={autoGenerateMIDP}
-                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700"
+                className="inline-flex items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-base font-semibold text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 hover:shadow-md"
               >
-                <TrendingUp className="w-4 h-4 mr-2" />
+                <TrendingUp className="w-5 h-5 mr-3" />
                 Auto-Generate MIDP
               </button>
             </div>
@@ -248,19 +247,19 @@ const TIDPMIDPDashboard = () => {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Navigation Tabs */}
-        <div className="mb-8">
-          <nav className="flex space-x-8">
+        <div className="mb-10">
+          <nav className="flex space-x-1 bg-gray-100 p-2 rounded-lg">
             {navigationItems.map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
                 onClick={() => setActiveView(id)}
-                className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
+                className={`flex-1 py-3 px-4 rounded-md font-semibold text-base flex items-center justify-center space-x-3 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                   activeView === id
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'bg-white text-blue-700 shadow-sm border border-gray-200'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                 }`}
               >
-                <Icon className="w-4 h-4" />
+                <Icon className="w-5 h-5" />
                 <span>{label}</span>
               </button>
             ))}
@@ -271,111 +270,153 @@ const TIDPMIDPDashboard = () => {
         {activeView === 'dashboard' && (
           <div className="space-y-8">
             {/* Statistics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="bg-white rounded-lg shadow p-6">
-                <div className="flex items-center">
-                  <Users className="w-8 h-8 text-blue-600" />
-                  <div className="ml-4">
-                    <p className="text-2xl font-bold text-gray-900">{stats.totalTidps}</p>
-                    <p className="text-gray-600">TIDPs</p>
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 animate-pulse">
+                    <div className="flex items-center">
+                      <div className="w-12 h-12 bg-gray-200 rounded-lg"></div>
+                      <div className="ml-4 flex-1">
+                        <div className="h-8 bg-gray-200 rounded w-16 mb-2"></div>
+                        <div className="h-4 bg-gray-200 rounded w-20"></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 p-6 hover:border-blue-300">
+                  <div className="flex items-center">
+                    <div className="p-3 bg-blue-50 rounded-lg">
+                      <Users className="w-8 h-8 text-blue-600" />
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-3xl font-bold text-gray-900">{stats.totalTidps}</p>
+                      <p className="text-gray-600 font-medium">TIDPs</p>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="bg-white rounded-lg shadow p-6">
-                <div className="flex items-center">
-                  <Calendar className="w-8 h-8 text-green-600" />
-                  <div className="ml-4">
-                    <p className="text-2xl font-bold text-gray-900">{stats.totalMidps}</p>
-                    <p className="text-gray-600">MIDPs</p>
+                <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 p-6 hover:border-green-300">
+                  <div className="flex items-center">
+                    <div className="p-3 bg-green-50 rounded-lg">
+                      <Calendar className="w-8 h-8 text-green-600" />
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-3xl font-bold text-gray-900">{stats.totalMidps}</p>
+                      <p className="text-gray-600 font-medium">MIDPs</p>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="bg-white rounded-lg shadow p-6">
-                <div className="flex items-center">
-                  <FileText className="w-8 h-8 text-purple-600" />
-                  <div className="ml-4">
-                    <p className="text-2xl font-bold text-gray-900">{stats.totalDeliverables}</p>
-                    <p className="text-gray-600">Deliverables</p>
+                <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 p-6 hover:border-purple-300">
+                  <div className="flex items-center">
+                    <div className="p-3 bg-purple-50 rounded-lg">
+                      <FileText className="w-8 h-8 text-purple-600" />
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-3xl font-bold text-gray-900">{stats.totalDeliverables}</p>
+                      <p className="text-gray-600 font-medium">Deliverables</p>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="bg-white rounded-lg shadow p-6">
-                <div className="flex items-center">
-                  <TrendingUp className="w-8 h-8 text-orange-600" />
-                  <div className="ml-4">
-                    <p className="text-2xl font-bold text-gray-900">{stats.activeMilestones}</p>
-                    <p className="text-gray-600">Milestones</p>
+                <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 p-6 hover:border-orange-300">
+                  <div className="flex items-center">
+                    <div className="p-3 bg-orange-50 rounded-lg">
+                      <TrendingUp className="w-8 h-8 text-orange-600" />
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-3xl font-bold text-gray-900">{stats.activeMilestones}</p>
+                      <p className="text-gray-600 font-medium">Milestones</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <button
                   onClick={() => setActiveView('tidps')}
-                  className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="group flex items-center p-6 border-2 border-gray-200 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <Users className="w-6 h-6 text-blue-600 mr-3" />
-                  <div className="text-left">
-                    <p className="font-medium text-gray-900">Manage TIDPs</p>
-                    <p className="text-sm text-gray-600">Create and edit team plans</p>
+                  <div className="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                    <Users className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="ml-4 text-left">
+                    <p className="font-bold text-gray-900 text-lg">Manage TIDPs</p>
+                    <p className="text-gray-600 mt-1">Create and edit team plans</p>
                   </div>
                 </button>
 
                 <button
                   onClick={() => setActiveView('midps')}
-                  className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="group flex items-center p-6 border-2 border-gray-200 rounded-lg hover:border-green-400 hover:bg-green-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 >
-                  <Calendar className="w-6 h-6 text-green-600 mr-3" />
-                  <div className="text-left">
-                    <p className="font-medium text-gray-900">View MIDPs</p>
-                    <p className="text-sm text-gray-600">Monitor master plans</p>
+                  <div className="p-3 bg-green-100 rounded-lg group-hover:bg-green-200 transition-colors">
+                    <Calendar className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div className="ml-4 text-left">
+                    <p className="font-bold text-gray-900 text-lg">View MIDPs</p>
+                    <p className="text-gray-600 mt-1">Monitor master plans</p>
                   </div>
                 </button>
 
                 <button
                   onClick={() => setShowImportDialog(true)}
-                  className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="group flex items-center p-6 border-2 border-gray-200 rounded-lg hover:border-purple-400 hover:bg-purple-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 >
-                  <Upload className="w-6 h-6 text-purple-600 mr-3" />
-                  <div className="text-left">
-                    <p className="font-medium text-gray-900">Import Data</p>
-                    <p className="text-sm text-gray-600">Import from Excel/CSV</p>
+                  <div className="p-3 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors">
+                    <Upload className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <div className="ml-4 text-left">
+                    <p className="font-bold text-gray-900 text-lg">Import Data</p>
+                    <p className="text-gray-600 mt-1">Import from Excel/CSV</p>
                   </div>
                 </button>
               </div>
             </div>
 
             {/* Recent Activity */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent TIDPs</h2>
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Recent TIDPs</h2>
               {tidps.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  <Users className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                  <p>No TIDPs created yet</p>
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Users className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <p className="text-xl font-semibold text-gray-900 mb-2">No TIDPs created yet</p>
+                  <p className="text-gray-600 mb-6">Get started by creating your first Team Information Delivery Plan</p>
                   <button
                     onClick={() => setActiveView('tidps')}
-                    className="mt-2 text-blue-600 hover:text-blue-800"
+                    className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
                   >
+                    <Plus className="w-5 h-5 mr-2" />
                     Create your first TIDP
                   </button>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {tidps.slice(0, 5).map((tidp, index) => (
-                    <div key={tidp.id || index} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                      <div>
-                        <h3 className="font-medium text-gray-900">{tidp.teamName || `TIDP ${index + 1}`}</h3>
-                        <p className="text-sm text-gray-600">{tidp.discipline} • {tidp.containers?.length || 0} deliverables</p>
+                    <div key={tidp.id || index} className="flex items-center justify-between p-6 border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all duration-200">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                          <Users className="w-6 h-6 text-blue-600" />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-gray-900 text-lg">{tidp.teamName || `TIDP ${index + 1}`}</h3>
+                          <p className="text-gray-600">{tidp.discipline} • {tidp.containers?.length || 0} deliverables</p>
+                        </div>
                       </div>
-                      <div className="text-sm text-gray-500">
-                        {new Date(tidp.updatedAt).toLocaleDateString()}
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-gray-900">
+                          {new Date(tidp.updatedAt).toLocaleDateString()}
+                        </div>
+                        <div className="text-sm text-gray-500">Last updated</div>
                       </div>
                     </div>
                   ))}
@@ -389,38 +430,42 @@ const TIDPMIDPDashboard = () => {
         {activeView === 'tidps' && (
           <div className="space-y-6">
             {/* Filters and Search */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex flex-col sm:flex-row gap-4">
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-8 mb-8">
+              <div className="flex flex-col lg:flex-row gap-6">
                 <div className="flex-1">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Search TIDPs</label>
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
                       type="text"
-                      placeholder="Search TIDPs..."
+                      placeholder="Search by team name, description, or discipline..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
                     />
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-4">
-                  <select
-                    value={filterDiscipline}
-                    onChange={(e) => setFilterDiscipline(e.target.value)}
-                    className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="all">All Disciplines</option>
-                    {getDisciplineOptions().map(discipline => (
-                      <option key={discipline} value={discipline}>{discipline}</option>
-                    ))}
-                  </select>
+                <div className="flex items-end space-x-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Filter by Discipline</label>
+                    <select
+                      value={filterDiscipline}
+                      onChange={(e) => setFilterDiscipline(e.target.value)}
+                      className="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base min-w-48"
+                    >
+                      <option value="all">All Disciplines</option>
+                      {getDisciplineOptions().map(discipline => (
+                        <option key={discipline} value={discipline}>{discipline}</option>
+                      ))}
+                    </select>
+                  </div>
 
                   <button
-                    onClick={() => navigate('/bep-generator?createTidp=true')}
-                    className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                    onClick={() => navigate('/tidp-editor')}
+                    className="inline-flex items-center px-8 py-3 border border-transparent rounded-lg shadow-sm text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 hover:shadow-md"
                   >
-                    <Plus className="w-4 h-4 mr-2" />
+                    <Plus className="w-5 h-5 mr-3" />
                     New TIDP
                   </button>
                 </div>
@@ -428,53 +473,96 @@ const TIDPMIDPDashboard = () => {
             </div>
 
             {/* TIDPs Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {getFilteredTidps().map((tidp, index) => (
-                <div key={tidp.id || index} className="bg-white rounded-lg shadow hover:shadow-md transition-shadow">
-                  <div className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">{tidp.teamName || `TIDP ${index + 1}`}</h3>
-                        <p className="text-sm text-gray-600">{tidp.discipline}</p>
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="bg-white rounded-lg border border-gray-200 shadow-sm p-8 animate-pulse">
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="flex-1">
+                        <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+                        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
                       </div>
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {tidp.status || 'Draft'}
-                      </span>
+                      <div className="h-6 bg-gray-200 rounded w-16"></div>
                     </div>
-
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                      {tidp.description || tidp.responsibilities || 'Task information delivery plan'}
-                    </p>
-
-                    <div className="space-y-2 mb-4">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">Deliverables:</span>
-                        <span className="font-medium">{tidp.containers?.length || 0}</span>
+                    <div className="space-y-2 mb-6">
+                      <div className="h-4 bg-gray-200 rounded"></div>
+                      <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                    </div>
+                    <div className="space-y-3 mb-8">
+                      <div className="flex justify-between">
+                        <div className="h-4 bg-gray-200 rounded w-20"></div>
+                        <div className="h-4 bg-gray-200 rounded w-8"></div>
                       </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">Leader:</span>
-                        <span className="font-medium">{tidp.leader || 'TBD'}</span>
+                      <div className="flex justify-between">
+                        <div className="h-4 bg-gray-200 rounded w-16"></div>
+                        <div className="h-4 bg-gray-200 rounded w-12"></div>
                       </div>
                     </div>
-
-                    <div className="flex space-x-2">
-                      <button className="flex-1 bg-blue-50 text-blue-700 py-2 px-3 rounded text-sm hover:bg-blue-100 transition-colors">
-                        View Details
-                      </button>
-                      <button className="bg-gray-50 text-gray-700 py-2 px-3 rounded text-sm hover:bg-gray-100 transition-colors">
-                        <Download className="w-4 h-4" />
-                      </button>
+                    <div className="flex space-x-3">
+                      <div className="flex-1 h-10 bg-gray-200 rounded-lg"></div>
+                      <div className="h-10 w-10 bg-gray-200 rounded-lg"></div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {getFilteredTidps().map((tidp, index) => (
+                  <div key={tidp.id || index} className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-lg hover:border-blue-300 transition-all duration-200 group">
+                    <div className="p-8">
+                      <div className="flex items-start justify-between mb-6">
+                        <div className="flex-1">
+                          <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-700 transition-colors">{tidp.teamName || `TIDP ${index + 1}`}</h3>
+                          <p className="text-gray-600 font-medium">{tidp.discipline}</p>
+                        </div>
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800">
+                          {tidp.status || 'Draft'}
+                        </span>
+                      </div>
+
+                      <p className="text-gray-700 text-base mb-6 line-clamp-3 leading-relaxed">
+                        {tidp.description || tidp.responsibilities || 'Task information delivery plan for team coordination and deliverables management.'}
+                      </p>
+
+                      <div className="space-y-3 mb-8">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600 font-medium">Deliverables:</span>
+                          <span className="font-bold text-gray-900">{tidp.containers?.length || 0}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600 font-medium">Team Leader:</span>
+                          <span className="font-bold text-gray-900">{tidp.leader || 'TBD'}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex space-x-3">
+                        <button className="flex-1 bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 hover:shadow-md">
+                          View Details
+                        </button>
+                        <button className="bg-gray-100 text-gray-700 p-3 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200">
+                          <Download className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
 
             {getFilteredTidps().length === 0 && (
-              <div className="text-center py-12 text-gray-500">
-                <Users className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                <p className="text-lg">No TIDPs found</p>
-                <p className="text-sm">Try adjusting your search or filters</p>
+              <div className="text-center py-16">
+                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-8">
+                  <Users className="w-10 h-10 text-gray-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">No TIDPs found</h3>
+                <p className="text-gray-600 text-lg mb-8 max-w-md mx-auto">Try adjusting your search terms or filters, or create a new TIDP to get started.</p>
+                <button
+                  onClick={() => navigate('/tidp-editor')}
+                  className="inline-flex items-center px-8 py-4 bg-blue-600 text-white font-semibold text-lg rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 hover:shadow-lg"
+                >
+                  <Plus className="w-6 h-6 mr-3" />
+                  Create New TIDP
+                </button>
               </div>
             )}
           </div>
@@ -484,85 +572,125 @@ const TIDPMIDPDashboard = () => {
         {activeView === 'midps' && (
           <div className="space-y-6">
             {/* MIDPs Header */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex justify-between items-center">
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-8 mb-8">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <div>
-                  <h2 className="text-xl font-semibold text-gray-900">Master Information Delivery Plans</h2>
-                  <p className="text-gray-600">Aggregated project delivery schedules</p>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Master Information Delivery Plans</h2>
+                  <p className="text-gray-600 text-lg">Aggregated project delivery schedules from multiple team plans</p>
                 </div>
                 <button
                   onClick={autoGenerateMIDP}
-                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700"
+                  className="inline-flex items-center px-8 py-4 border border-transparent rounded-lg shadow-sm text-base font-semibold text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 hover:shadow-md lg:shrink-0"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
+                  <Plus className="w-5 h-5 mr-3" />
                   Generate MIDP
                 </button>
               </div>
             </div>
 
             {/* MIDPs Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {getFilteredMidps().map((midp, index) => (
-                <div key={midp.id || index} className="bg-white rounded-lg shadow hover:shadow-md transition-shadow">
-                  <div className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">{midp.projectName || `MIDP ${index + 1}`}</h3>
-                        <p className="text-sm text-gray-600">{midp.includedTIDPs?.length || 0} TIDPs included</p>
+            {loading ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="bg-white rounded-lg border border-gray-200 shadow-sm p-8 animate-pulse">
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="flex-1">
+                        <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+                        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
                       </div>
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        {midp.status || 'Active'}
-                      </span>
+                      <div className="h-6 bg-gray-200 rounded w-16"></div>
                     </div>
-
-                    <p className="text-gray-600 text-sm mb-4">
-                      {midp.description || 'Master information delivery plan'}
-                    </p>
-
-                    <div className="space-y-2 mb-4">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">Total Deliverables:</span>
-                        <span className="font-medium">{midp.aggregatedData?.totalContainers || 0}</span>
+                    <div className="h-4 bg-gray-200 rounded mb-6"></div>
+                    <div className="space-y-3 mb-8">
+                      <div className="flex justify-between">
+                        <div className="h-4 bg-gray-200 rounded w-24"></div>
+                        <div className="h-4 bg-gray-200 rounded w-8"></div>
                       </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">Estimated Hours:</span>
-                        <span className="font-medium">{midp.aggregatedData?.totalEstimatedHours || 0}</span>
+                      <div className="flex justify-between">
+                        <div className="h-4 bg-gray-200 rounded w-28"></div>
+                        <div className="h-4 bg-gray-200 rounded w-12"></div>
                       </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">Last Updated:</span>
-                        <span className="font-medium">{new Date(midp.updatedAt).toLocaleDateString()}</span>
+                      <div className="flex justify-between">
+                        <div className="h-4 bg-gray-200 rounded w-20"></div>
+                        <div className="h-4 bg-gray-200 rounded w-16"></div>
                       </div>
                     </div>
-
-                    <div className="flex space-x-2">
-                      <button className="flex-1 bg-green-50 text-green-700 py-2 px-3 rounded text-sm hover:bg-green-100 transition-colors">
-                        View Details
-                      </button>
-                      <button
-                        onClick={() => setShowEvolutionDashboard(midp.id)}
-                        className="bg-blue-50 text-blue-700 py-2 px-3 rounded text-sm hover:bg-blue-100 transition-colors"
-                        title="Evolution Dashboard"
-                      >
-                        <TrendingUp className="w-4 h-4" />
-                      </button>
-                      <button className="bg-gray-50 text-gray-700 py-2 px-3 rounded text-sm hover:bg-gray-100 transition-colors">
-                        <Download className="w-4 h-4" />
-                      </button>
+                    <div className="flex space-x-3">
+                      <div className="flex-1 h-10 bg-gray-200 rounded-lg"></div>
+                      <div className="h-10 w-10 bg-gray-200 rounded-lg"></div>
+                      <div className="h-10 w-10 bg-gray-200 rounded-lg"></div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {getFilteredMidps().map((midp, index) => (
+                  <div key={midp.id || index} className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-lg hover:border-green-300 transition-all duration-200 group">
+                    <div className="p-8">
+                      <div className="flex items-start justify-between mb-6">
+                        <div className="flex-1">
+                          <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-green-700 transition-colors">{midp.projectName || `MIDP ${index + 1}`}</h3>
+                          <p className="text-gray-600 font-medium">{midp.includedTIDPs?.length || 0} TIDPs included</p>
+                        </div>
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-800">
+                          {midp.status || 'Active'}
+                        </span>
+                      </div>
+
+                      <p className="text-gray-700 text-base mb-6 leading-relaxed">
+                        {midp.description || 'Master information delivery plan aggregating multiple team plans for comprehensive project coordination.'}
+                      </p>
+
+                      <div className="space-y-3 mb-8">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600 font-medium">Total Deliverables:</span>
+                          <span className="font-bold text-gray-900">{midp.aggregatedData?.totalContainers || 0}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600 font-medium">Estimated Hours:</span>
+                          <span className="font-bold text-gray-900">{midp.aggregatedData?.totalEstimatedHours || 0}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600 font-medium">Last Updated:</span>
+                          <span className="font-bold text-gray-900">{new Date(midp.updatedAt).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex space-x-3">
+                        <button className="flex-1 bg-green-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 hover:shadow-md">
+                          View Details
+                        </button>
+                        <button
+                          onClick={() => setShowEvolutionDashboard(midp.id)}
+                          className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
+                          title="Evolution Dashboard"
+                        >
+                          <TrendingUp className="w-5 h-5" />
+                        </button>
+                        <button className="bg-gray-100 text-gray-700 p-3 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200">
+                          <Download className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
 
             {getFilteredMidps().length === 0 && (
-              <div className="text-center py-12 text-gray-500">
-                <Calendar className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                <p className="text-lg">No MIDPs created yet</p>
+              <div className="text-center py-16">
+                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-8">
+                  <Calendar className="w-10 h-10 text-gray-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">No MIDPs created yet</h3>
+                <p className="text-gray-600 text-lg mb-8 max-w-md mx-auto">Generate your first Master Information Delivery Plan by aggregating existing TIDPs.</p>
                 <button
                   onClick={autoGenerateMIDP}
-                  className="mt-2 text-green-600 hover:text-green-800"
+                  className="inline-flex items-center px-8 py-4 bg-green-600 text-white font-semibold text-lg rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 hover:shadow-lg"
                 >
-                  Generate your first MIDP
+                  <Plus className="w-6 h-6 mr-3" />
+                  Generate First MIDP
                 </button>
               </div>
             )}
@@ -571,42 +699,69 @@ const TIDPMIDPDashboard = () => {
 
         {/* Import View */}
         {activeView === 'import' && (
-          <div className="max-w-2xl mx-auto">
-            <div className="bg-white rounded-lg shadow p-8">
-              <div className="text-center mb-8">
-                <Upload className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                <h2 className="text-2xl font-semibold text-gray-900 mb-2">Import TIDPs</h2>
-                <p className="text-gray-600">
-                  Import TIDP data from Excel or CSV files created by external teams
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-12">
+              <div className="text-center mb-12">
+                <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-8">
+                  <Upload className="w-12 h-12 text-blue-600" />
+                </div>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Import TIDPs</h2>
+                <p className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
+                  Import TIDP data from Excel or CSV files created by external teams. 
+                  This allows seamless integration of team plans from various sources.
                 </p>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-8">
                 <button
                   onClick={() => setShowImportDialog(true)}
-                  className="w-full flex items-center justify-center px-6 py-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 transition-colors"
+                  className="w-full flex items-center justify-center px-8 py-6 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 group"
                 >
-                  <Upload className="w-6 h-6 mr-3 text-gray-400" />
-                  <span className="text-lg font-medium text-gray-600">Import from Excel/CSV</span>
+                  <div className="text-center">
+                    <Upload className="w-8 h-8 mx-auto mb-4 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                    <span className="text-xl font-semibold text-gray-600 group-hover:text-blue-700 transition-colors">Import from Excel/CSV</span>
+                    <p className="text-gray-500 mt-2">Click to select and upload your files</p>
+                  </div>
                 </button>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 border border-gray-200 rounded-lg">
-                    <h3 className="font-medium text-gray-900 mb-2">Supported Formats</h3>
-                    <ul className="text-sm text-gray-600 space-y-1">
-                      <li>• Excel (.xlsx, .xls)</li>
-                      <li>• CSV (.csv)</li>
-                      <li>• UTF-8 encoding recommended</li>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="p-6 border border-gray-200 rounded-lg bg-gray-50">
+                    <h3 className="font-bold text-gray-900 text-lg mb-4">Supported Formats</h3>
+                    <ul className="text-gray-700 space-y-2">
+                      <li className="flex items-center">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                        Excel (.xlsx, .xls)
+                      </li>
+                      <li className="flex items-center">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                        CSV (.csv)
+                      </li>
+                      <li className="flex items-center">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                        UTF-8 encoding recommended
+                      </li>
                     </ul>
                   </div>
 
-                  <div className="p-4 border border-gray-200 rounded-lg">
-                    <h3 className="font-medium text-gray-900 mb-2">What's Imported</h3>
-                    <ul className="text-sm text-gray-600 space-y-1">
-                      <li>• Team information</li>
-                      <li>• Deliverable containers</li>
-                      <li>• Schedules and milestones</li>
-                      <li>• Dependencies</li>
+                  <div className="p-6 border border-gray-200 rounded-lg bg-blue-50">
+                    <h3 className="font-bold text-gray-900 text-lg mb-4">What's Imported</h3>
+                    <ul className="text-gray-700 space-y-2">
+                      <li className="flex items-center">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                        Team information
+                      </li>
+                      <li className="flex items-center">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                        Deliverable containers
+                      </li>
+                      <li className="flex items-center">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                        Schedules and milestones
+                      </li>
+                      <li className="flex items-center">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                        Dependencies
+                      </li>
                     </ul>
                   </div>
                 </div>
