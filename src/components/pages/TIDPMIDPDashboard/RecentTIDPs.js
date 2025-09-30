@@ -25,25 +25,25 @@ const RecentTIDPs = ({ tidps, onCreateNew }) => {
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Recent TIDPs</h2>
+    <div className="bg-white rounded-xl border-2 border-gray-200 shadow-lg p-8">
+      <h2 className="text-3xl font-bold text-gray-900 mb-8">Recent TIDPs</h2>
       <div className="space-y-4">
         {tidps.slice(0, 5).map((tidp, index) => (
-          <div key={tidp.id || index} className="flex items-center justify-between p-6 border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all duration-200">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Users className="w-6 h-6 text-blue-600" />
+          <div key={tidp.id || index} className="flex items-center justify-between p-6 border-2 border-gray-200 rounded-xl hover:border-blue-400 hover:shadow-xl hover:bg-blue-50/30 transition-all duration-300 transform hover:-translate-y-0.5">
+            <div className="flex items-center space-x-5">
+              <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center shadow-md">
+                <Users className="w-7 h-7 text-blue-600" />
               </div>
               <div>
-                <h3 className="font-bold text-gray-900 text-lg">{tidp.teamName || `TIDP ${index + 1}`}</h3>
-                <p className="text-gray-600">{tidp.discipline} • {tidp.containers?.length || 0} deliverables</p>
+                <h3 className="font-bold text-gray-900 text-xl mb-1">{tidp.teamName || `TIDP ${index + 1}`}</h3>
+                <p className="text-gray-600 text-base font-medium">{tidp.discipline} • {tidp.containers?.length || 0} deliverables</p>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-sm font-medium text-gray-900">
+              <div className="text-base font-bold text-gray-900">
                 {new Date(tidp.updatedAt).toLocaleDateString()}
               </div>
-              <div className="text-sm text-gray-500">Last updated</div>
+              <div className="text-sm text-gray-500 font-medium">Last updated</div>
             </div>
           </div>
         ))}

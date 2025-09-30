@@ -26,25 +26,61 @@ const QuickActions = ({ onViewTIDPs, onViewMIDPs, onImport }) => {
     }
   ];
 
+  const colorStyles = {
+    blue: {
+      border: 'border-blue-200',
+      hoverBorder: 'hover:border-blue-500',
+      hoverBg: 'hover:bg-blue-50',
+      iconBg: 'bg-blue-100',
+      iconHoverBg: 'group-hover:bg-blue-500',
+      iconText: 'text-blue-600',
+      iconHoverText: 'group-hover:text-white',
+      ring: 'focus:ring-blue-500'
+    },
+    green: {
+      border: 'border-green-200',
+      hoverBorder: 'hover:border-green-500',
+      hoverBg: 'hover:bg-green-50',
+      iconBg: 'bg-green-100',
+      iconHoverBg: 'group-hover:bg-green-500',
+      iconText: 'text-green-600',
+      iconHoverText: 'group-hover:text-white',
+      ring: 'focus:ring-green-500'
+    },
+    purple: {
+      border: 'border-purple-200',
+      hoverBorder: 'hover:border-purple-500',
+      hoverBg: 'hover:bg-purple-50',
+      iconBg: 'bg-purple-100',
+      iconHoverBg: 'group-hover:bg-purple-500',
+      iconText: 'text-purple-600',
+      iconHoverText: 'group-hover:text-white',
+      ring: 'focus:ring-purple-500'
+    }
+  };
+
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h2>
+    <div className="bg-white rounded-xl border-2 border-gray-200 shadow-lg p-8">
+      <h2 className="text-3xl font-bold text-gray-900 mb-8">Quick Actions</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {actions.map(({ icon: Icon, title, description, onClick, colorClass }) => (
-          <button
-            key={title}
-            onClick={onClick}
-            className={`group flex items-center p-6 border-2 border-gray-200 rounded-lg hover:border-${colorClass}-400 hover:bg-${colorClass}-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-${colorClass}-500 focus:border-transparent`}
-          >
-            <div className={`p-3 bg-${colorClass}-100 rounded-lg group-hover:bg-${colorClass}-200 transition-colors`}>
-              <Icon className={`w-6 h-6 text-${colorClass}-600`} />
-            </div>
-            <div className="ml-4 text-left">
-              <p className="font-bold text-gray-900 text-lg">{title}</p>
-              <p className="text-gray-600 mt-1">{description}</p>
-            </div>
-          </button>
-        ))}
+        {actions.map(({ icon: Icon, title, description, onClick, colorClass }) => {
+          const styles = colorStyles[colorClass];
+          return (
+            <button
+              key={title}
+              onClick={onClick}
+              className={`group flex items-center p-6 border-2 ${styles.border} ${styles.hoverBorder} ${styles.hoverBg} rounded-xl shadow-md hover:shadow-xl transition-all duration-300 focus:outline-none ${styles.ring} focus:ring-2 focus:ring-offset-2 transform hover:-translate-y-1`}
+            >
+              <div className={`p-4 ${styles.iconBg} ${styles.iconHoverBg} rounded-xl transition-all duration-300 shadow-sm`}>
+                <Icon className={`w-7 h-7 ${styles.iconText} ${styles.iconHoverText} transition-colors duration-300`} />
+              </div>
+              <div className="ml-5 text-left">
+                <p className="font-bold text-gray-900 text-lg mb-1">{title}</p>
+                <p className="text-gray-600 text-base leading-relaxed">{description}</p>
+              </div>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
