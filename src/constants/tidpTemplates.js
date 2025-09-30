@@ -1,0 +1,40 @@
+export const TIDP_CSV_TEMPLATE_DATA = [
+  {
+    'Information Container ID': 'IC-ARCH-001',
+    'Information Container Name/Title': 'Federated Architectural Model',
+    'Description': 'Complete architectural model including all building elements',
+    'Task Name': 'Architectural Modeling',
+    'Responsible Task Team/Party': 'Architecture Team',
+    'Author': 'John Smith',
+    'Dependencies/Predecessors': 'Site Survey, Structural Grid',
+    'Level of Information Need (LOIN)': 'LOD 300',
+    'Classification': 'Pr_20_30_60 - Building model',
+    'Estimated Production Time': '3 days',
+    'Delivery Milestone': 'Stage 3 - Developed Design',
+    'Due Date': '2025-12-31',
+    'Format/Type': 'IFC 4.0',
+    'Purpose': 'Coordination and visualization',
+    'Acceptance Criteria': 'Model validation passed, no clashes',
+    'Review and Authorization Process': 'S4 - Issue for approval',
+    'Status': 'Planned'
+  },
+  {
+    'Information Container ID': 'IC-STRUC-001',
+    'Information Container Name/Title': 'Structural Model',
+    'Description': 'Complete structural model with foundations, columns, beams, and slabs',
+    'Task Name': 'Structural Modeling',
+    'Responsible Task Team/Party': 'Structural Engineering Team',
+    'Author': 'Jane Doe',
+    'Dependencies/Predecessors': 'Architectural Model',
+    'Level of Information Need (LOIN)': 'LOD 350',
+    'Classification': 'Pr_20_30_60 - Building model',
+    'Estimated Production Time': '5 days',
+    'Delivery Milestone': 'Stage 4 - Technical Design',
+    'Due Date': '2026-01-15',
+    'Format/Type': 'IFC 4.0',
+    'Purpose': 'Structural analysis and coordination',
+    'Acceptance Criteria': 'Structural analysis completed, coordination resolved',
+    'Review and Authorization Process': 'S4 - Issue for approval',
+    'Status': 'Planned'
+  }
+];
