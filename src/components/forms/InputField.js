@@ -7,6 +7,7 @@ import FileStructureDiagram from './FileStructureDiagram';
 import CDEDiagramBuilder from './CDEDiagramBuilder';
 import VolumeStrategyMindmap from './VolumeStrategyMindmap';
 import TipTapEditor from './TipTapEditor';
+import TimelineInput from './TimelineInput';
 
 const InputField = React.memo(({ field, value, onChange, error, formData = {} }) => {
   const { name, label, type, required, rows, placeholder, options: fieldOptions } = field;
@@ -23,6 +24,16 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
   };
 
   switch (type) {
+    case 'timeline':
+      return (
+        <TimelineInput
+          field={field}
+          value={value}
+          onChange={onChange}
+          error={error}
+        />
+      );
+
     case 'orgchart':
       return (
         <OrgStructureField

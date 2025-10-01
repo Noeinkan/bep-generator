@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { FileText, X, Sparkles } from 'lucide-react';
 import INITIAL_DATA from '../../data/initialData';
 
@@ -39,7 +39,16 @@ const FIELD_EXAMPLES = {
   'strategicAlignment': INITIAL_DATA.strategicAlignment,
 };
 
-const TemplateSelector = ({ editor, onClose, fieldName }) => {
+const TemplateSelector = ({ editor, onClose, fieldName, triggerRef }) => {
+  const dialogRef = useRef(null);
+
+  useEffect(() => {
+    // Scroll dialog into view when it opens
+    if (dialogRef.current) {
+      dialogRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, []);
+
   const handleLoadExample = () => {
     if (!editor) return;
 
@@ -49,18 +58,21 @@ const TemplateSelector = ({ editor, onClose, fieldName }) => {
     // Convert to HTML paragraph
     const htmlContent = `<p>${exampleText}</p>`;
 
-    // Set content WITHOUT clearing - just insert at cursor or replace selection
-    const currentContent = editor.getHTML();
+    // ALWAYS replace all content with the example text
+    editor.commands.setContent(htmlContent);
 
-    // If editor is empty or just has empty paragraph, replace it
-    if (currentContent === '<p></p>' || currentContent === '') {
-      editor.commands.setContent(htmlContent);
-    } else {
-      // Otherwise, insert at cursor position
-      editor.commands.insertContent(htmlContent);
-    }
-
+    // Close dialog first
     onClose();
+
+    // Scroll back to the editor after a short delay
+    setTimeout(() => {
+      if (triggerRef && triggerRef.current) {
+        triggerRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }
+    }, 100);
   };
 
   // Get the example text to show preview
@@ -68,8 +80,16 @@ const TemplateSelector = ({ editor, onClose, fieldName }) => {
   const previewText = exampleText.length > 200 ? exampleText.substring(0, 200) + '...' : exampleText;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+    <>
+      {/* Backdrop */}
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-[9999]" onClick={onClose} />
+
+      {/* Dialog - Centered in viewport */}
+      <div
+        ref={dialogRef}
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto z-[10000]"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="sticky top-0 bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-t-xl">
           <div className="flex justify-between items-start">
             <div className="flex items-center gap-3">
@@ -96,13 +116,13 @@ const TemplateSelector = ({ editor, onClose, fieldName }) => {
 
         <div className="p-6">
           {/* Info Box */}
-          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
             <div className="flex items-start gap-3">
-              <FileText className="text-blue-600 flex-shrink-0 mt-1" size={20} />
+              <FileText className="text-amber-600 flex-shrink-0 mt-1" size={20} />
               <div>
-                <h4 className="font-semibold text-blue-900 mb-1">How it works</h4>
-                <p className="text-sm text-blue-800">
-                  This will add professional example text to your editor. The example text will be <strong>inserted without removing</strong> any existing content you've already written.
+                <h4 className="font-semibold text-amber-900 mb-1">⚠️ How it works</h4>
+                <p className="text-sm text-amber-800">
+                  This will <strong>replace all current content</strong> in the editor with professional example text. Any existing text will be overwritten.
                 </p>
               </div>
             </div>
@@ -148,7 +168,7 @@ const TemplateSelector = ({ editor, onClose, fieldName }) => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

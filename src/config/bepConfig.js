@@ -74,7 +74,7 @@ const CONFIG = {
           { name: 'projectNumber', label: 'Project Number', type: 'text', placeholder: 'GF-2024-017' },
           { name: 'projectType', label: 'Project Type', required: true, type: 'select', options: 'projectTypes' },
           { name: 'appointingParty', label: 'Appointing Party', required: true, type: 'text', placeholder: 'ABC Development Corporation' },
-          { name: 'proposedTimeline', label: 'Proposed Project Timeline', type: 'text', placeholder: '24 months (Jan 2025 - Dec 2026)' },
+          { name: 'proposedTimeline', label: 'Proposed Project Timeline', type: 'timeline', placeholder: '24 months (Jan 2025 - Dec 2026)' },
           { name: 'estimatedBudget', label: 'Estimated Project Budget', type: 'text', placeholder: '£12.5 million' },
           { name: 'projectDescription', label: 'Project Description', type: 'textarea', rows: 4, placeholder: 'A modern 8-story office complex featuring sustainable design principles, flexible workspace layouts, and integrated smart building technologies. The building will accommodate 800+ employees across multiple tenants with shared amenities including conference facilities, cafeteria, and underground parking for 200 vehicles.' },
           { name: 'tenderApproach', label: 'Our Proposed Approach', type: 'textarea', rows: 3, placeholder: 'Our approach emphasizes collaborative design coordination through advanced BIM workflows, early stakeholder engagement, and integrated sustainability analysis. We propose a phased delivery strategy with continuous value engineering and risk mitigation throughout all project stages.' }
@@ -109,7 +109,7 @@ const CONFIG = {
           { name: 'projectNumber', label: 'Project Number', type: 'text', placeholder: 'GF-2024-017' },
           { name: 'projectType', label: 'Project Type', required: true, type: 'select', options: 'projectTypes' },
           { name: 'appointingParty', label: 'Appointing Party', required: true, type: 'text', placeholder: 'ABC Development Corporation' },
-          { name: 'confirmedTimeline', label: 'Confirmed Project Timeline', type: 'text', placeholder: '24 months (Jan 2025 - Dec 2026)' },
+          { name: 'confirmedTimeline', label: 'Confirmed Project Timeline', type: 'timeline', placeholder: '24 months (Jan 2025 - Dec 2026)' },
           { name: 'confirmedBudget', label: 'Confirmed Project Budget', type: 'text', placeholder: '£12.5 million' },
           { name: 'projectDescription', label: 'Project Description', type: 'textarea', rows: 4, placeholder: 'A modern 8-storey office complex featuring sustainable design principles, flexible workspace layouts, and integrated smart building technologies. The building will accommodate 800+ employees across multiple tenants with shared amenities including conference facilities, cafeteria, and underground parking for 200 vehicles.' },
           { name: 'deliveryApproach', label: 'Confirmed Delivery Approach', type: 'textarea', rows: 3, placeholder: 'Our delivery approach implements collaborative design coordination through advanced BIM workflows, stakeholder integration at key milestones, and continuous value engineering. We will execute a phased delivery strategy with integrated sustainability analysis and proactive risk management throughout all project stages to ensure on-time, on-budget completion.' },
