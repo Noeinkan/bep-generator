@@ -1,7 +1,7 @@
 import React from 'react';
 import { Users, Calendar, Upload } from 'lucide-react';
 
-const QuickActions = ({ onViewTIDPs, onViewMIDPs, onImport }) => {
+const QuickActions = ({ onViewTIDPs, onViewMIDPs, onImport, showImport = true }) => {
   const actions = [
     {
       icon: Users,
@@ -16,15 +16,19 @@ const QuickActions = ({ onViewTIDPs, onViewMIDPs, onImport }) => {
       description: 'Monitor master plan',
       onClick: onViewMIDPs,
       colorClass: 'green'
-    },
-    {
+    }
+  ];
+
+  // Only include the Import action when allowed (e.g., not on the main dashboard)
+  if (showImport) {
+    actions.push({
       icon: Upload,
       title: 'Import Data',
       description: 'Import from Excel/CSV',
       onClick: onImport,
       colorClass: 'purple'
-    }
-  ];
+    });
+  }
 
   const colorStyles = {
     blue: {

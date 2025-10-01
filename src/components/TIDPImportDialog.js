@@ -56,6 +56,12 @@ const TIDPImportDialog = ({ open, onClose, onImportComplete }) => {
     setImportResults(null);
 
     try {
+      // Quick health check to ensure backend is reachable and provide clearer error to the user
+      try {
+        await ApiService.healthCheck();
+      } catch (healthErr) {
+        throw new Error('Unable to reach backend server: ' + (healthErr.message || healthErr));
+      }
       // Use Papa Parse for CSV files
       if (file.name.endsWith('.csv') || importType === 'csv') {
         Papa.parse(file, {

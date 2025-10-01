@@ -11,8 +11,10 @@ import { useDraftOperations } from '../../hooks/useDraftOperations';
 import { validateDraftName } from '../../utils/validationUtils';
 import ConfirmDialog from '../common/ConfirmDialog';
 import Toast from '../common/Toast';
+import { usePage } from '../../contexts/PageContext';
 
 const DraftManager = ({ user, currentFormData, onLoadDraft, onClose, bepType }) => {
+  const { navigateTo } = usePage();
   // Load and validate drafts
   const { rawDrafts, isLoading: loadingDrafts, error: draftsError, isValidComponent, refreshDrafts } = useDrafts(user, currentFormData, onLoadDraft, onClose);
   // Filtering, searching, sorting
@@ -158,7 +160,18 @@ const DraftManager = ({ user, currentFormData, onLoadDraft, onClose, bepType }) 
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <button
-                onClick={onClose}
+                onClick={() => {
+                  if (window.history.length > 1) {
+                    window.history.back();
+                    setTimeout(() => {
+                      try { navigateTo('home'); } catch (e) { /* noop */ }
+                    }, 200);
+                  } else if (onClose) {
+                    onClose();
+                  } else {
+                    try { navigateTo('home'); } catch (e) { /* noop */ }
+                  }
+                }}
                 className="flex items-center space-x-2 text-gray-600 hover:text-gray-800 transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />

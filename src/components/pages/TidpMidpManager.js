@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { usePage } from '../../contexts/PageContext';
 import { ArrowLeft } from 'lucide-react';
 import { useTidpData } from '../../hooks/useTidpData';
 import { useMidpData } from '../../hooks/useMidpData';
@@ -17,6 +18,7 @@ import MIDPForm from '../midp/MIDPForm';
 
 const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidpForm = false, initialTidpId = null }) => {
   const navigate = useNavigate();
+  const { navigateTo } = usePage();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showTidpForm, setShowTidpForm] = useState(initialShowTidpForm);
   const [showMidpForm, setShowMidpForm] = useState(initialShowMidpForm);
@@ -103,7 +105,7 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
       }
     };
     loadData();
-  }, [loadTidps, loadMidps]);
+  }, [loadTidps, loadMidps, initialTidpId]);
 
   // TIDP handlers
   const handleCreateTidp = async () => {
@@ -279,16 +281,35 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
 
   const loading = tidpLoading || midpLoading;
 
+  const handleCloseTidpForm = () => {
+    // Always hide the form and reset local state
+    setShowTidpForm(false);
+    resetTidpForm();
+
+    // If this manager was mounted via the /tidp-editor URL (direct open),
+    // navigating back to a known page is preferable to leaving the app at a
+    // stray URL like /tidp-editor (without id) or other unexpected path.
+    const path = window.location.pathname || '';
+
+    // If an external onClose handler was provided (parent embedded context), call it
+    if (typeof onClose === 'function') {
+      try { onClose(); } catch (e) { /* noop */ }
+      return;
+    }
+
+    if (path.startsWith('/tidp-editor')) {
+      try { navigateTo('tidp-midp'); } catch (e) { /* noop */ }
+      try { navigate('/tidp-midp'); } catch (e) { /* noop */ }
+    }
+  };
+
   if (showTidpForm) {
     return (
       <TIDPForm
         tidpForm={tidpForm}
         onTidpFormChange={setTidpForm}
         onSubmit={handleCreateTidp}
-        onCancel={() => {
-          setShowTidpForm(false);
-          resetTidpForm();
-        }}
+        onCancel={handleCloseTidpForm}
       />
     );
   }
@@ -321,7 +342,18 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
               ) : (
                 <div className="flex items-center space-x-4">
                   <button
-                    onClick={() => navigate('/tidp-midp-dashboard')}
+                    onClick={() => {
+                      if (window.history.length > 1) {
+                        window.history.back();
+                        setTimeout(() => {
+                          try { navigateTo('tidp-midp'); } catch (e) { /* noop */ }
+                        }, 200);
+                      } else {
+                        // Fallback to explicit navigation
+                        try { navigateTo('tidp-midp'); } catch (e) { /* noop */ }
+                        try { navigate('/tidp-midp-dashboard'); } catch (e) { /* noop */ }
+                      }
+                    }}
                     className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
                   >
                     <ArrowLeft className="w-5 h-5 mr-2" />

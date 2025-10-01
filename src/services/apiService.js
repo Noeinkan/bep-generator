@@ -527,23 +527,33 @@ class ApiService {
   }
 
   handleError(error, defaultMessage) {
+    // If server responded with structured error, prefer that
     if (error.response?.data?.error) {
-      // API returned structured error
       return new Error(error.response.data.error);
-    } else if (error.response?.data?.details) {
-      // Validation error with details
+    }
+
+    // Validation error with details
+    if (error.response?.data?.details) {
       const details = error.response.data.details;
       const detailMessages = Array.isArray(details)
         ? details.map(d => d.message || d).join(', ')
         : details;
       return new Error(`${defaultMessage}: ${detailMessages}`);
-    } else if (error.message) {
-      // Network or other error
-      return new Error(`${defaultMessage}: ${error.message}`);
-    } else {
-      // Fallback
-      return new Error(defaultMessage);
     }
+
+    // Network errors (no response)
+    if (error.request && !error.response) {
+      // axios sets error.code for certain errors (e.g., ECONNREFUSED) and error.message for 'Network Error'
+      const code = error.code ? ` (${error.code})` : '';
+      return new Error(`${defaultMessage}: Network error${code} - unable to reach server at ${BASE_URL}`);
+    }
+
+    // Fallback to any message present
+    if (error.message) {
+      return new Error(`${defaultMessage}: ${error.message}`);
+    }
+
+    return new Error(defaultMessage);
   }
 
   // ======================
