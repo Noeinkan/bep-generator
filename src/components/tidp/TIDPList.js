@@ -19,9 +19,13 @@ const TIDPList = ({
   bulkExportRunning,
   bulkProgress,
   midps,
-  onToast
+  onToast,
+  onBulkUpdate
 }) => {
   const csvInputRef = useRef(null);
+  const [selectedIds, setSelectedIds] = React.useState([]);
+  const [showBulkEdit, setShowBulkEdit] = React.useState(false);
+  const [bulkValues, setBulkValues] = React.useState({ taskTeam: '', discipline: '', teamLeader: '' });
 
   const handleCsvImport = (event) => {
     const file = event.target.files[0];
@@ -67,6 +71,46 @@ const TIDPList = ({
     } catch (err) {
       console.error(err);
       onToast({ open: true, message: 'Failed consolidated export: ' + (err.message || err), type: 'error' });
+    }
+  };
+
+  const toggleSelect = (id) => {
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  };
+
+  const clearSelection = () => setSelectedIds([]);
+
+  const applyBulkEdit = async () => {
+    if (selectedIds.length === 0) {
+      onToast({ open: true, message: 'No TIDPs selected for bulk edit', type: 'info' });
+      return;
+    }
+
+    // Build updates array: only include fields that have a non-empty value in bulkValues
+    const fields = {};
+    Object.keys(bulkValues).forEach((k) => {
+      if (bulkValues[k] && String(bulkValues[k]).trim() !== '') fields[k] = bulkValues[k];
+    });
+    if (Object.keys(fields).length === 0) {
+      onToast({ open: true, message: 'No bulk changes provided', type: 'info' });
+      return;
+    }
+
+    try {
+      // call parent via onBulkUpdate if provided, else try to call ApiService directly as fallback
+      if (typeof onBulkUpdate === 'function') {
+        await onBulkUpdate(selectedIds.map((id) => ({ id, update: fields })));
+      } else {
+        const ApiService = require('../../services/apiService').default || require('../../services/apiService');
+        await ApiService.updateTIDPBatch(selectedIds.map((id) => ({ id, update: fields })));
+      }
+      onToast({ open: true, message: `Updated ${selectedIds.length} TIDPs`, type: 'success' });
+      setShowBulkEdit(false);
+      clearSelection();
+      setBulkValues({ taskTeam: '', discipline: '', teamLeader: '' });
+    } catch (err) {
+      console.error('Bulk update failed', err);
+      onToast({ open: true, message: 'Bulk update failed: ' + (err.message || err), type: 'error' });
     }
   };
 
@@ -165,49 +209,102 @@ const TIDPList = ({
             <p className="text-sm">Create your first Task Information Delivery Plan</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {tidps.map((tidp, index) => (
-              <div
-                key={tidp.id || index}
-                className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-              >
+          <>
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <button
+                  onClick={() => setShowBulkEdit(true)}
+                  className="bg-yellow-600 text-white px-3 py-1 rounded mr-2"
+                  disabled={selectedIds.length === 0}
+                >
+                  Bulk edit ({selectedIds.length})
+                </button>
+                <button onClick={clearSelection} className="bg-gray-200 px-3 py-1 rounded text-sm">
+                  Clear selection
+                </button>
+              </div>
+            </div>
+
+            {showBulkEdit && (
+              <div className="bg-white border rounded p-4 mb-4">
+                <h4 className="font-semibold mb-2">Bulk edit {selectedIds.length} TIDPs</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                  <input
+                    placeholder="Task Team"
+                    value={bulkValues.taskTeam}
+                    onChange={(e) => setBulkValues((b) => ({ ...b, taskTeam: e.target.value }))}
+                    className="p-2 border rounded"
+                  />
+                  <input
+                    placeholder="Discipline"
+                    value={bulkValues.discipline}
+                    onChange={(e) => setBulkValues((b) => ({ ...b, discipline: e.target.value }))}
+                    className="p-2 border rounded"
+                  />
+                  <input
+                    placeholder="Team Leader"
+                    value={bulkValues.teamLeader}
+                    onChange={(e) => setBulkValues((b) => ({ ...b, teamLeader: e.target.value }))}
+                    className="p-2 border rounded"
+                  />
+                </div>
+                <div className="flex space-x-2">
+                  <button onClick={applyBulkEdit} className="bg-blue-600 text-white px-3 py-1 rounded">Apply</button>
+                  <button onClick={() => setShowBulkEdit(false)} className="bg-gray-200 px-3 py-1 rounded">Cancel</button>
+                </div>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {tidps.map((tidp, index) => (
+                <div
+                  key={tidp.id || index}
+                  className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                >
+                  <div className="mb-2">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.includes(tidp.id)}
+                      onChange={() => toggleSelect(tidp.id)}
+                      className="mr-2"
+                      aria-label={`Select TIDP ${tidp.taskTeam || tidp.id}`}
+                    />
+                    <span className="font-semibold">{tidp.taskTeam || `TIDP ${index + 1}`}</span>
+                  </div>
+                  
                 {/* Status badge */}
                 {tidp.status === 'Active' && (
                   <div className="inline-block bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full mb-3">
                     Attivo
                   </div>
                 )}
-                <h3 className="font-semibold text-gray-900 mb-2">
-                  {tidp.taskTeam || `TIDP ${index + 1}`}
-                </h3>
-                <p className="text-gray-600 text-sm mb-3">
-                  {tidp.description || tidp.discipline || 'Task information delivery plan'}
-                </p>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => onViewDetails(tidp)}
-                    className="flex-1 bg-blue-50 text-blue-700 py-2 px-3 rounded text-sm hover:bg-blue-100 transition-colors"
-                  >
-                    View
-                  </button>
-                  <button
-                    disabled={!!exportLoading[tidp.id]}
-                    onClick={() => onExportPdf(tidp.id)}
-                    className="bg-gray-50 text-gray-700 py-2 px-3 rounded text-sm hover:bg-gray-100 transition-colors"
-                  >
-                    {exportLoading[tidp.id] ? '...' : <Download className="w-4 h-4" />}
-                  </button>
-                  <button
-                    disabled={!!exportLoading[tidp.id]}
-                    onClick={() => onExportExcel(tidp.id)}
-                    className="bg-gray-50 text-gray-700 py-2 px-3 rounded text-sm hover:bg-gray-100 transition-colors"
-                  >
-                    {exportLoading[tidp.id] ? '...' : 'XLSX'}
-                  </button>
+                  <p className="text-gray-600 text-sm mb-3">{tidp.description || tidp.discipline || 'Task information delivery plan'}</p>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => onViewDetails(tidp)}
+                      className="flex-1 bg-blue-50 text-blue-700 py-2 px-3 rounded text-sm hover:bg-blue-100 transition-colors"
+                    >
+                      View
+                    </button>
+                    <button
+                      disabled={!!exportLoading[tidp.id]}
+                      onClick={() => onExportPdf(tidp.id)}
+                      className="bg-gray-50 text-gray-700 py-2 px-3 rounded text-sm hover:bg-gray-100 transition-colors"
+                    >
+                      {exportLoading[tidp.id] ? '...' : <Download className="w-4 h-4" />}
+                    </button>
+                    <button
+                      disabled={!!exportLoading[tidp.id]}
+                      onClick={() => onExportExcel(tidp.id)}
+                      className="bg-gray-50 text-gray-700 py-2 px-3 rounded text-sm hover:bg-gray-100 transition-colors"
+                    >
+                      {exportLoading[tidp.id] ? '...' : 'XLSX'}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>

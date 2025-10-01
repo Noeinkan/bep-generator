@@ -1,7 +1,7 @@
 import React from 'react';
 import { Plus } from 'lucide-react';
 
-const TIDPForm = ({ tidpForm, onTidpFormChange, onSubmit, onCancel }) => {
+const TIDPForm = ({ tidpForm, onTidpFormChange, onSubmit, onCancel, createLoading = false }) => {
   const addContainer = () => {
     const newContainer = {
       id: `IC-${Date.now()}`,
@@ -72,7 +72,8 @@ const TIDPForm = ({ tidpForm, onTidpFormChange, onSubmit, onCancel }) => {
                 type="text"
                 className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500"
                 placeholder="Architecture Team"
-                required
+                data-testid="create-tidp-form-taskTeam"
+                aria-label="TIDP Task Team"
               />
             </div>
 
@@ -82,7 +83,8 @@ const TIDPForm = ({ tidpForm, onTidpFormChange, onSubmit, onCancel }) => {
                 value={tidpForm.discipline}
                 onChange={(e) => onTidpFormChange({ ...tidpForm, discipline: e.target.value })}
                 className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500"
-                required
+                data-testid="create-tidp-form-discipline"
+                aria-label="TIDP Discipline"
               >
                 <option value="">Select Discipline</option>
                 <option value="architecture">Architecture</option>
@@ -100,7 +102,8 @@ const TIDPForm = ({ tidpForm, onTidpFormChange, onSubmit, onCancel }) => {
                 type="text"
                 className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500"
                 placeholder="John Smith"
-                required
+                data-testid="create-tidp-form-teamLeader"
+                aria-label="TIDP Team Leader"
               />
             </div>
 
@@ -363,9 +366,13 @@ const TIDPForm = ({ tidpForm, onTidpFormChange, onSubmit, onCancel }) => {
           <div className="flex space-x-3 pt-2">
             <button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded text-sm"
+              id="create-tidp-form"
+              data-testid="create-tidp-form"
+              aria-label="Create TIDP (form submit)"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded text-sm disabled:opacity-60"
+              disabled={createLoading}
             >
-              Create TIDP
+              {createLoading ? 'Creating...' : 'Create TIDP'}
             </button>
             <button
               type="button"

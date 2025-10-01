@@ -120,6 +120,17 @@ const DraftManager = ({ user, currentFormData, onLoadDraft, onClose, bepType }) 
         const success = await operations.loadDraft(draft);
         if (success) {
           setToast({ open: true, message: 'Draft loaded.', type: 'success' });
+          // Ensure the URL reflects the opened draft so each draft has its own URI
+          try {
+            if (draft && draft.id) {
+              // include a slug made from the draft name for readability
+              const slugify = require('../../utils/slugify').default || require('../../utils/slugify');
+              const slug = slugify(draft.name || draft.title || 'draft');
+              navigateTo(`/tidp-editor/${draft.id}${slug ? '--' + slug : ''}`);
+            }
+          } catch (e) {
+            console.warn('Failed to navigate to tidp-editor with draft id', e);
+          }
         } else {
           setToast({ open: true, message: operations.error || 'Failed to load draft.', type: 'error' });
         }

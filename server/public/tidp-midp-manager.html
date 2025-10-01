@@ -116,6 +116,9 @@
                         <div className="flex space-x-4">
                             <button
                                 onClick={() => setShowTidpForm(true)}
+                                id="create-tidp-dashboard"
+                                data-testid="create-tidp-dashboard"
+                                aria-label="Create TIDP (dashboard)"
                                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors"
                             >
                                 <PlusIcon />
@@ -140,6 +143,9 @@
                             <h2 className="text-2xl font-bold text-gray-900">Task Information Delivery Plans</h2>
                             <button
                                 onClick={() => setShowTidpForm(true)}
+                                id="create-tidp-list"
+                                data-testid="create-tidp-list"
+                                aria-label="Create TIDP (list)"
                                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
                             >
                                 <PlusIcon />
@@ -511,8 +517,11 @@
 
                                 <div className="flex space-x-4">
                                     <button
-                                        type="submit"
-                                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
+                                            type="submit"
+                                            id="create-tidp-form-static"
+                                            data-testid="create-tidp-form-static"
+                                            aria-label="Create TIDP (static form)"
+                                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
                                     >
                                         Create TIDP
                                     </button>

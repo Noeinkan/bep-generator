@@ -152,7 +152,20 @@ const TIDPMIDPDashboard = () => {
   };
 
   const handleViewTidpDetails = (tidpId) => {
-    navigateTo(`/tidp-editor/${tidpId}`);
+    try {
+      // fetch tidp to build a readable slug if available
+      const ApiService = require('../../services/apiService').default || require('../../services/apiService');
+      ApiService.getTIDP(tidpId).then((resp) => {
+        const t = resp && resp.data ? resp.data : resp;
+        const slugify = require('../../utils/slugify').default || require('../../utils/slugify');
+  const slug = slugify(t?.taskTeam || t?.name || t?.title || 'tidp');
+  navigateTo(`/tidp-editor/${tidpId}${slug ? '--' + slug : ''}`);
+      }).catch(() => {
+  navigateTo(`/tidp-editor/${tidpId}`);
+      });
+    } catch (e) {
+      navigateTo(`/tidp-editor/${tidpId}`);
+    }
   };
 
   const handleDownloadTidp = async (tidp) => {
@@ -235,7 +248,7 @@ const TIDPMIDPDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50" data-page-uri="/tidp-midp">
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-6">

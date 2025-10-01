@@ -47,6 +47,17 @@ export const useTidpData = () => {
     await loadTidps();
   };
 
+  const bulkUpdateTidps = async (updates) => {
+    // updates: [{ id, update }, ...]
+    try {
+      await ApiService.updateTIDPBatch(updates);
+      await loadTidps();
+    } catch (error) {
+      console.error('Bulk update TIDPs failed', error);
+      throw error;
+    }
+  };
+
   const deleteTidp = async (id) => {
     await ApiService.deleteTIDP(id);
     await loadTidps();
@@ -58,6 +69,7 @@ export const useTidpData = () => {
     loadTidps,
     createTidp,
     updateTidp,
+    bulkUpdateTidps,
     deleteTidp
   };
 };
