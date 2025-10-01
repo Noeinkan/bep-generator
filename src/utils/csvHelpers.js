@@ -77,7 +77,7 @@ export const importTidpFromCsv = (file, onSuccess, onError) => {
           'Classification': row['Classification'] || '',
           'Estimated Production Time': row['Estimated Production Time'] || '1 day',
           'Delivery Milestone': row['Delivery Milestone'] || '',
-          'Due Date': row['Due Date'] || '',
+    'Due Date': row['Due Date'] ? (new Date(row['Due Date']).toISOString()) : '',
           'Format/Type': row['Format/Type'] || 'IFC 4.0',
           'Purpose': row['Purpose'] || '',
           'Acceptance Criteria': row['Acceptance Criteria'] || '',

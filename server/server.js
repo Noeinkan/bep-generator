@@ -10,7 +10,7 @@ const midpRoutes = require('./routes/midp');
 const exportRoutes = require('./routes/export');
 const validationRoutes = require('./routes/validation');
 
-const app = express();
+const app = require('./app');
 const PORT = process.env.PORT || 3001;
 
 // Security middleware
@@ -102,6 +102,8 @@ process.on('unhandledRejection', (reason, promise) => {
   process.exit(1);
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}

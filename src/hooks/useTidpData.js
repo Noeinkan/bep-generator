@@ -32,7 +32,10 @@ export const useTidpData = () => {
       company: 'TBD',
       responsibilities: tidpData.description || 'TBD',
       description: tidpData.description,
-      containers: tidpData.containers
+      containers: tidpData.containers,
+  // When creating from the UI, treat the action as publishing the TIDP so it can be included in MIDP flows
+  // Server accepts: Draft, Under Review, Approved, Active, Completed — use 'Active'
+  status: 'Active'
     };
     const created = await ApiService.createTIDP(payload);
     await loadTidps();
