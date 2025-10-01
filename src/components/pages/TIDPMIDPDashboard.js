@@ -179,22 +179,32 @@ const TIDPMIDPDashboard = () => {
   };
 
   const autoGenerateMIDP = async () => {
-    if (tidps.length === 0) {
-      setToast({ open: true, message: 'No TIDPs available to generate MIDP', type: 'info' });
-      return;
-    }
-
+    setLoading(true);
     try {
-      const projectId = 'project-1';
+      // Always fetch the latest TIDPs from the API before generating so we don't rely on stale/local state
+      const tidpResp = await ApiService.getAllTIDPs();
+      const currentTidps = tidpResp.data || [];
+
+      if (currentTidps.length === 0) {
+        setToast({ open: true, message: 'No TIDPs available to generate MIDP', type: 'info' });
+        return;
+      }
+
+      // Derive projectId from the fetched TIDPs
+      const projectId = currentTidps[0]?.projectId || 'imported-project';
+
       await ApiService.autoGenerateMIDP(projectId, {
         projectName: `Auto-generated MIDP ${new Date().toLocaleDateString()}`,
-        description: `MIDP generated from ${tidps.length} TIDPs`
+        description: `MIDP generated from ${currentTidps.length} TIDPs`
       });
+
       setToast({ open: true, message: 'MIDP auto-generated successfully', type: 'success' });
       await loadData();
     } catch (err) {
       console.error('Auto-generate MIDP failed', err);
       setToast({ open: true, message: err.message || 'Failed to auto-generate MIDP', type: 'error' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -232,7 +242,19 @@ const TIDPMIDPDashboard = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-6">
               <button
-                onClick={() => navigateTo('home')}
+                onClick={() => {
+                  // Try to navigate back in browser history first
+                  if (window.history.length > 1) {
+                    window.history.back();
+                    // Also schedule a fallback to keep PageContext in sync
+                    setTimeout(() => {
+                      try { navigateTo('home'); } catch (e) { /* noop */ }
+                    }, 200);
+                  } else {
+                    // If no history, navigate to home via PageContext
+                    navigateTo('home');
+                  }
+                }}
                 className="inline-flex items-center text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-md p-2 transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />
@@ -245,13 +267,15 @@ const TIDPMIDPDashboard = () => {
             </div>
 
             <div className="flex items-center space-x-4">
-              <button
-                onClick={() => setShowImportDialog(true)}
-                className="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
-              >
-                <Upload className="w-5 h-5 mr-3" />
-                Import
-              </button>
+              {activeView === 'tidps' && (
+                <button
+                  onClick={() => setShowImportDialog(true)}
+                  className="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
+                >
+                  <Upload className="w-5 h-5 mr-3" />
+                  Import
+                </button>
+              )}
 
               <button
                 onClick={autoGenerateMIDP}
@@ -317,7 +341,10 @@ const TIDPMIDPDashboard = () => {
             <QuickActions
               onViewTIDPs={() => setActiveView('tidps')}
               onViewMIDPs={() => setActiveView('midps')}
-              onImport={() => setShowImportDialog(true)}
+              // On the dashboard the Import Data quick action should take the user
+              // to the Manage TIDPs page where the Import button is available.
+              onImport={() => setActiveView('tidps')}
+              showImport={false}
             />
             <RecentTIDPs
               tidps={tidps}

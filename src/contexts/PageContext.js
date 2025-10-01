@@ -28,7 +28,8 @@ export const PageProvider = ({ children }) => {
     if (!currentPage.startsWith('/')) {
       const path = `/${currentPage}`;
       if (window.location.pathname !== path) {
-        window.history.replaceState(null, '', path);
+        // Use pushState so navigation creates a history entry and the browser back button works
+        window.history.pushState(null, '', path);
       }
     }
   }, [currentPage]);
