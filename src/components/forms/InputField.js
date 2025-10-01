@@ -6,7 +6,7 @@ import EditableTable from './EditableTable';
 import FileStructureDiagram from './FileStructureDiagram';
 import CDEDiagramBuilder from './CDEDiagramBuilder';
 import VolumeStrategyMindmap from './VolumeStrategyMindmap';
-import FormattedTextEditor from './FormattedTextEditor';
+import TipTapEditor from './TipTapEditor';
 
 const InputField = React.memo(({ field, value, onChange, error, formData = {} }) => {
   const { name, label, type, required, rows, placeholder, options: fieldOptions } = field;
@@ -97,15 +97,16 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
           <label htmlFor={name} className="block text-sm font-medium mb-2">
             {label} {required && '*'}
           </label>
-          <FormattedTextEditor
+          <TipTapEditor
             id={name}
             aria-required={required}
             value={value || ''}
             onChange={(newValue) => onChange(name, newValue)}
-            rows={rows || 3}
             className=""
             placeholder={placeholder || `Enter ${label.toLowerCase()}...`}
-            autoGrow={true}
+            minHeight={`${(rows || 3) * 24}px`}
+            autoSaveKey={`tiptap-${name}`}
+            fieldName={name}
           />
           {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
         </div>

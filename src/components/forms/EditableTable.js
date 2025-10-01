@@ -1,6 +1,6 @@
 import React from 'react';
 import { Users } from 'lucide-react';
-import FormattedTextEditor from './FormattedTextEditor';
+import TipTapEditor from './TipTapEditor';
 
 const EditableTable = React.memo(({ field, value, onChange, error }) => {
   const { name, label, required, columns = ['Role/Discipline', 'Name/Company', 'Experience/Notes'] } = field;
@@ -116,14 +116,14 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
                     </td>
                     {columns.map(column => (
                       <td key={column} className="px-1 py-2">
-                        <FormattedTextEditor
+                        <TipTapEditor
                           value={row[column] || ''}
                           onChange={(newValue) => updateCell(rowIndex, column, newValue)}
                           className="text-sm"
                           placeholder={`Enter ${column.toLowerCase()}...`}
-                          rows={2}
+                          minHeight="48px"
                           showToolbar={false}
-                          autoGrow={true}
+                          autoSaveKey={`table-${name}-${rowIndex}-${column}`}
                         />
                       </td>
                     ))}
