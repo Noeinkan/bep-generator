@@ -1,5 +1,170 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, Clock } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Calendar, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
+
+const CustomDatePicker = ({ value, onChange, label, placeholder }) => {
+  const [showPicker, setShowPicker] = useState(false);
+  const [selectedYear, setSelectedYear] = useState(() => {
+    if (value) {
+      return parseInt(value.split('-')[0]);
+    }
+    return new Date().getFullYear();
+  });
+  const [selectedMonth, setSelectedMonth] = useState(() => {
+    if (value) {
+      return parseInt(value.split('-')[1]);
+    }
+    return null;
+  });
+
+  const pickerRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (pickerRef.current && !pickerRef.current.contains(event.target)) {
+        setShowPicker(false);
+      }
+    };
+
+    if (showPicker) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showPicker]);
+
+  const months = [
+    { num: 1, name: 'Jan', full: 'January' },
+    { num: 2, name: 'Feb', full: 'February' },
+    { num: 3, name: 'Mar', full: 'March' },
+    { num: 4, name: 'Apr', full: 'April' },
+    { num: 5, name: 'May', full: 'May' },
+    { num: 6, name: 'Jun', full: 'June' },
+    { num: 7, name: 'Jul', full: 'July' },
+    { num: 8, name: 'Aug', full: 'August' },
+    { num: 9, name: 'Sep', full: 'September' },
+    { num: 10, name: 'Oct', full: 'October' },
+    { num: 11, name: 'Nov', full: 'November' },
+    { num: 12, name: 'Dec', full: 'December' }
+  ];
+
+  const formatDisplayValue = () => {
+    if (!value) return '';
+    const [year, month] = value.split('-');
+    const monthName = months[parseInt(month) - 1].full;
+    return `${monthName} ${year}`;
+  };
+
+  const handleMonthSelect = (monthNum) => {
+    setSelectedMonth(monthNum);
+    const monthStr = monthNum.toString().padStart(2, '0');
+    const newValue = `${selectedYear}-${monthStr}`;
+    onChange(newValue);
+    setShowPicker(false);
+  };
+
+  const handleYearChange = (delta) => {
+    setSelectedYear(prev => prev + delta);
+  };
+
+  return (
+    <div className="relative" ref={pickerRef}>
+      <label className="block text-xs font-medium text-gray-600 mb-1">
+        <Calendar className="inline-block w-3 h-3 mr-1" />
+        {label}
+      </label>
+      <button
+        type="button"
+        onClick={() => setShowPicker(!showPicker)}
+        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-left bg-white hover:bg-gray-50 transition-colors flex items-center justify-between"
+      >
+        <span className={value ? 'text-gray-900' : 'text-gray-400'}>
+          {formatDisplayValue() || placeholder}
+        </span>
+        <Calendar className="w-4 h-4 text-gray-400" />
+      </button>
+
+      {showPicker && (
+        <div className="absolute z-50 mt-2 bg-white border border-gray-300 rounded-lg shadow-xl p-4 w-full min-w-[320px]">
+          {/* Year Selector */}
+          <div className="flex items-center justify-between mb-4 pb-3 border-b">
+            <button
+              type="button"
+              onClick={() => handleYearChange(-1)}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <ChevronLeft className="w-5 h-5 text-gray-600" />
+            </button>
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(parseInt(e.target.value) || new Date().getFullYear())}
+                className="w-24 px-3 py-2 text-center text-lg font-semibold border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                min="1900"
+                max="2100"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => handleYearChange(1)}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <ChevronRight className="w-5 h-5 text-gray-600" />
+            </button>
+          </div>
+
+          {/* Month Grid */}
+          <div className="grid grid-cols-3 gap-2">
+            {months.map((month) => (
+              <button
+                key={month.num}
+                type="button"
+                onClick={() => handleMonthSelect(month.num)}
+                className={`
+                  px-4 py-3 rounded-lg text-sm font-medium transition-all
+                  ${selectedMonth === month.num && value?.startsWith(selectedYear.toString())
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'bg-gray-50 text-gray-700 hover:bg-blue-50 hover:text-blue-700'
+                  }
+                `}
+              >
+                {month.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Quick Year Selection */}
+          <div className="mt-4 pt-3 border-t">
+            <div className="text-xs font-medium text-gray-600 mb-2">Quick select:</div>
+            <div className="flex gap-2">
+              {[0, 1, 2].map(offset => {
+                const year = new Date().getFullYear() + offset;
+                return (
+                  <button
+                    key={year}
+                    type="button"
+                    onClick={() => setSelectedYear(year)}
+                    className={`
+                      flex-1 px-3 py-2 text-xs rounded-lg transition-colors
+                      ${selectedYear === year
+                        ? 'bg-blue-100 text-blue-700 font-medium'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }
+                    `}
+                  >
+                    {year}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const TimelineInput = ({ field, value, onChange, error }) => {
   const { name, label, required, placeholder } = field;
@@ -137,34 +302,20 @@ const TimelineInput = ({ field, value, onChange, error }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Start Date */}
-        <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">
-            <Calendar className="inline-block w-3 h-3 mr-1" />
-            Start Date
-          </label>
-          <input
-            type="month"
-            value={timeline.startDate}
-            onChange={(e) => handleChange('startDate', e.target.value)}
-            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Select start month"
-          />
-        </div>
+        <CustomDatePicker
+          value={timeline.startDate}
+          onChange={(val) => handleChange('startDate', val)}
+          label="Start Date"
+          placeholder="Select start month"
+        />
 
         {/* End Date */}
-        <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">
-            <Calendar className="inline-block w-3 h-3 mr-1" />
-            End Date
-          </label>
-          <input
-            type="month"
-            value={timeline.endDate}
-            onChange={(e) => handleChange('endDate', e.target.value)}
-            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Select end month"
-          />
-        </div>
+        <CustomDatePicker
+          value={timeline.endDate}
+          onChange={(val) => handleChange('endDate', val)}
+          label="End Date"
+          placeholder="Select end month"
+        />
       </div>
 
       {/* Duration Display */}

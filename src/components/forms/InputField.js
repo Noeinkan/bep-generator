@@ -8,10 +8,14 @@ import CDEDiagramBuilder from './CDEDiagramBuilder';
 import VolumeStrategyMindmap from './VolumeStrategyMindmap';
 import TipTapEditor from './TipTapEditor';
 import TimelineInput from './TimelineInput';
+import BudgetInput from './BudgetInput';
+import FieldHelpTooltip from './FieldHelpTooltip';
+import HELP_CONTENT from '../../data/helpContentData';
 
 const InputField = React.memo(({ field, value, onChange, error, formData = {} }) => {
   const { name, label, type, required, rows, placeholder, options: fieldOptions } = field;
   const optionsList = fieldOptions ? CONFIG.options[fieldOptions] : null;
+  const helpContent = HELP_CONTENT[name]; // Get help content for this field
 
   const baseClasses = "w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500";
 
@@ -23,10 +27,32 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
     onChange(name, updated);
   };
 
+  // Helper component for label with optional help tooltip
+  const FieldLabel = ({ htmlFor, children, className = "block text-sm font-medium mb-2" }) => (
+    <div className="flex items-center gap-2 mb-2">
+      <label htmlFor={htmlFor} className={className}>
+        {children}
+      </label>
+      {helpContent && (
+        <FieldHelpTooltip fieldName={name} helpContent={helpContent} />
+      )}
+    </div>
+  );
+
   switch (type) {
     case 'timeline':
       return (
         <TimelineInput
+          field={field}
+          value={value}
+          onChange={onChange}
+          error={error}
+        />
+      );
+
+    case 'budget':
+      return (
+        <BudgetInput
           field={field}
           value={value}
           onChange={onChange}
@@ -105,9 +131,9 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
     case 'textarea':
       return (
         <div>
-          <label htmlFor={name} className="block text-sm font-medium mb-2">
+          <FieldLabel htmlFor={name}>
             {label} {required && '*'}
-          </label>
+          </FieldLabel>
           <TipTapEditor
             id={name}
             aria-required={required}
@@ -126,9 +152,9 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
     case 'select':
       return (
         <div>
-          <label htmlFor={name} className="block text-sm font-medium mb-2">
+          <FieldLabel htmlFor={name}>
             {label} {required && '*'}
-          </label>
+          </FieldLabel>
           <select
             id={name}
             aria-required={required}
@@ -148,9 +174,9 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
     case 'checkbox':
       return (
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <FieldLabel>
             {label} {required && '*'}
-          </label>
+          </FieldLabel>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-60 overflow-y-auto border rounded-lg p-3">
             {optionsList?.map(option => (
               <label key={option} htmlFor={`${name}-${option}`} className="flex items-center space-x-2 p-2 border rounded cursor-pointer hover:bg-gray-50">
@@ -172,9 +198,9 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
     default:
       return (
         <div>
-          <label htmlFor={name} className="block text-sm font-medium mb-2">
+          <FieldLabel htmlFor={name}>
             {label} {required && '*'}
-          </label>
+          </FieldLabel>
           <input
             id={name}
             aria-required={required}
