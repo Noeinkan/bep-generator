@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import {
   Bold,
   Italic,
@@ -37,6 +37,7 @@ const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldN
   const [showHighlightPicker, setShowHighlightPicker] = useState(false);
   const [currentHighlight, setCurrentHighlight] = useState('#ffff00');
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+  const templateButtonRef = useRef(null);
 
   const addLink = useCallback(() => {
     if (linkUrl && editor) {
@@ -500,6 +501,7 @@ const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldN
 
       {/* Templates - Emphasized Button */}
       <button
+        ref={templateButtonRef}
         onClick={() => setShowTemplateSelector(true)}
         className="ml-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2 font-medium"
         title="Load example text for this field"
@@ -514,6 +516,7 @@ const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldN
         <TemplateSelector
           editor={editor}
           fieldName={fieldName}
+          triggerRef={templateButtonRef}
           onClose={() => setShowTemplateSelector(false)}
         />
       )}
