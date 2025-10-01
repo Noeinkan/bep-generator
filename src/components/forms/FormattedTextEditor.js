@@ -390,15 +390,6 @@ const FormattedTextEditor = ({
                 </div>
               </div>
             )}
-            {/* Word/Character Count */}
-            <div
-              className="text-xs text-gray-500 mt-1 text-right select-none"
-              aria-live="polite"
-              id={id ? `${id}-desc` : undefined}
-              role="status"
-            >
-              {wordCount} words, {charCount} characters
-            </div>
           </>
         )}
       </div>
