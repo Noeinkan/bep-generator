@@ -171,6 +171,12 @@ const TIDPList = ({
                 key={tidp.id || index}
                 className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
               >
+                {/* Status badge */}
+                {tidp.status === 'Active' && (
+                  <div className="inline-block bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full mb-3">
+                    Attivo
+                  </div>
+                )}
                 <h3 className="font-semibold text-gray-900 mb-2">
                   {tidp.taskTeam || `TIDP ${index + 1}`}
                 </h3>

@@ -66,7 +66,7 @@ const TIDPsView = ({
               aria-label="Create new TIDP"
             >
               <Plus className="w-5 h-5 mr-3" />
-              Crea nuovo TIDP
+              Create New TIDP
             </button>
 
             <button
@@ -156,9 +156,9 @@ const TIDPsView = ({
                   <button
                     onClick={(e) => { e.stopPropagation(); onViewDetails(tidp.id); }}
                     className="flex-1 bg-blue-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-3 focus:ring-blue-200 focus:ring-offset-2 transition-all duration-300 hover:shadow-lg transform hover:scale-105"
-                    aria-label={`Seleziona il BEP ${tidp.teamName || index + 1}`}
+                    aria-label={`Select the TIDP ${tidp.teamName || index + 1}`}
                   >
-                    Seleziona questo BEP
+                    Select this TIDP
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); onDownloadTidp(tidp); }}
@@ -180,16 +180,16 @@ const TIDPsView = ({
           <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-8">
             <Users className="w-10 h-10 text-gray-400" />
           </div>
-          <h3 className="text-3xl font-extrabold text-gray-900 mb-4">Nessun TIDP trovato</h3>
-          <p className="text-gray-600 text-base mb-8 max-w-md mx-auto">Prova a modificare i termini di ricerca o i filtri. Puoi anche creare un nuovo TIDP per iniziare.</p>
+          <h3 className="text-3xl font-extrabold text-gray-900 mb-4">No TIDPs found</h3>
+          <p className="text-gray-600 text-base mb-8 max-w-md mx-auto">Try adjusting your search terms or filters. You can also create a new TIDP to get started.</p>
           <div>
             <button
               onClick={onCreateNew}
               className="inline-flex items-center px-5 py-2 bg-blue-600 text-white font-semibold text-base rounded-md hover:bg-blue-700 focus:outline-none focus:ring-3 focus:ring-blue-200 focus:ring-offset-2 transition-all duration-200"
-              aria-label="Crea nuovo TIDP"
+              aria-label="Create new TIDP"
             >
               <Plus className="w-5 h-5 mr-2" />
-              Crea nuovo TIDP
+              Create New TIDP
             </button>
           </div>
         </div>

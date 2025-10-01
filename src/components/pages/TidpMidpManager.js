@@ -15,7 +15,7 @@ import TIDPDashboard from '../tidp/TIDPDashboard';
 import MIDPList from '../midp/MIDPList';
 import MIDPForm from '../midp/MIDPForm';
 
-const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidpForm = false }) => {
+const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidpForm = false, initialTidpId = null }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showTidpForm, setShowTidpForm] = useState(initialShowTidpForm);
@@ -65,6 +65,34 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
     const loadData = async () => {
       try {
         await Promise.all([loadTidps(), loadMidps()]);
+        // If an initial TIDP id was provided (e.g. via /tidp-editor/:id), load it into the form
+        if (initialTidpId) {
+          try {
+            const t = await (async () => {
+              const ApiService = require('../../services/apiService').default || require('../../services/apiService');
+              const resp = await ApiService.getTIDP(initialTidpId);
+              return resp.data || resp;
+            })();
+
+            if (t) {
+              // Populate tidpForm and detailsForm, and show the tidp form for editing
+              setTidpForm((prev) => ({
+                ...prev,
+                taskTeam: t.teamName || t.taskTeam || prev.taskTeam,
+                discipline: t.discipline || prev.discipline,
+                teamLeader: t.leader || t.teamLeader || prev.teamLeader,
+                description: t.responsibilities || t.description || prev.description,
+                containers: t.containers && t.containers.length > 0 ? t.containers : prev.containers
+              }));
+
+              setDetailsItem({ type: 'tidp', data: t });
+              setDetailsForm({ taskTeam: t.teamName || t.taskTeam, description: t.description || t.responsibilities, containers: t.containers || [] });
+              setShowTidpForm(true);
+            }
+          } catch (err) {
+            console.warn('Failed to load initial TIDP by id:', initialTidpId, err);
+          }
+        }
       } catch (error) {
         console.error('Failed to load initial data:', error);
         setToast({
@@ -100,6 +128,15 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
 
       if (created) {
         const t = created.data ? created.data : created;
+        // Switch to the TIDPs tab and reload the list so the newly created item is visible
+        try {
+          setActiveTab('tidps');
+          await loadTidps();
+        } catch (loadErr) {
+          console.warn('Failed to reload TIDPs after create:', loadErr);
+        }
+
+        // Show details for the newly created TIDP
         setDetailsItem({ type: 'tidp', data: t });
         setDetailsForm({
           taskTeam: t.taskTeam || '',

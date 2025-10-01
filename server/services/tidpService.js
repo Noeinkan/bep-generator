@@ -20,7 +20,7 @@ class TIDPService {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       version: '1.0',
-      status: 'Draft'
+      status: tidpData.status || 'Draft'
     };
 
     // Validate and process information containers
@@ -40,6 +40,7 @@ class TIDPService {
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
+    // Insert TIDP into database
     insertTidp.run(
       tidp.id,
       tidp.teamName,
@@ -66,6 +67,11 @@ class TIDPService {
     `);
 
     processedContainers.forEach(container => {
+      // Ensure due_date is a string (ISO) since better-sqlite3 cannot bind Date objects
+      const dueDateValue = container['Due Date'] ? (
+        (container['Due Date'] instanceof Date) ? container['Due Date'].toISOString() : String(container['Due Date'])
+      ) : null;
+
       insertContainer.run(
         container.id,
         tidp.id,
@@ -80,7 +86,7 @@ class TIDPService {
         container['Classification'] || null,
         container['Estimated Production Time'] || container['Est. Time'] || null,
         container['Delivery Milestone'] || container.Milestone || null,
-        container['Due Date'] || null,
+        dueDateValue,
         container['Format/Type'] || container.Format || container.Type || null,
         container['Purpose'] || null,
         container['Acceptance Criteria'] || null,
@@ -143,6 +149,11 @@ class TIDPService {
       `);
 
       updateData.containers.forEach(container => {
+        // Normalize due date to ISO string to avoid binding non-primitive values
+        const dueDateVal = container['Due Date'] ? (
+          (container['Due Date'] instanceof Date) ? container['Due Date'].toISOString() : String(container['Due Date'])
+        ) : null;
+
         insertContainer.run(
           container.id || uuidv4(),
           id,
@@ -157,7 +168,7 @@ class TIDPService {
           container['Classification'] || null,
           container['Estimated Production Time'] || container['Est. Time'] || null,
           container['Delivery Milestone'] || container.Milestone || null,
-          container['Due Date'] || null,
+          dueDateVal,
           container['Format/Type'] || container.Format || container.Type || null,
           container['Purpose'] || null,
           container['Acceptance Criteria'] || null,
