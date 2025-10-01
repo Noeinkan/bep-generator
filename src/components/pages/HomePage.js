@@ -64,7 +64,7 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100" data-page-uri="/">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         {/* Background with animated gradient */}

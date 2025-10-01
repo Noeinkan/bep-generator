@@ -29,7 +29,7 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
   const [toast, setToast] = useState({ open: false, message: '', type: 'info' });
 
   // Custom hooks
-  const { tidps, loading: tidpLoading, loadTidps, createTidp, updateTidp, deleteTidp } = useTidpData();
+  const { tidps, loading: tidpLoading, loadTidps, createTidp, updateTidp, deleteTidp, bulkUpdateTidps } = useTidpData();
   const { midps, loading: midpLoading, loadMidps, createMidp } = useMidpData();
   const {
     templates,
@@ -60,6 +60,7 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
       }
     ]
   });
+  const [createLoading, setCreateLoading] = useState(false);
 
   const [midpForm, setMidpForm] = useState({ projectName: '', description: '' });
 
@@ -70,9 +71,13 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
         // If an initial TIDP id was provided (e.g. via /tidp-editor/:id), load it into the form
         if (initialTidpId) {
           try {
+            // initialTidpId may include a slug (id-slug); extract the id portion
+            // If initialTidpId was provided as 'id--slug', split on the double-dash separator to get the id
+            const rawParts = String(initialTidpId).split('--');
+            const idOnly = rawParts[0];
             const t = await (async () => {
               const ApiService = require('../../services/apiService').default || require('../../services/apiService');
-              const resp = await ApiService.getTIDP(initialTidpId);
+              const resp = await ApiService.getTIDP(idOnly);
               return resp.data || resp;
             })();
 
@@ -109,6 +114,7 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
 
   // TIDP handlers
   const handleCreateTidp = async () => {
+    console.log('handleCreateTidp invoked', tidpForm);
     if (!tidpForm.taskTeam || tidpForm.taskTeam.trim().length < 2) {
       setToast({ open: true, message: 'Task team is required', type: 'error' });
       return;
@@ -123,7 +129,9 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
     }
 
     try {
+      setCreateLoading(true);
       const created = await createTidp(tidpForm);
+      console.log('createTidp result', created);
       setToast({ open: true, message: 'TIDP created', type: 'success' });
       setShowTidpForm(false);
       resetTidpForm();
@@ -145,10 +153,19 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
           description: t.description || '',
           containers: t.containers || []
         });
+        // Update URL to include id and a readable slug from the TIDP name
+        try {
+          const slugify = require('../../utils/slugify').default || require('../../utils/slugify');
+          const slug = slugify(t.taskTeam || t.name || t.title || 'tidp');
+          navigateTo(`/tidp-editor/${t.id}${slug ? '--' + slug : ''}`);
+        } catch (e) { /* noop */ }
       }
     } catch (err) {
       console.error('Create TIDP failed', err);
       setToast({ open: true, message: err.message || 'Failed to create TIDP', type: 'error' });
+    }
+    finally {
+      setCreateLoading(false);
     }
   };
 
@@ -211,6 +228,29 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
       containers: containers
     }));
     setShowTidpForm(true);
+  };
+
+  // Centralized open editor function: open a new or existing TIDP and update URL
+  const openTidpEditor = (tidp = null) => {
+    if (tidp) {
+      setDetailsItem({ type: 'tidp', data: tidp });
+      setDetailsForm({
+        taskTeam: tidp.taskTeam || '',
+        description: tidp.description || '',
+        containers: tidp.containers || []
+      });
+      setShowTidpForm(true);
+      try {
+  const slugify = require('../../utils/slugify').default || require('../../utils/slugify');
+  const slug = slugify(tidp.taskTeam || tidp.name || tidp.title || tidp.taskTeam);
+  navigateTo(`/tidp-editor/${tidp.id}${slug ? '--' + slug : ''}`);
+      } catch (e) { /* noop */ }
+    } else {
+      // New TIDP
+      setTidpForm((prev) => ({ ...prev }));
+      setShowTidpForm(true);
+      try { navigateTo('/tidp-editor'); } catch (e) { /* noop */ }
+    }
   };
 
   // Export handlers
@@ -309,6 +349,7 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
         tidpForm={tidpForm}
         onTidpFormChange={setTidpForm}
         onSubmit={handleCreateTidp}
+        createLoading={createLoading}
         onCancel={handleCloseTidpForm}
       />
     );
@@ -330,7 +371,7 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
 
   return (
     <>
-      <div className="min-h-full">
+      <div className="min-h-full" data-page-uri="/tidp-midp">
         <div className="bg-white shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
             <div>
@@ -365,6 +406,13 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
                   </div>
                 </div>
               )}
+              <button
+                onClick={handleCreateTidp}
+                className="bg-blue-500 text-white py-2 px-4 rounded"
+                aria-label="Create TIDP"
+              >
+                Create TIDP
+              </button>
             </div>
             {onClose && (
               <div className="flex items-center space-x-3">
@@ -399,6 +447,7 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
             </nav>
           </div>
 
+
           {loading ? (
             <div className="text-center py-12">
               <p className="text-gray-500">Loading...</p>
@@ -409,7 +458,7 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
                 <TIDPDashboard
                   tidps={tidps}
                   midps={midps}
-                  onShowTidpForm={() => setShowTidpForm(true)}
+                  onShowTidpForm={() => openTidpEditor(null)}
                   onShowMidpForm={() => setShowMidpForm(true)}
                   onImportCsv={handleImportCsv}
                   onToast={setToast}
@@ -424,15 +473,8 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
                   exportLoading={exportLoading}
                   onExportPdf={handleExportTidpPdf}
                   onExportExcel={handleExportTidpExcel}
-                  onViewDetails={(tidp) => {
-                    setDetailsItem({ type: 'tidp', data: tidp });
-                    setDetailsForm({
-                      taskTeam: tidp.taskTeam || '',
-                      description: tidp.description || '',
-                      containers: tidp.containers || []
-                    });
-                  }}
-                  onShowTidpForm={() => setShowTidpForm(true)}
+                  onViewDetails={(tidp) => openTidpEditor(tidp)}
+                  onShowTidpForm={() => openTidpEditor(null)}
                   onShowImportDialog={() => setShowImportDialog(true)}
                   onImportCsv={handleImportCsv}
                   onExportAllPdfs={handleExportAllPdfs}
@@ -441,6 +483,15 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
                   bulkProgress={bulkProgress}
                   midps={midps}
                   onToast={setToast}
+                  onBulkUpdate={async (updates) => {
+                    try {
+                      await bulkUpdateTidps(updates);
+                      setToast({ open: true, message: `Bulk update applied to ${updates.length} items`, type: 'success' });
+                    } catch (err) {
+                      console.error('Bulk update failed', err);
+                      setToast({ open: true, message: 'Bulk update failed: ' + (err.message || err), type: 'error' });
+                    }
+                  }}
                 />
               )}
               {activeTab === 'midps' && (

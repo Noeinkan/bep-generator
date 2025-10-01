@@ -290,7 +290,7 @@ const BEPGeneratorWrapper = () => {
   // If no BEP type selected, show type selector
   if (!bepType) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50" data-page-uri="/bep-generator">
         {/* Header with navigation */}
         <div className="bg-white shadow-lg border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -374,7 +374,7 @@ const BEPGeneratorWrapper = () => {
 
   // Main BEP Generator interface
   return (
-    <div className="h-screen bg-gray-50 flex relative">
+    <div className="h-screen bg-gray-50 flex relative" data-page-uri="/bep-generator">
       {/* Sidebar */}
       <div className="w-80 bg-white shadow-xl border-r border-gray-200 flex flex-col">
         <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">

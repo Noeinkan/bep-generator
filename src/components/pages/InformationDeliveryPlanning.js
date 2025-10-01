@@ -269,6 +269,9 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
           <button
             onClick={createNewTidp}
             className="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+            id="create-tidp-overview"
+            data-testid="create-tidp-overview"
+            aria-label="Create TIDP (overview)"
           >
             Create TIDP
           </button>
@@ -320,6 +323,9 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
         <button
           onClick={createNewTidp}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+          id="create-tidp-tidps-tab"
+          data-testid="create-tidp-tidps-tab"
+          aria-label="Create TIDP (TIDPs tab)"
         >
           <Plus className="w-4 h-4" />
           <span>New TIDP</span>
@@ -496,6 +502,8 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
 
   return (
     <div className="space-y-6">
+      {/* Mark page URI for debugging and testing */}
+      <div data-page-uri="/information-delivery-planning" />
       <div className="flex items-center space-x-3 mb-6">
         <Calendar className="w-6 h-6 text-blue-600" />
         <h2 className="text-2xl font-bold text-gray-900">Information Delivery Planning</h2>
