@@ -28,6 +28,7 @@ import {
   FileText,
 } from 'lucide-react';
 import TemplateSelector from './TemplateSelector';
+import TableInsertDialog from './TableInsertDialog';
 
 const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldName }) => {
   const [showLinkInput, setShowLinkInput] = useState(false);
@@ -37,6 +38,7 @@ const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldN
   const [showHighlightPicker, setShowHighlightPicker] = useState(false);
   const [currentHighlight, setCurrentHighlight] = useState('#ffff00');
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+  const [showTableDialog, setShowTableDialog] = useState(false);
   const templateButtonRef = useRef(null);
 
   const addLink = useCallback(() => {
@@ -56,9 +58,9 @@ const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldN
     }
   }, [editor]);
 
-  const addTable = useCallback(() => {
+  const addTable = useCallback((options) => {
     if (editor) {
-      editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+      editor.chain().focus().insertTable(options).run();
     }
   }, [editor]);
 
@@ -465,7 +467,7 @@ const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldN
       </ToolbarButton>
 
       {/* Table */}
-      <ToolbarButton onClick={addTable} title="Insert Table">
+      <ToolbarButton onClick={() => setShowTableDialog(true)} title="Insert Table">
         <TableIcon size={18} />
       </ToolbarButton>
 
@@ -518,6 +520,14 @@ const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldN
           fieldName={fieldName}
           triggerRef={templateButtonRef}
           onClose={() => setShowTemplateSelector(false)}
+        />
+      )}
+
+      {/* Table Insert Dialog */}
+      {showTableDialog && (
+        <TableInsertDialog
+          onInsert={addTable}
+          onClose={() => setShowTableDialog(false)}
         />
       )}
     </div>

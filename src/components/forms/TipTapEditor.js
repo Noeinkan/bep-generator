@@ -17,6 +17,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import FontSize from './extensions/FontSize';
 import TipTapToolbar from './TipTapToolbar';
 import FindReplaceDialog from './FindReplaceDialog';
+import TableBubbleMenu from './TableBubbleMenu';
 
 const TipTapEditor = ({
   value = '',
@@ -147,6 +148,35 @@ const TipTapEditor = ({
         }
         return false;
       },
+      // Handle Tab key for table navigation
+      handleKeyDown: (view, event) => {
+        if (event.key === 'Tab') {
+          const { state } = view;
+          const { selection } = state;
+
+          // Check if we're in a table
+          const isInTable = state.schema.nodes.table &&
+                           selection.$anchor.node(-3) &&
+                           selection.$anchor.node(-3).type.name === 'table';
+
+          if (isInTable) {
+            event.preventDefault();
+
+            if (event.shiftKey) {
+              // Shift+Tab: go to previous cell
+              return view.state.schema.nodes.tableCell
+                ? editor.commands.goToPreviousCell()
+                : false;
+            } else {
+              // Tab: go to next cell
+              return view.state.schema.nodes.tableCell
+                ? editor.commands.goToNextCell()
+                : false;
+            }
+          }
+        }
+        return false;
+      },
     },
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
@@ -235,11 +265,9 @@ const TipTapEditor = ({
         />
       )}
 
-      {/* Stats Footer */}
-      <div className="text-xs text-gray-500 mt-1 text-right select-none flex justify-between items-center" aria-live="polite" role="status">
-        <span>Zoom: {zoom}%</span>
-        <span>{stats.words} words, {stats.characters} characters</span>
-      </div>
+      {/* Table Bubble Menu */}
+      <TableBubbleMenu editor={editor} />
+
 
       {/* Custom Styles */}
       <style jsx>{`
@@ -274,26 +302,65 @@ const TipTapEditor = ({
           width: 100%;
           margin: 1rem 0;
           overflow: hidden;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          border-radius: 0.5rem;
         }
 
         .tiptap-table td,
         .tiptap-table th {
-          border: 2px solid #d1d5db;
+          border: 2px solid #e5e7eb;
           box-sizing: border-box;
-          min-width: 1em;
-          padding: 0.5rem;
+          min-width: 3em;
+          padding: 0.75rem;
           position: relative;
           vertical-align: top;
+          transition: background-color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .tiptap-table td:hover,
+        .tiptap-table th:hover {
+          background-color: #f9fafb;
+          border-color: #d1d5db;
         }
 
         .tiptap-table th {
           background-color: #f3f4f6;
-          font-weight: bold;
+          font-weight: 600;
           text-align: left;
+          color: #374151;
         }
 
         .tiptap-table .selectedCell {
-          background-color: #dbeafe;
+          background-color: #dbeafe !important;
+          border-color: #3b82f6 !important;
+          box-shadow: inset 0 0 0 1px #3b82f6;
+        }
+
+        /* Table cell resize handle */
+        .tiptap-table .column-resize-handle {
+          position: absolute;
+          right: -2px;
+          top: 0;
+          bottom: 0;
+          width: 4px;
+          background-color: #3b82f6;
+          cursor: col-resize;
+          opacity: 0;
+          transition: opacity 0.15s ease;
+        }
+
+        .tiptap-table td:hover .column-resize-handle,
+        .tiptap-table th:hover .column-resize-handle {
+          opacity: 0.5;
+        }
+
+        .tiptap-table .column-resize-handle:hover {
+          opacity: 1 !important;
+        }
+
+        /* Table focus state */
+        .tiptap-table:focus-within {
+          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
         /* Image styles */
