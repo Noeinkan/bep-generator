@@ -45,7 +45,17 @@ const INITIAL_DATA = {
   confirmedTimeline: '24 months (Jan 2025 - Dec 2026)',
   confirmedBudget: '£12.5 million',
   deliveryApproach: 'Our delivery approach implements collaborative design coordination through advanced BIM workflows, stakeholder integration at key milestones, and continuous value engineering. We will execute a phased delivery strategy with integrated sustainability analysis and proactive risk management throughout all project stages to ensure on-time, on-budget completion.',
-  referencedMaterial: 'This BEP references: Exchange Information Requirements (EIR) v2.1, Project Information Requirements (PIR) dated March 2024, ISO 19650-2:2018, BS 1192:2007+A2:2016, PAS 1192-2:2013, Client BIM Standards Manual v3.0, Health & Safety Information Requirements, and all applicable RIBA Plan of Work 2020 deliverables.',
+  referencedMaterialIntro: 'This BEP references and responds to the following documents and standards:',
+  referencedMaterialTable: [
+    { 'Document/Standard': 'Exchange Information Requirements (EIR)', 'Version/Date': 'v2.1 - March 2024', 'Relevance/Purpose': 'Defines client information requirements and delivery expectations' },
+    { 'Document/Standard': 'Project Information Requirements (PIR)', 'Version/Date': 'March 2024', 'Relevance/Purpose': 'Specifies project-specific information delivery standards' },
+    { 'Document/Standard': 'ISO 19650-2:2018', 'Version/Date': '2018', 'Relevance/Purpose': 'Information management framework for delivery phase' },
+    { 'Document/Standard': 'BS 1192:2007+A2:2016', 'Version/Date': '2007+A2:2016', 'Relevance/Purpose': 'Collaborative production of architectural, engineering and construction information' },
+    { 'Document/Standard': 'PAS 1192-2:2013', 'Version/Date': '2013', 'Relevance/Purpose': 'Specification for information management for the capital/delivery phase' },
+    { 'Document/Standard': 'Client BIM Standards Manual', 'Version/Date': 'v3.0', 'Relevance/Purpose': 'Client-specific BIM standards and procedures' },
+    { 'Document/Standard': 'Health & Safety Information Requirements', 'Version/Date': 'Current', 'Relevance/Purpose': 'CDM regulations and safety information requirements' },
+    { 'Document/Standard': 'RIBA Plan of Work 2020', 'Version/Date': '2020', 'Relevance/Purpose': 'Project stage definitions and deliverable milestones' }
+  ],
   leadAppointedParty: 'Smith & Associates Architects Ltd.',
   informationManager: 'Sarah Johnson, BIM Manager (RICS Certified, ISO 19650 Lead)',
   assignedTeamLeaders: [

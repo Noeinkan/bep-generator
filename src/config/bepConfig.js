@@ -113,7 +113,8 @@ const CONFIG = {
           { name: 'confirmedBudget', label: 'Confirmed Project Budget', type: 'budget', placeholder: '£12.5 million' },
           { name: 'projectDescription', label: 'Project Description', type: 'textarea', rows: 4, placeholder: 'A modern 8-storey office complex featuring sustainable design principles, flexible workspace layouts, and integrated smart building technologies. The building will accommodate 800+ employees across multiple tenants with shared amenities including conference facilities, cafeteria, and underground parking for 200 vehicles.' },
           { name: 'deliveryApproach', label: 'Confirmed Delivery Approach', type: 'textarea', rows: 3, placeholder: 'Our delivery approach implements collaborative design coordination through advanced BIM workflows, stakeholder integration at key milestones, and continuous value engineering. We will execute a phased delivery strategy with integrated sustainability analysis and proactive risk management throughout all project stages to ensure on-time, on-budget completion.' },
-          { name: 'referencedMaterial', label: 'Referenced Material', type: 'textarea', rows: 3, placeholder: 'This BEP references: Exchange Information Requirements (EIR) v2.1, Project Information Requirements (PIR) dated March 2024, ISO 19650-2:2018, BS 1192:2007+A2:2016, PAS 1192-2:2013, Client BIM Standards Manual v3.0, Health & Safety Information Requirements, and all applicable RIBA Plan of Work 2020 deliverables.' }
+          { name: 'referencedMaterialIntro', label: 'Referenced Documents and Standards', type: 'textarea', rows: 2, placeholder: 'This BEP references and responds to the following documents and standards:' },
+          { name: 'referencedMaterialTable', label: '', type: 'table', columns: ['Document/Standard', 'Version/Date', 'Relevance/Purpose'] }
         ]
       },
       1: {
