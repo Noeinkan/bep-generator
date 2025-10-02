@@ -11,10 +11,10 @@ import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { TableHeader } from '@tiptap/extension-table-header';
-import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import FontSize from './extensions/FontSize';
+import ResizableImage from './extensions/ResizableImage';
 import TipTapToolbar from './TipTapToolbar';
 import FindReplaceDialog from './FindReplaceDialog';
 import TableBubbleMenu from './TableBubbleMenu';
@@ -59,6 +59,8 @@ const TipTapEditor = ({
       }),
       Table.configure({
         resizable: true,
+        handleWidth: 5,
+        cellMinWidth: 50,
         HTMLAttributes: {
           class: 'tiptap-table',
         },
@@ -66,7 +68,7 @@ const TipTapEditor = ({
       TableRow,
       TableCell,
       TableHeader,
-      Image.configure({
+      ResizableImage.configure({
         inline: true,
         allowBase64: true,
         HTMLAttributes: {
@@ -105,7 +107,7 @@ const TipTapEditor = ({
 
           reader.onload = (e) => {
             const { schema } = view.state;
-            const node = schema.nodes.image.create({
+            const node = schema.nodes.resizableImage.create({
               src: e.target.result,
             });
             const transaction = view.state.tr.replaceSelectionWith(node);
@@ -134,7 +136,7 @@ const TipTapEditor = ({
               const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
 
               if (coordinates) {
-                const node = schema.nodes.image.create({
+                const node = schema.nodes.resizableImage.create({
                   src: e.target.result,
                 });
                 const transaction = view.state.tr.insert(coordinates.pos, node);
@@ -296,71 +298,66 @@ const TipTapEditor = ({
         }
 
         /* Table styles */
-        .tiptap-table {
+        .tiptap-editor table {
           border-collapse: collapse;
           table-layout: fixed;
           width: 100%;
           margin: 1rem 0;
           overflow: hidden;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-          border-radius: 0.5rem;
         }
 
-        .tiptap-table td,
-        .tiptap-table th {
-          border: 2px solid #e5e7eb;
+        .tiptap-editor table td,
+        .tiptap-editor table th {
+          border: 1px solid #000000;
           box-sizing: border-box;
           min-width: 3em;
-          padding: 0.75rem;
+          padding: 0.5rem;
           position: relative;
           vertical-align: top;
-          transition: background-color 0.15s ease, border-color 0.15s ease;
         }
 
-        .tiptap-table td:hover,
-        .tiptap-table th:hover {
-          background-color: #f9fafb;
-          border-color: #d1d5db;
-        }
-
-        .tiptap-table th {
+        .tiptap-editor table th {
           background-color: #f3f4f6;
           font-weight: 600;
           text-align: left;
-          color: #374151;
         }
 
-        .tiptap-table .selectedCell {
+        .tiptap-editor table .selectedCell {
           background-color: #dbeafe !important;
           border-color: #3b82f6 !important;
           box-shadow: inset 0 0 0 1px #3b82f6;
         }
 
-        /* Table cell resize handle */
-        .tiptap-table .column-resize-handle {
+        /* Column resize handle */
+        .tiptap-editor .column-resize-handle {
           position: absolute;
           right: -2px;
           top: 0;
-          bottom: 0;
+          bottom: -2px;
           width: 4px;
           background-color: #3b82f6;
+          pointer-events: none;
+          z-index: 20;
+        }
+
+        .tiptap-editor .resize-cursor {
           cursor: col-resize;
+        }
+
+        /* ProseMirror table resize handle visibility */
+        .tiptap-editor .ProseMirror-table-handle {
+          position: absolute;
+          background-color: #3b82f6;
           opacity: 0;
-          transition: opacity 0.15s ease;
+          transition: opacity 0.2s;
         }
 
-        .tiptap-table td:hover .column-resize-handle,
-        .tiptap-table th:hover .column-resize-handle {
+        .tiptap-editor .ProseMirror-table-handle:hover {
+          opacity: 1;
+        }
+
+        .tiptap-editor table:hover .ProseMirror-table-handle {
           opacity: 0.5;
-        }
-
-        .tiptap-table .column-resize-handle:hover {
-          opacity: 1 !important;
-        }
-
-        /* Table focus state */
-        .tiptap-table:focus-within {
-          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
         /* Image styles */
@@ -393,8 +390,17 @@ const TipTapEditor = ({
           margin: 0.5rem 0;
         }
 
+        .tiptap-editor ul {
+          list-style-type: disc;
+        }
+
+        .tiptap-editor ol {
+          list-style-type: decimal;
+        }
+
         .tiptap-editor li {
           margin: 0.25rem 0;
+          display: list-item;
         }
 
         /* Heading styles */

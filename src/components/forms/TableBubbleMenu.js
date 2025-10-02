@@ -1,5 +1,4 @@
-import React from 'react';
-import { BubbleMenu } from '@tiptap/react/menus';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Table as TableIcon,
   Plus,
@@ -11,10 +10,47 @@ import {
   ArrowDown,
   ArrowLeft,
   ArrowRight,
+  Type,
 } from 'lucide-react';
 
 const TableBubbleMenu = ({ editor }) => {
-  if (!editor) return null;
+  const [showMenu, setShowMenu] = useState(false);
+  const [showCaptionInput, setShowCaptionInput] = useState(false);
+  const [caption, setCaption] = useState('');
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    if (!editor) return;
+
+    const updateMenu = () => {
+      const isInTableCell = editor.isActive('tableCell') || editor.isActive('tableHeader');
+
+      if (isInTableCell) {
+        const { from } = editor.state.selection;
+        const start = editor.view.coordsAtPos(from);
+
+        setPosition({
+          top: start.top - 60,
+          left: start.left,
+        });
+        setShowMenu(true);
+      } else {
+        setShowMenu(false);
+        setShowCaptionInput(false);
+      }
+    };
+
+    editor.on('selectionUpdate', updateMenu);
+    editor.on('transaction', updateMenu);
+
+    return () => {
+      editor.off('selectionUpdate', updateMenu);
+      editor.off('transaction', updateMenu);
+    };
+  }, [editor]);
+
+  if (!editor || !showMenu) return null;
 
   const ButtonGroup = ({ children, label }) => (
     <div className="flex flex-col gap-1">
@@ -40,24 +76,22 @@ const TableBubbleMenu = ({ editor }) => {
   const Divider = () => <div className="w-px h-8 bg-gray-300 mx-1" />;
 
   return (
-    <BubbleMenu
-      editor={editor}
-      options={{
-        offset: 8,
-        placement: 'top',
+    <div
+      ref={menuRef}
+      className="bg-white border border-gray-300 rounded-lg shadow-lg p-2 flex gap-2 items-start"
+      style={{
+        position: 'fixed',
+        top: `${position.top}px`,
+        left: `${position.left}px`,
+        zIndex: 1000,
+        animation: 'fadeIn 0.15s ease-in-out',
       }}
-      shouldShow={({ editor, view, state, from, to }) => {
-        // Show only when inside a table cell
-        const isInTableCell = editor.isActive('tableCell') || editor.isActive('tableHeader');
-        return isInTableCell;
-      }}
-      className="bubble-menu-table bg-white border border-gray-300 rounded-lg shadow-lg p-2 flex gap-2 items-start"
     >
       {/* Row Operations */}
-      <ButtonGroup label="Righe">
+      <ButtonGroup label="Rows">
         <MenuButton
           onClick={() => editor.chain().focus().addRowBefore().run()}
-          title="Aggiungi riga sopra"
+          title="Add row above"
         >
           <div className="flex flex-col items-center">
             <ArrowUp size={14} />
@@ -66,7 +100,7 @@ const TableBubbleMenu = ({ editor }) => {
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().addRowAfter().run()}
-          title="Aggiungi riga sotto"
+          title="Add row below"
         >
           <div className="flex flex-col items-center">
             <Plus size={12} />
@@ -75,7 +109,7 @@ const TableBubbleMenu = ({ editor }) => {
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().deleteRow().run()}
-          title="Elimina riga"
+          title="Delete row"
         >
           <Minus size={16} />
         </MenuButton>
@@ -84,10 +118,10 @@ const TableBubbleMenu = ({ editor }) => {
       <Divider />
 
       {/* Column Operations */}
-      <ButtonGroup label="Colonne">
+      <ButtonGroup label="Columns">
         <MenuButton
           onClick={() => editor.chain().focus().addColumnBefore().run()}
-          title="Aggiungi colonna a sinistra"
+          title="Add column left"
         >
           <div className="flex items-center">
             <ArrowLeft size={14} />
@@ -96,7 +130,7 @@ const TableBubbleMenu = ({ editor }) => {
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().addColumnAfter().run()}
-          title="Aggiungi colonna a destra"
+          title="Add column right"
         >
           <div className="flex items-center">
             <Plus size={12} />
@@ -105,7 +139,7 @@ const TableBubbleMenu = ({ editor }) => {
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().deleteColumn().run()}
-          title="Elimina colonna"
+          title="Delete column"
         >
           <Minus size={16} />
         </MenuButton>
@@ -114,18 +148,18 @@ const TableBubbleMenu = ({ editor }) => {
       <Divider />
 
       {/* Cell Operations */}
-      <ButtonGroup label="Celle">
+      <ButtonGroup label="Cells">
         <MenuButton
           onClick={() => editor.chain().focus().mergeCells().run()}
           disabled={!editor.can().mergeCells()}
-          title="Unisci celle"
+          title="Merge cells"
         >
           <Merge size={16} />
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().splitCell().run()}
           disabled={!editor.can().splitCell()}
-          title="Dividi cella"
+          title="Split cell"
         >
           <Split size={16} />
         </MenuButton>
@@ -134,32 +168,89 @@ const TableBubbleMenu = ({ editor }) => {
       <Divider />
 
       {/* Table Operations */}
-      <ButtonGroup label="Tabella">
+      <ButtonGroup label="Table">
+        <MenuButton
+          onClick={() => setShowCaptionInput(!showCaptionInput)}
+          title="Add caption"
+        >
+          <Type size={16} />
+        </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().deleteTable().run()}
-          title="Elimina tabella"
+          title="Delete table"
         >
           <Trash2 size={16} className="text-red-600" />
         </MenuButton>
       </ButtonGroup>
 
-      <style jsx>{`
-        .bubble-menu-table {
-          animation: fadeIn 0.15s ease-in-out;
-        }
+      {/* Caption Input */}
+      {showCaptionInput && (
+        <div className="absolute top-full left-0 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg p-3 z-30 min-w-[300px]">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Table Caption (appears above table):
+          </label>
+          <input
+            type="text"
+            value={caption}
+            onChange={(e) => setCaption(e.target.value)}
+            placeholder="Enter table caption..."
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-2"
+            autoFocus
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                // Insert caption before the table
+                const { state } = editor;
+                const { $anchor } = state.selection;
+                const tablePos = $anchor.before($anchor.depth - 2);
 
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(-5px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
-    </BubbleMenu>
+                editor.chain()
+                  .focus()
+                  .insertContentAt(tablePos, {
+                    type: 'paragraph',
+                    content: [{ type: 'text', text: caption, marks: [{ type: 'bold' }] }],
+                  })
+                  .run();
+
+                setCaption('');
+                setShowCaptionInput(false);
+              } else if (e.key === 'Escape') {
+                setShowCaptionInput(false);
+              }
+            }}
+          />
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                const { state } = editor;
+                const { $anchor } = state.selection;
+                const tablePos = $anchor.before($anchor.depth - 2);
+
+                editor.chain()
+                  .focus()
+                  .insertContentAt(tablePos, {
+                    type: 'paragraph',
+                    content: [{ type: 'text', text: caption, marks: [{ type: 'bold' }] }],
+                  })
+                  .run();
+
+                setCaption('');
+                setShowCaptionInput(false);
+              }}
+              className="flex-1 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+            >
+              Add Caption
+            </button>
+            <button
+              onClick={() => setShowCaptionInput(false)}
+              className="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

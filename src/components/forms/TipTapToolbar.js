@@ -26,6 +26,7 @@ import {
   ZoomIn,
   ZoomOut,
   FileText,
+  ChevronDown,
 } from 'lucide-react';
 import TemplateSelector from './TemplateSelector';
 import TableInsertDialog from './TableInsertDialog';
@@ -43,7 +44,18 @@ const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldN
 
   const addLink = useCallback(() => {
     if (linkUrl && editor) {
-      editor.chain().focus().setLink({ href: linkUrl }).run();
+      // If there's no text selected, we need to extend the selection to avoid creating an empty link
+      const { state } = editor;
+      const { from, to } = state.selection;
+
+      if (from === to) {
+        // No text selected - insert the URL as both text and link
+        editor.chain().focus().insertContent(`<a href="${linkUrl}">${linkUrl}</a>`).run();
+      } else {
+        // Text is selected - apply link to selection
+        editor.chain().focus().setLink({ href: linkUrl }).run();
+      }
+
       setLinkUrl('');
       setShowLinkInput(false);
     }
@@ -51,10 +63,26 @@ const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldN
 
   const addImage = useCallback(() => {
     if (editor) {
-      const url = window.prompt('Enter image URL:');
-      if (url) {
-        editor.chain().focus().setImage({ src: url }).run();
-      }
+      // Create a file input element
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+
+      input.onchange = (e) => {
+        const file = e.target.files?.[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const src = event.target.result;
+            if (src) {
+              editor.chain().focus().setImage({ src }).run();
+            }
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+
+      input.click();
     }
   }, [editor]);
 
@@ -245,7 +273,7 @@ const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldN
           type="button"
         >
           <div className="w-4 h-4 border border-gray-400 rounded" style={{ backgroundColor: currentColor }} />
-          <span className="text-xs">▼</span>
+          <ChevronDown size={12} />
         </button>
         {showColorPicker && (
           <div className="absolute top-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg p-2 z-20">
@@ -281,7 +309,7 @@ const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldN
           type="button"
         >
           <Highlighter size={18} style={{ color: currentHighlight }} />
-          <span className="text-xs">▼</span>
+          <ChevronDown size={12} />
         </button>
         {showHighlightPicker && (
           <div className="absolute top-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg p-2 z-20">

@@ -49,13 +49,13 @@ const TableInsertDialog = ({ onInsert, onClose }) => {
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-2">
             <TableIcon size={24} className="text-blue-600" />
-            <h3 className="text-xl font-semibold text-gray-800">Inserisci Tabella</h3>
+            <h3 className="text-xl font-semibold text-gray-800">Insert Table</h3>
           </div>
           <button
             onClick={onClose}
             className="p-1 rounded hover:bg-gray-100 transition-colors"
             type="button"
-            title="Chiudi"
+            title="Close"
           >
             <X size={20} />
           </button>
@@ -64,7 +64,7 @@ const TableInsertDialog = ({ onInsert, onClose }) => {
         {/* Presets */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Dimensioni predefinite:
+            Preset Sizes:
           </label>
           <div className="flex flex-wrap gap-2">
             {presets.map((preset) => (
@@ -87,11 +87,11 @@ const TableInsertDialog = ({ onInsert, onClose }) => {
         {/* Custom dimensions */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Dimensioni personalizzate:
+            Custom Dimensions:
           </label>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs text-gray-600 mb-1">Righe</label>
+              <label className="block text-xs text-gray-600 mb-1">Rows</label>
               <input
                 type="number"
                 min="1"
@@ -103,7 +103,7 @@ const TableInsertDialog = ({ onInsert, onClose }) => {
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-600 mb-1">Colonne</label>
+              <label className="block text-xs text-gray-600 mb-1">Columns</label>
               <input
                 type="number"
                 min="1"
@@ -125,13 +125,13 @@ const TableInsertDialog = ({ onInsert, onClose }) => {
               onChange={(e) => setWithHeaderRow(e.target.checked)}
               className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
             />
-            <span className="text-sm text-gray-700">Includi riga intestazione</span>
+            <span className="text-sm text-gray-700">Include header row</span>
           </label>
         </div>
 
         {/* Preview */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Anteprima:</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Preview:</label>
           <div className="border border-gray-300 rounded-lg p-3 bg-gray-50 overflow-auto">
             <table className="w-full border-collapse text-xs">
               <tbody>
@@ -165,14 +165,14 @@ const TableInsertDialog = ({ onInsert, onClose }) => {
             className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
             type="button"
           >
-            Inserisci Tabella
+            Insert Table
           </button>
           <button
             onClick={onClose}
             className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors"
             type="button"
           >
-            Annulla
+            Cancel
           </button>
         </div>
       </div>
