@@ -33,9 +33,11 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
 
   return (
     <div className="mb-8">
-      <label className="block text-lg font-semibold mb-4 text-gray-800">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
+      {label && (
+        <label className="block text-lg font-semibold mb-4 text-gray-800">
+          {label} {required && <span className="text-red-500">*</span>}
+        </label>
+      )}
 
       <div className="border rounded-xl overflow-hidden shadow-sm bg-white">
         <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200">
@@ -84,7 +86,6 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
                     </th>
                   ))}
                   <th className="w-16 px-2 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Actions
                   </th>
                 </tr>
               </thead>

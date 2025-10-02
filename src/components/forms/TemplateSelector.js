@@ -53,7 +53,12 @@ const TemplateSelector = ({ editor, onClose, fieldName, triggerRef }) => {
     if (!editor) return;
 
     // Get example text for the specific field
-    const exampleText = FIELD_EXAMPLES[fieldName] || INITIAL_DATA.projectDescription;
+    let exampleData = FIELD_EXAMPLES[fieldName] || INITIAL_DATA.projectDescription;
+
+    // If the data is an object with intro property, use the intro text
+    const exampleText = typeof exampleData === 'object' && exampleData?.intro
+      ? exampleData.intro
+      : exampleData;
 
     // Convert to HTML paragraph
     const htmlContent = `<p>${exampleText}</p>`;
@@ -76,7 +81,10 @@ const TemplateSelector = ({ editor, onClose, fieldName, triggerRef }) => {
   };
 
   // Get the example text to show preview
-  const exampleText = FIELD_EXAMPLES[fieldName] || INITIAL_DATA.projectDescription;
+  let exampleData = FIELD_EXAMPLES[fieldName] || INITIAL_DATA.projectDescription;
+  const exampleText = typeof exampleData === 'object' && exampleData?.intro
+    ? exampleData.intro
+    : exampleData;
   const previewText = exampleText.length > 200 ? exampleText.substring(0, 200) + '...' : exampleText;
 
   return (
