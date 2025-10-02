@@ -3,6 +3,18 @@ import InputField from '../forms/InputField';
 import CONFIG from '../../config/bepConfig';
 import InformationDeliveryPlanning from '../pages/InformationDeliveryPlanning';
 
+// Field types that should span full width (both columns) in the grid layout
+const FULL_WIDTH_FIELD_TYPES = [
+  'textarea',
+  'checkbox',
+  'table',
+  'introTable',
+  'fileStructure',
+  'cdeDiagram',
+  'mindmap',
+  'orgchart'
+];
+
 const FormStep = ({ stepIndex, formData, updateFormData, errors, bepType }) => {
   // Safety check - ensure we have the required props
   if (!formData || !bepType) {
@@ -37,7 +49,7 @@ const FormStep = ({ stepIndex, formData, updateFormData, errors, bepType }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {stepConfig.fields.map(field => (
-          <div key={field.name} className={field.type === 'textarea' || field.type === 'checkbox' || field.type === 'table' || field.type === 'fileStructure' || field.type === 'cdeDiagram' || field.type === 'mindmap' || field.type === 'orgchart' ? 'md:col-span-2' : ''}>
+          <div key={field.name} className={FULL_WIDTH_FIELD_TYPES.includes(field.type) ? 'md:col-span-2' : ''}>
             <InputField
               field={field}
               value={formData ? formData[field.name] : ''}

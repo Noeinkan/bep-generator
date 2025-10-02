@@ -17,7 +17,15 @@ const INITIAL_DATA = {
   // Executive Summary fields
   projectContext: 'This BEP outlines our comprehensive approach to delivering the Greenfield Office Complex using advanced BIM methodologies. Our strategy emphasizes collaborative design coordination, data-driven decision making, and seamless information handover to support long-term facility management. The project will serve as a flagship example of sustainable commercial development in the region.',
   bimStrategy: 'Our BIM strategy centers on early clash detection, integrated 4D/5D modeling for construction sequencing and cost control, and comprehensive digital twin creation for facilities management. We will utilize federated models across all disciplines with real-time collaboration through cloud-based platforms, ensuring design quality and construction efficiency while reducing project risks.',
-  keyCommitments: 'We commit to full ISO 19650-2:2018 compliance throughout all project phases. Key deliverables include: coordinated federated models at each design milestone, comprehensive COBie data for asset handover, 4D construction sequences for all major building elements, and a complete digital twin with integrated IoT sensor data. All information will be delivered through our cloud-based CDE with full audit trails and version control.',
+  keyCommitments: {
+    intro: 'We commit to full ISO 19650-2:2018 compliance throughout all project phases. Key deliverables include:',
+    table: [
+      { 'Deliverable': 'Coordinated Federated Models', 'Description': 'Multi-discipline coordinated models at each design milestone with clash detection', 'Due Date': 'Each milestone' },
+      { 'Deliverable': 'COBie Data Handover', 'Description': 'Comprehensive asset data for facility management integration', 'Due Date': 'Project completion' },
+      { 'Deliverable': '4D Construction Sequences', 'Description': 'Time-phased construction models for all major building elements', 'Due Date': 'Pre-construction' },
+      { 'Deliverable': 'Digital Twin with IoT', 'Description': 'Complete digital twin with integrated IoT sensor data', 'Due Date': 'Project handover' }
+    ]
+  },
   keyContacts: [
     { 'Role': 'Project Director', 'Name': 'John Smith', 'Company': 'Smith & Associates Architects Ltd.', 'Contact Details': 'j.smith@smithassociates.com | +44 20 1234 5678' },
     { 'Role': 'BIM Manager', 'Name': 'Sarah Johnson', 'Company': 'Smith & Associates Architects Ltd.', 'Contact Details': 's.johnson@smithassociates.com | +44 20 1234 5679' },
@@ -45,17 +53,19 @@ const INITIAL_DATA = {
   confirmedTimeline: '24 months (Jan 2025 - Dec 2026)',
   confirmedBudget: '£12.5 million',
   deliveryApproach: 'Our delivery approach implements collaborative design coordination through advanced BIM workflows, stakeholder integration at key milestones, and continuous value engineering. We will execute a phased delivery strategy with integrated sustainability analysis and proactive risk management throughout all project stages to ensure on-time, on-budget completion.',
-  referencedMaterialIntro: 'This BEP references and responds to the following documents and standards:',
-  referencedMaterialTable: [
-    { 'Document/Standard': 'Exchange Information Requirements (EIR)', 'Version/Date': 'v2.1 - March 2024', 'Relevance/Purpose': 'Defines client information requirements and delivery expectations' },
-    { 'Document/Standard': 'Project Information Requirements (PIR)', 'Version/Date': 'March 2024', 'Relevance/Purpose': 'Specifies project-specific information delivery standards' },
-    { 'Document/Standard': 'ISO 19650-2:2018', 'Version/Date': '2018', 'Relevance/Purpose': 'Information management framework for delivery phase' },
-    { 'Document/Standard': 'BS 1192:2007+A2:2016', 'Version/Date': '2007+A2:2016', 'Relevance/Purpose': 'Collaborative production of architectural, engineering and construction information' },
-    { 'Document/Standard': 'PAS 1192-2:2013', 'Version/Date': '2013', 'Relevance/Purpose': 'Specification for information management for the capital/delivery phase' },
-    { 'Document/Standard': 'Client BIM Standards Manual', 'Version/Date': 'v3.0', 'Relevance/Purpose': 'Client-specific BIM standards and procedures' },
-    { 'Document/Standard': 'Health & Safety Information Requirements', 'Version/Date': 'Current', 'Relevance/Purpose': 'CDM regulations and safety information requirements' },
-    { 'Document/Standard': 'RIBA Plan of Work 2020', 'Version/Date': '2020', 'Relevance/Purpose': 'Project stage definitions and deliverable milestones' }
-  ],
+  referencedMaterial: {
+    intro: 'This BEP references and responds to the following documents and standards:',
+    table: [
+      { 'Document/Standard': 'Exchange Information Requirements (EIR)', 'Version/Date': 'v2.1 - March 2024', 'Relevance/Purpose': 'Defines client information requirements and delivery expectations' },
+      { 'Document/Standard': 'Project Information Requirements (PIR)', 'Version/Date': 'March 2024', 'Relevance/Purpose': 'Specifies project-specific information delivery standards' },
+      { 'Document/Standard': 'ISO 19650-2:2018', 'Version/Date': '2018', 'Relevance/Purpose': 'Information management framework for delivery phase' },
+      { 'Document/Standard': 'BS 1192:2007+A2:2016', 'Version/Date': '2007+A2:2016', 'Relevance/Purpose': 'Collaborative production of architectural, engineering and construction information' },
+      { 'Document/Standard': 'PAS 1192-2:2013', 'Version/Date': '2013', 'Relevance/Purpose': 'Specification for information management for the capital/delivery phase' },
+      { 'Document/Standard': 'Client BIM Standards Manual', 'Version/Date': 'v3.0', 'Relevance/Purpose': 'Client-specific BIM standards and procedures' },
+      { 'Document/Standard': 'Health & Safety Information Requirements', 'Version/Date': 'Current', 'Relevance/Purpose': 'CDM regulations and safety information requirements' },
+      { 'Document/Standard': 'RIBA Plan of Work 2020', 'Version/Date': '2020', 'Relevance/Purpose': 'Project stage definitions and deliverable milestones' }
+    ]
+  },
   leadAppointedParty: 'Smith & Associates Architects Ltd.',
   informationManager: 'Sarah Johnson, BIM Manager (RICS Certified, ISO 19650 Lead)',
   assignedTeamLeaders: [
