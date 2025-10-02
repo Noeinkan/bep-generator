@@ -120,14 +120,6 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
                 </span>
               )}
             </div>
-            <button
-              type="button"
-              onClick={addRow}
-              className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-105 shadow-md"
-            >
-              <span className="text-lg">+</span>
-              <span>Add Row</span>
-            </button>
           </div>
         </div>
 
@@ -299,6 +291,18 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
             </table>
           </div>
         )}
+      </div>
+
+      {/* Add Row button - always visible below the table */}
+      <div className="flex justify-end mt-4">
+        <button
+          type="button"
+          onClick={addRow}
+          className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-105 shadow-md"
+        >
+          <span className="text-lg">+</span>
+          <span>Add Row</span>
+        </button>
       </div>
 
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}

@@ -114,12 +114,46 @@ const INITIAL_DATA = {
   // Legacy fields for backward compatibility (converted from table format)
   taskTeamLeaders: 'Architecture: John Smith (Modern Design Associates)\nStructural: Emily Chen (Engineering Excellence Ltd.)\nMEP: Michael Rodriguez (Advanced Systems Group)\nFacades: David Wilson (Curtain Wall Experts Ltd.)',
   appointedParties: 'Architecture: Modern Design Associates\nStructural: Engineering Excellence Ltd.\nMEP: Advanced Systems Group\nQuantity Surveyor: Cost Management Partners\nSpecialist Facades: Curtain Wall Experts Ltd.',
+  loinIntroduction: `Introduction to Level of Information Need (LOIN) - Define the information requirements that specify what information is needed, at what level of detail, and for what purposes.
+
+This section establishes the foundation for information delivery by linking to the Project Information Requirements (PIR) and Employer's Information Requirements (EIR) defined earlier in the BEP.`,
   informationPurposes: ['Design Development', 'Construction Planning', 'Quantity Surveying', 'Facility Management'],
-  geometricalInfo: 'LOD 350 for construction documentation phase, with dimensional accuracy of ±10mm for structural elements and ±5mm for MEP coordination points.',
-  alphanumericalInfo: 'All building elements must include material specifications, performance data, manufacturer information, maintenance requirements, and warranty details.',
-  documentationInfo: 'Construction drawings, specifications, schedules, O&M manuals, warranty documents, and asset registers in digital format.',
+  geometricalInfo: {
+    intro: `Describe the purpose of geometrical requirements (e.g., "Support interdisciplinary coordination and visualization"). Specify the LOD standard reference (e.g., UNI EN 17412-1, NBS BIM Object Standard).`,
+    table: [
+      { 'Element': 'Structures (beams, columns)', 'Phase (RIBA)': 'Stage 2 (Concept)', 'LOD': 'LOD 100', 'Purpose': 'Preliminary visualization', 'Verification': 'Basic dimensional control', 'Delivery Format': 'IFC 4.0' },
+      { 'Element': 'MEP systems (ducts)', 'Phase (RIBA)': 'Stage 4 (Technical Design)', 'LOD': 'LOD 300', 'Purpose': 'Clash detection', 'Verification': 'Solibri audit (tolerance ±5mm)', 'Delivery Format': 'IFC 4.0, Revit 2025' },
+      { 'Element': 'Facades', 'Phase (RIBA)': 'Stage 3 (Developed Design)', 'LOD': 'LOD 200', 'Purpose': 'Energy analysis', 'Verification': 'Geometric compliance', 'Delivery Format': 'IFC 4.0' }
+    ]
+  },
+  alphanumericalInfo: {
+    intro: `General Description: Introduce the purpose of alphanumerical attributes (e.g., "Support facility management and regulatory compliance"). Cite standards like COBie or BS 1192-4.`,
+    table: [
+      { 'Element': 'HVAC Pump', 'Phase (RIBA)': 'Stage 5 (Construction)', 'Attributes (LOI)': 'Model, Power, InstallationDate, WarrantyDuration', 'Purpose': 'Facility Management', 'Verification': 'COBie validation in Excel', 'Delivery Format': 'COBie XLS' },
+      { 'Element': 'Walls', 'Phase (RIBA)': 'Stage 3 (Developed Design)', 'Attributes (LOI)': 'Material, Thickness, UniclassCode', 'Purpose': 'Cost analysis', 'Verification': 'Attribute check in CDE', 'Delivery Format': 'BIM Database' },
+      { 'Element': 'Windows', 'Phase (RIBA)': 'Stage 6 (Handover)', 'Attributes (LOI)': 'U-Value, MaintenanceSchedule', 'Purpose': 'Maintenance', 'Verification': 'Validation report', 'Delivery Format': 'COBie XLS' }
+    ]
+  },
+  documentationInfo: {
+    intro: `General Description: Introduce the purpose of documents (e.g., "Provide maintenance manuals or compliance reports"). Cite standards (e.g., PDF/A for long-term archiving).`,
+    table: [
+      { 'Document': 'O&M Manual', 'Phase (RIBA)': 'Stage 6 (Handover)', 'Detail': 'Maintenance instructions, technical data sheets', 'Purpose': 'Facility Management', 'Verification': 'Completeness check', 'Delivery Format': 'PDF/A, max 10MB' },
+      { 'Document': 'Clash Detection Report', 'Phase (RIBA)': 'Stage 4 (Technical Design)', 'Detail': 'List of resolved clashes', 'Purpose': 'Coordination', 'Verification': 'Solibri validation', 'Delivery Format': 'PDF' },
+      { 'Document': 'Material Specification Sheet', 'Phase (RIBA)': 'Stage 3 (Developed Design)', 'Detail': 'Material specifications', 'Purpose': 'Cost estimation', 'Verification': 'EIR compliance', 'Delivery Format': 'PDF' }
+    ]
+  },
   informationFormats: ['IFC 4', 'PDF', 'BCF 2.1', 'DWG', 'COBie'],
-  projectInformationRequirements: 'Project Information Requirements specify deliverable information to support asset management objectives: integrated 3D models with embedded property data for space management systems, energy consumption monitoring through IoT sensor integration, preventive maintenance scheduling with equipment lifecycle data, tenant fit-out guidelines with services capacity information, building performance analytics for continuous optimisation, digital twin connectivity for predictive maintenance, compliance monitoring systems for regulatory reporting, and structured data formats supporting client\'s existing CAFM systems and sustainability reporting requirements.',
+  projectInformationRequirements: `Define the Project Information Requirements (PIR) - the information needed to support asset management and operational objectives beyond project delivery.
+
+Address:
+• Asset management system integration
+• Space management and occupancy data
+• Energy monitoring and performance tracking
+• Maintenance planning and scheduling
+• Digital twin connectivity
+• Building performance analytics
+• Compliance and regulatory reporting`,
+  loinTransition: `The LOIN requirements defined here will be satisfied through the delivery plans described in the Information Delivery Planning Sect., with MIDP and TIDPs that map each deliverable to specific LOD/LOIN.`,
   midpDescription: 'The MIDP coordinates all discipline-specific TIDPs into a unified delivery schedule aligned with RIBA stages and construction milestones. Information exchanges occur at stage gates with formal approval processes.',
   keyMilestones: [
     { 'Stage/Phase': 'Stage 2', 'Milestone Description': 'Concept Design Complete', 'Deliverables': 'Basic geometry and spatial coordination models', 'Due Date': 'Month 6' },
