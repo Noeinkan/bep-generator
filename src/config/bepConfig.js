@@ -93,8 +93,7 @@ const CONFIG = {
       2: {
         title: 'Proposed Team and Capabilities',
         fields: [
-          { name: 'proposedLead', label: 'Proposed Lead Appointed Party', required: true, type: 'text', placeholder: 'Smith & Associates Architects Ltd.' },
-          { name: 'proposedInfoManager', label: 'Proposed Information Manager', required: true, type: 'text', placeholder: 'Sarah Johnson, BIM Manager (RICS Certified, ISO 19650 Lead)' },
+          { name: 'proposedLeadAndInfoManagers', label: 'Lead Appointed Party', required: true, type: 'table', columns: ['Lead Appointed Party', 'Information Manager'] },
           { name: 'proposedTeamLeaders', label: 'Proposed Task Team Leaders', type: 'table', columns: ['Discipline', 'Name & Title', 'Company', 'Experience'] },
           { name: 'teamCapabilities', label: 'Team Capabilities and Experience', type: 'textarea', rows: 4, placeholder: 'Our multidisciplinary team brings 15+ years of BIM implementation experience across £500M+ of commercial projects. Key capabilities include: ISO 19650 certified information management, advanced parametric design using Revit/Grasshopper, integrated MEP coordination, 4D/5D modeling expertise, and digital twin development. Recent projects include the award-winning Tech Hub (£25M) and Riverside Commercial Center (£18M).' },
           { name: 'subcontractors', label: 'Proposed Subcontractors/Partners', type: 'table', columns: ['Role/Service', 'Company Name', 'Certification', 'Contact'] }
@@ -130,8 +129,7 @@ const CONFIG = {
         title: 'Confirmed Team and Responsibilities',
         fields: [
           { name: 'organizationalStructure', label: 'Delivery Team\'s Organisational Structure and Composition', type: 'orgchart' },
-          { name: 'leadAppointedParty', label: 'Lead Appointed Party', required: true, type: 'text', placeholder: 'Smith & Associates Architects Ltd.' },
-          { name: 'informationManager', label: 'Information Manager', required: true, type: 'text', placeholder: 'Sarah Johnson, BIM Manager (RICS Certified, ISO 19650 Lead)' },
+          { name: 'leadAndInfoManagers', label: 'Lead Appointed Party', required: true, type: 'table', columns: ['Lead Appointed Party', 'Information Manager'] },
           { name: 'taskTeamsBreakdown', label: 'Task Teams', type: 'table', columns: ['Task Team', 'Discipline', 'Leader', 'Leader Contact', 'Company'] },
           { name: 'resourceAllocation', label: 'Resource Allocation', type: 'textarea', rows: 3, placeholder: 'The confirmed delivery team comprises 45 specialists across all disciplines: 12 architects, 8 structural engineers, 10 MEP engineers, 6 quantity surveyors, 4 project managers, and 5 BIM specialists. Resource allocation follows RIBA stages with peak deployment during Stage 4 (Technical Design) requiring 35 FTE personnel. Specialist consultants for sustainability and facade engineering will be engaged for 6-month periods during critical design phases.' },
           { name: 'informationManagementResponsibilities', label: 'Information Management Responsibilities', type: 'textarea', rows: 3, placeholder: 'The Information Manager oversees all aspects of information production, validation, and exchange in accordance with ISO 19650-2:2018. Responsibilities include: establishing and maintaining the CDE, coordinating task information delivery plans (TIDPs), ensuring model federation quality, managing information security protocols, conducting regular audits of information deliverables, and facilitating cross-disciplinary information exchanges. The IM reports directly to the project director and client representative.' }

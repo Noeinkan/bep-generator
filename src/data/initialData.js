@@ -13,6 +13,13 @@ const INITIAL_DATA = {
   tenderApproach: 'Our approach emphasizes collaborative design coordination through advanced BIM workflows, early stakeholder engagement, and integrated sustainability analysis. We propose a phased delivery strategy with continuous value engineering and risk mitigation throughout all project stages.',
   proposedLead: 'Smith & Associates Architects Ltd.',
   proposedInfoManager: 'Sarah Johnson, BIM Manager (RICS Certified, ISO 19650 Lead)',
+  proposedLeadAndInfoManagers: {
+    columns: ['Lead Appointed Party', 'Information Manager'],
+    data: [
+      { 'Lead Appointed Party': 'Smith & Associates Architects Ltd.', 'Information Manager': 'Sarah Johnson, BIM Manager (RICS Certified, ISO 19650 Lead)' },
+      { 'Lead Appointed Party': 'Jones Engineering Consultants', 'Information Manager': 'Michael Chen, Information Coordinator (ISO 19650-2 Certified)' }
+    ]
+  },
 
   // Executive Summary fields
   projectContext: 'This BEP outlines our comprehensive approach to delivering the Greenfield Office Complex using advanced BIM methodologies. Our strategy emphasizes collaborative design coordination, data-driven decision making, and seamless information handover to support long-term facility management. The project will serve as a flagship example of sustainable commercial development in the region.',
@@ -68,6 +75,13 @@ const INITIAL_DATA = {
   },
   leadAppointedParty: 'Smith & Associates Architects Ltd.',
   informationManager: 'Sarah Johnson, BIM Manager (RICS Certified, ISO 19650 Lead)',
+  leadAndInfoManagers: {
+    columns: ['Lead Appointed Party', 'Information Manager'],
+    data: [
+      { 'Lead Appointed Party': 'Smith & Associates Architects Ltd.', 'Information Manager': 'Sarah Johnson, BIM Manager (RICS Certified, ISO 19650 Lead)' },
+      { 'Lead Appointed Party': 'Jones Engineering Consultants', 'Information Manager': 'Michael Chen, Information Coordinator (ISO 19650-2 Certified)' }
+    ]
+  },
   assignedTeamLeaders: [
     { 'Discipline': 'Architecture', 'Name & Title': 'John Smith, Project Director', 'Company': 'Modern Design Associates', 'Role Details': 'Overall design coordination and client liaison' },
     { 'Discipline': 'Structural', 'Name & Title': 'Emily Chen, Senior Engineer', 'Company': 'Engineering Excellence Ltd.', 'Role Details': 'Structural design and analysis coordination' },

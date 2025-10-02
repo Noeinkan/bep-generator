@@ -11,6 +11,7 @@ import TipTapEditor from './TipTapEditor';
 import TimelineInput from './TimelineInput';
 import BudgetInput from './BudgetInput';
 import FieldHelpTooltip from './FieldHelpTooltip';
+import DynamicCheckboxField from './DynamicCheckboxField';
 import HELP_CONTENT from '../../data/helpContentData';
 
 const InputField = React.memo(({ field, value, onChange, error, formData = {} }) => {
@@ -183,6 +184,21 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
       );
 
     case 'checkbox':
+      // Usa il componente dinamico per i campi che beneficiano di aggiunta/rimozione opzioni
+      // (es. bimUses, informationPurposes, etc.)
+      if (name === 'bimUses' || name === 'informationPurposes' || name === 'bimSoftware' || name === 'fileFormats') {
+        return (
+          <DynamicCheckboxField
+            field={field}
+            value={value}
+            onChange={onChange}
+            error={error}
+            optionsList={optionsList || []}
+          />
+        );
+      }
+
+      // Fallback al componente checkbox standard per altri campi
       return (
         <div>
           <FieldLabel>
