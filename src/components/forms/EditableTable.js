@@ -141,8 +141,7 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
             <table className="w-full min-w-full table-fixed">
               <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
                 <tr>
-                  <th className="w-16 px-2 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Order
+                  <th className="w-10 px-1 py-3">
                   </th>
                   {columns.map((column, colIndex) => (
                     <th key={column} className={`px-4 py-3 text-left ${
@@ -167,7 +166,7 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
                                 }
                               }}
                               autoFocus
-                              className="w-full px-3 py-2 text-sm font-semibold border-2 border-blue-500 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                              className="w-full px-2 py-1.5 text-sm font-semibold border-2 border-blue-500 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                             />
                           ) : (
                             <div
@@ -175,7 +174,7 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
                                 setEditingColumn(colIndex);
                                 setEditingColumnName(column);
                               }}
-                              className="px-3 py-2 text-sm font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-white hover:shadow-sm rounded-lg transition-all"
+                              className="px-2 py-1.5 text-sm font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-white hover:shadow-sm rounded-lg transition-all"
                               title="Click to rename"
                             >
                               {column}
@@ -184,13 +183,13 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
                         </div>
 
                         {/* Column controls - appear on hover */}
-                        <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           {/* Move left */}
                           <button
                             type="button"
                             onClick={() => moveColumn(colIndex, colIndex - 1)}
                             disabled={colIndex === 0}
-                            className="p-1.5 rounded-md bg-white hover:bg-blue-50 text-blue-600 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white shadow-sm border border-gray-200 transition-all hover:scale-110"
+                            className="p-1 rounded-md bg-white hover:bg-blue-50 text-blue-600 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white shadow-sm border border-gray-200 transition-all hover:scale-110 text-xs"
                             title="Move left"
                           >
                             ←
@@ -203,10 +202,10 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
                               setEditingColumn(colIndex);
                               setEditingColumnName(column);
                             }}
-                            className="p-1.5 rounded-md bg-white hover:bg-green-50 text-green-600 shadow-sm border border-gray-200 transition-all hover:scale-110"
+                            className="p-1 rounded-md bg-white hover:bg-green-50 text-green-600 shadow-sm border border-gray-200 transition-all hover:scale-110"
                             title="Rename column"
                           >
-                            <Edit2 size={14} />
+                            <Edit2 size={12} />
                           </button>
 
                           {/* Move right */}
@@ -214,7 +213,7 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
                             type="button"
                             onClick={() => moveColumn(colIndex, colIndex + 1)}
                             disabled={colIndex === columns.length - 1}
-                            className="p-1.5 rounded-md bg-white hover:bg-blue-50 text-blue-600 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white shadow-sm border border-gray-200 transition-all hover:scale-110"
+                            className="p-1 rounded-md bg-white hover:bg-blue-50 text-blue-600 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white shadow-sm border border-gray-200 transition-all hover:scale-110 text-xs"
                             title="Move right"
                           >
                             →
@@ -224,23 +223,23 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
                           <button
                             type="button"
                             onClick={() => setColumnToDelete(colIndex)}
-                            className="p-1.5 rounded-md bg-white hover:bg-red-50 text-red-500 shadow-sm border border-gray-200 transition-all hover:scale-110"
+                            className="p-1 rounded-md bg-white hover:bg-red-50 text-red-500 shadow-sm border border-gray-200 transition-all hover:scale-110"
                             title="Remove column"
                           >
-                            <X size={14} />
+                            <X size={12} />
                           </button>
                         </div>
                       </div>
                     </th>
                   ))}
-                  <th className="w-20 px-2 py-3 text-center">
+                  <th className="w-12 px-1 py-3 text-center">
                     <button
                       type="button"
                       onClick={addColumn}
-                      className="p-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white shadow-md transition-all hover:scale-110"
+                      className="p-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white shadow-md transition-all hover:scale-110"
                       title="Add column"
                     >
-                      <Plus size={18} />
+                      <Plus size={16} />
                     </button>
                   </th>
                 </tr>
@@ -248,23 +247,23 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {tableData.map((row, rowIndex) => (
                   <tr key={rowIndex} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-2 py-2">
-                      <div className="flex flex-col items-center space-y-1">
+                    <td className="px-1 py-2">
+                      <div className="flex flex-col items-center space-y-0.5">
                         <button
                           type="button"
                           onClick={() => moveRow(rowIndex, rowIndex - 1)}
                           disabled={rowIndex === 0}
-                          className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-xs"
+                          className="w-5 h-5 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-xs"
                           title="Move up"
                         >
                           ↑
                         </button>
-                        <span className="text-xs font-medium text-gray-600 bg-gray-100 px-1 py-0.5 rounded">{rowIndex + 1}</span>
+                        <span className="text-xs font-medium text-gray-600 bg-gray-100 px-1 rounded">{rowIndex + 1}</span>
                         <button
                           type="button"
                           onClick={() => moveRow(rowIndex, rowIndex + 1)}
                           disabled={rowIndex === tableData.length - 1}
-                          className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-xs"
+                          className="w-5 h-5 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-xs"
                           title="Move down"
                         >
                           ↓
@@ -284,11 +283,11 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
                         />
                       </td>
                     ))}
-                    <td className="px-2 py-2">
+                    <td className="px-1 py-2">
                       <button
                         type="button"
                         onClick={() => removeRow(rowIndex)}
-                        className="w-8 h-8 flex items-center justify-center text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors font-medium text-sm"
+                        className="w-6 h-6 flex items-center justify-center text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors font-medium text-sm"
                         title="Remove row"
                       >
                         ✕
