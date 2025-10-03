@@ -6,6 +6,7 @@ import EditableTable from './EditableTable';
 import IntroTableField from './IntroTableField';
 import FileStructureDiagram from './FileStructureDiagram';
 import CDEDiagramBuilder from './CDEDiagramBuilder';
+import CDEFlowDiagram from './CDEFlowDiagram';
 import VolumeStrategyMindmap from './VolumeStrategyMindmap';
 import TipTapEditor from './TipTapEditor';
 import TimelineInput from './TimelineInput';
@@ -123,6 +124,16 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
     case 'cdeDiagram':
       return (
         <CDEDiagramBuilder
+          field={field}
+          value={value}
+          onChange={onChange}
+          error={error}
+        />
+      );
+
+    case 'cdeFlowDiagram':
+      return (
+        <CDEFlowDiagram
           field={field}
           value={value}
           onChange={onChange}

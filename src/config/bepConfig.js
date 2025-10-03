@@ -188,6 +188,7 @@ const CONFIG = {
       title: 'Common Data Environment (CDE)',
       fields: [
         { name: 'cdeStrategy', label: 'Multi-Platform CDE Strategy', type: 'textarea', rows: 3, placeholder: 'The project employs a federated CDE approach utilizing multiple specialized platforms to optimize workflow efficiency and data management across different information types and project phases. Each platform is selected for its specific strengths while maintaining seamless integration and unified information governance.' },
+        { name: 'cdeFlowDiagram', label: 'CDE Platform Workflow Diagram', type: 'cdeFlowDiagram' },
         { name: 'cdePlatforms', label: 'CDE Platform Matrix', required: true, type: 'table', columns: ['Platform/Service', 'Usage/Purpose', 'Information Types', 'Workflow States', 'Access Control'] },
         { name: 'workflowStates', label: 'Unified Workflow States', required: true, type: 'table', columns: ['State Name', 'Description', 'Access Level', 'Next State'] },
         { name: 'accessControl', label: 'Integrated Access Control', type: 'textarea', rows: 3, placeholder: 'Unified role-based access control across all CDE platforms with Single Sign-On (SSO) integration. Project Administrator, Design Team, Review Team, and Client View permissions maintained consistently. Multi-factor authentication required for all platforms. Cross-platform folder synchronization with discipline-specific read/write permissions. Guest access limited to 30-day periods with approval workflows across all systems.' },
