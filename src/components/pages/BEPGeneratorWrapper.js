@@ -66,6 +66,19 @@ const BEPGeneratorWrapper = () => {
     return validateDraftName(newDraftName);
   }, [newDraftName]);
 
+  // Set up cross-reference navigation
+  React.useEffect(() => {
+    window.navigateToBepStep = (stepId) => {
+      const stepIndex = stepId - 1; // Convert to 0-based index
+      if (stepIndex >= 0 && stepIndex < (CONFIG.steps?.length || 0)) {
+        setCurrentStep(stepIndex);
+      }
+    };
+    return () => {
+      delete window.navigateToBepStep;
+    };
+  }, []);
+
   // Navigation functions
   const goToTidpManager = () => {
     navigateTo('tidp-midp');

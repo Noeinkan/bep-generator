@@ -1534,6 +1534,38 @@ The alignment strategy demonstrates how information management processes will be
   // STEP 4: LEVEL OF INFORMATION NEED (LOIN)
   // ====================================================================
 
+  loinIntroduction: {
+    description: `Introduction to Level of Information Need (LOIN) - Define the information requirements that specify what information is needed, at what level of detail, and for what purposes.
+
+This section establishes the foundation for information delivery by linking to the Project Information Requirements (PIR) and Employer's Information Requirements (EIR) defined earlier in the BEP.`,
+
+    iso19650: `ISO 19650-1:2018 Section 5.1 - Information Requirements
+
+Information requirements define the information to be delivered, including the level of detail, format, and timing required to support defined information purposes.`,
+
+    bestPractices: [
+      'Reference the PIR and EIR established in earlier sections',
+      'Ensure LOIN aligns with project objectives and client needs',
+      'Consider the full asset lifecycle from design through operation',
+      'Link information requirements to specific project stages and milestones'
+    ],
+
+    examples: [
+      'Reference to PIR Section 3.2 for operational requirements',
+      'Link to EIR Appendix A for information format specifications',
+      'Alignment with RIBA Plan of Work Stage 4 information needs'
+    ],
+
+    commonMistakes: [
+      'Defining LOIN without referencing PIR/EIR',
+      'Over-specifying requirements without considering cost implications',
+      'Failing to align LOIN with project delivery schedule',
+      'Not including operational and maintenance information needs'
+    ],
+
+    relatedFields: ['projectInformationRequirements', 'informationPurposes']
+  },
+
   informationPurposes: {
     description: `Select the purposes for which information will be used throughout the project lifecycle. This defines what the information needs to support.`,
 
@@ -1550,14 +1582,14 @@ The alignment strategy demonstrates how information management processes will be
   },
 
   geometricalInfo: {
-    description: `Define the geometrical information requirements - the level of detail, accuracy, and dimensional information needed in 3D models.
+    description: `Provide an introduction describing the purpose of geometrical requirements and the LOD standards used. Then define the geometrical information requirements in the table below with specific elements, phases, LOD levels, purposes, verification methods, and delivery formats.
 
-Include:
-• LOD (Level of Development) requirements by stage and discipline
-• Accuracy and tolerance requirements
-• Survey and as-built requirements
-• Spatial coordination requirements
-• Detail level for different elements (structure, MEP, architecture)`,
+Geometrical requirements define the level of graphical detail (LOD) for BIM models, in compliance with UNI EN 17412-1 and NBS BIM Object Standard. They are proportional to the purposes defined in the EIR (e.g., coordination, visualization) and vary by project phase (RIBA Stages). Models will be uploaded to the CDE with status codes (e.g., S2 for Shared) and verified through software such as Solibri.
+
+**Notes**:
+- LODs are defined according to UNI EN 17412-1.
+- Models must respect size limits (e.g., <250MB) for CDE upload.
+- Verification occurs in "Shared" status with compliance reports.`,
 
     iso19650: `ISO 19650-1:2018 Section 5.3 - Geometrical Information
 
@@ -1573,19 +1605,32 @@ Geometrical information requirements specify the detail, dimensionality, locatio
       'Align with project complexity and information uses'
     ],
 
+    examples: [
+      'Structures (beams, columns) - Stage 2 - LOD 100 - Preliminary visualization',
+      'MEP systems (ducts) - Stage 4 - LOD 300 - Clash detection - Solibri audit',
+      'Facades - Stage 3 - LOD 200 - Energy analysis - IFC 4.0 delivery'
+    ],
+
+    commonMistakes: [
+      'Not specifying LOD levels for each element type',
+      'Inconsistent verification methods across disciplines',
+      'Over-specifying detail without considering project phase',
+      'Failing to align delivery formats with CDE requirements',
+      'Not including size limits for model uploads'
+    ],
+
     relatedFields: ['alphanumericalInfo', 'informationPurposes', 'volumeStrategy']
   },
 
   alphanumericalInfo: {
-    description: `Define the alphanumerical (non-graphical) information requirements - the properties, parameters, and data needed for model elements.
+    description: `Provide an introduction describing the purpose of alphanumerical attributes and the standards used. Then define the alphanumerical information requirements in the table below with specific elements, phases, attributes (LOI), purposes, verification methods, and delivery formats.
 
-Include:
-• Material specifications and properties
-• Manufacturer information and part numbers
-• Cost data and lifecycle information
-• Performance specifications
-• Asset data for FM handover (COBie)
-• Maintenance schedules and warranty information`,
+Alphanumerical requirements define non-graphical attributes for BIM elements, in compliance with COBie 2.4 and BS 1192-4. They support purposes like facility management, cost estimation, and regulatory compliance. Attributes are filtered to avoid redundant information and uploaded to the CDE as "Shared" for verification.
+
+**Notes**:
+- Attributes follow COBie 2.4 for FM and Uniclass for classification.
+- Verification occurs through automatic export and manual audits.
+- TIDPs will specify responsibility for each attribute (e.g., MEP Designer for pumps).`,
 
     iso19650: `ISO 19650-1:2018 Section 5.3 - Alphanumerical Information
 
@@ -1601,20 +1646,32 @@ Alphanumerical requirements specify properties, attributes, and parameters that 
       'Ensure consistency with client asset management requirements'
     ],
 
+    examples: [
+      'HVAC Pump - Stage 5 - Model, Power, InstallationDate - Facility Management - COBie validation',
+      'Walls - Stage 3 - Material, Thickness, UniclassCode - Cost analysis - CDE attribute check',
+      'Windows - Stage 6 - U-Value, MaintenanceSchedule - Maintenance - Validation report'
+    ],
+
+    commonMistakes: [
+      'Including redundant or unnecessary attributes',
+      'Not specifying attribute responsibility in TIDPs',
+      'Failing to align with COBie standards for FM handover',
+      'Overloading elements with too many attributes',
+      'Not including maintenance and warranty information'
+    ],
+
     relatedFields: ['geometricalInfo', 'documentationInfo', 'projectInformationRequirements']
   },
 
   documentationInfo: {
-    description: `Define documentation requirements - the supporting documents, specifications, certificates, and manuals required alongside models.
+    description: `Provide an introduction describing the purpose of documents and the standards used. Then define the documentation requirements in the table below with specific documents, phases, details, purposes, verification methods, and delivery formats.
 
-Include:
-• Technical specifications
-• O&M (Operation & Maintenance) manuals
-• Health & Safety documentation
-• Commissioning reports and certificates
-• Warranties and guarantees
-• Training materials
-• Compliance certificates`,
+Documentation requirements define the documents necessary to support project purposes, such as maintenance and compliance. They comply with PDF/A for long-term archiving and are uploaded to the CDE with status codes (e.g., S3 for Published).
+
+**Notes**:
+- Documents follow PDF/A to ensure long-term readability.
+- Verified in "Published" status in the CDE.
+- The MIDP defines deadlines for each document (e.g., O&M Manual by 30/06/2026).`,
 
     iso19650: `ISO 19650-2:2018 Section 5.4 - Documentation
 
@@ -1630,7 +1687,63 @@ Documentation requirements specify non-model information deliverables necessary 
       'Link documentation to asset data where possible'
     ],
 
+    examples: [
+      'O&M Manual - Stage 6 - Maintenance instructions - Facility Management - Completeness check',
+      'Clash Detection Report - Stage 4 - Resolved clashes list - Coordination - Solibri validation',
+      'Material Specification Sheet - Stage 3 - Material specs - Cost estimation - EIR compliance'
+    ],
+
+    commonMistakes: [
+      'Not specifying document format standards (PDF/A)',
+      'Missing links between documents and model elements',
+      'Incomplete O&M manual requirements',
+      'Not including verification processes',
+      'Overlooking training materials for operators'
+    ],
+
     relatedFields: ['alphanumericalInfo', 'projectInformationRequirements']
+  },
+
+  informationFormats: {
+    description: `Specify the information formats and file types required for information delivery. Define the standards and protocols for exchanging information between project participants.
+
+Include:
+• Model formats (IFC, DWG, RVT)
+• Document formats (PDF, DOCX)
+• Data exchange formats (COBie, BCF)
+• Collaboration formats (BCF, DWFX)
+• Proprietary vs open formats considerations`,
+
+    iso19650: `ISO 19650-2:2018 Section 5.4 - Information Formats
+
+Information formats specify the technical standards and protocols for information exchange and delivery throughout the project lifecycle.`,
+
+    bestPractices: [
+      'Specify IFC versions and Model View Definitions (MVD)',
+      'Include COBie for facility management handover',
+      'Address BCF for issue tracking and coordination',
+      'Consider PDF/A for long-term document archiving',
+      'Reference BS 1192 or equivalent standards',
+      'Include version control and naming conventions',
+      'Address proprietary format limitations'
+    ],
+
+    examples: [
+      'IFC 4.3 for architectural and structural models',
+      'COBie spreadsheet for asset data handover',
+      'BCF 2.1 for clash detection and issue management',
+      'PDF/A-2 for specification documents'
+    ],
+
+    commonMistakes: [
+      'Not specifying IFC MVD requirements',
+      'Failing to include COBie for FM handover',
+      'Using outdated format versions',
+      'Not addressing format compatibility between software platforms',
+      'Over-reliance on proprietary formats'
+    ],
+
+    relatedFields: ['geometricalInfo', 'alphanumericalInfo', 'documentationInfo']
   },
 
   projectInformationRequirements: {
@@ -1660,6 +1773,36 @@ PIR specify deliverable information to support the operational phase and ongoing
     ],
 
     relatedFields: ['alphanumericalInfo', 'documentationInfo', 'informationPurposes']
+  },
+
+  loinTransition: {
+    description: `The LOIN requirements defined here will be satisfied through the delivery plans described in the Information Delivery Planning Sect., with MIDP and TIDPs that map each deliverable to specific LOD/LOIN.`,
+
+    iso19650: `ISO 19650-2:2018 Section 5.4 - Information Delivery Planning
+
+The LOIN establishes the information requirements that must be fulfilled through the MIDP and TIDPs.`,
+
+    bestPractices: [
+      'Ensure all LOIN requirements are addressed in delivery plans',
+      'Map deliverables to specific LOD/LOIN levels',
+      'Align delivery schedules with information needs',
+      'Include quality assurance for LOIN compliance'
+    ],
+
+    examples: [
+      'TIDP mapping structural model to LOD 400 at Stage 4',
+      'COBie delivery for FM handover at project completion',
+      'Progressive information delivery aligned with RIBA stages'
+    ],
+
+    commonMistakes: [
+      'Failing to link LOIN to actual deliverables',
+      'Not specifying LOD/LOIN levels in TIDPs',
+      'Overlooking operational information requirements',
+      'Inadequate quality control for information delivery'
+    ],
+
+    relatedFields: ['midpDescription', 'keyMilestones', 'tidpRequirements']
   },
 
   // ====================================================================

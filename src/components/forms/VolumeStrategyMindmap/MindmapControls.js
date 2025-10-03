@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Trash2, Maximize2, Brain, ChevronDown, Undo, Redo } from 'lucide-react';
 import NodeTypeSelector from './NodeTypeSelector';
 import LayoutControls from './LayoutControls';
-import { NODE_TYPES } from '../../utils/nodeTypes';
+import { NODE_TYPES } from '../../../utils/nodeTypes';
 
 const MindmapControls = ({
   selectedNode,

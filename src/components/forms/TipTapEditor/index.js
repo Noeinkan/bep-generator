@@ -80,6 +80,25 @@ const TipTapEditor = ({
         HTMLAttributes: {
           class: 'tiptap-link',
         },
+        validate: href => true, // Allow any href
+      }).extend({
+        addAttributes() {
+          return {
+            ...this.parent?.(),
+            'data-cross-ref': {
+              default: null,
+              parseHTML: element => element.getAttribute('data-cross-ref'),
+              renderHTML: attributes => {
+                if (!attributes['data-cross-ref']) {
+                  return {};
+                }
+                return {
+                  'data-cross-ref': attributes['data-cross-ref'],
+                };
+              },
+            },
+          };
+        },
       }),
       Placeholder.configure({
         placeholder,
@@ -215,6 +234,51 @@ const TipTapEditor = ({
       editor.commands.setContent(value);
     }
   }, [editor, value]);
+
+  // Handle internal link clicks to navigate to BEP steps
+  useEffect(() => {
+    if (!editor) return;
+
+    const handleLinkClick = (event) => {
+      const target = event.target;
+      if (target.tagName === 'A') {
+        const crossRef = target.getAttribute('data-cross-ref');
+        if (crossRef) {
+          event.preventDefault();
+          event.stopPropagation();
+
+          // Extract step ID from cross-ref (format: "step-3" or "step-3-section-name")
+          const match = crossRef.match(/^step-(\d+)/);
+          if (match && window.navigateToBepStep) {
+            const stepId = parseInt(match[1], 10);
+            window.navigateToBepStep(stepId);
+          }
+          return;
+        }
+
+        // Handle regular links that start with #
+        if (target.href && target.href.includes('#')) {
+          event.preventDefault();
+          event.stopPropagation();
+          const url = new URL(target.href);
+          const elementId = url.hash.substring(1);
+          if (elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+              element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }
+        }
+      }
+    };
+
+    const editorElement = editor.view.dom;
+    editorElement.addEventListener('click', handleLinkClick, true); // Use capture phase
+
+    return () => {
+      editorElement.removeEventListener('click', handleLinkClick, true);
+    };
+  }, [editor]);
 
   // Word and character count
   const getStats = useCallback(() => {
@@ -380,6 +444,17 @@ const TipTapEditor = ({
         }
 
         .tiptap-link:hover {
+          color: #2563eb;
+        }
+
+        /* Cross reference link styles */
+        .cross-reference-link {
+          color: #3b82f6;
+          text-decoration: underline;
+          cursor: pointer;
+        }
+
+        .cross-reference-link:hover {
           color: #2563eb;
         }
 

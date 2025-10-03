@@ -13,6 +13,13 @@ const INITIAL_DATA = {
   tenderApproach: 'Our approach emphasizes collaborative design coordination through advanced BIM workflows, early stakeholder engagement, and integrated sustainability analysis. We propose a phased delivery strategy with continuous value engineering and risk mitigation throughout all project stages.',
   proposedLead: 'Smith & Associates Architects Ltd.',
   proposedInfoManager: 'Sarah Johnson, BIM Manager (RICS Certified, ISO 19650 Lead)',
+  proposedLeadAndInfoManagers: {
+    columns: ['Lead Appointed Party', 'Information Manager'],
+    data: [
+      { 'Lead Appointed Party': 'Smith & Associates Architects Ltd.', 'Information Manager': 'Sarah Johnson, BIM Manager (RICS Certified, ISO 19650 Lead)' },
+      { 'Lead Appointed Party': 'Jones Engineering Consultants', 'Information Manager': 'Michael Chen, Information Coordinator (ISO 19650-2 Certified)' }
+    ]
+  },
 
   // Executive Summary fields
   projectContext: 'This BEP outlines our comprehensive approach to delivering the Greenfield Office Complex using advanced BIM methodologies. Our strategy emphasizes collaborative design coordination, data-driven decision making, and seamless information handover to support long-term facility management. The project will serve as a flagship example of sustainable commercial development in the region.',
@@ -68,6 +75,13 @@ const INITIAL_DATA = {
   },
   leadAppointedParty: 'Smith & Associates Architects Ltd.',
   informationManager: 'Sarah Johnson, BIM Manager (RICS Certified, ISO 19650 Lead)',
+  leadAndInfoManagers: {
+    columns: ['Lead Appointed Party', 'Information Manager'],
+    data: [
+      { 'Lead Appointed Party': 'Smith & Associates Architects Ltd.', 'Information Manager': 'Sarah Johnson, BIM Manager (RICS Certified, ISO 19650 Lead)' },
+      { 'Lead Appointed Party': 'Jones Engineering Consultants', 'Information Manager': 'Michael Chen, Information Coordinator (ISO 19650-2 Certified)' }
+    ]
+  },
   assignedTeamLeaders: [
     { 'Discipline': 'Architecture', 'Name & Title': 'John Smith, Project Director', 'Company': 'Modern Design Associates', 'Role Details': 'Overall design coordination and client liaison' },
     { 'Discipline': 'Structural', 'Name & Title': 'Emily Chen, Senior Engineer', 'Company': 'Engineering Excellence Ltd.', 'Role Details': 'Structural design and analysis coordination' },
@@ -100,22 +114,59 @@ const INITIAL_DATA = {
   // Legacy fields for backward compatibility (converted from table format)
   taskTeamLeaders: 'Architecture: John Smith (Modern Design Associates)\nStructural: Emily Chen (Engineering Excellence Ltd.)\nMEP: Michael Rodriguez (Advanced Systems Group)\nFacades: David Wilson (Curtain Wall Experts Ltd.)',
   appointedParties: 'Architecture: Modern Design Associates\nStructural: Engineering Excellence Ltd.\nMEP: Advanced Systems Group\nQuantity Surveyor: Cost Management Partners\nSpecialist Facades: Curtain Wall Experts Ltd.',
+  loinIntroduction: `Introduction to Level of Information Need (LOIN) - Define the information requirements that specify what information is needed, at what level of detail, and for what purposes.
+
+This section establishes the foundation for information delivery by linking to the Project Information Requirements (PIR) and Employer's Information Requirements (EIR) defined earlier in the BEP.`,
   informationPurposes: ['Design Development', 'Construction Planning', 'Quantity Surveying', 'Facility Management'],
-  geometricalInfo: 'LOD 350 for construction documentation phase, with dimensional accuracy of ±10mm for structural elements and ±5mm for MEP coordination points.',
-  alphanumericalInfo: 'All building elements must include material specifications, performance data, manufacturer information, maintenance requirements, and warranty details.',
-  documentationInfo: 'Construction drawings, specifications, schedules, O&M manuals, warranty documents, and asset registers in digital format.',
+  geometricalInfo: {
+    intro: `Describe the purpose of geometrical requirements (e.g., "Support interdisciplinary coordination and visualization"). Specify the LOD standard reference (e.g., UNI EN 17412-1, NBS BIM Object Standard).`,
+    table: [
+      { 'Element': 'Structures (beams, columns)', 'Phase (RIBA)': 'Stage 2 (Concept)', 'LOD': 'LOD 100', 'Purpose': 'Preliminary visualization', 'Verification': 'Basic dimensional control', 'Delivery Format': 'IFC 4.0' },
+      { 'Element': 'MEP systems (ducts)', 'Phase (RIBA)': 'Stage 4 (Technical Design)', 'LOD': 'LOD 300', 'Purpose': 'Clash detection', 'Verification': 'Solibri audit (tolerance ±5mm)', 'Delivery Format': 'IFC 4.0, Revit 2025' },
+      { 'Element': 'Facades', 'Phase (RIBA)': 'Stage 3 (Developed Design)', 'LOD': 'LOD 200', 'Purpose': 'Energy analysis', 'Verification': 'Geometric compliance', 'Delivery Format': 'IFC 4.0' }
+    ]
+  },
+  alphanumericalInfo: {
+    intro: `General Description: Introduce the purpose of alphanumerical attributes (e.g., "Support facility management and regulatory compliance"). Cite standards like COBie or BS 1192-4.`,
+    table: [
+      { 'Element': 'HVAC Pump', 'Phase (RIBA)': 'Stage 5 (Construction)', 'Attributes (LOI)': 'Model, Power, InstallationDate, WarrantyDuration', 'Purpose': 'Facility Management', 'Verification': 'COBie validation in Excel', 'Delivery Format': 'COBie XLS' },
+      { 'Element': 'Walls', 'Phase (RIBA)': 'Stage 3 (Developed Design)', 'Attributes (LOI)': 'Material, Thickness, UniclassCode', 'Purpose': 'Cost analysis', 'Verification': 'Attribute check in CDE', 'Delivery Format': 'BIM Database' },
+      { 'Element': 'Windows', 'Phase (RIBA)': 'Stage 6 (Handover)', 'Attributes (LOI)': 'U-Value, MaintenanceSchedule', 'Purpose': 'Maintenance', 'Verification': 'Validation report', 'Delivery Format': 'COBie XLS' }
+    ]
+  },
+  documentationInfo: {
+    intro: `General Description: Introduce the purpose of documents (e.g., "Provide maintenance manuals or compliance reports"). Cite standards (e.g., PDF/A for long-term archiving).`,
+    table: [
+      { 'Document': 'O&M Manual', 'Phase (RIBA)': 'Stage 6 (Handover)', 'Detail': 'Maintenance instructions, technical data sheets', 'Purpose': 'Facility Management', 'Verification': 'Completeness check', 'Delivery Format': 'PDF/A, max 10MB' },
+      { 'Document': 'Clash Detection Report', 'Phase (RIBA)': 'Stage 4 (Technical Design)', 'Detail': 'List of resolved clashes', 'Purpose': 'Coordination', 'Verification': 'Solibri validation', 'Delivery Format': 'PDF' },
+      { 'Document': 'Material Specification Sheet', 'Phase (RIBA)': 'Stage 3 (Developed Design)', 'Detail': 'Material specifications', 'Purpose': 'Cost estimation', 'Verification': 'EIR compliance', 'Delivery Format': 'PDF' }
+    ]
+  },
   informationFormats: ['IFC 4', 'PDF', 'BCF 2.1', 'DWG', 'COBie'],
-  projectInformationRequirements: 'Project Information Requirements specify deliverable information to support asset management objectives: integrated 3D models with embedded property data for space management systems, energy consumption monitoring through IoT sensor integration, preventive maintenance scheduling with equipment lifecycle data, tenant fit-out guidelines with services capacity information, building performance analytics for continuous optimisation, digital twin connectivity for predictive maintenance, compliance monitoring systems for regulatory reporting, and structured data formats supporting client\'s existing CAFM systems and sustainability reporting requirements.',
-  midpDescription: 'The MIDP coordinates all discipline-specific TIDPs into a unified delivery schedule aligned with RIBA stages and construction milestones. Information exchanges occur at stage gates with formal approval processes.',
-  keyMilestones: [
-    { 'Stage/Phase': 'Stage 2', 'Milestone Description': 'Concept Design Complete', 'Deliverables': 'Basic geometry and spatial coordination models', 'Due Date': 'Month 6' },
-    { 'Stage/Phase': 'Stage 3', 'Milestone Description': 'Spatial Coordination', 'Deliverables': 'Full coordination model with clash detection', 'Due Date': 'Month 12' },
-    { 'Stage/Phase': 'Stage 4', 'Milestone Description': 'Technical Design', 'Deliverables': 'Construction-ready information and documentation', 'Due Date': 'Month 18' },
-    { 'Stage/Phase': 'Stage 5', 'Milestone Description': 'Manufacturing Support', 'Deliverables': 'Production information and fabrication models', 'Due Date': 'Month 24' },
-    { 'Stage/Phase': 'Stage 6', 'Milestone Description': 'Handover', 'Deliverables': 'As-built models and FM data', 'Due Date': 'Month 36' }
-  ],
+  projectInformationRequirements: `Define the Project Information Requirements (PIR) - the information needed to support asset management and operational objectives beyond project delivery.
+
+Address:
+• Asset management system integration
+• Space management and occupancy data
+• Energy monitoring and performance tracking
+• Maintenance planning and scheduling
+• Digital twin connectivity
+• Building performance analytics
+• Compliance and regulatory reporting`,
+  loinTransition: `The LOIN requirements defined here will be satisfied through the delivery plans described in the Information Delivery Planning Sect., with MIDP and TIDPs that map each deliverable to specific LOD/LOIN.`,
+  midpDescription: `<p>The <strong>Master Information Delivery Plan (MIDP)</strong> establishes a structured schedule for information delivery aligned with <em>RIBA Plan of Work 2020</em> stages. Key deliverables include:</p><ul><li><strong>Stage 3</strong>: Coordinated federated models by Month 8</li><li><strong>Stage 4</strong>: Construction-ready models with full MEP coordination by Month 14</li><li><strong>Stage 5</strong>: As-built verification models by Month 22</li><li><strong>Stage 6</strong>: Handover documentation including COBie data by Month 24</li></ul><p>Information exchanges occur at stage gates with formal approval processes and quality validation against LOIN requirements.</p>`,
+  keyMilestones: {
+    intro: `<p>Information delivery is structured around <strong>key project milestones</strong>, each representing critical decision points and formal information exchanges. The following milestones align with <em>RIBA Plan of Work 2020</em> stages and define:</p><ul><li>Required information content and quality levels (referencing LOIN specifications)</li><li>Acceptance criteria for progression to the next stage</li><li>Quality gate reviews and approval workflows</li><li>Responsibility matrix for information delivery and validation</li></ul><p>Each milestone includes formal client review and approval before progression to subsequent project phases.</p>`,
+    table: [
+      { 'Stage/Phase': '<p><strong>Stage 2</strong></p><p><em>RIBA 2020</em></p>', 'Milestone Description': '<p><strong>Concept Design Complete</strong></p><p>Initial spatial coordination and design intent established</p>', 'Deliverables': '<ul><li>Basic geometry models (LOD 200)</li><li>Spatial coordination models</li><li>Preliminary specifications</li></ul>', 'Due Date': 'Month 6' },
+      { 'Stage/Phase': '<p><strong>Stage 3</strong></p><p><em>Spatial Coordination</em></p>', 'Milestone Description': '<p><strong>Developed Design</strong></p><p>Full coordination model with clash detection and resolution</p>', 'Deliverables': '<ul><li>Coordinated federated models (LOD 300)</li><li>Clash detection reports</li><li>Updated specifications</li><li>Preliminary cost plans</li></ul>', 'Due Date': 'Month 12' },
+      { 'Stage/Phase': '<p><strong>Stage 4</strong></p><p><em>Technical Design</em></p>', 'Milestone Description': '<p><strong>Construction Documentation</strong></p><p>Construction-ready information and technical design complete</p>', 'Deliverables': '<ul><li>Construction models (LOD 350)</li><li>Technical drawings and schedules</li><li>Final specifications</li><li>Construction cost estimate</li></ul>', 'Due Date': 'Month 18' },
+      { 'Stage/Phase': '<p><strong>Stage 5</strong></p><p><em>Construction</em></p>', 'Milestone Description': '<p><strong>Manufacturing & Construction Support</strong></p><p>Production information and fabrication coordination</p>', 'Deliverables': '<ul><li>Fabrication models (LOD 400)</li><li>Shop drawings</li><li>Construction progress models</li><li>RFI responses</li></ul>', 'Due Date': 'Month 24' },
+      { 'Stage/Phase': '<p><strong>Stage 6</strong></p><p><em>Handover</em></p>', 'Milestone Description': '<p><strong>Project Closeout</strong></p><p>As-built documentation and facility management data delivery</p>', 'Deliverables': '<ul><li>As-built models (LOD 500)</li><li>COBie data export</li><li>O&amp;M manuals</li><li>Digital twin integration files</li></ul>', 'Due Date': 'Month 36' }
+    ]
+  },
   deliverySchedule: 'Monthly model updates during design phases, weekly coordination cycles during construction documentation, and daily updates during critical construction phases.',
-  tidpRequirements: 'Each task team must produce TIDPs detailing their information deliverables, responsibilities, quality requirements, and delivery schedules in alignment with project milestones.',
+  tidpRequirements: `<p><strong>Task Information Delivery Plans (TIDPs)</strong> define discipline-specific delivery requirements:</p><ul><li><strong>Architecture TIDP</strong>: Delivers spatial models and specification schedules biweekly</li><li><strong>Structural TIDP</strong>: Provides analysis models and connection details monthly</li><li><strong>MEP TIDP</strong>: Supplies coordinated services models with equipment schedules weekly during coordination phases</li><li><strong>Cost TIDP</strong>: Updates quantity take-offs and cost estimates at each milestone</li></ul><p>Each TIDP details information deliverables, responsibilities, quality requirements, and delivery schedules in alignment with the MIDP and project milestones.</p>`,
   mobilisationPlan: 'Project mobilisation occurs over 4 weeks: Week 1 includes CDE setup, template development, and team onboarding; Week 2 involves standards training, tool deployment, and workflow testing; Week 3 encompasses pilot model creation, federation testing, and quality checking procedures; Week 4 includes final system validation, team competency verification, and formal project launch. All team members complete ISO 19650 certification and project-specific training before accessing the CDE and commencing information production activities.',
   teamCapabilitySummary: 'The delivery team provides comprehensive BIM capabilities across all disciplines: 15 certified BIM professionals with ISO 19650 competency, advanced modeling expertise in Revit, Tekla, and specialist analysis software, 5+ years experience delivering federated models for commercial projects £10M+, proven track record in clash detection reducing construction issues by 60%, established workflows for 4D/5D integration, and dedicated quality assurance resources ensuring deliverable compliance. Team capacity supports peak deployment of 35 specialists during technical design phases.',
   taskTeamExchange: 'Information exchange protocols establish: weekly model federation with automated clash detection reports, fortnightly design coordination meetings with federated model reviews, monthly design freeze periods for cross-disciplinary validation, standardised BCF workflows for issue resolution, real-time model access through shared CDE workspace, automated notification systems for model updates and issue assignments, and formal sign-off procedures for milestone deliverables ensuring all disciplines approve federated models before progression to next design stage.',

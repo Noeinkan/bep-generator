@@ -1,5 +1,5 @@
 import React from 'react';
-import { getNodeTypeOptions } from '../../utils/nodeTypes';
+import { getNodeTypeOptions } from '../../../utils/nodeTypes';
 
 const NodeTypeSelector = ({ selectedType, onTypeChange, isVisible, onClose }) => {
   const nodeTypes = getNodeTypeOptions();

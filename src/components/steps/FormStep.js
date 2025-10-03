@@ -11,6 +11,7 @@ const FULL_WIDTH_FIELD_TYPES = [
   'introTable',
   'fileStructure',
   'cdeDiagram',
+  'cdeFlowDiagram',
   'mindmap',
   'orgchart'
 ];

@@ -15,6 +15,25 @@
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <script>
+      // Suppress ResizeObserver errors (harmless warnings from ReactFlow)
+      window.addEventListener('error', function(e) {
+        if (e.message === 'ResizeObserver loop limit exceeded' ||
+            e.message === 'ResizeObserver loop completed with undelivered notifications.') {
+          const resizeObserverErrDiv = document.getElementById('webpack-dev-server-client-overlay');
+          const resizeObserverErr = document.getElementById('webpack-dev-server-client-overlay-div');
+          if (resizeObserverErr) {
+            resizeObserverErr.setAttribute('style', 'display: none');
+          }
+          if (resizeObserverErrDiv) {
+            resizeObserverErrDiv.setAttribute('style', 'display: none');
+          }
+          e.stopImmediatePropagation();
+          e.stopPropagation();
+          e.preventDefault();
+        }
+      });
+    </script>
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.

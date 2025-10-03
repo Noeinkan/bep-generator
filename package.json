@@ -29,8 +29,6 @@
     "d3": "^7.9.0",
     "docx": "^9.5.1",
     "dompurify": "^3.2.7",
-    "html2canvas": "^1.4.1",
-    "html2pdf.js": "^0.12.1",
     "jspdf": "^3.0.3",
     "lucide-react": "^0.544.0",
     "papaparse": "^5.5.3",
@@ -39,6 +37,7 @@
     "react-organizational-chart": "^2.2.1",
     "react-router-dom": "^7.9.3",
     "react-scripts": "5.0.1",
+    "reactflow": "^11.11.4",
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5"
   },

@@ -3,14 +3,15 @@ import OrgStructureField from './OrgStructureField';
 import React from 'react';
 import CONFIG from '../../config/bepConfig';
 import EditableTable from './EditableTable';
-import IntroTableField from './IntroTableField';
+import IntroTableField from './EditableTable/IntroTableField';
 import FileStructureDiagram from './FileStructureDiagram';
-import CDEDiagramBuilder from './CDEDiagramBuilder';
+import CDEFlowDiagram from './CDEFlowDiagram';
 import VolumeStrategyMindmap from './VolumeStrategyMindmap';
 import TipTapEditor from './TipTapEditor';
 import TimelineInput from './TimelineInput';
 import BudgetInput from './BudgetInput';
 import FieldHelpTooltip from './FieldHelpTooltip';
+import DynamicCheckboxField from './DynamicCheckboxField';
 import HELP_CONTENT from '../../data/helpContentData';
 
 const InputField = React.memo(({ field, value, onChange, error, formData = {} }) => {
@@ -119,9 +120,9 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
         />
       );
 
-    case 'cdeDiagram':
+    case 'cdeFlowDiagram':
       return (
-        <CDEDiagramBuilder
+        <CDEFlowDiagram
           field={field}
           value={value}
           onChange={onChange}
@@ -155,6 +156,7 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
             minHeight={`${(rows || 3) * 24}px`}
             autoSaveKey={`tiptap-${name}`}
             fieldName={name}
+            showToolbar={true}
           />
           {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
         </div>
@@ -183,6 +185,21 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
       );
 
     case 'checkbox':
+      // Usa il componente dinamico per i campi che beneficiano di aggiunta/rimozione opzioni
+      // (es. bimUses, informationPurposes, etc.)
+      if (name === 'bimUses' || name === 'informationPurposes' || name === 'bimSoftware' || name === 'fileFormats') {
+        return (
+          <DynamicCheckboxField
+            field={field}
+            value={value}
+            onChange={onChange}
+            error={error}
+            optionsList={optionsList || []}
+          />
+        );
+      }
+
+      // Fallback al componente checkbox standard per altri campi
       return (
         <div>
           <FieldLabel>

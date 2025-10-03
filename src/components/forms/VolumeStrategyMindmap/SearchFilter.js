@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Search, X, Filter } from 'lucide-react';
-import { getNodeTypeOptions } from '../../utils/nodeTypes';
+import { getNodeTypeOptions } from '../../../utils/nodeTypes';
 
 const SearchFilter = ({
   searchTerm,
