@@ -18,7 +18,10 @@
       "Bash(done)",
       "Bash(awk:*)",
       "Bash(find:*)",
-      "Bash(cmd /c \"taskkill /PID 24772 /F & taskkill /PID 27564 /F & taskkill /PID 4764 /F\")"
+      "Bash(cmd /c \"taskkill /PID 24772 /F & taskkill /PID 27564 /F & taskkill /PID 4764 /F\")",
+      "Bash(rm:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)"
     ],
     "deny": [],
     "ask": []

@@ -4,7 +4,7 @@ import ApiService from '../../services/apiService';
 import TidpMidpManager from './TidpMidpManager';
 import ExcelTIDPEditor from '../ExcelTIDPEditor';
 import TipTapEditor from '../forms/TipTapEditor';
-import IntroTableField from '../forms/IntroTableField';
+import IntroTableField from '../forms/EditableTable/IntroTableField';
 import FieldHelpTooltip from '../forms/FieldHelpTooltip';
 import HELP_CONTENT from '../../data/helpContentData';
 

@@ -3,9 +3,8 @@ import OrgStructureField from './OrgStructureField';
 import React from 'react';
 import CONFIG from '../../config/bepConfig';
 import EditableTable from './EditableTable';
-import IntroTableField from './IntroTableField';
+import IntroTableField from './EditableTable/IntroTableField';
 import FileStructureDiagram from './FileStructureDiagram';
-import CDEDiagramBuilder from './CDEDiagramBuilder';
 import CDEFlowDiagram from './CDEFlowDiagram';
 import VolumeStrategyMindmap from './VolumeStrategyMindmap';
 import TipTapEditor from './TipTapEditor';
@@ -114,16 +113,6 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
     case 'fileStructure':
       return (
         <FileStructureDiagram
-          field={field}
-          value={value}
-          onChange={onChange}
-          error={error}
-        />
-      );
-
-    case 'cdeDiagram':
-      return (
-        <CDEDiagramBuilder
           field={field}
           value={value}
           onChange={onChange}
