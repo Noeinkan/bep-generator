@@ -27,9 +27,12 @@ import {
   ZoomOut,
   FileText,
   ChevronDown,
+  ExternalLink,
 } from 'lucide-react';
 import TemplateSelector from './TemplateSelector';
 import TableInsertDialog from './TableInsertDialog';
+import CrossReferenceSelector from './CrossReferenceSelector';
+import { BEP_STEPS } from '../../constants/bepSteps';
 
 const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldName }) => {
   const [showLinkInput, setShowLinkInput] = useState(false);
@@ -40,6 +43,7 @@ const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldN
   const [currentHighlight, setCurrentHighlight] = useState('#ffff00');
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [showTableDialog, setShowTableDialog] = useState(false);
+  const [showCrossReferenceSelector, setShowCrossReferenceSelector] = useState(false);
   const templateButtonRef = useRef(null);
 
   const addLink = useCallback(() => {
@@ -60,6 +64,36 @@ const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldN
       setShowLinkInput(false);
     }
   }, [editor, linkUrl]);
+
+  const addCrossReference = useCallback((stepId, section) => {
+    if (editor) {
+      const step = BEP_STEPS.find(s => s.id === stepId);
+      if (step) {
+        const targetId = section ? `step-${stepId}-${section.toLowerCase().replace(/\s+/g, '-')}` : `step-${stepId}`;
+        const text = section ? `${section} (Step ${stepId})` : `Step ${stepId}: ${step.title}`;
+
+        // Insert link using TipTap's link extension
+        editor
+          .chain()
+          .focus()
+          .insertContent({
+            type: 'text',
+            text: text,
+            marks: [
+              {
+                type: 'link',
+                attrs: {
+                  href: `#${targetId}`,
+                  class: 'tiptap-link cross-reference-link',
+                  'data-cross-ref': targetId
+                }
+              }
+            ]
+          })
+          .run();
+      }
+    }
+  }, [editor]);
 
   const addImage = useCallback(() => {
     if (editor) {
@@ -486,6 +520,22 @@ const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldN
               </button>
             </div>
           </div>
+        )}
+      </div>
+
+      {/* Cross Reference */}
+      <div className="relative">
+        <ToolbarButton
+          onClick={() => setShowCrossReferenceSelector(!showCrossReferenceSelector)}
+          title="Insert Cross Reference"
+        >
+          <ExternalLink size={18} />
+        </ToolbarButton>
+        {showCrossReferenceSelector && (
+          <CrossReferenceSelector
+            onSelect={addCrossReference}
+            onClose={() => setShowCrossReferenceSelector(false)}
+          />
         )}
       </div>
 

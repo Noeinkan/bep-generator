@@ -156,6 +156,7 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
             minHeight={`${(rows || 3) * 24}px`}
             autoSaveKey={`tiptap-${name}`}
             fieldName={name}
+            showToolbar={true}
           />
           {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
         </div>

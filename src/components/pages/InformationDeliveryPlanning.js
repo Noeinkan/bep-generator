@@ -3,6 +3,10 @@ import { Calendar, Plus, FileText, Download, RefreshCw, AlertCircle, CheckCircle
 import ApiService from '../../services/apiService';
 import TidpMidpManager from './TidpMidpManager';
 import ExcelTIDPEditor from '../ExcelTIDPEditor';
+import TipTapEditor from '../forms/TipTapEditor';
+import IntroTableField from '../forms/IntroTableField';
+import FieldHelpTooltip from '../forms/FieldHelpTooltip';
+import HELP_CONTENT from '../../data/helpContentData';
 
 const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType }) => {
   const [tidps, setTidps] = useState([]);
@@ -88,15 +92,22 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
 
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Master Information Delivery Plan (MIDP) <span className="text-red-500">*</span>
-          </label>
-          <textarea
+          <div className="flex items-center gap-2 mb-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Master Information Delivery Plan (MIDP) <span className="text-red-500">*</span>
+            </label>
+            {HELP_CONTENT.midpDescription && (
+              <FieldHelpTooltip fieldName="midpDescription" helpContent={HELP_CONTENT.midpDescription} />
+            )}
+          </div>
+          <TipTapEditor
             value={formData.midpDescription || ''}
-            onChange={(e) => updateFormData('midpDescription', e.target.value)}
-            className={`w-full p-3 border rounded-lg resize-none ${errors.midpDescription ? 'border-red-300' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
-            rows={4}
+            onChange={(html) => updateFormData('midpDescription', html)}
             placeholder="The MIDP establishes a structured schedule for information delivery aligned with RIBA Plan of Work 2020 stages. Key deliverables include: Stage 3 coordinated federated models by Month 8, Stage 4 construction-ready models with full MEP coordination by Month 14..."
+            className={errors.midpDescription ? 'border-red-300' : ''}
+            minHeight="150px"
+            fieldName="midpDescription"
+            autoSaveKey={`midp-description-${formData.projectName || 'default'}`}
           />
           {errors.midpDescription && (
             <p className="text-red-500 text-sm mt-1">{errors.midpDescription}</p>
@@ -104,102 +115,46 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Task Information Delivery Plans (TIDPs)
-          </label>
-          <textarea
+          <div className="flex items-center gap-2 mb-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Task Information Delivery Plans (TIDPs)
+            </label>
+            {HELP_CONTENT.tidpRequirements && (
+              <FieldHelpTooltip fieldName="tidpRequirements" helpContent={HELP_CONTENT.tidpRequirements} />
+            )}
+          </div>
+          <TipTapEditor
             value={formData.tidpRequirements || ''}
-            onChange={(e) => updateFormData('tidpRequirements', e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            rows={3}
+            onChange={(html) => updateFormData('tidpRequirements', html)}
             placeholder="TIDPs define discipline-specific delivery requirements: Architecture TIDP delivers spatial models and specification schedules biweekly, Structural TIDP provides analysis models and connection details monthly..."
+            minHeight="120px"
+            fieldName="tidpRequirements"
+            autoSaveKey={`tidp-requirements-${formData.projectName || 'default'}`}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Key Information Delivery Milestones <span className="text-red-500">*</span>
-          </label>
-          <div className="overflow-x-auto">
-            <table className="min-w-full border border-gray-300 rounded-lg">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Stage/Phase</th>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Milestone Description</th>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Deliverables</th>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Due Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(formData.keyMilestones || []).map((milestone, index) => (
-                  <tr key={index} className="border-b">
-                    <td className="px-4 py-2">
-                      <input
-                        type="text"
-                        value={milestone.stage || ''}
-                        onChange={(e) => {
-                          const newMilestones = [...(formData.keyMilestones || [])];
-                          newMilestones[index] = { ...milestone, stage: e.target.value };
-                          updateFormData('keyMilestones', newMilestones);
-                        }}
-                        className="w-full p-2 border border-gray-300 rounded"
-                        placeholder="Stage 3"
-                      />
-                    </td>
-                    <td className="px-4 py-2">
-                      <input
-                        type="text"
-                        value={milestone.description || ''}
-                        onChange={(e) => {
-                          const newMilestones = [...(formData.keyMilestones || [])];
-                          newMilestones[index] = { ...milestone, description: e.target.value };
-                          updateFormData('keyMilestones', newMilestones);
-                        }}
-                        className="w-full p-2 border border-gray-300 rounded"
-                        placeholder="Coordinated Federated Models"
-                      />
-                    </td>
-                    <td className="px-4 py-2">
-                      <input
-                        type="text"
-                        value={milestone.deliverables || ''}
-                        onChange={(e) => {
-                          const newMilestones = [...(formData.keyMilestones || [])];
-                          newMilestones[index] = { ...milestone, deliverables: e.target.value };
-                          updateFormData('keyMilestones', newMilestones);
-                        }}
-                        className="w-full p-2 border border-gray-300 rounded"
-                        placeholder="Architecture, Structure, MEP Models"
-                      />
-                    </td>
-                    <td className="px-4 py-2">
-                      <input
-                        type="date"
-                        value={milestone.dueDate || ''}
-                        onChange={(e) => {
-                          const newMilestones = [...(formData.keyMilestones || [])];
-                          newMilestones[index] = { ...milestone, dueDate: e.target.value };
-                          updateFormData('keyMilestones', newMilestones);
-                        }}
-                        className="w-full p-2 border border-gray-300 rounded"
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <button
-              type="button"
-              onClick={() => {
-                const newMilestones = [...(formData.keyMilestones || []), { stage: '', description: '', deliverables: '', dueDate: '' }];
-                updateFormData('keyMilestones', newMilestones);
-              }}
-              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add Milestone</span>
-            </button>
+          <div className="flex items-center gap-2 mb-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Key Information Delivery Milestones <span className="text-red-500">*</span>
+            </label>
+            {HELP_CONTENT.keyMilestones && (
+              <FieldHelpTooltip fieldName="keyMilestones" helpContent={HELP_CONTENT.keyMilestones} />
+            )}
           </div>
+          <IntroTableField
+            field={{
+              name: 'keyMilestones',
+              label: '',
+              required: true,
+              type: 'introTable',
+              introPlaceholder: 'The following milestones represent key information delivery points throughout the project:',
+              tableColumns: ['Stage/Phase', 'Milestone Description', 'Deliverables', 'Due Date']
+            }}
+            value={formData.keyMilestones}
+            onChange={(name, value) => updateFormData(name, value)}
+            error={errors.keyMilestones}
+          />
         </div>
       </div>
     </div>
@@ -487,18 +442,6 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
       </div>
     </div>
   );
-
-  // Initialize default milestones if none exist
-  useEffect(() => {
-    if (!formData.keyMilestones || formData.keyMilestones.length === 0) {
-      updateFormData('keyMilestones', [
-        { stage: 'Stage 3', description: 'Spatial Coordination', deliverables: 'Federated Models', dueDate: '' },
-        { stage: 'Stage 4', description: 'Technical Design', deliverables: 'Construction Models', dueDate: '' },
-        { stage: 'Stage 5', description: 'Manufacturing & Construction', deliverables: 'As-Built Models', dueDate: '' },
-        { stage: 'Stage 6', description: 'Handover', deliverables: 'COBie Data', dueDate: '' }
-      ]);
-    }
-  }, [formData.keyMilestones, updateFormData]);
 
   return (
     <div className="space-y-6">

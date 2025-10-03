@@ -8,7 +8,8 @@
       "Bash(taskkill:*)",
       "Bash(timeout:*)",
       "Bash(cat:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(cmd /c \"taskkill /PID 1104 /F & taskkill /PID 18760 /F & taskkill /PID 24500 /F\")"
     ],
     "deny": [],
     "ask": []
