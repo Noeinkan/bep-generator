@@ -4,6 +4,30 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// Suppress ResizeObserver errors globally (harmless warnings from ReactFlow)
+window.addEventListener('error', (e) => {
+  if (
+    e.message === 'ResizeObserver loop limit exceeded' ||
+    e.message === 'ResizeObserver loop completed with undelivered notifications.'
+  ) {
+    e.stopImmediatePropagation();
+    e.stopPropagation();
+  }
+});
+
+// Override console.error to filter ResizeObserver errors
+const originalError = console.error;
+console.error = (...args) => {
+  if (
+    typeof args[0] === 'string' &&
+    (args[0].includes('ResizeObserver loop') ||
+     args[0].includes('ResizeObserver'))
+  ) {
+    return;
+  }
+  originalError.apply(console, args);
+};
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>

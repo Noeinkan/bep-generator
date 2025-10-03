@@ -9,7 +9,16 @@
       "Bash(timeout:*)",
       "Bash(cat:*)",
       "Bash(python:*)",
-      "Bash(cmd /c \"taskkill /PID 1104 /F & taskkill /PID 18760 /F & taskkill /PID 24500 /F\")"
+      "Bash(cmd /c \"taskkill /PID 1104 /F & taskkill /PID 18760 /F & taskkill /PID 24500 /F\")",
+      "Bash(npm run build:*)",
+      "Bash(npx tsc:*)",
+      "Bash(for file in src/components/forms/CDEFlowDiagram/**/*.js)",
+      "Bash(do echo \"Checking: $file\")",
+      "Bash(exit 1)",
+      "Bash(done)",
+      "Bash(awk:*)",
+      "Bash(find:*)",
+      "Bash(cmd /c \"taskkill /PID 24772 /F & taskkill /PID 27564 /F & taskkill /PID 4764 /F\")"
     ],
     "deny": [],
     "ask": []
