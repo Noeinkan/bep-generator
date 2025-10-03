@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { FileText, X, Sparkles } from 'lucide-react';
-import INITIAL_DATA from '../../data/initialData';
+import INITIAL_DATA from '../../../data/initialData';
 
 // Map di esempi per diversi field names
 const FIELD_EXAMPLES = {

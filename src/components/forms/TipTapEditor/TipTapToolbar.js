@@ -32,7 +32,7 @@ import {
 import TemplateSelector from './TemplateSelector';
 import TableInsertDialog from './TableInsertDialog';
 import CrossReferenceSelector from './CrossReferenceSelector';
-import { BEP_STEPS } from '../../constants/bepSteps';
+import { BEP_STEPS } from '../../../constants/bepSteps';
 
 const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldName }) => {
   const [showLinkInput, setShowLinkInput] = useState(false);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BEP_STEPS } from '../../constants/bepSteps';
+import { BEP_STEPS } from '../../../constants/bepSteps';
 
 const CrossReferenceSelector = ({ onSelect, onClose }) => {
   const handleSelect = (stepId, section = null) => {

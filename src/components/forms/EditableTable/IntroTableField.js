@@ -1,6 +1,6 @@
 import React from 'react';
-import TipTapEditor from './TipTapEditor';
-import EditableTable from './EditableTable';
+import TipTapEditor from '../TipTapEditor';
+import EditableTable from './index';
 
 const IntroTableField = React.memo(({ field, value, onChange, error }) => {
   const { name, label, required, introPlaceholder, tableColumns } = field;

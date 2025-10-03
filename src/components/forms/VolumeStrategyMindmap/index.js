@@ -1,6 +1,6 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { useMindmapD3 } from '../../hooks/useMindmapD3';
-import { useUndoRedo } from '../../hooks/useUndoRedo';
+import { useMindmapD3 } from '../../../hooks/useMindmapD3';
+import { useUndoRedo } from '../../../hooks/useUndoRedo';
 import {
   parseValue,
   convertToText,
@@ -8,8 +8,8 @@ import {
   removeNodeFromTree,
   updateNodeInTree,
   searchNodes
-} from '../../utils/mindmapUtils';
-import { organizeNodes, snapToGrid } from '../../utils/layoutUtils';
+} from '../../../utils/mindmapUtils';
+import { organizeNodes, snapToGrid } from '../../../utils/layoutUtils';
 import MindmapControls from './MindmapControls';
 import EditModal from './EditModal';
 import SearchFilter from './SearchFilter';
