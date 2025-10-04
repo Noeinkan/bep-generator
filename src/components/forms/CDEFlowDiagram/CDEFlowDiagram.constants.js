@@ -55,9 +55,9 @@ export const getInitialNodes = () => [
     id: `header-${lane.id}`,
     type: 'swimlaneHeader',
     data: { ...lane },
-    position: { x: lane.x + 15, y: 0 },
+    position: { x: lane.x + 15, y: -10 },
     draggable: false,
-    selectable: false,
+    selectable: true,
   })),
   // Example solutions in swimlanes
   {
@@ -65,30 +65,35 @@ export const getInitialNodes = () => [
     type: 'solution',
     data: { label: 'SharePoint', description: 'Team collaboration platform', swimlane: 'wip' },
     position: { x: 25, y: 200 },
+    style: { width: 200, height: 120 },
   },
   {
     id: 'sol2',
     type: 'solution',
     data: { label: 'Autodesk Docs', description: 'Document management system', swimlane: 'shared' },
     position: { x: 275, y: 200 },
+    style: { width: 200, height: 120 },
   },
   {
     id: 'sol3',
     type: 'solution',
     data: { label: 'BIMcollab', description: 'Issue tracking and coordination', swimlane: 'shared' },
     position: { x: 275, y: 340 },
+    style: { width: 200, height: 120 },
   },
   {
     id: 'sol4',
     type: 'solution',
     data: { label: 'Aconex', description: 'Final approved documents', swimlane: 'published' },
     position: { x: 525, y: 200 },
+    style: { width: 200, height: 120 },
   },
   {
     id: 'sol5',
     type: 'solution',
     data: { label: 'Document Archive', description: 'Long-term storage', swimlane: 'archived' },
     position: { x: 775, y: 200 },
+    style: { width: 200, height: 120 },
   },
 ];
 

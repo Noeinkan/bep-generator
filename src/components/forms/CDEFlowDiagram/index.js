@@ -91,12 +91,27 @@ const CDEFlowDiagram = ({ field, value, onChange, error }) => {
     });
   }, [setNodes, edges, updateParent]);
 
-  // Handle edge label change
-  const handleEdgeLabelChange = useCallback((edgeId, newLabel) => {
+  // Handle edge label and style change
+  const handleEdgeLabelChange = useCallback((edgeId, newLabel, styleProps) => {
     setEdges((eds) => {
-      const updatedEdges = eds.map((edge) =>
-        edge.id === edgeId ? { ...edge, data: { ...edge.data, label: newLabel } } : edge
-      );
+      const updatedEdges = eds.map((edge) => {
+        if (edge.id === edgeId) {
+          const updatedEdge = {
+            ...edge,
+            data: {
+              ...edge.data,
+              label: newLabel,
+              ...(styleProps || {})
+            }
+          };
+          // Update style for color if changed
+          if (styleProps?.lineColor) {
+            updatedEdge.style = { ...updatedEdge.style, stroke: styleProps.lineColor };
+          }
+          return updatedEdge;
+        }
+        return edge;
+      });
       updateParent(nodes, updatedEdges);
       return updatedEdges;
     });
@@ -291,15 +306,70 @@ const CDEFlowDiagram = ({ field, value, onChange, error }) => {
             maxZoom={2}
             snapToGrid={true}
             snapGrid={[15, 15]}
+            zoomOnScroll={true}
+            zoomOnPinch={true}
+            panOnScroll={false}
+            panOnDrag={true}
           >
-            <Controls showInteractive={false} />
+            <Controls
+              showInteractive={false}
+              style={{
+                display: 'flex',
+                gap: '8px',
+                left: '20px',
+                bottom: '20px',
+              }}
+            />
             <Background color="#d1d5db" gap={20} size={1.5} />
           </ReactFlow>
+          <style>{`
+            .react-flow__controls {
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+              border: 2px solid #e5e7eb !important;
+              border-radius: 10px !important;
+              background: white !important;
+              overflow: hidden !important;
+            }
+            .react-flow__controls-button {
+              background: white !important;
+              border: none !important;
+              border-bottom: 1px solid #e5e7eb !important;
+              width: 40px !important;
+              height: 40px !important;
+              transition: all 0.2s ease !important;
+            }
+            .react-flow__controls-button:last-child {
+              border-bottom: none !important;
+            }
+            .react-flow__controls-button:hover {
+              background: #f3f4f6 !important;
+            }
+            .react-flow__controls-button svg {
+              fill: #374151 !important;
+              width: 18px !important;
+              height: 18px !important;
+            }
+            .react-flow__resize-control {
+              background: #3b82f6 !important;
+              border: 2px solid white !important;
+              width: 12px !important;
+              height: 12px !important;
+              border-radius: 50% !important;
+            }
+            .react-flow__resize-control:hover {
+              background: #2563eb !important;
+              transform: scale(1.2) !important;
+            }
+            .react-flow__resize-control.line {
+              border: none !important;
+              background: transparent !important;
+            }
+          `}</style>
         </div>
       </div>
 
       <div className="mt-2 text-sm text-gray-600">
-        💡 <strong>Tips:</strong> Drag header to move node • Double-click header to rename • Click description to edit • Double-click edge label to edit • Drag from handles to connect • Delete key to remove
+        💡 <strong>Tips:</strong> Select node to resize (drag blue corners) • Click "Style" button on edge to edit line • Drag header to move • Double-click to rename • Mouse wheel to zoom
       </div>
 
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Handle, Position } from 'reactflow';
+import { Handle, Position, NodeResizer } from 'reactflow';
 
 /**
- * Solution node component with editable header and description
+ * Solution node component with editable header, description, and resizing
  */
 const SolutionNode = React.memo(({ data, id, selected }) => {
   const [editingHeader, setEditingHeader] = useState(false);
@@ -32,27 +32,43 @@ const SolutionNode = React.memo(({ data, id, selected }) => {
   };
 
   return (
-    <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      style={{
-        border: `2px solid ${selected ? '#3b82f6' : nodeStyle.borderColor}`,
-        borderRadius: '10px',
-        background: nodeStyle.background,
-        color: nodeStyle.textColor,
-        minWidth: '200px',
-        maxWidth: '280px',
-        fontSize: '14px',
-        boxShadow: selected
-          ? '0 8px 20px rgba(59, 130, 246, 0.3), 0 4px 10px rgba(0, 0, 0, 0.1)'
-          : isHovered
-            ? '0 6px 16px rgba(0,0,0,0.15)'
-            : '0 3px 8px rgba(0,0,0,0.1)',
-        position: 'relative',
-        overflow: 'hidden',
-        transition: 'box-shadow 0.2s ease, border 0.2s ease',
-      }}
-    >
+    <>
+      <NodeResizer
+        color="#3b82f6"
+        isVisible={selected}
+        minWidth={180}
+        minHeight={100}
+        lineStyle={{ strokeWidth: 2 }}
+        handleStyle={{
+          width: 12,
+          height: 12,
+          borderRadius: '50%',
+          backgroundColor: '#3b82f6',
+          border: '2px solid white',
+        }}
+      />
+      <div
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        style={{
+          border: `2px solid ${selected ? '#3b82f6' : nodeStyle.borderColor}`,
+          borderRadius: '10px',
+          background: nodeStyle.background,
+          color: nodeStyle.textColor,
+          width: '100%',
+          height: '100%',
+          minWidth: '180px',
+          fontSize: '14px',
+          boxShadow: selected
+            ? '0 8px 20px rgba(59, 130, 246, 0.3), 0 4px 10px rgba(0, 0, 0, 0.1)'
+            : isHovered
+              ? '0 6px 16px rgba(0,0,0,0.15)'
+              : '0 3px 8px rgba(0,0,0,0.1)',
+          position: 'relative',
+          overflow: 'hidden',
+          transition: 'box-shadow 0.2s ease, border 0.2s ease',
+        }}
+      >
       <Handle
         type="target"
         position={Position.Left}
@@ -79,7 +95,7 @@ const SolutionNode = React.memo(({ data, id, selected }) => {
           cursor: editingHeader ? 'text' : 'grab',
           transition: 'background 0.2s ease',
           letterSpacing: '0.01em',
-          userSelect: 'none',
+          userSelect: editingHeader ? 'text' : 'none',
         }}
         onDoubleClick={(e) => {
           e.stopPropagation();
@@ -96,8 +112,9 @@ const SolutionNode = React.memo(({ data, id, selected }) => {
               if (e.key === 'Enter') handleSaveHeader();
               if (e.key === 'Escape') { setLabel(data.label); setEditingHeader(false); }
             }}
-            className="nodrag nopan"
+            className="nodrag nopan nowheel"
             autoFocus
+            onFocus={(e) => e.target.select()}
             style={{
               background: 'rgba(255,255,255,0.98)',
               color: '#1f2937',
@@ -148,8 +165,9 @@ const SolutionNode = React.memo(({ data, id, selected }) => {
             onKeyDown={(e) => {
               if (e.key === 'Escape') { setDescription(data.description || ''); setEditingDescription(false); }
             }}
-            className="nodrag nopan"
+            className="nodrag nopan nowheel"
             autoFocus
+            onFocus={(e) => e.target.select()}
             placeholder="Add a description..."
             style={{
               background: '#ffffff',
@@ -192,6 +210,7 @@ const SolutionNode = React.memo(({ data, id, selected }) => {
         }}
       />
     </div>
+    </>
   );
 });
 

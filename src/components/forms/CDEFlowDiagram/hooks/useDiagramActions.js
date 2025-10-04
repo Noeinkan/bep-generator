@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { SWIMLANES } from '../CDEFlowDiagram.constants';
 
 /**
  * Custom hook for diagram actions (add/remove nodes, swimlanes, etc.)
@@ -15,55 +14,44 @@ export const useDiagramActions = ({
   handleNodeLabelChange,
   handleEdgeLabelChange
 }) => {
-  // Open modal for adding node to swimlane
+  // Open modal for adding node to swimlane (now directly adds node)
   const openAddNodeModal = useCallback((swimlaneId) => {
-    setModalState({ isOpen: true, type: 'addNode', swimlaneId });
-  }, [setModalState]);
-
-  // Handle adding node from modal
-  const handleAddNode = useCallback((solutionName, modalState) => {
-    const { swimlaneId } = modalState;
     const swimlane = swimlaneMap.get(swimlaneId);
     if (!swimlane) return;
 
+    // Find existing nodes in this swimlane
     const existingNodesInLane = nodes.filter(n => n.data?.swimlane === swimlaneId && n.type === 'solution');
-    const yPosition = 80 + (existingNodesInLane.length * 80);
+
+    // Calculate y position to avoid overlaps
+    const yPosition = 100 + (existingNodesInLane.length * 150);
+
+    // Generate example name
+    const exampleName = `Solution ${existingNodesInLane.length + 1}`;
 
     const newNodeId = `node-${Date.now()}`;
     const newNode = {
       id: newNodeId,
       type: 'solution',
-      data: { label: solutionName, swimlane: swimlaneId, onChange: handleNodeLabelChange },
+      data: {
+        label: exampleName,
+        description: 'Click to add description',
+        swimlane: swimlaneId,
+        onChange: handleNodeLabelChange
+      },
       position: { x: swimlane.x + 25, y: yPosition },
+      style: { width: 200, height: 120 },
     };
 
     const newNodes = [...nodes, newNode];
-    const currentIndex = SWIMLANES.findIndex(s => s.id === swimlaneId);
-    const nextSwimlane = SWIMLANES[currentIndex + 1];
-
-    let newEdges = [...edges];
-
-    if (nextSwimlane) {
-      const nextSwimlaneNodes = nodes.filter(n => n.data?.swimlane === nextSwimlane.id && n.type === 'solution');
-      if (nextSwimlaneNodes.length > 0) {
-        const targetNode = nextSwimlaneNodes[0];
-        const newEdge = {
-          id: `edge-${Date.now()}`,
-          source: newNodeId,
-          target: targetNode.id,
-          type: 'labeledStraight',
-          style: { stroke: nextSwimlane.borderColor, strokeWidth: 2 },
-          data: { label: '', onChange: handleEdgeLabelChange }
-        };
-        newEdges = [...edges, newEdge];
-      }
-    }
-
     setNodes(newNodes);
-    setEdges(newEdges);
-    updateParent(newNodes, newEdges);
-    setModalState({ isOpen: false, type: null, swimlaneId: null });
-  }, [nodes, edges, setNodes, setEdges, updateParent, setModalState, swimlaneMap, handleNodeLabelChange, handleEdgeLabelChange]);
+    setEdges(edges);
+    updateParent(newNodes, edges);
+  }, [nodes, edges, setNodes, setEdges, updateParent, swimlaneMap, handleNodeLabelChange]);
+
+  // Handle adding node from modal (kept for compatibility but not used)
+  const handleAddNode = useCallback((solutionName, modalState) => {
+    // Not used anymore - nodes are created directly
+  }, []);
 
   // Open modal for adding swimlane
   const openAddSwimlaneModal = useCallback(() => {

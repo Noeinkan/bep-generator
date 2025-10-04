@@ -94,8 +94,9 @@ export const useDiagramState = (initialValue, onChange, name) => {
     updateParent(nodes, newEdges);
   }, [edges, setEdges, nodes, updateParent]);
 
-  // Apply constraints after dragging stops
+  // Apply constraints after dragging stops - SIMPLIFIED VERSION
   const handleNodeDragStop = useCallback((event, node) => {
+    // Don't move bg or header nodes
     if (node.id.startsWith('bg-') || node.id.startsWith('header-')) {
       const originalNode = nodes.find(n => n.id === node.id);
       if (originalNode) {
@@ -108,21 +109,9 @@ export const useDiagramState = (initialValue, onChange, name) => {
       return;
     }
 
-    if (node.type === 'solution' && node.data?.swimlane) {
-      const swimlane = swimlaneMap.get(node.data.swimlane);
-      if (swimlane) {
-        setNodes((nds) => {
-          const updatedNodes = nds.map((n) =>
-            n.id === node.id ? { ...n, position: { x: swimlane.x + 25, y: node.position.y } } : n
-          );
-          updateParent(updatedNodes, edges);
-          return updatedNodes;
-        });
-      }
-    } else {
-      updateParent(nodes, edges);
-    }
-  }, [nodes, edges, setNodes, updateParent, swimlaneMap]);
+    // Just save the position - overlap detection disabled for now
+    updateParent(nodes, edges);
+  }, [nodes, edges, updateParent]);
 
   return {
     nodes,

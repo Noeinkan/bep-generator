@@ -11,7 +11,10 @@ const SwimlaneHeader = ({ data, id }) => {
   const [fullLabel, setFullLabel] = React.useState(data.fullLabel);
   const [isHovered, setIsHovered] = React.useState(false);
 
-  const handleAddClick = () => {
+  const handleAddClick = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    console.log('Add Solution clicked for swimlane:', data.id);
     if (data.onAddSolution) {
       data.onAddSolution(data.id);
     }
@@ -32,22 +35,22 @@ const SwimlaneHeader = ({ data, id }) => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
+    <div style={{ display: 'flex', flexDirection: 'row', gap: '12px', alignItems: 'center' }}>
       <div
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         style={{
-          padding: '12px 18px',
+          padding: '10px 16px',
           background: data.color || '#e5e7eb',
           border: `2px solid ${data.borderColor || '#9ca3af'}`,
           borderRadius: '10px',
           fontWeight: '700',
-          fontSize: '15px',
+          fontSize: '14px',
           color: data.textColor || '#374151',
           textAlign: 'center',
           textTransform: 'uppercase',
           letterSpacing: '0.8px',
-          width: '200px',
+          minWidth: '140px',
           boxShadow: isHovered ? '0 4px 12px rgba(0,0,0,0.15)' : '0 2px 6px rgba(0,0,0,0.08)',
           cursor: 'text',
           transition: 'all 0.2s ease',
@@ -89,7 +92,7 @@ const SwimlaneHeader = ({ data, id }) => {
           </div>
         )}
         <div
-          style={{ fontSize: '10px', fontWeight: '400', marginTop: '2px', opacity: 0.8, cursor: 'text' }}
+          style={{ fontSize: '9px', fontWeight: '400', marginTop: '2px', opacity: 0.75, cursor: 'text' }}
           title="Click to edit"
         >
           {editingFullLabel ? (
@@ -110,7 +113,7 @@ const SwimlaneHeader = ({ data, id }) => {
                 padding: '2px 4px',
                 width: '100%',
                 textAlign: 'center',
-                fontSize: '10px',
+                fontSize: '9px',
                 fontWeight: '400',
                 color: 'inherit',
               }}
@@ -127,35 +130,42 @@ const SwimlaneHeader = ({ data, id }) => {
         </div>
       </div>
       <button
+        onMouseDown={handleAddClick}
         onClick={handleAddClick}
+        onPointerDown={handleAddClick}
         onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'translateY(-2px)';
+          e.currentTarget.style.transform = 'scale(1.05)';
           e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.transform = 'scale(1)';
           e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.12)';
         }}
-        className="nodrag"
+        className="nodrag nopan"
         style={{
-          padding: '8px 14px',
+          padding: '7px 12px',
           background: data.borderColor || '#3b82f6',
           color: 'white',
           border: 'none',
           borderRadius: '8px',
-          fontSize: '12px',
+          fontSize: '11px',
           fontWeight: '600',
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
-          gap: '6px',
+          gap: '5px',
           boxShadow: '0 2px 6px rgba(0,0,0,0.12)',
           transition: 'all 0.2s ease',
           letterSpacing: '0.02em',
+          whiteSpace: 'nowrap',
+          pointerEvents: 'all',
+          zIndex: 1000,
+          position: 'relative',
         }}
+        title={`Add solution to ${data.label}`}
       >
-        <Plus size={15} strokeWidth={2.5} />
-        Add Solution
+        <Plus size={14} strokeWidth={2.5} />
+        Add
       </button>
     </div>
   );
