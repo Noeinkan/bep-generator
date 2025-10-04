@@ -63,41 +63,41 @@ export const getInitialNodes = () => [
   {
     id: 'sol1',
     type: 'solution',
-    data: { label: 'SharePoint', swimlane: 'wip' },
-    position: { x: 25, y: 80 },
+    data: { label: 'SharePoint', description: 'Team collaboration platform', swimlane: 'wip' },
+    position: { x: 25, y: 200 },
   },
   {
     id: 'sol2',
     type: 'solution',
-    data: { label: 'Autodesk Docs', swimlane: 'shared' },
-    position: { x: 275, y: 80 },
+    data: { label: 'Autodesk Docs', description: 'Document management system', swimlane: 'shared' },
+    position: { x: 275, y: 200 },
   },
   {
     id: 'sol3',
     type: 'solution',
-    data: { label: 'BIMcollab', swimlane: 'shared' },
-    position: { x: 275, y: 160 },
+    data: { label: 'BIMcollab', description: 'Issue tracking and coordination', swimlane: 'shared' },
+    position: { x: 275, y: 340 },
   },
   {
     id: 'sol4',
     type: 'solution',
-    data: { label: 'Aconex', swimlane: 'published' },
-    position: { x: 525, y: 80 },
+    data: { label: 'Aconex', description: 'Final approved documents', swimlane: 'published' },
+    position: { x: 525, y: 200 },
   },
   {
     id: 'sol5',
     type: 'solution',
-    data: { label: 'Document Archive', swimlane: 'archived' },
-    position: { x: 775, y: 80 },
+    data: { label: 'Document Archive', description: 'Long-term storage', swimlane: 'archived' },
+    position: { x: 775, y: 200 },
   },
 ];
 
 // Initial edges showing workflow
 export const getInitialEdges = () => [
-  { id: 'e1', source: 'sol1', target: 'sol2', type: 'labeledStraight', style: { stroke: '#3b82f6', strokeWidth: 2 }, data: { label: 'review' } },
-  { id: 'e2', source: 'sol2', target: 'sol4', type: 'labeledStraight', style: { stroke: '#10b981', strokeWidth: 2 }, data: { label: 'approve' } },
-  { id: 'e3', source: 'sol3', target: 'sol4', type: 'labeledStraight', style: { stroke: '#10b981', strokeWidth: 2 }, data: { label: 'publish' } },
-  { id: 'e4', source: 'sol4', target: 'sol5', type: 'labeledStraight', style: { stroke: '#6b7280', strokeWidth: 2 }, data: { label: 'archive' } },
+  { id: 'e1', source: 'sol1', target: 'sol2', type: 'labeledStraight', style: { stroke: '#3b82f6', strokeWidth: 3 }, data: { label: 'review' } },
+  { id: 'e2', source: 'sol2', target: 'sol4', type: 'labeledStraight', style: { stroke: '#10b981', strokeWidth: 3 }, data: { label: 'approve' } },
+  { id: 'e3', source: 'sol3', target: 'sol4', type: 'labeledStraight', style: { stroke: '#10b981', strokeWidth: 3 }, data: { label: 'publish' } },
+  { id: 'e4', source: 'sol4', target: 'sol5', type: 'labeledStraight', style: { stroke: '#6b7280', strokeWidth: 3 }, data: { label: 'archive' } },
 ];
 
 // Default node style

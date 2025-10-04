@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useCallback } from 'react';
 import ReactFlow, {
   Background,
   Controls,
-  MiniMap,
   ConnectionMode,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
@@ -75,6 +74,17 @@ const CDEFlowDiagram = ({ field, value, onChange, error }) => {
     setNodes((nds) => {
       const updatedNodes = nds.map((node) =>
         node.id === nodeId ? { ...node, data: { ...node.data, label: newLabel } } : node
+      );
+      updateParent(updatedNodes, edges);
+      return updatedNodes;
+    });
+  }, [setNodes, edges, updateParent]);
+
+  // Handle node description change
+  const handleNodeDescriptionChange = useCallback((nodeId, newDescription) => {
+    setNodes((nds) => {
+      const updatedNodes = nds.map((node) =>
+        node.id === nodeId ? { ...node, data: { ...node.data, description: newDescription } } : node
       );
       updateParent(updatedNodes, edges);
       return updatedNodes;
@@ -225,8 +235,8 @@ const CDEFlowDiagram = ({ field, value, onChange, error }) => {
   const nodeTypes = useMemo(() => ({
     swimlaneBackground: (props) => <SwimlaneBackground {...props} data={{ ...props.data, onAddNode: openAddNodeModal }} />,
     swimlaneHeader: (props) => <SwimlaneHeader {...props} data={{ ...props.data, onAddSolution: openAddNodeModal, onLabelChange: handleSwimlaneHeaderChange }} />,
-    solution: (props) => <SolutionNode {...props} data={{ ...props.data, onChange: handleNodeLabelChange, nodeStyle }} />,
-  }), [handleNodeLabelChange, openAddNodeModal, handleSwimlaneHeaderChange, nodeStyle]);
+    solution: (props) => <SolutionNode {...props} data={{ ...props.data, onChange: handleNodeLabelChange, onDescriptionChange: handleNodeDescriptionChange, nodeStyle }} />,
+  }), [handleNodeLabelChange, handleNodeDescriptionChange, openAddNodeModal, handleSwimlaneHeaderChange, nodeStyle]);
 
   // Memoize edge types
   const edgeTypes = useMemo(() => ({
@@ -239,7 +249,7 @@ const CDEFlowDiagram = ({ field, value, onChange, error }) => {
         {label} {required && <span className="text-red-500">*</span>}
       </label>
 
-      <div style={{ height: '600px', border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden' }}>
+      <div style={{ height: '600px', border: '2px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)' }}>
         <DiagramToolbar
           onReset={resetToDefault}
           onAddSwimlane={openAddSwimlaneModal}
@@ -274,20 +284,22 @@ const CDEFlowDiagram = ({ field, value, onChange, error }) => {
             edgeTypes={edgeTypes}
             connectionMode={ConnectionMode.Loose}
             fitView
+            fitViewOptions={{ padding: 0.2 }}
             deleteKeyCode="Delete"
             attributionPosition="bottom-left"
-            minZoom={0.5}
-            maxZoom={1.5}
+            minZoom={0.4}
+            maxZoom={2}
+            snapToGrid={true}
+            snapGrid={[15, 15]}
           >
-            <MiniMap nodeStrokeWidth={3} zoomable pannable />
-            <Controls />
-            <Background color="#e5e7eb" gap={16} />
+            <Controls showInteractive={false} />
+            <Background color="#d1d5db" gap={20} size={1.5} />
           </ReactFlow>
         </div>
       </div>
 
       <div className="mt-2 text-sm text-gray-600">
-        💡 <strong>Tips:</strong> Double-click nodes/edges to edit • Select and press Delete to remove • Drag horizontally to connect nodes across swimlanes
+        💡 <strong>Tips:</strong> Drag header to move node • Double-click header to rename • Click description to edit • Double-click edge label to edit • Drag from handles to connect • Delete key to remove
       </div>
 
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}

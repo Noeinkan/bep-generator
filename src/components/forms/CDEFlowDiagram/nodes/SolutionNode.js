@@ -2,17 +2,27 @@ import React, { useState } from 'react';
 import { Handle, Position } from 'reactflow';
 
 /**
- * Solution node component with editing capability and horizontal handles
+ * Solution node component with editable header and description
  */
-const SolutionNode = React.memo(({ data, id }) => {
-  const [editing, setEditing] = useState(false);
+const SolutionNode = React.memo(({ data, id, selected }) => {
+  const [editingHeader, setEditingHeader] = useState(false);
+  const [editingDescription, setEditingDescription] = useState(false);
   const [label, setLabel] = useState(data.label);
+  const [description, setDescription] = useState(data.description || '');
+  const [isHovered, setIsHovered] = useState(false);
 
-  const handleSave = () => {
+  const handleSaveHeader = () => {
     if (data.onChange) {
       data.onChange(id, label);
     }
-    setEditing(false);
+    setEditingHeader(false);
+  };
+
+  const handleSaveDescription = () => {
+    if (data.onDescriptionChange) {
+      data.onDescriptionChange(id, description);
+    }
+    setEditingDescription(false);
   };
 
   const nodeStyle = data.nodeStyle || {
@@ -23,63 +33,163 @@ const SolutionNode = React.memo(({ data, id }) => {
 
   return (
     <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       style={{
-        padding: '10px 14px',
-        border: `1px solid ${nodeStyle.borderColor}`,
-        borderRadius: '6px',
+        border: `2px solid ${selected ? '#3b82f6' : nodeStyle.borderColor}`,
+        borderRadius: '10px',
         background: nodeStyle.background,
         color: nodeStyle.textColor,
-        minWidth: '160px',
-        textAlign: 'center',
+        minWidth: '200px',
+        maxWidth: '280px',
         fontSize: '14px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        boxShadow: selected
+          ? '0 8px 20px rgba(59, 130, 246, 0.3), 0 4px 10px rgba(0, 0, 0, 0.1)'
+          : isHovered
+            ? '0 6px 16px rgba(0,0,0,0.15)'
+            : '0 3px 8px rgba(0,0,0,0.1)',
         position: 'relative',
+        overflow: 'hidden',
+        transition: 'box-shadow 0.2s ease, border 0.2s ease',
       }}
-      title="Click text to edit"
     >
       <Handle
         type="target"
         position={Position.Left}
-        style={{ background: nodeStyle.borderColor, left: '-8px' }}
+        style={{
+          background: selected ? '#3b82f6' : nodeStyle.borderColor,
+          left: '-10px',
+          width: '16px',
+          height: '16px',
+          border: '3px solid white',
+          transition: 'all 0.2s ease',
+          opacity: 1,
+          zIndex: 10,
+        }}
       />
-      {editing ? (
-        <input
-          value={label}
-          onChange={(e) => setLabel(e.target.value)}
-          onBlur={handleSave}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') handleSave();
-            if (e.key === 'Escape') { setLabel(data.label); setEditing(false); }
-          }}
-          className="nodrag"
-          autoFocus
-          style={{
-            background: nodeStyle.background,
-            color: nodeStyle.textColor,
-            border: `1px solid ${nodeStyle.borderColor}`,
-            borderRadius: '4px',
-            padding: '4px 8px',
-            width: '100%',
-            textAlign: 'center',
-            fontSize: '14px',
-          }}
-        />
-      ) : (
-        <div
-          onClick={(e) => {
+
+      {/* Header section - DRAGGABLE AREA */}
+      <div
+        style={{
+          background: selected ? '#3b82f6' : nodeStyle.borderColor,
+          color: '#ffffff',
+          padding: '12px 14px',
+          fontWeight: '600',
+          fontSize: '14px',
+          cursor: editingHeader ? 'text' : 'grab',
+          transition: 'background 0.2s ease',
+          letterSpacing: '0.01em',
+          userSelect: 'none',
+        }}
+        onDoubleClick={(e) => {
+          e.stopPropagation();
+          setEditingHeader(true);
+        }}
+        title="Drag to move • Double-click to edit"
+      >
+        {editingHeader ? (
+          <input
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+            onBlur={handleSaveHeader}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleSaveHeader();
+              if (e.key === 'Escape') { setLabel(data.label); setEditingHeader(false); }
+            }}
+            className="nodrag nopan"
+            autoFocus
+            style={{
+              background: 'rgba(255,255,255,0.98)',
+              color: '#1f2937',
+              border: 'none',
+              borderRadius: '4px',
+              padding: '4px 8px',
+              width: '100%',
+              fontSize: '14px',
+              fontWeight: '600',
+              outline: 'none',
+              cursor: 'text',
+            }}
+          />
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+            <span style={{ flex: 1 }}>{data.label}</span>
+            {isHovered && <span style={{ fontSize: '11px', opacity: 0.8, flexShrink: 0 }}>⋮⋮</span>}
+          </div>
+        )}
+      </div>
+
+      {/* Description section - NON-DRAGGABLE */}
+      <div
+        style={{
+          padding: '12px 14px',
+          minHeight: '60px',
+          fontSize: '13px',
+          color: description || editingDescription ? '#4b5563' : '#9ca3af',
+          cursor: editingDescription ? 'text' : 'pointer',
+          lineHeight: '1.5',
+          background: editingDescription ? '#f9fafb' : 'transparent',
+          transition: 'background 0.2s ease',
+        }}
+        onClick={(e) => {
+          if (!editingDescription) {
             e.stopPropagation();
-            setEditing(true);
-          }}
-          className="nodrag nopan"
-          style={{ cursor: 'text', userSelect: 'none' }}
-        >
-          {data.label}
-        </div>
-      )}
+            setEditingDescription(true);
+          }
+        }}
+        className="nodrag nopan"
+        title="Click to edit description"
+      >
+        {editingDescription ? (
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            onBlur={handleSaveDescription}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') { setDescription(data.description || ''); setEditingDescription(false); }
+            }}
+            className="nodrag nopan"
+            autoFocus
+            placeholder="Add a description..."
+            style={{
+              background: '#ffffff',
+              color: '#4b5563',
+              border: `2px solid ${nodeStyle.borderColor}`,
+              borderRadius: '6px',
+              padding: '8px',
+              width: '100%',
+              fontSize: '13px',
+              minHeight: '50px',
+              resize: 'vertical',
+              fontFamily: 'inherit',
+              lineHeight: '1.5',
+              outline: 'none',
+              cursor: 'text',
+            }}
+          />
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
+            <span style={{ flex: 1, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+              {description || 'Add description...'}
+            </span>
+            {isHovered && description && <span style={{ fontSize: '11px', opacity: 0.5, flexShrink: 0 }}>✎</span>}
+          </div>
+        )}
+      </div>
+
       <Handle
         type="source"
         position={Position.Right}
-        style={{ background: nodeStyle.borderColor, right: '-8px' }}
+        style={{
+          background: selected ? '#3b82f6' : nodeStyle.borderColor,
+          right: '-10px',
+          width: '16px',
+          height: '16px',
+          border: '3px solid white',
+          transition: 'all 0.2s ease',
+          opacity: 1,
+          zIndex: 10,
+        }}
       />
     </div>
   );

@@ -9,6 +9,7 @@ const SwimlaneHeader = ({ data, id }) => {
   const [editingFullLabel, setEditingFullLabel] = React.useState(false);
   const [label, setLabel] = React.useState(data.label);
   const [fullLabel, setFullLabel] = React.useState(data.fullLabel);
+  const [isHovered, setIsHovered] = React.useState(false);
 
   const handleAddClick = () => {
     if (data.onAddSolution) {
@@ -31,24 +32,28 @@ const SwimlaneHeader = ({ data, id }) => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
       <div
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         style={{
-          padding: '10px 16px',
+          padding: '12px 18px',
           background: data.color || '#e5e7eb',
           border: `2px solid ${data.borderColor || '#9ca3af'}`,
-          borderRadius: '8px',
+          borderRadius: '10px',
           fontWeight: '700',
           fontSize: '15px',
           color: data.textColor || '#374151',
           textAlign: 'center',
           textTransform: 'uppercase',
-          letterSpacing: '0.5px',
+          letterSpacing: '0.8px',
           width: '200px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          boxShadow: isHovered ? '0 4px 12px rgba(0,0,0,0.15)' : '0 2px 6px rgba(0,0,0,0.08)',
           cursor: 'text',
+          transition: 'all 0.2s ease',
+          transform: isHovered ? 'translateY(-1px)' : 'translateY(0)',
         }}
-        title="Double-click to edit"
+        title="Click to edit"
       >
         {editingLabel ? (
           <input
@@ -123,23 +128,33 @@ const SwimlaneHeader = ({ data, id }) => {
       </div>
       <button
         onClick={handleAddClick}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-2px)';
+          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.12)';
+        }}
         className="nodrag"
         style={{
-          padding: '6px 12px',
+          padding: '8px 14px',
           background: data.borderColor || '#3b82f6',
           color: 'white',
           border: 'none',
-          borderRadius: '6px',
+          borderRadius: '8px',
           fontSize: '12px',
-          fontWeight: '500',
+          fontWeight: '600',
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
-          gap: '4px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          gap: '6px',
+          boxShadow: '0 2px 6px rgba(0,0,0,0.12)',
+          transition: 'all 0.2s ease',
+          letterSpacing: '0.02em',
         }}
       >
-        <Plus size={14} />
+        <Plus size={15} strokeWidth={2.5} />
         Add Solution
       </button>
     </div>

@@ -85,7 +85,9 @@ export const useDiagramState = (initialValue, onChange, name) => {
     const newEdge = {
       ...params,
       type: 'labeledStraight',
-      data: { label: '' }
+      data: { label: '' },
+      animated: true,
+      style: { strokeWidth: 3 }
     };
     const newEdges = addEdge(newEdge, edges);
     setEdges(newEdges);
