@@ -25,7 +25,7 @@ export const generateBEPContent = (formData, bepType, options = {}) => {
     if (field.type === 'checkbox' && Array.isArray(value)) {
       return `
         <div class="field-container">
-          <h4 class="field-title">${field.label}</h4>
+          <h4 class="field-title">${field.number ? field.number + ' ' : ''}${field.label}</h4>
           <ul class="checkbox-list">
             ${value.map(item => `<li class="checkbox-item">${DOMPurify.sanitize(item)}</li>`).join('')}
           </ul>
@@ -39,7 +39,7 @@ export const generateBEPContent = (formData, bepType, options = {}) => {
       const columns = field.columns || ['Column 1', 'Column 2', 'Column 3'];
       let tableHtml = `
         <div class="field-container">
-          <h4 class="field-title">${field.label}</h4>
+          <h4 class="field-title">${field.number ? field.number + ' ' : ''}${field.label}</h4>
           <div class="table-container">
             <table class="data-table">
               <thead>
@@ -64,7 +64,7 @@ export const generateBEPContent = (formData, bepType, options = {}) => {
     if (field.type === 'textarea') {
       return `
         <div class="field-container">
-          <h4 class="field-title">${field.label}</h4>
+          <h4 class="field-title">${field.number ? field.number + ' ' : ''}${field.label}</h4>
           <div class="textarea-content">${DOMPurify.sanitize(value)}</div>
         </div>
       `;
@@ -72,7 +72,7 @@ export const generateBEPContent = (formData, bepType, options = {}) => {
 
     return `
       <div class="field-pair">
-        <span class="field-label">${field.label}:</span>
+        <span class="field-label">${field.number ? field.number + ' ' : ''}${field.label}:</span>
         <span class="field-value">${DOMPurify.sanitize(value)}</span>
       </div>
     `;
