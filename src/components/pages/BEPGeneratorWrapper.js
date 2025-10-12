@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { ChevronRight, ChevronLeft, Eye, Zap, FolderOpen, Save, ExternalLink } from 'lucide-react';
 
 // Import all the existing BEP components
-import ProgressSidebar from '../ui/ProgressSidebar';
+import ProgressSidebar from '../forms/ProgressSidebar';
 import CONFIG from '../../config/bepConfig';
 import INITIAL_DATA from '../../data/initialData';
 import FormStep from '../steps/FormStep';
@@ -524,7 +524,7 @@ const BEPGeneratorWrapper = () => {
 
         {/* Form Content */}
   <div className="flex-1 overflow-y-auto bg-gray-50">
-          <div className="max-w-4xl mx-auto px-6 py-8">
+          <div className={`mx-auto px-6 py-8 ${currentStep === CONFIG.steps?.length - 1 ? 'max-w-[297mm]' : 'max-w-[210mm]'}`}>
             <div className={`bg-white rounded-xl shadow-sm border border-gray-200 p-8 transition-all duration-300 ease-in-out ${isTransitioning ? 'opacity-50 transform scale-95' : 'opacity-100 transform scale-100'}`}>
               {formData && bepType ? (
                 <FormStep
