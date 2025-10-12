@@ -1,6 +1,6 @@
 
 import React from 'react';
-import OrgStructureChart from '../visual/OrgStructureChart';
+import OrgStructureChart from './OrgStructureChart';
 
 
 
