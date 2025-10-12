@@ -11,6 +11,7 @@ import TipTapEditor from './TipTapEditor';
 import TimelineInput from './TimelineInput';
 import BudgetInput from './BudgetInput';
 import FieldHelpTooltip from './FieldHelpTooltip';
+import StandardsTable from '../StandardsTable';
 import HELP_CONTENT from '../../data/helpContentData';
 
 const InputField = React.memo(({ field, value, onChange, error, formData = {} }) => {
@@ -92,6 +93,16 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
     case 'table':
       return (
         <EditableTable
+          field={field}
+          value={value}
+          onChange={onChange}
+          error={error}
+        />
+      );
+
+    case 'standardsTable':
+      return (
+        <StandardsTable
           field={field}
           value={value}
           onChange={onChange}
