@@ -15,7 +15,7 @@ import StandardsTable from './StandardsTable';
 import HELP_CONTENT from '../../data/helpContentData';
 
 const InputField = React.memo(({ field, value, onChange, error, formData = {} }) => {
-  const { name, label, type, required, rows, placeholder, options: fieldOptions } = field;
+  const { name, label, number, type, required, rows, placeholder, options: fieldOptions } = field;
   const optionsList = fieldOptions ? CONFIG.options[fieldOptions] : null;
   const helpContent = HELP_CONTENT[name]; // Get help content for this field
 
@@ -154,7 +154,7 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
       return (
         <div>
           <FieldLabel htmlFor={name}>
-            {label} {required && '*'}
+            {number ? `${number} ` : ''}{label} {required && '*'}
           </FieldLabel>
           <TipTapEditor
             id={name}
@@ -175,7 +175,7 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
       return (
         <div>
           <FieldLabel htmlFor={name}>
-            {label} {required && '*'}
+            {number ? `${number} ` : ''}{label} {required && '*'}
           </FieldLabel>
           <select
             id={name}
@@ -197,7 +197,7 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
       return (
         <div>
           <FieldLabel>
-            {label} {required && '*'}
+            {number ? `${number} ` : ''}{label} {required && '*'}
           </FieldLabel>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-60 overflow-y-auto border rounded-lg p-3">
             {optionsList?.map(option => (
@@ -221,7 +221,7 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
       return (
         <div>
           <FieldLabel htmlFor={name}>
-            {label} {required && '*'}
+            {number ? `${number} ` : ''}{label} {required && '*'}
           </FieldLabel>
           <input
             id={name}

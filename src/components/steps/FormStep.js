@@ -56,7 +56,7 @@ const FormStep = ({ stepIndex, formData, updateFormData, errors, bepType }) => {
 
   return (
     <div className="space-y-6">
-      <h3 className="text-xl font-semibold">{stepConfig.title}</h3>
+      <h3 className="text-xl font-semibold">{stepConfig.number} {stepConfig.title}</h3>
 
       <div className={`grid grid-cols-1 ${gridColsClass} gap-4`}>
         {stepConfig.fields.map(field => (

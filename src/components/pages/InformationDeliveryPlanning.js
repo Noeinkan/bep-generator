@@ -89,7 +89,7 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Master Information Delivery Plan (MIDP) <span className="text-red-500">*</span>
+            6.1.1 Master Information Delivery Plan (MIDP) <span className="text-red-500">*</span>
           </label>
           <textarea
             value={formData.midpDescription || ''}
@@ -105,7 +105,7 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Task Information Delivery Plans (TIDPs)
+            6.1.4 Task Information Delivery Plans (TIDPs)
           </label>
           <textarea
             value={formData.tidpRequirements || ''}
@@ -118,7 +118,7 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Key Information Delivery Milestones <span className="text-red-500">*</span>
+            6.1.2 Key Information Delivery Milestones <span className="text-red-500">*</span>
           </label>
           <div className="overflow-x-auto">
             <table className="min-w-full border border-gray-300 rounded-lg">
