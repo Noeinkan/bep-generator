@@ -112,8 +112,7 @@ const CONFIG = {
           { name: 'confirmedTimeline', label: 'Confirmed Project Timeline', type: 'timeline', placeholder: '24 months (Jan 2025 - Dec 2026)' },
           { name: 'confirmedBudget', label: 'Confirmed Project Budget', type: 'budget', placeholder: '£12.5 million' },
           { name: 'projectDescription', label: 'Project Description', type: 'textarea', rows: 4, placeholder: 'A modern 8-storey office complex featuring sustainable design principles, flexible workspace layouts, and integrated smart building technologies. The building will accommodate 800+ employees across multiple tenants with shared amenities including conference facilities, cafeteria, and underground parking for 200 vehicles.' },
-          { name: 'deliveryApproach', label: 'Confirmed Delivery Approach', type: 'textarea', rows: 3, placeholder: 'Our delivery approach implements collaborative design coordination through advanced BIM workflows, stakeholder integration at key milestones, and continuous value engineering. We will execute a phased delivery strategy with integrated sustainability analysis and proactive risk management throughout all project stages to ensure on-time, on-budget completion.' },
-          { name: 'referencedMaterial', label: 'Referenced Documents and Standards', type: 'introTable', introPlaceholder: 'This BEP references and responds to the following documents and standards:', tableColumns: ['Document/Standard', 'Version/Date', 'Relevance/Purpose'] }
+          { name: 'deliveryApproach', label: 'Confirmed Delivery Approach', type: 'textarea', rows: 3, placeholder: 'Our delivery approach implements collaborative design coordination through advanced BIM workflows, stakeholder integration at key milestones, and continuous value engineering. We will execute a phased delivery strategy with integrated sustainability analysis and proactive risk management throughout all project stages to ensure on-time, on-budget completion.' }
         ]
       },
       1: {
@@ -278,7 +277,8 @@ const CONFIG = {
         { name: 'exchangeWorkflow', label: 'Appendix D: Information Exchange Workflow Template', required: true, type: 'table', columns: ['Exchange Point', 'Information Required', 'Format', 'Quality Checks', 'Approval Process'] },
         { name: 'modelCheckingCriteria', label: 'Appendix E: Model Quality Checking Criteria', type: 'table', columns: ['Check Type', 'Acceptance Criteria', 'Tools Used', 'Frequency'] },
         { name: 'softwareVersionMatrix', label: 'Appendix F: Software Version Compatibility Matrix', type: 'table', columns: ['Software', 'Version', 'File Formats Supported', 'Interoperability Notes'] },
-        { name: 'deliverableTemplates', label: 'Appendix G: Information Deliverable Templates', type: 'textarea', rows: 4, placeholder: 'Standard templates and schedules for key deliverables:\n\n- Task Information Delivery Plan (TIDP) Template\n- Model Element Checklist Template\n- Quality Assurance Report Template\n- Clash Detection Report Template\n- Progress Report Template\n- Information Exchange Record Template\n- Asset Data Handover Template\n\nAll templates available in project CDE Templates folder with version control and approval workflows.' }
+        { name: 'deliverableTemplates', label: 'Appendix G: Information Deliverable Templates', type: 'textarea', rows: 4, placeholder: 'Standard templates and schedules for key deliverables:\n\n- Task Information Delivery Plan (TIDP) Template\n- Model Element Checklist Template\n- Quality Assurance Report Template\n- Clash Detection Report Template\n- Progress Report Template\n- Information Exchange Record Template\n- Asset Data Handover Template\n\nAll templates available in project CDE Templates folder with version control and approval workflows.' },
+        { name: 'referencedDocuments', label: 'Appendix H: Referenced Documents and Standards', type: 'standardsTable' }
       ]
     }
   },
