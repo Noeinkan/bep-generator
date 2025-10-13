@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePage } from '../../contexts/PageContext';
+import { usePage } from '../../../contexts/PageContext';
 import { ArrowLeft } from 'lucide-react';
-import { useTidpData } from '../../hooks/useTidpData';
-import { useMidpData } from '../../hooks/useMidpData';
-import { useExport } from '../../hooks/useExport';
-import { getDefaultContainer } from '../../utils/csvHelpers';
-import Toast from '../common/Toast';
-import TIDPImportDialog from '../TIDPImportDialog';
-import MIDPEvolutionDashboard from '../MIDPEvolutionDashboard';
-import TIDPList from '../tidp/TIDPList';
-import TIDPForm from '../tidp/TIDPForm';
-import TIDPDetailsPanel from '../tidp/TIDPDetailsPanel';
-import TIDPDashboard from '../tidp/TIDPDashboard';
-import MIDPList from '../midp/MIDPList';
-import MIDPForm from '../midp/MIDPForm';
+import { useTidpData } from '../../../hooks/useTidpData';
+import { useMidpData } from '../../../hooks/useMidpData';
+import { useExport } from '../../../hooks/useExport';
+import { getDefaultContainer } from '../../../utils/csvHelpers';
+import Toast from '../../common/Toast';
+import TIDPImportDialog from '../../tidp/TIDPImportDialog';
+import MIDPEvolutionDashboard from '../../midp/MIDPEvolutionDashboard';
+import TIDPList from '../../tidp/TIDPList';
+import TIDPForm from '../../tidp/TIDPForm';
+import TIDPDetailsPanel from '../../tidp/TIDPDetailsPanel';
+import TIDPDashboard from '../../tidp/TIDPDashboard';
+import MIDPList from '../../midp/MIDPList';
+import MIDPForm from '../../midp/MIDPForm';
 
 const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidpForm = false, initialTidpId = null }) => {
   const navigate = useNavigate();
@@ -76,7 +76,7 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
             const rawParts = String(initialTidpId).split('--');
             const idOnly = rawParts[0];
             const t = await (async () => {
-              const ApiService = require('../../services/apiService').default || require('../../services/apiService');
+              const ApiService = require('../../../services/apiService').default || require('../../../services/apiService');
               const resp = await ApiService.getTIDP(idOnly);
               return resp.data || resp;
             })();
@@ -155,7 +155,7 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
         });
         // Update URL to include id and a readable slug from the TIDP name
         try {
-          const slugify = require('../../utils/slugify').default || require('../../utils/slugify');
+          const slugify = require('../../../utils/slugify').default || require('../../../utils/slugify');
           const slug = slugify(t.taskTeam || t.name || t.title || 'tidp');
           navigateTo(`/tidp-editor/${t.id}${slug ? '--' + slug : ''}`);
         } catch (e) { /* noop */ }
@@ -241,7 +241,7 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
       });
       setShowTidpForm(true);
       try {
-  const slugify = require('../../utils/slugify').default || require('../../utils/slugify');
+  const slugify = require('../../../utils/slugify').default || require('../../../utils/slugify');
   const slug = slugify(tidp.taskTeam || tidp.name || tidp.title || tidp.taskTeam);
   navigateTo(`/tidp-editor/${tidp.id}${slug ? '--' + slug : ''}`);
       } catch (e) { /* noop */ }

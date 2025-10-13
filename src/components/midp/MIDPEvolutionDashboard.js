@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { TrendingUp, Users, Clock, BarChart3, AlertTriangle } from 'lucide-react';
-import ApiService from '../services/apiService';
+import ApiService from '../../services/apiService';
 
 const MIDPEvolutionDashboard = ({ midpId, onClose }) => {
   const [evolution, setEvolution] = useState(null);

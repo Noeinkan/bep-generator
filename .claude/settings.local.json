@@ -8,7 +8,12 @@
       "Bash(taskkill:*)",
       "Bash(timeout:*)",
       "Bash(cat:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(del StandardsTable.js)",
+      "Bash(del uiProgressSidebar.js)",
+      "Bash(del visualOrgStructureChart.js)",
+      "Bash(find:*)",
+      "Bash(npm run build)"
     ],
     "deny": [],
     "ask": []

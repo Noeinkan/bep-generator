@@ -16,8 +16,8 @@ import Placeholder from '@tiptap/extension-placeholder';
 import FontSize from './extensions/FontSize';
 import ResizableImage from './extensions/ResizableImage';
 import TipTapToolbar from './TipTapToolbar';
-import FindReplaceDialog from './FindReplaceDialog';
-import TableBubbleMenu from './TableBubbleMenu';
+import FindReplaceDialog from '../dialogs/FindReplaceDialog';
+import TableBubbleMenu from '../tables/TableBubbleMenu';
 
 const TipTapEditor = ({
   value = '',

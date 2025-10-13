@@ -7,7 +7,7 @@ import { PageProvider, usePage } from './contexts/PageContext';
 import MainLayout from './components/layout/MainLayout';
 import HomePage from './components/pages/HomePage';
 import BEPGeneratorWrapper from './components/pages/BEPGeneratorWrapper';
-import TIDPMIDPDashboard from './components/pages/TIDPMIDPDashboard';
+import TIDPMIDPDashboard from './components/pages/tidp-midp/TIDPMIDPDashboard';
 import TidpEditorPage from './components/pages/TidpEditorPage';
 
 const AppContent = () => {

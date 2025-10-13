@@ -2,14 +2,14 @@ import React, { useState, useCallback } from 'react';
 import { ChevronRight, ChevronLeft, Eye, Zap, FolderOpen, Save, ExternalLink } from 'lucide-react';
 
 // Import all the existing BEP components
-import ProgressSidebar from '../forms/ProgressSidebar';
+import ProgressSidebar from '../forms/controls/ProgressSidebar';
 import CONFIG from '../../config/bepConfig';
 import INITIAL_DATA from '../../data/initialData';
 import FormStep from '../steps/FormStep';
 import PreviewExportPage from './PreviewExportPage';
-import EnhancedBepTypeSelector from './EnhancedBepTypeSelector';
-import DraftManager from './DraftManager';
-import SaveDraftDialog from './SaveDraftDialog';
+import EnhancedBepTypeSelector from './bep/EnhancedBepTypeSelector';
+import DraftManager from './drafts/DraftManager';
+import SaveDraftDialog from './drafts/SaveDraftDialog';
 import { generateBEPContent } from '../../services/bepFormatter';
 import { generatePDF } from '../../services/pdfGenerator';
 import { generateDocx } from '../../services/docxGenerator';

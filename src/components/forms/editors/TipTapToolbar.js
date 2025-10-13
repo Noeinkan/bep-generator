@@ -28,8 +28,8 @@ import {
   FileText,
   ChevronDown,
 } from 'lucide-react';
-import TemplateSelector from './TemplateSelector';
-import TableInsertDialog from './TableInsertDialog';
+import TemplateSelector from '../controls/TemplateSelector';
+import TableInsertDialog from '../dialogs/TableInsertDialog';
 
 const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldName }) => {
   const [showLinkInput, setShowLinkInput] = useState(false);

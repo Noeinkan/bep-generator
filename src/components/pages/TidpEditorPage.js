@@ -1,5 +1,5 @@
 import React from 'react';
-import TidpMidpManager from './TidpMidpManager';
+import TidpMidpManager from './tidp-midp/TidpMidpManager';
 
 const TidpEditorPage = () => {
   // If URL is /tidp-editor/:id, extract the id and forward to the manager so it can load the existing TIDP

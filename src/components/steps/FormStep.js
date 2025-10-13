@@ -1,5 +1,5 @@
 import React from 'react';
-import InputField from '../forms/InputField';
+import InputField from '../forms/base/InputField';
 import CONFIG from '../../config/bepConfig';
 import InformationDeliveryPlanning from '../pages/InformationDeliveryPlanning';
 

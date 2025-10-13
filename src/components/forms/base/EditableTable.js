@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Users, Plus, X, Edit2 } from 'lucide-react';
-import TipTapEditor from './TipTapEditor';
+import TipTapEditor from '../editors/TipTapEditor';
 
 const EditableTable = React.memo(({ field, value, onChange, error }) => {
   const { name, label, required, columns: presetColumns = ['Role/Discipline', 'Name/Company', 'Experience/Notes'] } = field;

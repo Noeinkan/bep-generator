@@ -1,6 +1,6 @@
 import React from 'react';
 import { CheckCircle, AlertCircle } from 'lucide-react';
-import CONFIG from '../../config/bepConfig';
+import CONFIG from '../../../config/bepConfig';
 
 const ProgressSidebar = React.memo(({ steps, currentStep, completedSections, onStepClick, validateStep, tidpData = [], midpData = [] }) => (
   <div className="bg-white rounded-lg shadow-sm p-6">

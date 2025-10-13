@@ -1,6 +1,6 @@
 import React from 'react';
 import { CheckCircle, Zap, Target, Eye } from 'lucide-react';
-import CONFIG from '../../config/bepConfig';
+import CONFIG from '../../../config/bepConfig';
 
 const EnhancedBepTypeSelector = ({ bepType, setBepType, onProceed }) => (
   <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">

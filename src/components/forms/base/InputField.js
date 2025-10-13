@@ -1,18 +1,18 @@
-import OrgStructureField from './OrgStructureField';
+import OrgStructureField from '../specialized/OrgStructureField';
 // ...existing code...
 import React from 'react';
-import CONFIG from '../../config/bepConfig';
+import CONFIG from '../../../config/bepConfig';
 import EditableTable from './EditableTable';
 import IntroTableField from './IntroTableField';
-import FileStructureDiagram from './FileStructureDiagram';
-import CDEDiagramBuilder from './CDEDiagramBuilder';
-import VolumeStrategyMindmap from './VolumeStrategyMindmap';
-import TipTapEditor from './TipTapEditor';
-import TimelineInput from './TimelineInput';
-import BudgetInput from './BudgetInput';
-import FieldHelpTooltip from './FieldHelpTooltip';
-import StandardsTable from './StandardsTable';
-import HELP_CONTENT from '../../data/helpContentData';
+import FileStructureDiagram from '../diagrams/FileStructureDiagram';
+import CDEDiagramBuilder from '../diagrams/CDEDiagramBuilder';
+import VolumeStrategyMindmap from '../diagrams/VolumeStrategyMindmap';
+import TipTapEditor from '../editors/TipTapEditor';
+import TimelineInput from '../specialized/TimelineInput';
+import BudgetInput from '../specialized/BudgetInput';
+import FieldHelpTooltip from '../controls/FieldHelpTooltip';
+import StandardsTable from '../tables/StandardsTable';
+import HELP_CONTENT from '../../../data/helpContentData';
 
 const InputField = React.memo(({ field, value, onChange, error, formData = {} }) => {
   const { name, label, number, type, required, rows, placeholder, options: fieldOptions } = field;

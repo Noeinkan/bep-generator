@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Upload, Download, FileText, AlertCircle, CheckCircle } from 'lucide-react';
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
-import ApiService from '../services/apiService';
+import ApiService from '../../services/apiService';
 
 const TIDPImportDialog = ({ open, onClose, onImportComplete }) => {
   const [importType, setImportType] = useState('excel');
