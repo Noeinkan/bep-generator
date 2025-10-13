@@ -11,23 +11,23 @@ import {
   Users,
   Calendar
 } from 'lucide-react';
-import ApiService from '../../services/apiService';
-import Toast from '../common/Toast';
-import TIDPImportDialog from '../TIDPImportDialog';
-import MIDPEvolutionDashboard from '../MIDPEvolutionDashboard';
-import { usePage } from '../../contexts/PageContext';
-import { useTIDPFilters } from '../../hooks/useTIDPFilters';
-import { exportTidpCsvTemplate, exportTidpToCSV, exportMidpToCSV } from '../../utils/tidpExport';
-import { checkMIDPCompliance, generateComplianceReport } from '../../utils/complianceCheck';
+import ApiService from '../../../services/apiService';
+import Toast from '../../common/Toast';
+import TIDPImportDialog from '../../tidp/TIDPImportDialog';
+import MIDPEvolutionDashboard from '../../midp/MIDPEvolutionDashboard';
+import { usePage } from '../../../contexts/PageContext';
+import { useTIDPFilters } from '../../../hooks/useTIDPFilters';
+import { exportTidpCsvTemplate, exportTidpToCSV, exportMidpToCSV } from '../../../utils/tidpExport';
+import { checkMIDPCompliance, generateComplianceReport } from '../../../utils/complianceCheck';
 
 // Sub-components
-import StatisticsCards from './TIDPMIDPDashboard/StatisticsCards';
-import QuickActions from './TIDPMIDPDashboard/QuickActions';
-import RecentTIDPs from './TIDPMIDPDashboard/RecentTIDPs';
-import TIDPsView from './TIDPMIDPDashboard/TIDPsView';
-import MIDPsView from './TIDPMIDPDashboard/MIDPsView';
-import ImportView from './TIDPMIDPDashboard/ImportView';
-import HelpModal from './TIDPMIDPDashboard/HelpModal';
+import StatisticsCards from './dashboard/StatisticsCards';
+import QuickActions from './dashboard/QuickActions';
+import RecentTIDPs from './dashboard/RecentTIDPs';
+import TIDPsView from './dashboard/TIDPsView';
+import MIDPsView from './dashboard/MIDPsView';
+import ImportView from './dashboard/ImportView';
+import HelpModal from './dashboard/HelpModal';
 
 const TIDPMIDPDashboard = () => {
   const { navigateTo } = usePage();
@@ -154,10 +154,10 @@ const TIDPMIDPDashboard = () => {
   const handleViewTidpDetails = (tidpId) => {
     try {
       // fetch tidp to build a readable slug if available
-      const ApiService = require('../../services/apiService').default || require('../../services/apiService');
+      const ApiService = require('../../../services/apiService').default || require('../../../services/apiService');
       ApiService.getTIDP(tidpId).then((resp) => {
         const t = resp && resp.data ? resp.data : resp;
-        const slugify = require('../../utils/slugify').default || require('../../utils/slugify');
+        const slugify = require('../../../utils/slugify').default || require('../../../utils/slugify');
   const slug = slugify(t?.taskTeam || t?.name || t?.title || 'tidp');
   navigateTo(`/tidp-editor/${tidpId}${slug ? '--' + slug : ''}`);
       }).catch(() => {

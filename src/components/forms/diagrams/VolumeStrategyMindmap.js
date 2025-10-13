@@ -1,6 +1,6 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { useMindmapD3 } from '../../hooks/useMindmapD3';
-import { useUndoRedo } from '../../hooks/useUndoRedo';
+import { useMindmapD3 } from '../../../hooks/useMindmapD3';
+import { useUndoRedo } from '../../../hooks/useUndoRedo';
 import {
   parseValue,
   convertToText,
@@ -8,11 +8,11 @@ import {
   removeNodeFromTree,
   updateNodeInTree,
   searchNodes
-} from '../../utils/mindmapUtils';
-import { organizeNodes, snapToGrid } from '../../utils/layoutUtils';
-import MindmapControls from './MindmapControls';
-import EditModal from './EditModal';
-import SearchFilter from './SearchFilter';
+} from '../../../utils/mindmapUtils';
+import { organizeNodes, snapToGrid } from '../../../utils/layoutUtils';
+import MindmapControls from '../controls/MindmapControls';
+import EditModal from '../dialogs/EditModal';
+import SearchFilter from '../controls/SearchFilter';
 
 const VolumeStrategyMindmap = ({ field, value, onChange, error }) => {
   const { name, label, required } = field;

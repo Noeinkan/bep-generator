@@ -5,13 +5,13 @@ import { Save, FolderOpen, ArrowLeft, Filter } from 'lucide-react';
 import DraftListItem from './DraftListItem';
 import SaveDraftDialog from './SaveDraftDialog';
 import SearchAndFilters from './SearchAndFilters';
-import { useDrafts } from '../../hooks/useDrafts';
-import { useDraftFilters } from '../../hooks/useDraftFilters';
-import { useDraftOperations } from '../../hooks/useDraftOperations';
-import { validateDraftName } from '../../utils/validationUtils';
-import ConfirmDialog from '../common/ConfirmDialog';
-import Toast from '../common/Toast';
-import { usePage } from '../../contexts/PageContext';
+import { useDrafts } from '../../../hooks/useDrafts';
+import { useDraftFilters } from '../../../hooks/useDraftFilters';
+import { useDraftOperations } from '../../../hooks/useDraftOperations';
+import { validateDraftName } from '../../../utils/validationUtils';
+import ConfirmDialog from '../../common/ConfirmDialog';
+import Toast from '../../common/Toast';
+import { usePage } from '../../../contexts/PageContext';
 
 const DraftManager = ({ user, currentFormData, onLoadDraft, onClose, bepType }) => {
   const { navigateTo } = usePage();
@@ -124,7 +124,7 @@ const DraftManager = ({ user, currentFormData, onLoadDraft, onClose, bepType }) 
           try {
             if (draft && draft.id) {
               // include a slug made from the draft name for readability
-              const slugify = require('../../utils/slugify').default || require('../../utils/slugify');
+              const slugify = require('../../../utils/slugify').default || require('../../../utils/slugify');
               const slug = slugify(draft.name || draft.title || 'draft');
               navigateTo(`/tidp-editor/${draft.id}${slug ? '--' + slug : ''}`);
             }

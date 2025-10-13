@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Calendar, Plus, FileText, Download, RefreshCw, AlertCircle, CheckCircle, Users, Target } from 'lucide-react';
 import ApiService from '../../services/apiService';
-import TidpMidpManager from './TidpMidpManager';
-import ExcelTIDPEditor from '../ExcelTIDPEditor';
+import TidpMidpManager from './tidp-midp/TidpMidpManager';
+import ExcelTIDPEditor from '../tidp/ExcelTIDPEditor';
 
 const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType }) => {
   const [tidps, setTidps] = useState([]);
