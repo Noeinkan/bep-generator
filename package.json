@@ -24,6 +24,7 @@
     "@tiptap/pm": "^3.6.2",
     "@tiptap/react": "^3.6.2",
     "@tiptap/starter-kit": "^3.6.2",
+    "@xyflow/react": "^12.8.6",
     "axios": "^1.12.2",
     "better-sqlite3": "^12.4.1",
     "d3": "^7.9.0",

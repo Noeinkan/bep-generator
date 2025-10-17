@@ -5,7 +5,7 @@ import CONFIG from '../../../config/bepConfig';
 import EditableTable from './EditableTable';
 import IntroTableField from './IntroTableField';
 import FileStructureDiagram from '../diagrams/FileStructureDiagram';
-import CDEDiagramBuilder from '../diagrams/CDEDiagramBuilder';
+import CDEDiagramBuilderV2 from '../diagrams/CDEDiagramBuilder';
 import VolumeStrategyMindmap from '../diagrams/VolumeStrategyMindmap';
 import TipTapEditor from '../editors/TipTapEditor';
 import TimelineInput from '../specialized/TimelineInput';
@@ -132,7 +132,7 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
 
     case 'cdeDiagram':
       return (
-        <CDEDiagramBuilder
+        <CDEDiagramBuilderV2
           field={field}
           value={value}
           onChange={onChange}
