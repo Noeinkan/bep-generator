@@ -37,6 +37,7 @@
     "papaparse": "^5.5.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-focus-lock": "^2.13.6",
     "react-organizational-chart": "^2.2.1",
     "react-router-dom": "^7.9.3",
     "react-scripts": "5.0.1",

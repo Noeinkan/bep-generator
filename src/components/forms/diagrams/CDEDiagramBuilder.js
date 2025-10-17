@@ -24,7 +24,11 @@ import {
   Grid3x3,
   AlignHorizontalJustifyCenter,
   AlignVerticalJustifyCenter,
+  Maximize2,
+  MoreVertical,
+  ChevronDown,
 } from 'lucide-react';
+import FullscreenDiagramModal from './FullscreenDiagramModal';
 
 import { nodeTypes, availableShapes } from './CustomNodes';
 import {
@@ -60,6 +64,8 @@ const CDEDiagramBuilderInner = ({ field, value, onChange, error }) => {
   const [showToolbar, setShowToolbar] = useState(true);
   const [selectedNodes, setSelectedNodes] = useState([]);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [showFocusMode, setShowFocusMode] = useState(false);
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
   const reactFlowWrapper = useRef(null);
 
   // Save to parent form on changes
@@ -325,124 +331,195 @@ const CDEDiagramBuilderInner = ({ field, value, onChange, error }) => {
       </label>
 
       <div className="w-full border rounded-xl overflow-hidden shadow-lg bg-white">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-purple-50 to-purple-100 px-6 py-4 border-b border-purple-200">
-          <div className="flex justify-between items-center">
+        {/* Header - Clean Single Row Toolbar */}
+        <div className="bg-gradient-to-r from-purple-50 to-purple-100 px-4 py-2.5 border-b border-purple-200">
+          <div className="flex items-center justify-between">
+            {/* Left: Title & Primary Actions */}
             <div className="flex items-center space-x-3">
-              <Layers className="w-5 h-5 text-purple-600" />
-              <span className="text-base font-semibold text-purple-800">
-                CDE Diagram Builder V2 (Infinite Canvas)
-              </span>
-            </div>
-            <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2">
+                <Layers className="w-5 h-5 text-purple-600" />
+                <span className="text-sm font-semibold text-purple-800">CDE Diagram</span>
+              </div>
+
+              {/* Primary Edit Actions */}
+              <div className="flex items-center space-x-1">
+                <button
+                  onClick={undo}
+                  disabled={historyIndex <= 0}
+                  className="p-2 text-gray-600 hover:bg-white/60 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  title="Undo (Ctrl+Z)"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={redo}
+                  disabled={historyIndex >= history.length - 1}
+                  className="p-2 text-gray-600 hover:bg-white/60 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  title="Redo (Ctrl+Y)"
+                >
+                  <RotateCw className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={deleteSelected}
+                  disabled={selectedNodes.length === 0}
+                  className="p-2 text-red-600 hover:bg-red-50 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  title="Delete (Del)"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="w-px h-6 bg-purple-300" />
+
+              {/* Add Layer */}
               <button
-                onClick={undo}
-                disabled={historyIndex <= 0}
-                className="p-2 text-gray-600 hover:bg-gray-100 rounded disabled:opacity-30"
-                title="Undo (Ctrl+Z)"
+                onClick={addLayer}
+                className="flex items-center space-x-1.5 bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-md transition-all text-sm"
+                title="Add Layer"
               >
-                <RotateCcw className="w-4 h-4" />
+                <Plus className="w-4 h-4" />
+                <span>Layer</span>
               </button>
-              <button
-                onClick={redo}
-                disabled={historyIndex >= history.length - 1}
-                className="p-2 text-gray-600 hover:bg-gray-100 rounded disabled:opacity-30"
-                title="Redo (Ctrl+Y)"
-              >
-                <RotateCw className="w-4 h-4" />
-              </button>
-              <div className="w-px h-6 bg-gray-300" />
-              <button
-                onClick={() => setSnapToGrid(!snapToGrid)}
-                className={`p-2 rounded ${
-                  snapToGrid ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-100'
-                }`}
-                title="Toggle Snap to Grid"
-              >
-                <Grid3x3 className="w-4 h-4" />
-              </button>
-              <button
-                onClick={alignHorizontal}
-                disabled={selectedNodes.length < 2}
-                className="p-2 text-gray-600 hover:bg-gray-100 rounded disabled:opacity-30"
-                title="Align Horizontal"
-              >
-                <AlignHorizontalJustifyCenter className="w-4 h-4" />
-              </button>
-              <button
-                onClick={alignVertical}
-                disabled={selectedNodes.length < 2}
-                className="p-2 text-gray-600 hover:bg-gray-100 rounded disabled:opacity-30"
-                title="Align Vertical"
-              >
-                <AlignVerticalJustifyCenter className="w-4 h-4" />
-              </button>
-              <div className="w-px h-6 bg-gray-300" />
-              <button
-                onClick={deleteSelected}
-                disabled={selectedNodes.length === 0}
-                className="p-2 text-red-600 hover:bg-red-100 rounded disabled:opacity-30"
-                title="Delete Selected (Del)"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-              <div className="w-px h-6 bg-gray-300" />
-              <button
-                onClick={importJSON}
-                className="p-2 text-gray-600 hover:bg-gray-100 rounded"
-                title="Import JSON"
-              >
-                <Upload className="w-4 h-4" />
-              </button>
-              <button
-                onClick={exportJSON}
-                className="p-2 text-gray-600 hover:bg-gray-100 rounded"
-                title="Export JSON"
-              >
-                <Download className="w-4 h-4" />
-              </button>
-              <div className="w-px h-6 bg-gray-300" />
+
+              {/* Templates Dropdown */}
               <div className="relative">
                 <button
                   onClick={() => setShowTemplates(!showTemplates)}
-                  className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all"
+                  className="flex items-center space-x-1.5 bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 px-3 py-1.5 rounded-md transition-all text-sm"
                   title="Load Template"
                 >
-                  <Layers className="w-4 h-4" />
+                  <Layers className="w-3.5 h-3.5" />
                   <span>Templates</span>
+                  <ChevronDown className="w-3 h-3" />
                 </button>
                 {showTemplates && (
-                  <div className="absolute right-0 top-full mt-2 bg-white border border-gray-300 rounded-lg shadow-xl z-50 w-64">
-                    <div className="p-2 border-b border-gray-200 bg-gray-50 rounded-t-lg">
-                      <h4 className="font-semibold text-sm text-gray-700">Load Template</h4>
+                  <>
+                    <div
+                      className="fixed inset-0 z-40"
+                      onClick={() => setShowTemplates(false)}
+                    />
+                    <div className="absolute left-0 top-full mt-1 bg-white border border-gray-300 rounded-lg shadow-xl z-50 w-72">
+                      <div className="p-2 border-b border-gray-200 bg-gray-50 rounded-t-lg">
+                        <h4 className="font-semibold text-sm text-gray-700">Load Template</h4>
+                      </div>
+                      <div className="max-h-80 overflow-y-auto">
+                        {getTemplateOptions().map((template) => (
+                          <button
+                            key={template.value}
+                            onClick={() => loadTemplate(template.value)}
+                            className="w-full text-left px-3 py-2.5 hover:bg-purple-50 border-b border-gray-100 transition-colors"
+                          >
+                            <div className="font-medium text-sm text-gray-800">{template.label}</div>
+                            <div className="text-xs text-gray-500 mt-0.5">{template.description}</div>
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                    <div className="max-h-96 overflow-y-auto">
-                      {getTemplateOptions().map((template) => (
-                        <button
-                          key={template.value}
-                          onClick={() => loadTemplate(template.value)}
-                          className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 transition-colors"
-                        >
-                          <div className="font-medium text-sm text-gray-800">{template.label}</div>
-                          <div className="text-xs text-gray-500 mt-1">{template.description}</div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                  </>
                 )}
               </div>
-              <button
-                onClick={addLayer}
-                className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add Layer</span>
-              </button>
+
+              {/* More Menu Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowMoreMenu(!showMoreMenu)}
+                  className="flex items-center space-x-1.5 bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 px-3 py-1.5 rounded-md transition-all text-sm"
+                  title="More Options"
+                >
+                  <MoreVertical className="w-3.5 h-3.5" />
+                  <span>More</span>
+                </button>
+                {showMoreMenu && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-40"
+                      onClick={() => setShowMoreMenu(false)}
+                    />
+                    <div className="absolute left-0 top-full mt-1 bg-white border border-gray-300 rounded-lg shadow-xl z-50 w-56">
+                      <div className="p-1">
+                        {/* Grid Toggle */}
+                        <button
+                          onClick={() => {
+                            setSnapToGrid(!snapToGrid);
+                            setShowMoreMenu(false);
+                          }}
+                          className="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-50 rounded text-sm"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Grid3x3 className="w-4 h-4 text-gray-600" />
+                            <span className="text-gray-700">Snap to Grid</span>
+                          </div>
+                          <div className={`w-10 h-5 rounded-full transition-colors ${snapToGrid ? 'bg-blue-500' : 'bg-gray-300'}`}>
+                            <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform mt-0.5 ${snapToGrid ? 'ml-5' : 'ml-0.5'}`} />
+                          </div>
+                        </button>
+
+                        <div className="border-t border-gray-200 my-1" />
+
+                        {/* Align Options */}
+                        <button
+                          onClick={() => {
+                            alignHorizontal();
+                            setShowMoreMenu(false);
+                          }}
+                          disabled={selectedNodes.length < 2}
+                          className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 rounded text-sm disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                          <AlignHorizontalJustifyCenter className="w-4 h-4 text-gray-600" />
+                          <span className="text-gray-700">Align Horizontal</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            alignVertical();
+                            setShowMoreMenu(false);
+                          }}
+                          disabled={selectedNodes.length < 2}
+                          className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 rounded text-sm disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                          <AlignVerticalJustifyCenter className="w-4 h-4 text-gray-600" />
+                          <span className="text-gray-700">Align Vertical</span>
+                        </button>
+
+                        <div className="border-t border-gray-200 my-1" />
+
+                        {/* Import/Export */}
+                        <button
+                          onClick={() => {
+                            importJSON();
+                            setShowMoreMenu(false);
+                          }}
+                          className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 rounded text-sm"
+                        >
+                          <Upload className="w-4 h-4 text-gray-600" />
+                          <span className="text-gray-700">Import JSON</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            exportJSON();
+                            setShowMoreMenu(false);
+                          }}
+                          className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 rounded text-sm"
+                        >
+                          <Download className="w-4 h-4 text-gray-600" />
+                          <span className="text-gray-700">Export JSON</span>
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
+
+            {/* Right: Focus Mode */}
+            <button
+              onClick={() => setShowFocusMode(true)}
+              className="flex items-center space-x-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-md transition-all text-sm"
+              title="Focus Mode - Fullscreen editing"
+            >
+              <Maximize2 className="w-4 h-4" />
+              <span>Focus Mode</span>
+            </button>
           </div>
-          <p className="text-sm text-purple-700 mt-2">
-            Infinite canvas • Drag to pan • Scroll to zoom • Multi-select (Shift+Click) • Templates for quick start • Connect nodes by dragging handles
-          </p>
         </div>
 
         {/* React Flow Canvas */}
@@ -529,6 +606,87 @@ const CDEDiagramBuilderInner = ({ field, value, onChange, error }) => {
       </div>
 
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+
+      {/* Focus Mode - Fullscreen Modal */}
+      <FullscreenDiagramModal
+        isOpen={showFocusMode}
+        onClose={() => setShowFocusMode(false)}
+        closeOnClickOutside={false}
+      >
+        <div style={{ width: '100%', height: '100%' }}>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onSelectionChange={onSelectionChange}
+            nodeTypes={nodeTypes}
+            snapToGrid={snapToGrid}
+            snapGrid={[15, 15]}
+            fitView
+            attributionPosition="bottom-left"
+            multiSelectionKeyCode="Shift"
+            deleteKeyCode="Delete"
+          >
+            <Background variant="dots" gap={16} size={1} color="#ddd" />
+            <Controls showInteractive={false} />
+            <MiniMap
+              nodeColor={(node) => {
+                if (node.type === 'swimlane') return '#f3f4f6';
+                return '#cbd5e1';
+              }}
+              maskColor="rgba(0, 0, 0, 0.1)"
+              style={{ background: '#f8f9fa' }}
+            />
+
+            {/* Toolbar in Focus Mode */}
+            {showToolbar && (
+              <Panel position="top-left" className="bg-white rounded-lg shadow-lg p-3 max-w-48">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-semibold text-sm text-gray-700">Shapes</h4>
+                  <button
+                    onClick={() => setShowToolbar(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    ×
+                  </button>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {availableShapes.slice(0, 12).map((shape) => {
+                    const Icon = shape.icon;
+                    return (
+                      <button
+                        key={shape.type}
+                        onClick={() => addNode(shape.type)}
+                        className="flex flex-col items-center justify-center p-2 border border-gray-200 rounded hover:bg-gray-50 hover:border-blue-400 transition-all"
+                        title={shape.label}
+                      >
+                        <Icon className="w-5 h-5 text-gray-600" />
+                        <span className="text-xs mt-1 text-gray-600 truncate w-full text-center">
+                          {shape.label}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </Panel>
+            )}
+
+            {!showToolbar && (
+              <Panel position="top-left">
+                <button
+                  onClick={() => setShowToolbar(true)}
+                  className="bg-white rounded-lg shadow-lg p-2 hover:bg-gray-50"
+                  title="Show Toolbar"
+                >
+                  <Plus className="w-5 h-5 text-gray-600" />
+                </button>
+              </Panel>
+            )}
+          </ReactFlow>
+        </div>
+      </FullscreenDiagramModal>
     </div>
   );
 };
