@@ -331,22 +331,23 @@ const CDEDiagramBuilderInner = ({ field, value, onChange, error }) => {
       </label>
 
       <div className="w-full border rounded-xl overflow-hidden shadow-lg bg-white">
-        {/* Header - Clean Single Row Toolbar */}
-        <div className="bg-gradient-to-r from-purple-50 to-purple-100 px-4 py-2.5 border-b border-purple-200">
+        {/* Header - Improved Toolbar with Better Grouping */}
+        <div className="bg-white px-4 py-2 border-b border-gray-200 shadow-sm">
           <div className="flex items-center justify-between">
-            {/* Left: Title & Primary Actions */}
-            <div className="flex items-center space-x-3">
-              <div className="flex items-center space-x-2">
-                <Layers className="w-5 h-5 text-purple-600" />
-                <span className="text-sm font-semibold text-purple-800">CDE Diagram</span>
+            {/* Left: Brand & Quick Actions */}
+            <div className="flex items-center gap-4">
+              {/* Brand */}
+              <div className="flex items-center gap-2 pr-4 border-r border-gray-200">
+                <Layers className="w-5 h-5 text-indigo-600" />
+                <span className="text-sm font-semibold text-gray-900">CDE Diagram</span>
               </div>
 
-              {/* Primary Edit Actions */}
-              <div className="flex items-center space-x-1">
+              {/* History Group */}
+              <div className="flex items-center gap-1 bg-gray-50 rounded-lg p-1">
                 <button
                   onClick={undo}
                   disabled={historyIndex <= 0}
-                  className="p-2 text-gray-600 hover:bg-white/60 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  className="p-1.5 text-gray-700 hover:bg-white hover:shadow-sm rounded disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                   title="Undo (Ctrl+Z)"
                 >
                   <RotateCcw className="w-4 h-4" />
@@ -354,119 +355,133 @@ const CDEDiagramBuilderInner = ({ field, value, onChange, error }) => {
                 <button
                   onClick={redo}
                   disabled={historyIndex >= history.length - 1}
-                  className="p-2 text-gray-600 hover:bg-white/60 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  className="p-1.5 text-gray-700 hover:bg-white hover:shadow-sm rounded disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                   title="Redo (Ctrl+Y)"
                 >
                   <RotateCw className="w-4 h-4" />
                 </button>
+              </div>
+
+              {/* Edit Group */}
+              <div className="flex items-center gap-1 bg-gray-50 rounded-lg p-1">
                 <button
                   onClick={deleteSelected}
                   disabled={selectedNodes.length === 0}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                  title="Delete (Del)"
+                  className="p-1.5 text-red-600 hover:bg-red-50 hover:shadow-sm rounded disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                  title={`Delete ${selectedNodes.length > 0 ? `(${selectedNodes.length})` : ''}`}
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
 
-              <div className="w-px h-6 bg-purple-300" />
-
-              {/* Add Layer */}
-              <button
-                onClick={addLayer}
-                className="flex items-center space-x-1.5 bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-md transition-all text-sm"
-                title="Add Layer"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Layer</span>
-              </button>
-
-              {/* Templates Dropdown */}
-              <div className="relative">
+              {/* Primary Actions */}
+              <div className="flex items-center gap-2">
                 <button
-                  onClick={() => setShowTemplates(!showTemplates)}
-                  className="flex items-center space-x-1.5 bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 px-3 py-1.5 rounded-md transition-all text-sm"
-                  title="Load Template"
+                  onClick={addLayer}
+                  className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium shadow-sm hover:shadow"
                 >
-                  <Layers className="w-3.5 h-3.5" />
-                  <span>Templates</span>
-                  <ChevronDown className="w-3 h-3" />
+                  <Plus className="w-4 h-4" />
+                  <span>Add Layer</span>
                 </button>
-                {showTemplates && (
-                  <>
-                    <div
-                      className="fixed inset-0 z-40"
-                      onClick={() => setShowTemplates(false)}
-                    />
-                    <div className="absolute left-0 top-full mt-1 bg-white border border-gray-300 rounded-lg shadow-xl z-50 w-72">
-                      <div className="p-2 border-b border-gray-200 bg-gray-50 rounded-t-lg">
-                        <h4 className="font-semibold text-sm text-gray-700">Load Template</h4>
-                      </div>
-                      <div className="max-h-80 overflow-y-auto">
-                        {getTemplateOptions().map((template) => (
-                          <button
-                            key={template.value}
-                            onClick={() => loadTemplate(template.value)}
-                            className="w-full text-left px-3 py-2.5 hover:bg-purple-50 border-b border-gray-100 transition-colors"
-                          >
-                            <div className="font-medium text-sm text-gray-800">{template.label}</div>
-                            <div className="text-xs text-gray-500 mt-0.5">{template.description}</div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
 
-              {/* More Menu Dropdown */}
+                {/* Templates Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setShowTemplates(!showTemplates)}
+                    className="flex items-center gap-1.5 bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 px-3 py-1.5 rounded-lg transition-all text-sm font-medium shadow-sm"
+                  >
+                    <Layers className="w-4 h-4" />
+                    <span>Templates</span>
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showTemplates ? 'rotate-180' : ''}`} />
+                  </button>
+                  {showTemplates && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setShowTemplates(false)} />
+                      <div className="absolute left-0 top-full mt-2 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 w-80 overflow-hidden">
+                        <div className="px-4 py-3 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-purple-50">
+                          <h4 className="font-semibold text-sm text-gray-900">Choose Template</h4>
+                          <p className="text-xs text-gray-600 mt-0.5">Start with a pre-built diagram</p>
+                        </div>
+                        <div className="max-h-96 overflow-y-auto">
+                          {getTemplateOptions().map((template, idx) => (
+                            <button
+                              key={template.value}
+                              onClick={() => loadTemplate(template.value)}
+                              className={`w-full text-left px-4 py-3 hover:bg-indigo-50 transition-colors ${
+                                idx !== getTemplateOptions().length - 1 ? 'border-b border-gray-100' : ''
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className="mt-0.5 w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                                  <Layers className="w-4 h-4 text-indigo-600" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="font-medium text-sm text-gray-900">{template.label}</div>
+                                  <div className="text-xs text-gray-600 mt-0.5 line-clamp-2">{template.description}</div>
+                                </div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Secondary Actions */}
+            <div className="flex items-center gap-2">
+              {/* Settings/More Menu */}
               <div className="relative">
                 <button
                   onClick={() => setShowMoreMenu(!showMoreMenu)}
-                  className="flex items-center space-x-1.5 bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 px-3 py-1.5 rounded-md transition-all text-sm"
+                  className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                   title="More Options"
                 >
-                  <MoreVertical className="w-3.5 h-3.5" />
-                  <span>More</span>
+                  <MoreVertical className="w-5 h-5" />
                 </button>
                 {showMoreMenu && (
                   <>
-                    <div
-                      className="fixed inset-0 z-40"
-                      onClick={() => setShowMoreMenu(false)}
-                    />
-                    <div className="absolute left-0 top-full mt-1 bg-white border border-gray-300 rounded-lg shadow-xl z-50 w-56">
-                      <div className="p-1">
+                    <div className="fixed inset-0 z-40" onClick={() => setShowMoreMenu(false)} />
+                    <div className="absolute right-0 top-full mt-2 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 w-64 overflow-hidden">
+                      <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                        <h4 className="font-semibold text-sm text-gray-900">Options</h4>
+                      </div>
+                      <div className="p-2">
                         {/* Grid Toggle */}
                         <button
                           onClick={() => {
                             setSnapToGrid(!snapToGrid);
                             setShowMoreMenu(false);
                           }}
-                          className="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-50 rounded text-sm"
+                          className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-gray-50 rounded-lg text-sm transition-colors"
                         >
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center gap-2.5">
                             <Grid3x3 className="w-4 h-4 text-gray-600" />
-                            <span className="text-gray-700">Snap to Grid</span>
+                            <span className="text-gray-700 font-medium">Snap to Grid</span>
                           </div>
-                          <div className={`w-10 h-5 rounded-full transition-colors ${snapToGrid ? 'bg-blue-500' : 'bg-gray-300'}`}>
-                            <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform mt-0.5 ${snapToGrid ? 'ml-5' : 'ml-0.5'}`} />
+                          <div className={`relative w-11 h-6 rounded-full transition-colors ${snapToGrid ? 'bg-indigo-600' : 'bg-gray-300'}`}>
+                            <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-md transition-transform ${snapToGrid ? 'right-1' : 'left-1'}`} />
                           </div>
                         </button>
 
-                        <div className="border-t border-gray-200 my-1" />
+                        <div className="my-2 border-t border-gray-200" />
 
-                        {/* Align Options */}
+                        {/* Align Section */}
+                        <div className="px-3 py-1.5">
+                          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Alignment</span>
+                        </div>
                         <button
                           onClick={() => {
                             alignHorizontal();
                             setShowMoreMenu(false);
                           }}
                           disabled={selectedNodes.length < 2}
-                          className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 rounded text-sm disabled:opacity-30 disabled:cursor-not-allowed"
+                          className="w-full flex items-center gap-2.5 px-3 py-2.5 hover:bg-gray-50 rounded-lg text-sm disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                         >
                           <AlignHorizontalJustifyCenter className="w-4 h-4 text-gray-600" />
-                          <span className="text-gray-700">Align Horizontal</span>
+                          <span className="text-gray-700 font-medium">Align Horizontal</span>
                         </button>
                         <button
                           onClick={() => {
@@ -474,51 +489,53 @@ const CDEDiagramBuilderInner = ({ field, value, onChange, error }) => {
                             setShowMoreMenu(false);
                           }}
                           disabled={selectedNodes.length < 2}
-                          className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 rounded text-sm disabled:opacity-30 disabled:cursor-not-allowed"
+                          className="w-full flex items-center gap-2.5 px-3 py-2.5 hover:bg-gray-50 rounded-lg text-sm disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                         >
                           <AlignVerticalJustifyCenter className="w-4 h-4 text-gray-600" />
-                          <span className="text-gray-700">Align Vertical</span>
+                          <span className="text-gray-700 font-medium">Align Vertical</span>
                         </button>
 
-                        <div className="border-t border-gray-200 my-1" />
+                        <div className="my-2 border-t border-gray-200" />
 
-                        {/* Import/Export */}
+                        {/* Import/Export Section */}
+                        <div className="px-3 py-1.5">
+                          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Import/Export</span>
+                        </div>
                         <button
                           onClick={() => {
                             importJSON();
                             setShowMoreMenu(false);
                           }}
-                          className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 rounded text-sm"
+                          className="w-full flex items-center gap-2.5 px-3 py-2.5 hover:bg-gray-50 rounded-lg text-sm transition-colors"
                         >
                           <Upload className="w-4 h-4 text-gray-600" />
-                          <span className="text-gray-700">Import JSON</span>
+                          <span className="text-gray-700 font-medium">Import JSON</span>
                         </button>
                         <button
                           onClick={() => {
                             exportJSON();
                             setShowMoreMenu(false);
                           }}
-                          className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 rounded text-sm"
+                          className="w-full flex items-center gap-2.5 px-3 py-2.5 hover:bg-gray-50 rounded-lg text-sm transition-colors"
                         >
                           <Download className="w-4 h-4 text-gray-600" />
-                          <span className="text-gray-700">Export JSON</span>
+                          <span className="text-gray-700 font-medium">Export JSON</span>
                         </button>
                       </div>
                     </div>
                   </>
                 )}
               </div>
-            </div>
 
-            {/* Right: Focus Mode */}
-            <button
-              onClick={() => setShowFocusMode(true)}
-              className="flex items-center space-x-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-md transition-all text-sm"
-              title="Focus Mode - Fullscreen editing"
-            >
-              <Maximize2 className="w-4 h-4" />
-              <span>Focus Mode</span>
-            </button>
+              {/* Focus Mode - Prominent CTA */}
+              <button
+                onClick={() => setShowFocusMode(true)}
+                className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg transition-all text-sm font-medium shadow-md hover:shadow-lg"
+              >
+                <Maximize2 className="w-4 h-4" />
+                <span>Focus Mode</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -550,35 +567,48 @@ const CDEDiagramBuilderInner = ({ field, value, onChange, error }) => {
               style={{ background: '#f8f9fa' }}
             />
 
-            {/* Sidebar Shape Palette */}
+            {/* Improved Shape Palette */}
             {showToolbar && (
-              <Panel position="top-left" className="bg-white rounded-lg shadow-lg p-3 max-w-48">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-semibold text-sm text-gray-700">Shapes</h4>
+              <Panel position="top-left" className="bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden" style={{ width: '240px' }}>
+                <div className="px-4 py-3 bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-gray-200 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
+                      <Plus className="w-4 h-4 text-indigo-600" />
+                    </div>
+                    <h4 className="font-semibold text-sm text-gray-900">Add Shapes</h4>
+                  </div>
                   <button
                     onClick={() => setShowToolbar(false)}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-gray-400 hover:text-gray-600 hover:bg-white/50 rounded p-1 transition-colors"
+                    title="Close"
                   >
-                    ×
+                    <span className="text-xl leading-none">×</span>
                   </button>
                 </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {availableShapes.slice(0, 12).map((shape) => {
-                    const Icon = shape.icon;
-                    return (
-                      <button
-                        key={shape.type}
-                        onClick={() => addNode(shape.type)}
-                        className="flex flex-col items-center justify-center p-2 border border-gray-200 rounded hover:bg-gray-50 hover:border-blue-400 transition-all"
-                        title={shape.label}
-                      >
-                        <Icon className="w-5 h-5 text-gray-600" />
-                        <span className="text-xs mt-1 text-gray-600 truncate w-full text-center">
-                          {shape.label}
-                        </span>
-                      </button>
-                    );
-                  })}
+                <div className="p-3 max-h-[500px] overflow-y-auto">
+                  <div className="grid grid-cols-3 gap-2">
+                    {availableShapes.map((shape) => {
+                      const Icon = shape.icon;
+                      return (
+                        <button
+                          key={shape.type}
+                          onClick={() => addNode(shape.type)}
+                          className="group flex flex-col items-center justify-center p-3 border-2 border-gray-200 rounded-lg hover:border-indigo-400 hover:bg-indigo-50 transition-all hover:shadow-md active:scale-95"
+                          title={shape.label}
+                        >
+                          <Icon className="w-6 h-6 text-gray-600 group-hover:text-indigo-600 transition-colors" />
+                          <span className="text-xs mt-1.5 text-gray-600 group-hover:text-indigo-700 group-hover:font-medium truncate w-full text-center transition-all">
+                            {shape.label}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div className="px-4 py-2 bg-gray-50 border-t border-gray-200">
+                  <p className="text-xs text-gray-500 text-center">
+                    Click to add • Drag to position
+                  </p>
                 </div>
               </Panel>
             )}
@@ -587,21 +617,41 @@ const CDEDiagramBuilderInner = ({ field, value, onChange, error }) => {
               <Panel position="top-left">
                 <button
                   onClick={() => setShowToolbar(true)}
-                  className="bg-white rounded-lg shadow-lg p-2 hover:bg-gray-50"
-                  title="Show Toolbar"
+                  className="bg-white rounded-xl shadow-lg p-3 hover:bg-indigo-50 border-2 border-transparent hover:border-indigo-300 transition-all group"
+                  title="Show Shapes"
                 >
-                  <Plus className="w-5 h-5 text-gray-600" />
+                  <Plus className="w-5 h-5 text-gray-600 group-hover:text-indigo-600 transition-colors" />
                 </button>
               </Panel>
             )}
           </ReactFlow>
         </div>
 
-        {/* Footer */}
-        <div className="w-full bg-gray-100 px-6 py-3 border-t">
-          <p className="text-xs text-gray-600">
-            💡 Tip: Use Ctrl+Z/Y for undo/redo • Shift+Click for multi-select • Drag handles to connect • Del to delete
-          </p>
+        {/* Enhanced Footer */}
+        <div className="w-full bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-3 border-t border-gray-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4 text-xs text-gray-600">
+              <div className="flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                <span><strong>{nodes.length}</strong> nodes</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                <span><strong>{edges.length}</strong> connections</span>
+              </div>
+              {selectedNodes.length > 0 && (
+                <div className="flex items-center gap-1.5 text-indigo-600 font-medium">
+                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
+                  <span>{selectedNodes.length} selected</span>
+                </div>
+              )}
+            </div>
+            <div className="flex items-center gap-4 text-xs text-gray-500">
+              <span>⌨️ <kbd className="px-1.5 py-0.5 bg-white border border-gray-300 rounded text-xs">Ctrl+Z</kbd> Undo</span>
+              <span>🖱️ <kbd className="px-1.5 py-0.5 bg-white border border-gray-300 rounded text-xs">Shift</kbd> Multi-select</span>
+              <span>🗑️ <kbd className="px-1.5 py-0.5 bg-white border border-gray-300 rounded text-xs">Del</kbd> Delete</span>
+            </div>
+          </div>
         </div>
       </div>
 
