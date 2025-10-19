@@ -12,9 +12,10 @@ import {
   Move3D,
   FolderOpen
 } from 'lucide-react';
+import FieldHeader from '../base/FieldHeader';
 
 const FileStructureDiagram = ({ field, value, onChange, error }) => {
-  const { name, label, required } = field;
+  const { name, label, number, required } = field;
 
   // Parse the value (could be string or object)
   const parseStructure = (val) => {
@@ -378,9 +379,12 @@ const FileStructureDiagram = ({ field, value, onChange, error }) => {
 
   return (
     <div className="mb-8 w-full">
-      <label className="block text-lg font-semibold mb-4 text-gray-800">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
+      <FieldHeader 
+        fieldName={name}
+        label={label}
+        number={number}
+        required={required}
+      />
 
       <div className="w-full border rounded-xl overflow-hidden shadow-sm bg-white">
         <div className="bg-gradient-to-r from-blue-50 to-blue-100 px-6 py-4 border-b border-blue-200">

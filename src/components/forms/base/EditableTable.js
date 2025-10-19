@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Users, Plus, X, Edit2 } from 'lucide-react';
 import TipTapEditor from '../editors/TipTapEditor';
+import FieldHeader from './FieldHeader';
 
 const EditableTable = React.memo(({ field, value, onChange, error }) => {
-  const { name, label, required, columns: presetColumns = ['Role/Discipline', 'Name/Company', 'Experience/Notes'] } = field;
+  const { name, label, number, required, columns: presetColumns = ['Role/Discipline', 'Name/Company', 'Experience/Notes'] } = field;
 
   // Value structure: { columns: [], data: [] } or legacy format (just array)
   const isLegacyFormat = Array.isArray(value);
@@ -102,9 +103,12 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
   return (
     <div className="mb-8">
       {label && (
-        <label className="block text-lg font-semibold mb-4 text-gray-800">
-          {label} {required && <span className="text-red-500">*</span>}
-        </label>
+        <FieldHeader 
+          fieldName={name}
+          label={label}
+          number={number}
+          required={required}
+        />
       )}
 
       <div className="border rounded-xl overflow-hidden shadow-sm bg-white">

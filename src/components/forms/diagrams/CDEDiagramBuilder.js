@@ -29,6 +29,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import FullscreenDiagramModal from './FullscreenDiagramModal';
+import FieldHeader from '../base/FieldHeader';
 
 import { nodeTypes, availableShapes } from './CustomNodes';
 import {
@@ -39,7 +40,7 @@ import {
 import { getTemplate, getTemplateOptions } from './diagramTemplates';
 
 const CDEDiagramBuilderInner = ({ field, value, onChange, error }) => {
-  const { name, label, required } = field;
+  const { name, label, number, required } = field;
   const { screenToFlowPosition } = useReactFlow();
 
   // Parse initial value
@@ -326,9 +327,12 @@ const CDEDiagramBuilderInner = ({ field, value, onChange, error }) => {
 
   return (
     <div className="mb-8 w-full">
-      <label className="block text-lg font-semibold mb-4 text-gray-800">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
+      <FieldHeader 
+        fieldName={name}
+        label={label}
+        number={number}
+        required={required}
+      />
 
       <div className="w-full border rounded-xl overflow-hidden shadow-lg bg-white">
         {/* Header - Improved Toolbar with Better Grouping */}
