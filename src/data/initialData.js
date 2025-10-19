@@ -40,6 +40,44 @@ const INITIAL_DATA = {
     { 'Discipline': 'Facades', 'Name & Title': 'David Wilson, Technical Director', 'Company': 'Curtain Wall Experts Ltd.', 'Experience': '15 years facade design, BIM certified' }
   ],
   teamCapabilities: 'Our multidisciplinary team brings 15+ years of BIM implementation experience across £500M+ of commercial projects. Key capabilities include: ISO 19650 certified information management, advanced parametric design using Revit/Grasshopper, integrated MEP coordination, 4D/5D modeling expertise, and digital twin development. Recent projects include the award-winning Tech Hub (£25M) and Riverside Commercial Center (£18M).',
+  proposedResourceAllocation: {
+    columns: ['Role', 'Proposed Personnel', 'Key Competencies/Experience', 'Anticipated Weekly Allocation (Hours)', 'Software/Hardware Requirements', 'Notes'],
+    data: [
+      { 
+        'Role': 'Senior BIM Coordinator', 
+        'Proposed Personnel': 'John Doe (15+ years experience)', 
+        'Key Competencies/Experience': 'ISO 19650-certified; Expert in BIM federation and clash detection; Navisworks specialist', 
+        'Anticipated Weekly Allocation (Hours)': '40 (full-time)', 
+        'Software/Hardware Requirements': 'Revit 2024, Navisworks Manage; High-spec workstation (32GB RAM)', 
+        'Notes': 'Will lead federation strategy and coordinate all disciplines'
+      },
+      { 
+        'Role': 'Architectural BIM Lead', 
+        'Proposed Personnel': 'Emma Davis (10+ years)', 
+        'Key Competencies/Experience': 'Revit Architecture certified; Advanced Dynamo scripting; IFC export expert', 
+        'Anticipated Weekly Allocation (Hours)': '40 (full-time)', 
+        'Software/Hardware Requirements': 'Revit 2024, Dynamo, Rhino/Grasshopper', 
+        'Notes': 'Responsible for architectural model quality and team coordination'
+      },
+      { 
+        'Role': 'Information Manager', 
+        'Proposed Personnel': 'Sarah Johnson (8+ years)', 
+        'Key Competencies/Experience': 'ISO 19650 Lead Assessor; CDE implementation specialist; Audit and compliance expert', 
+        'Anticipated Weekly Allocation (Hours)': '20 (part-time)', 
+        'Software/Hardware Requirements': 'BIM 360, Audit software', 
+        'Notes': 'Will oversee information protocols and ensure ISO 19650 compliance'
+      }
+    ]
+  },
+  proposedMobilizationPlan: `Upon appointment, we will mobilize the team within 3 weeks:
+
+**Week 1 - Onboarding:** Team orientation, ISO 19650-2 training (2-day workshop), information security briefings, EIR review sessions with all team leaders.
+
+**Week 2 - IT Setup:** Software licensing activation (Revit 2024, Navisworks), workstation configuration, BIM 360 platform setup, cloud storage allocation, VPN configuration for remote collaboration.
+
+**Week 3 - Verification:** Pilot model production for each discipline, federation testing, IFC export quality checks, CDE submission workflow testing, review against EIR requirements.
+
+**Risk Mitigation:** We have identified potential risks (IT connectivity, specialist availability) with contingency plans including backup consultants and floating software licenses. Our proven mobilization process has achieved 100% on-time readiness on our last 5 projects.`,
   subcontractors: [
     { 'Role/Service': 'MEP Services', 'Company Name': 'Advanced Systems Group', 'Certification': 'ISO 19650 certified', 'Contact': 'info@advancedsystems.com' },
     { 'Role/Service': 'Curtain Wall', 'Company Name': 'Specialist Facades Ltd.', 'Certification': 'BIM Level 2 compliant', 'Contact': 'projects@specialistfacades.com' },
@@ -81,6 +119,86 @@ const INITIAL_DATA = {
     { 'Role/Service': 'Quantity Surveying', 'Company Name': 'Cost Management Partners', 'Lead Contact': 'Sarah Williams - s.williams@cmp.com', 'Contract Value': '£0.3M' },
     { 'Role/Service': 'Specialist Facades', 'Company Name': 'Curtain Wall Experts Ltd.', 'Lead Contact': 'David Wilson - d.wilson@cwe.com', 'Contract Value': '£4.5M' }
   ],
+  resourceAllocationTable: {
+    columns: ['Role', 'Assigned Personnel', 'Key Competencies/Experience', 'Weekly Allocation (Hours)', 'Software/Hardware Requirements', 'Notes'],
+    data: [
+      { 
+        'Role': 'Senior BIM Coordinator', 
+        'Assigned Personnel': 'John Doe, Jane Smith', 
+        'Key Competencies/Experience': '10+ years BIM federation; ISO 19650-certified; Expert in clash detection and CDE workflows', 
+        'Weekly Allocation (Hours)': '80 (2x40 FTE)', 
+        'Software/Hardware Requirements': 'Revit 2024, Navisworks Manage; High-spec workstations (32GB RAM, dedicated GPU)', 
+        'Notes': 'Leads federation strategy per ISO 19650-2 clause 5.3.2(c); Training provided on CDE workflows'
+      },
+      { 
+        'Role': 'Discipline BIM Modeler - Architecture', 
+        'Assigned Personnel': 'Emma Davis (Lead), Team of 3', 
+        'Key Competencies/Experience': '5+ years architectural modeling; Revit certified; IFC export proficiency', 
+        'Weekly Allocation (Hours)': '160 (4 FTE)', 
+        'Software/Hardware Requirements': 'Revit 2024, AutoCAD; Cloud CDE access', 
+        'Notes': 'Ensures model quality per production methods; Interoperability tested with IFC 4 exports'
+      },
+      { 
+        'Role': 'Discipline BIM Modeler - Structural', 
+        'Assigned Personnel': 'Alex Kim (Lead), Team of 2', 
+        'Key Competencies/Experience': '6+ years structural modeling; Revit Structure expert; Steel connection detailing', 
+        'Weekly Allocation (Hours)': '120 (3 FTE)', 
+        'Software/Hardware Requirements': 'Revit 2024 Structure, Tekla integration; Analysis software', 
+        'Notes': 'Coordination with architectural and MEP models; Clash detection protocols established'
+      },
+      { 
+        'Role': 'Information Manager', 
+        'Assigned Personnel': 'Sarah Johnson', 
+        'Key Competencies/Experience': '8+ years information protocols; ISO 19650 Lead Assessor certification', 
+        'Weekly Allocation (Hours)': '20 (QA/QC)', 
+        'Software/Hardware Requirements': 'BIM 360, Aconex; Audit and reporting tools', 
+        'Notes': 'Manages version control and approvals; Integrates capacity gaps into risk register per clause 5.3.6'
+      },
+      { 
+        'Role': 'CDE Administrator', 
+        'Assigned Personnel': 'Mike Lee', 
+        'Key Competencies/Experience': '6+ years CDE setup; Metadata and security protocols', 
+        'Weekly Allocation (Hours)': '40 (full-time)', 
+        'Software/Hardware Requirements': 'BIM 360 or equivalent; Secure server infrastructure', 
+        'Notes': 'Configures CDE per clause 5.1.6; Shared templates and object libraries management'
+      }
+    ]
+  },
+  mobilizationPlan: `PHASED MOBILIZATION TIMELINE
+
+Week 1 - Onboarding and Training:
+  - Team orientation and project kickoff meeting with all stakeholders
+  - ISO 19650-2:2018 training for all personnel (2-day intensive workshop)
+  - Information security briefings and CDE access provisioning with role-based permissions
+  - Review of EIR requirements and delivery obligations with each task team
+
+Week 2 - IT Infrastructure Setup:
+  - Workstation configuration and deployment (Revit 2024, Navisworks, AutoCAD)
+  - Software licensing verification and activation for all team members
+  - Cloud storage allocation and VPN setup for secure remote collaboration
+  - CDE platform configuration (BIM 360) with folder structure, naming conventions, and permissions
+  - Shared template files and object libraries deployment
+
+Week 3 - Capability Verification:
+  - Pilot model production (one discipline per task team to test workflows)
+  - Federation testing and clash detection protocol validation
+  - IFC export testing to verify data integrity and interoperability compliance
+  - CDE submission procedures walkthrough and quality checks
+  - Review against EIR requirements with client feedback integration
+
+RISK MITIGATION STRATEGY
+
+Resource capacity risks (skill shortfalls, IT connectivity issues, software compatibility) are documented in the project risk register per ISO 19650-2 clause 5.3.6. 
+
+Contingency Plans:
+  - Access to specialist BIM consultants for advanced workflows
+  - Backup internet connectivity (4G/5G mobile hotspots)
+  - Alternative software licenses (floating licenses for surge capacity)
+  - Escalation protocols via MIDP notifications to client for critical issues
+
+CAPABILITY VERIFICATION
+
+All resources will be tested for collaborative production capability before full information delivery commences. This includes verification of software interoperability, CDE access permissions, and information security compliance.`,
   resourceAllocation: 'Project staffing confirmed: 2x Senior BIM Coordinators, 4x Discipline BIM Modelers, 1x Information Manager, 1x CDE Administrator. Weekly allocation: 40 hours coordination, 160 hours modeling, 20 hours QA/QC.',
   informationManagementResponsibilities: 'Sarah Johnson, Information Manager, oversees all information production, validation, and exchange protocols in full compliance with ISO 19650-2:2018. Key responsibilities include establishing CDE governance structures, coordinating Task Information Delivery Plans (TIDPs) across all disciplines, ensuring model federation quality and consistency, implementing information security protocols including access controls and audit procedures, conducting weekly quality audits of information deliverables, facilitating cross-disciplinary coordination meetings, managing version control and approval workflows, monitoring compliance with established naming conventions and standards, coordinating client information exchanges and milestone reviews, and providing regular progress reports to project leadership on information delivery performance.',
   organizationalStructure: 'The delivery team operates under a Lead Appointed Party structure with Smith & Associates Architects as the primary coordinator reporting directly to ABC Development Corporation. The organizational hierarchy includes: Project Director (Michael Thompson - overall project governance), Information Manager (Sarah Johnson - ISO 19650 compliance and data coordination), Design Team Coordinator (James Wilson - discipline coordination), and four Task Team Leaders representing Architecture (Emma Davis), Structural Engineering (Robert Chen), MEP Engineering (Lisa Rodriguez), and Quantity Surveying (David Kumar). Supporting specialists include Sustainability Consultant (Green Building Associates), Facade Engineer (Advanced Envelope Solutions), and Cost Manager (Value Engineering Partners). All parties maintain direct contractual relationships with the client while operating through established collaboration agreements, shared CDE protocols, and unified project communication channels to ensure seamless information exchange and coordinated delivery.',

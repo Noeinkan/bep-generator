@@ -99,7 +99,22 @@ const CONFIG = {
           { number: '3.1', name: 'proposedLead', label: 'Proposed Lead Appointed Party', required: true, type: 'text', placeholder: 'Smith & Associates Architects Ltd.' },
           { number: '3.1', name: 'proposedInfoManager', label: 'Proposed Information Manager', required: true, type: 'text', placeholder: 'Sarah Johnson, BIM Manager (RICS Certified, ISO 19650 Lead)' },
           { number: '3.1', name: 'proposedTeamLeaders', label: 'Proposed Task Team Leaders', type: 'table', columns: ['Discipline', 'Name & Title', 'Company', 'Experience'] },
+          { 
+            number: '3.1', 
+            name: 'proposedResourceAllocation', 
+            label: 'Proposed Resource Allocation - Capability and Capacity', 
+            type: 'table', 
+            columns: ['Role', 'Proposed Personnel', 'Key Competencies/Experience', 'Anticipated Weekly Allocation (Hours)', 'Software/Hardware Requirements', 'Notes']
+          },
           { number: '3.1', name: 'teamCapabilities', label: 'Team Capabilities and Experience', type: 'textarea', rows: 4, placeholder: 'Our multidisciplinary team brings 15+ years of BIM implementation experience across £500M+ of commercial projects. Key capabilities include: ISO 19650 certified information management, advanced parametric design using Revit/Grasshopper, integrated MEP coordination, 4D/5D modeling expertise, and digital twin development. Recent projects include the award-winning Tech Hub (£25M) and Riverside Commercial Center (£18M).' },
+          { 
+            number: '3.1', 
+            name: 'proposedMobilizationPlan', 
+            label: 'Proposed Mobilization Plan', 
+            type: 'textarea', 
+            rows: 3, 
+            placeholder: 'Upon appointment, our mobilization plan includes: Week 1 - Team onboarding and ISO 19650 training; Week 2 - IT infrastructure setup and software licensing (Revit 2024, Navisworks); Week 3 - Capability verification through pilot models and CDE testing. Risk mitigation strategies include access to specialist consultants and contingency resource pools to address potential skill gaps or capacity constraints aligned with ISO 19650-2 clauses 5.3.3-5.3.5.' 
+          },
           { number: '3.1', name: 'subcontractors', label: 'Proposed Subcontractors/Partners', type: 'table', columns: ['Role/Service', 'Company Name', 'Certification', 'Contact'] }
         ]
       }
@@ -110,13 +125,13 @@ const CONFIG = {
         title: 'Project Information and Confirmed Objectives',
         fields: [
           { number: '1.1', name: 'projectName', label: 'Project Name', required: true, type: 'text', placeholder: 'Greenfield Office Complex Phase 2' },
-          { number: '1.1', name: 'projectNumber', label: 'Project Number', type: 'text', placeholder: 'GF-2024-017' },
-          { number: '1.1', name: 'projectType', label: 'Project Type', required: true, type: 'select', options: 'projectTypes' },
-          { number: '1.1', name: 'appointingParty', label: 'Appointing Party', required: true, type: 'text', placeholder: 'ABC Development Corporation' },
-          { number: '1.1', name: 'confirmedTimeline', label: 'Confirmed Project Timeline', type: 'timeline', placeholder: '24 months (Jan 2025 - Dec 2026)' },
-          { number: '1.1', name: 'confirmedBudget', label: 'Confirmed Project Budget', type: 'budget', placeholder: '£12.5 million' },
-          { number: '1.1', name: 'projectDescription', label: 'Project Description', type: 'textarea', rows: 4, placeholder: 'A modern 8-storey office complex featuring sustainable design principles, flexible workspace layouts, and integrated smart building technologies. The building will accommodate 800+ employees across multiple tenants with shared amenities including conference facilities, cafeteria, and underground parking for 200 vehicles.' },
-          { number: '1.1', name: 'deliveryApproach', label: 'Confirmed Delivery Approach', type: 'textarea', rows: 3, placeholder: 'Our delivery approach implements collaborative design coordination through advanced BIM workflows, stakeholder integration at key milestones, and continuous value engineering. We will execute a phased delivery strategy with integrated sustainability analysis and proactive risk management throughout all project stages to ensure on-time, on-budget completion.' }
+          { number: '', name: 'projectNumber', label: 'Project Number', type: 'text', placeholder: 'GF-2024-017' },
+          { number: '', name: 'projectType', label: 'Project Type', required: true, type: 'select', options: 'projectTypes' },
+          { number: '', name: 'appointingParty', label: 'Appointing Party', required: true, type: 'text', placeholder: 'ABC Development Corporation' },
+          { number: '', name: 'confirmedTimeline', label: 'Confirmed Project Timeline', type: 'timeline', placeholder: '24 months (Jan 2025 - Dec 2026)' },
+          { number: '', name: 'confirmedBudget', label: 'Confirmed Project Budget', type: 'budget', placeholder: '£12.5 million' },
+          { number: '1.2', name: 'projectDescription', label: 'Project Description', type: 'textarea', rows: 4, placeholder: 'A modern 8-storey office complex featuring sustainable design principles, flexible workspace layouts, and integrated smart building technologies. The building will accommodate 800+ employees across multiple tenants with shared amenities including conference facilities, cafeteria, and underground parking for 200 vehicles.' },
+          { number: '1.3', name: 'deliveryApproach', label: 'Confirmed Delivery Approach', type: 'textarea', rows: 3, placeholder: 'Our delivery approach implements collaborative design coordination through advanced BIM workflows, stakeholder integration at key milestones, and continuous value engineering. We will execute a phased delivery strategy with integrated sustainability analysis and proactive risk management throughout all project stages to ensure on-time, on-budget completion.' }
         ]
       },
       1: {
@@ -124,10 +139,10 @@ const CONFIG = {
         title: 'Executive Summary',
         fields: [
           { number: '2.1', name: 'projectContext', label: 'Project Context and Overview', required: true, type: 'textarea', rows: 4, placeholder: 'This BEP confirms our comprehensive approach to delivering the Greenfield Office Complex using advanced BIM methodologies. Our strategy emphasises collaborative design coordination, data-driven decision making, and seamless information handover to support long-term facility management. The project will serve as a flagship example of sustainable commercial development in the region, incorporating smart building technologies and flexible workspace design.' },
-          { number: '2.1', name: 'bimStrategy', label: 'BIM Strategy Summary', required: true, type: 'textarea', rows: 3, placeholder: 'Our confirmed BIM strategy centres on early clash detection, integrated 4D/5D modelling for construction sequencing and cost control, and comprehensive digital twin creation for facilities management. We will utilise federated models across all disciplines with real-time collaboration through cloud-based platforms, ensuring design quality and construction efficiency whilst reducing project risks and enabling predictive maintenance capabilities.' },
-          { number: '2.1', name: 'keyCommitments', label: 'Key Commitments and Deliverables', required: true, type: 'introTable', introPlaceholder: 'We are committed to full ISO 19650-2:2018 compliance throughout all project phases. Key deliverables include:', tableColumns: ['Deliverable', 'Description', 'Due Date'] },
-          { number: '2.1', name: 'keyContacts', label: 'Key Project Contacts', type: 'table', columns: ['Role', 'Name', 'Company', 'Email', 'Phone Number'] },
-          { number: '2.1', name: 'valueProposition', label: 'Value Proposition', type: 'textarea', rows: 3, placeholder: 'Our BIM approach will deliver 15% reduction in construction costs through early clash detection, 25% faster design coordination, and comprehensive lifecycle cost analysis enabling informed material selections. The digital twin will provide 30% operational cost savings through predictive maintenance and space optimisation, whilst the structured data handover ensures seamless facilities management integration and supports the client\'s sustainability targets through enhanced building performance monitoring.' }
+          { number: '2.2', name: 'bimStrategy', label: 'BIM Strategy Summary', required: true, type: 'textarea', rows: 3, placeholder: 'Our confirmed BIM strategy centres on early clash detection, integrated 4D/5D modelling for construction sequencing and cost control, and comprehensive digital twin creation for facilities management. We will utilise federated models across all disciplines with real-time collaboration through cloud-based platforms, ensuring design quality and construction efficiency whilst reducing project risks and enabling predictive maintenance capabilities.' },
+          { number: '2.3', name: 'keyCommitments', label: 'Key Commitments and Deliverables', required: true, type: 'introTable', introPlaceholder: 'We are committed to full ISO 19650-2:2018 compliance throughout all project phases. Key deliverables include:', tableColumns: ['Deliverable', 'Description', 'Due Date'] },
+          { number: '2.4', name: 'keyContacts', label: 'Key Project Contacts', type: 'table', columns: ['Role', 'Name', 'Company', 'Email', 'Phone Number'] },
+          { number: '2.5', name: 'valueProposition', label: 'Value Proposition', type: 'textarea', rows: 3, placeholder: 'Our BIM approach will deliver 15% reduction in construction costs through early clash detection, 25% faster design coordination, and comprehensive lifecycle cost analysis enabling informed material selections. The digital twin will provide 30% operational cost savings through predictive maintenance and space optimisation, whilst the structured data handover ensures seamless facilities management integration and supports the client\'s sustainability targets through enhanced building performance monitoring.' }
         ]
       },
       2: {
@@ -135,10 +150,24 @@ const CONFIG = {
         title: 'Confirmed Team and Responsibilities',
         fields: [
           { number: '3.1', name: 'organizationalStructure', label: 'Delivery Team\'s Organisational Structure and Composition', type: 'orgchart' },
-          { number: '3.1', name: 'leadAppointedPartiesTable', label: 'Lead Appointed Parties and Information Managers', type: 'orgstructure-data-table', readOnly: true },
-          { number: '3.1', name: 'taskTeamsBreakdown', label: 'Task Teams', type: 'table', columns: ['Task Team', 'Discipline', 'Leader', 'Leader Contact', 'Company'] },
-          { number: '3.1', name: 'resourceAllocation', label: 'Resource Allocation', type: 'textarea', rows: 3, placeholder: 'The confirmed delivery team comprises 45 specialists across all disciplines: 12 architects, 8 structural engineers, 10 MEP engineers, 6 quantity surveyors, 4 project managers, and 5 BIM specialists. Resource allocation follows RIBA stages with peak deployment during Stage 4 (Technical Design) requiring 35 FTE personnel. Specialist consultants for sustainability and facade engineering will be engaged for 6-month periods during critical design phases.' },
-          { number: '3.1', name: 'informationManagementResponsibilities', label: 'Information Management Responsibilities', type: 'textarea', rows: 3, placeholder: 'The Information Manager oversees all aspects of information production, validation, and exchange in accordance with ISO 19650-2:2018. Responsibilities include: establishing and maintaining the CDE, coordinating task information delivery plans (TIDPs), ensuring model federation quality, managing information security protocols, conducting regular audits of information deliverables, and facilitating cross-disciplinary information exchanges. The IM reports directly to the project director and client representative.' }
+          { number: '3.2', name: 'leadAppointedPartiesTable', label: 'Lead Appointed Parties and Information Managers', type: 'orgstructure-data-table', readOnly: true },
+          { number: '3.3', name: 'taskTeamsBreakdown', label: 'Task Teams', type: 'table', columns: ['Task Team', 'Discipline', 'Leader', 'Leader Contact', 'Company'] },
+          { 
+            number: '3.4', 
+            name: 'resourceAllocationTable', 
+            label: 'Resource Allocation - Capability and Capacity Assessment', 
+            type: 'table', 
+            columns: ['Role', 'Assigned Personnel', 'Key Competencies/Experience', 'Weekly Allocation (Hours)', 'Software/Hardware Requirements', 'Notes']
+          },
+          { 
+            number: '3.5', 
+            name: 'mobilizationPlan', 
+            label: 'Mobilization Plan and Risk Mitigation', 
+            type: 'textarea', 
+            rows: 6, 
+            placeholder: 'PHASED MOBILIZATION TIMELINE\n\nWeek 1 - Onboarding and Training:\n  - Team orientation and project kickoff meeting\n  - ISO 19650-2:2018 training (2-day workshop)\n  - Information security briefings and CDE access provisioning\n\nWeek 2 - IT Infrastructure Setup:\n  - Workstation configuration (Revit 2024, Navisworks, AutoCAD)\n  - Software licensing and cloud storage allocation\n  - CDE platform configuration with permissions\n\nWeek 3 - Capability Verification:\n  - Pilot model production and federation testing\n  - IFC export testing for interoperability\n  - CDE submission procedures and quality checks\n\nRISK MITIGATION STRATEGY\n\nResource capacity risks documented in project risk register per ISO 19650-2 clause 5.3.6. Contingency plans include specialist consultants, backup connectivity, and escalation protocols via MIDP notifications.' 
+          },
+          { number: '3.6', name: 'informationManagementResponsibilities', label: 'Information Management Responsibilities', type: 'textarea', rows: 3, placeholder: 'The Information Manager oversees all aspects of information production, validation, and exchange in accordance with ISO 19650-2:2018. Responsibilities include: establishing and maintaining the CDE, coordinating task information delivery plans (TIDPs), ensuring model federation quality, managing information security protocols, conducting regular audits of information deliverables, and facilitating cross-disciplinary information exchanges. The IM reports directly to the project director and client representative.' }
         ]
       }
     }

@@ -285,7 +285,128 @@ Recent projects: St. James's Hospital Extension (£55M, 2022 - full digital twin
       'No differentiation - sounds like every other BIM team'
     ],
 
-    relatedFields: ['proposedInfoManager', 'informationManager', 'resourceAllocation']
+    relatedFields: ['proposedInfoManager', 'informationManager', 'proposedResourceAllocation', 'proposedMobilizationPlan']
+  },
+
+  proposedResourceAllocation: {
+    description: `Define your proposed resource allocation with detailed capability and capacity assessments for each role. This demonstrates your team's ability to meet the client's Exchange Information Requirements (EIRs) if appointed, per ISO 19650-2 clauses 5.3.3–5.3.5.
+
+For each proposed resource, specify:
+• **Role**: Specific position (e.g., Senior BIM Coordinator, Discipline BIM Modeler)
+• **Proposed Personnel**: Names or descriptions of team members you will assign
+• **Key Competencies/Experience**: Relevant skills, certifications (ISO 19650, BIM tools), years of experience
+• **Anticipated Weekly Allocation (Hours)**: Expected time commitment per week
+• **Software/Hardware Requirements**: Tools and infrastructure you will deploy
+• **Notes**: Additional information on responsibilities, training plans, or interoperability approaches
+
+This demonstrates your capability evaluation and capacity planning as part of your tender response.`,
+
+    iso19650: `ISO 19650-2:2018 Multiple Clauses (Pre-Appointment Context):
+
+**Section 5.1.3 - Capacity and Capability**: Proposed delivery team must demonstrate sufficient capability (skills, certifications) and capacity (people, time, resources) to deliver information requirements.
+
+**Section 5.3.3 - Task Team Assessment**: Assessment of each proposed task team's capability and capacity to fulfill information delivery obligations.
+
+**Section 5.3.4 - Capability Evaluation**: Proposed team skills in BIM tools, standards compliance, information security, and collaborative working.
+
+Resource allocation proposal should align with anticipated MIDP schedule and demonstrate readiness for mobilization upon appointment.`,
+
+    bestPractices: [
+      'Include all key information management roles in your proposal',
+      'Highlight ISO 19650 certifications and BIM tool proficiencies',
+      'Quantify anticipated time allocation using hours or FTE',
+      'Detail software/tools you will deploy (with versions)',
+      'Address information security capabilities and training',
+      'Show alignment with anticipated project phases and EIRs',
+      'Include proposed interoperability testing approaches',
+      'Demonstrate access to specialist resources if needed',
+      'Show scalability for different project phases',
+      'Reference similar projects where team has succeeded'
+    ],
+
+    examples: {
+      'Tender Response Example': `Our proposed resource allocation demonstrates capability and capacity to deliver all EIR requirements:
+
+**Senior BIM Coordinator**: John Doe (15+ years BIM federation; ISO 19650-certified; Expert clash detection) - 40 hrs/week - Revit 2024, Navisworks, BIM 360 on high-spec workstations.
+
+**Structural Modelers**: Team of 3 led by Alex Kim (8 years Revit Structure) - 120 hrs/week total - Revit 2024, IFC 4 export capability tested.
+
+**Information Manager**: Sarah Johnson (ISO 19650 Lead Assessor; 10+ years CDE management) - 20 hrs/week - BIM 360 platform with audit tools.
+
+All personnel are ISO 19650 trained with information security certification. Interoperability verified through IFC testing on similar projects (Riverside Centre, Tech Hub). Capacity scalable to 50+ FTE if needed during peak design stages.`
+    },
+
+    commonMistakes: [
+      'Not naming key personnel or providing credentials',
+      'Omitting software versions and hardware specs',
+      'No mention of certifications or training',
+      'Missing time allocation quantification',
+      'Not addressing information security capabilities',
+      'Failing to show alignment with EIRs',
+      'No evidence of past successful resource deployment'
+    ],
+
+    relatedFields: ['proposedMobilizationPlan', 'teamCapabilities', 'proposedTeamLeaders', 'proposedInfoManager']
+  },
+
+  proposedMobilizationPlan: {
+    description: `Outline your proposed mobilization plan showing how you will onboard, equip, and verify your team's capability upon appointment. This demonstrates your readiness and planning for ISO 19650-2 clauses 5.3.5 (mobilization) and 5.5.1-5.5.3 (resource setup).
+
+Include in your proposal:
+• **Phased Timeline**: Week-by-week mobilization schedule post-appointment
+• **Onboarding & Training**: ISO 19650 training, CDE workflows, information security
+• **IT Infrastructure**: Software licensing plans, hardware provisioning approach
+• **Capability Verification**: How you will test and verify readiness (pilot models, testing)
+• **Interoperability Testing**: Your approach to IFC exports, data integrity checks
+• **Risk Mitigation**: How you will address potential capacity or capability risks
+
+This shows the client you have a clear, detailed plan to be production-ready quickly after appointment.`,
+
+    iso19650: `ISO 19650-2:2018 Multiple Clauses (Pre-Appointment Context):
+
+**Section 5.3.5 - Mobilization**: Proposed plan for mobilizing the delivery team upon appointment, ensuring readiness for information production.
+
+**Section 5.3.6 - Risk Management**: Identification of potential capacity/capability risks with proposed mitigation strategies.
+
+**Section 5.5.1-5.5.3 - Resource Setup**: Proposed approach to establishing IT infrastructure, software, and testing workflows before production begins.`,
+
+    bestPractices: [
+      'Provide a clear phased timeline (e.g., 3-week mobilization)',
+      'Show you understand ISO 19650 training requirements',
+      'Demonstrate readiness with licensed software and infrastructure',
+      'Propose specific capability verification activities',
+      'Address interoperability testing proactively',
+      'Identify potential risks and your mitigation plans',
+      'Show you can mobilize quickly post-appointment',
+      'Reference successful mobilizations on past projects',
+      'Align timeline with anticipated project start'
+    ],
+
+    examples: {
+      'Tender Mobilization Proposal': `Upon appointment, we propose a 3-week mobilization plan:
+
+**Week 1:** Team onboarding, ISO 19650-2 training (2-day workshop), information security briefings, CDE access provisioning, EIR review sessions.
+
+**Week 2:** IT setup - Revit 2024/Navisworks licensing activation, workstation configuration, BIM 360 platform setup, cloud storage, VPN for remote teams.
+
+**Week 3:** Capability verification via pilot architectural model demonstrating federation, clash detection, IFC export quality, and CDE submission workflows per EIRs.
+
+**Risk Mitigation:** We have identified risks (IT connectivity, specialist availability) and have contingency plans including backup consultants, alternative connectivity (4G hotspots), and floating software licenses. Our track record shows 100% on-time mobilization on last 5 projects.`,
+
+      'Concise Proposal': `We will mobilize within 3 weeks post-appointment: Week 1 - Team onboarding and ISO 19650 training; Week 2 - IT infrastructure and software setup; Week 3 - Capability verification through pilot models and interoperability testing. Risks (capacity, IT) mitigated via specialist consultant access and contingency resources. Proven approach delivered successfully on Tech Hub and Riverside Centre projects.`
+    },
+
+    commonMistakes: [
+      'No specific timeline or phasing',
+      'Missing training and onboarding elements',
+      'Not addressing IT infrastructure setup',
+      'No capability verification or testing plan',
+      'Failing to identify and mitigate risks',
+      'Too vague - not demonstrating real planning',
+      'Not referencing past successful mobilizations'
+    ],
+
+    relatedFields: ['proposedResourceAllocation', 'teamCapabilities', 'proposedBimGoals']
   },
 
   // ====================================================================
@@ -1110,11 +1231,181 @@ MEP Engineering | Emma Davis, Associate Director (CEng, MCIBSE, Revit MEP Specia
       'Leaders without authority to make design decisions'
     ],
 
-    relatedFields: ['proposedTeamLeaders', 'taskTeamsBreakdown', 'resourceAllocation']
+    relatedFields: ['proposedTeamLeaders', 'taskTeamsBreakdown', 'resourceAllocationTable', 'mobilizationPlan']
+  },
+
+  resourceAllocationTable: {
+    description: `Define the confirmed resource allocation with detailed capability and capacity assessments for each role. This structured table demonstrates the delivery team's ability to meet Exchange Information Requirements (EIRs) per ISO 19650-2 clauses 5.3.3–5.3.5.
+
+For each resource, specify:
+• **Role**: Specific position (e.g., Senior BIM Coordinator, Discipline BIM Modeler)
+• **Assigned Personnel**: Names of team members assigned to the role
+• **Key Competencies/Experience**: Relevant skills, certifications (ISO 19650, BIM tools), years of experience
+• **Weekly Allocation (Hours)**: Time commitment per week (use FTE equivalents)
+• **Software/Hardware Requirements**: Tools needed (Revit 2024, Navisworks, workstation specs)
+• **Notes**: Additional information on responsibilities, training needs, interoperability testing
+
+This addresses capability evaluation (clause 5.3.4) by aggregating task team assessments and demonstrating competencies in BIM tools, standards compliance, and information security.`,
+
+    iso19650: `ISO 19650-2:2018 Multiple Clauses:
+
+**Section 5.1.3 - Capacity**: The delivery team must demonstrate sufficient capacity (people, time, resources) to deliver all information requirements throughout the appointment.
+
+**Section 5.3.3 - Task Team Assessment**: Each task team's capability and capacity must be assessed to ensure they can fulfill their information delivery obligations.
+
+**Section 5.3.4 - Capability Evaluation**: Aggregate assessments of team skills in BIM tools, standards compliance, information security, and collaborative working.
+
+**Section 5.3.5 - Mobilization Requirements**: Resources must be tested and verified before collaborative production begins.
+
+**Section 5.5.1-5.5.3 - Resource Setup**: IT infrastructure, software, hardware, and interoperability must be established and tested.`,
+
+    bestPractices: [
+      'Include all key information management roles (BIM Coordinator, Information Manager, CDE Administrator)',
+      'Specify ISO 19650 certifications and BIM tool proficiencies',
+      'Quantify weekly allocation using hours or FTE (Full-Time Equivalent)',
+      'Detail software versions (e.g., Revit 2024) and hardware specifications',
+      'Address information security training and CDE access requirements',
+      'Include interoperability testing plans (IFC exports, federation workflows)',
+      'Identify training needs for team members',
+      'Show alignment with TIDP/MIDP delivery schedules',
+      'Include contingency resources for capacity risks',
+      'Document specialist consultants and engagement periods'
+    ],
+
+    examples: {
+      'Senior BIM Coordinator': `• Role: Senior BIM Coordinator
+• Assigned Personnel: John Doe, Jane Smith
+• Key Competencies: 10+ years BIM federation experience; ISO 19650-certified; Expert in clash detection and CDE workflows; Certified in Navisworks and BIM 360
+• Weekly Allocation: 40 hours (full-time coordination)
+• Software/Hardware: Revit 2024, Navisworks Manage, BIM 360; High-spec workstation (32GB RAM, dedicated GPU)
+• Notes: Leads federation strategy per clause 5.3.2(c); Training provided on CDE workflows and information security protocols`,
+
+      'Discipline BIM Modeler': `• Role: Structural BIM Modeler
+• Assigned Personnel: Alex Kim (Lead), Team of 3
+• Key Competencies: 5+ years structural modeling in Revit; Proficient in IFC export and coordination; Information security training completed
+• Weekly Allocation: 160 hours total (4 FTE)
+• Software/Hardware: Revit 2024 (Structural), AutoCAD; Cloud CDE access
+• Notes: Ensures model quality per production methods (clause 5.1.5); Interoperability tested with IFC 4 exports to verify data integrity`,
+
+      'Information Manager': `• Role: Information Manager
+• Assigned Personnel: Sarah Johnson
+• Key Competencies: 8+ years managing information protocols; ISO 19650 Lead Assessor certification; Experience with CDE implementation and compliance auditing
+• Weekly Allocation: 20 hours (QA/QC oversight)
+• Software/Hardware: BIM 360, Aconex, or equivalent CDE platform; Audit and reporting tools
+• Notes: Manages version control, approval workflows, and TIDP coordination; Integrates capacity gaps into project risk register per clause 5.3.6`
+    },
+
+    commonMistakes: [
+      'Not specifying software versions or hardware requirements',
+      'Omitting competency details (certifications, experience level)',
+      'No mention of information security training',
+      'Missing interoperability testing plans',
+      'Not quantifying time allocation (hours/FTE)',
+      'Failing to address training needs',
+      'No contingency plans for resource shortfalls',
+      'Not aligning with TIDP/MIDP schedules'
+    ],
+
+    relatedFields: ['mobilizationPlan', 'taskTeamsBreakdown', 'informationManagementResponsibilities', 'confirmedBimGoals']
+  },
+
+  mobilizationPlan: {
+    description: `Outline a phased mobilization plan that demonstrates how the delivery team will be onboarded, equipped, and verified for capability before full information production begins. This addresses ISO 19650-2 clauses 5.3.5 (mobilization) and 5.5.1-5.5.3 (resource setup and testing).
+
+Include:
+• **Phased Timeline**: Week-by-week or stage-by-stage mobilization schedule
+• **Onboarding & Training**: ISO 19650 training, CDE workflows, information security briefings
+• **IT Infrastructure Setup**: Software licensing, hardware provisioning, VPN/cloud access
+• **Capability Verification**: Pilot models, federation testing, CDE submission procedures
+• **Interoperability Testing**: IFC exports, data integrity checks, cross-discipline coordination
+• **Risk Mitigation**: Documented capacity risks (skill shortfalls, IT issues) with contingency plans
+
+The plan should ensure all resources are tested and ready for collaborative production before information delivery commences, with risks tracked in the project risk register.`,
+
+    iso19650: `ISO 19650-2:2018 Multiple Clauses:
+
+**Section 5.3.5 - Mobilization**: The lead appointed party must mobilize the delivery team, ensuring all task teams are capable and ready to produce information.
+
+**Section 5.3.6 - Risk Register**: Capacity and capability risks must be documented in the delivery team's risk register with mitigation strategies.
+
+**Section 5.5.1 - Information Technology Setup**: Establish and test IT infrastructure (hardware, software, networks) before production begins.
+
+**Section 5.5.2 - Software and Tools**: Ensure all required software is licensed, configured, and tested for interoperability.
+
+**Section 5.5.3 - Testing and Verification**: Verify team capability through pilot information production, testing workflows, CDE access, and federation processes.`,
+
+    bestPractices: [
+      'Use a phased approach (Week 1, Week 2, Week 3) for clarity',
+      'Start with training (ISO 19650, CDE workflows, information security)',
+      'Include IT setup (workstations, software licensing, cloud access)',
+      'Test interoperability early (IFC exports, model federation, clash detection)',
+      'Verify capability through pilot models before full production',
+      'Document risks in project risk register per clause 5.3.6',
+      'Include contingency plans (specialist consultants, backup resources)',
+      'Align mobilization timeline with MIDP milestones',
+      'Address CDE configuration (templates, shared object libraries, metadata)',
+      'Plan for ongoing training and upskilling as needed'
+    ],
+
+    examples: {
+      'Detailed Mobilization Plan': `**Week 1 - Onboarding and Training:**
+• Team orientation and project kickoff meeting
+• ISO 19650-2 training for all personnel (2-day workshop)
+• Information security briefings and CDE access provisioning
+• Review of EIR requirements and delivery obligations
+
+**Week 2 - IT Infrastructure Setup:**
+• Workstation configuration (Revit 2024, Navisworks, AutoCAD)
+• Software licensing verification and activation
+• Cloud storage allocation and VPN setup for remote collaboration
+• CDE platform configuration (BIM 360/Aconex) with folder structure and permissions
+
+**Week 3 - Capability Verification:**
+• Pilot model production (one discipline per task team)
+• Testing federation workflows and clash detection protocols
+• IFC export testing to verify data integrity and interoperability
+• CDE submission procedures walkthrough and quality checks
+• Review against EIR requirements and client feedback
+
+**Risk Mitigation:**
+Resource capacity risks (skill shortfalls, IT connectivity issues, software compatibility) are documented in the project risk register per ISO 19650-2 clause 5.3.6. Contingency plans include:
+• Access to specialist BIM consultants for advanced workflows
+• Backup internet connectivity (4G/5G hotspots)
+• Alternative software licenses (floating licenses for surge capacity)
+• Escalation protocols via MIDP notifications to client
+
+All resources will be tested for collaborative production capability before full information delivery commences.`,
+
+      'Concise Plan': `Upon appointment, mobilization proceeds in three phases:
+
+**Phase 1 (Week 1):** Team onboarding, ISO 19650 training, information security briefings, CDE access provisioning.
+
+**Phase 2 (Week 2):** IT setup - software licensing (Revit 2024, Navisworks), hardware provisioning, cloud access configuration, interoperability testing via IFC exports.
+
+**Phase 3 (Week 3):** Capability verification through pilot models demonstrating federation, clash detection, and CDE submission procedures aligned with EIRs.
+
+**Risks:** Capacity gaps (IT connectivity, skill shortfalls) documented in risk register with mitigation via specialist consultants and contingency resource pools. All personnel tested before production begins.`
+    },
+
+    commonMistakes: [
+      'No phased timeline or schedule',
+      'Missing training and onboarding activities',
+      'Not addressing IT infrastructure setup',
+      'No capability verification or testing phase',
+      'Failing to mention interoperability testing',
+      'Not documenting risks in risk register',
+      'No contingency plans for resource shortfalls',
+      'Missing alignment with MIDP milestones',
+      'Not addressing CDE configuration and templates'
+    ],
+
+    relatedFields: ['resourceAllocationTable', 'informationManagementResponsibilities', 'cdeStructure', 'confirmedBimGoals']
   },
 
   resourceAllocation: {
-    description: `Describe the confirmed resource allocation across the delivery team. Explain the team composition, staffing levels, resource deployment across project phases, and how resources will be scaled to meet delivery demands.
+    description: `(Legacy field - use resourceAllocationTable and mobilizationPlan instead)
+    
+Describe the confirmed resource allocation across the delivery team. Explain the team composition, staffing levels, resource deployment across project phases, and how resources will be scaled to meet delivery demands.
 
 Include:
 • Total team size and composition by discipline
