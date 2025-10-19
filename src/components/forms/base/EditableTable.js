@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Users, Plus, X, Edit2 } from 'lucide-react';
+import { Users, Plus, X, Edit2, Sparkles } from 'lucide-react';
 import TipTapEditor from '../editors/TipTapEditor';
 import FieldHeader from './FieldHeader';
+import INITIAL_DATA from '../../../data/initialData';
 
 const EditableTable = React.memo(({ field, value, onChange, error }) => {
   const { name, label, number, required, columns: presetColumns = ['Role/Discipline', 'Name/Company', 'Experience/Notes'] } = field;
@@ -18,6 +19,20 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
   const [editingColumn, setEditingColumn] = useState(null);
   const [editingColumnName, setEditingColumnName] = useState('');
   const [columnToDelete, setColumnToDelete] = useState(null);
+
+  // Check if example data exists for this field
+  const hasExampleData = INITIAL_DATA[name] && 
+    typeof INITIAL_DATA[name] === 'object' && 
+    INITIAL_DATA[name].data && 
+    Array.isArray(INITIAL_DATA[name].data) && 
+    INITIAL_DATA[name].data.length > 0;
+
+  const loadExampleData = () => {
+    if (hasExampleData) {
+      const exampleData = INITIAL_DATA[name];
+      onChange(name, exampleData);
+    }
+  };
 
   const updateTableValue = (newColumns, newData) => {
     onChange(name, { columns: newColumns, data: newData });
@@ -124,21 +139,38 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
                 </span>
               )}
             </div>
-            <button
-              type="button"
-              onClick={addRow}
-              className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-105 shadow-md"
-            >
-              <span className="text-lg">+</span>
-              <span>Add Row</span>
-            </button>
+            <div className="flex items-center gap-2">
+              {hasExampleData && tableData.length === 0 && (
+                <button
+                  type="button"
+                  onClick={loadExampleData}
+                  className="flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-105 shadow-md"
+                >
+                  <Sparkles size={18} />
+                  <span>Load Example Data</span>
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={addRow}
+                className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-105 shadow-md"
+              >
+                <span className="text-lg">+</span>
+                <span>Add Row</span>
+              </button>
+            </div>
           </div>
         </div>
 
         {tableData.length === 0 ? (
           <div className="p-12 text-center text-gray-500">
             <Users className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-            <p className="text-lg">No entries yet. Click "Add Row" to get started.</p>
+            <p className="text-lg mb-2">No entries yet.</p>
+            <p className="text-sm">
+              {hasExampleData 
+                ? 'Click "Load Example Data" to see a sample, or "Add Row" to start from scratch.' 
+                : 'Click "Add Row" to get started.'}
+            </p>
           </div>
         ) : (
           <div className="overflow-x-auto bg-white">
