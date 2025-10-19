@@ -1794,31 +1794,132 @@ Collaborative production goals should establish how task teams will work togethe
   },
 
   alignmentStrategy: {
-    description: `Describe the practical approach to facilitating information management goals and ensuring alignment across the delivery team. Explain the processes, meetings, standards, and tools that will maintain consistency.
+    description: `Define your comprehensive approach to facilitating information management goals and maintaining alignment throughout the project. This structured strategy covers 7 key aspects required by ISO 19650-2.
 
-Cover:
-• Coordination meetings and frequency
-• Responsibility matrices (RACI)
-• Naming conventions and file structures
-• Automated quality checking workflows
-• Training and competency development
-• Performance monitoring and KPIs`,
+The Information Management Strategy Builder provides an interactive interface to document:
+1. **Coordination Meeting Schedule** - Regular meetings for information management oversight
+2. **RACI Responsibility Matrices** - Clear accountability for information production and approval
+3. **Naming and File Structure Standards** - Standardized conventions ensuring consistency
+4. **Quality Checking Tools** - Automated validation processes for compliance
+5. **Training and Competency Requirements** - Ensuring team capability
+6. **Performance Monitoring and KPIs** - Measurable indicators of effectiveness
+7. **Ongoing Alignment Maintenance** - Strategy for continuous improvement
 
-    iso19650: `ISO 19650-2:2018 Section 5.2 - Mobilization and Collaboration
+Each section can be completed independently and includes structured fields appropriate to the content type (tables for schedules/tools, text for strategies/standards).`,
 
-The alignment strategy demonstrates how information management processes will be established, maintained, and monitored to ensure consistent delivery and quality.`,
+    iso19650: `**ISO 19650-2:2018 Key Clauses:**
+
+**Section 5.2 - Mobilization and Collaboration**
+Requires establishing information management processes, responsibilities, and communication protocols. The alignment strategy demonstrates how these will be implemented and maintained.
+
+**Section 5.4.1 - Collaborative Production of Information**
+Mandates coordination procedures, quality assurance processes, and competency requirements. Your strategy must show how information will be produced, checked, and approved consistently.
+
+**Section 5.6 - Information Delivery Milestones**
+Requires performance monitoring against agreed milestones. KPIs demonstrate measurable compliance with information requirements.
+
+**Section 5.3.4 - Mobilization**
+Addresses team competency verification, training requirements, and capacity assessment. Training plans ensure compliance.
+
+The strategy must demonstrate continuous alignment between appointing party requirements (EIR) and delivery team processes throughout the project lifecycle.`,
 
     bestPractices: [
-      'Define coordination meeting schedule (weekly, bi-weekly)',
-      'Reference responsibility matrices (RACI)',
-      'Mention standardized naming and file structures',
-      'Include automated quality checking tools',
-      'Address training and competency requirements',
-      'Define performance monitoring and KPIs',
-      'Explain how alignment will be maintained throughout project'
+      '**Coordination Meetings:** Schedule regular meetings at appropriate frequencies (weekly BIM coordination, bi-weekly design reviews, monthly IM reviews). Define clear participants and agenda items.',
+      
+      '**RACI Matrices:** Reference detailed responsibility matrices (typically in Section 3.3). Highlight key decision points: model approvals, information delivery, change management, CDE access.',
+      
+      '**Naming Standards:** Follow ISO 19650-2 file naming convention structure. Document folder hierarchies (WIP/Shared/Published/Archive). Provide specific examples for your project.',
+      
+      '**Quality Tools:** List specific software tools (Navisworks for clash detection, Solibri for IFC validation). Define check frequencies, responsible roles, and failure actions.',
+      
+      '**Training Plan:** Identify training needs by role. Include ISO 19650 awareness, project-specific workflows, tool competency. Define verification methods (certificates, practical tests).',
+      
+      '**KPIs:** Set measurable targets for key areas: model coordination quality, delivery timeliness, data quality, RFI reduction. Assign owners and monitoring frequency.',
+      
+      '**Ongoing Alignment:** Establish review cycles (monthly stakeholder reviews, quarterly BEP reviews). Implement change management for scope variations. Maintain open communication channels with appointing party.'
     ],
 
-    relatedFields: ['coordinationMeetings', 'informationManagementResponsibilities', 'qaFramework']
+    examples: [
+      {
+        title: 'Comprehensive IM Strategy (Large Commercial Project)',
+        content: `**Meeting Schedule:** Weekly BIM coordination (90 min), bi-weekly design workshops (2 hours), monthly IM reviews (60 min), monthly client progress reviews (90 min). All with defined participants and standard agendas.
+
+**RACI Reference:** Section 3.3 defines full matrices. Key decisions: Model federation approval (Accountable: Lead BIM Coordinator), Design sign-off (Accountable: Design Manager), Information delivery (Accountable: Information Manager).
+
+**Naming Convention:** [Project Code]-[Originator]-[Volume]-[Level]-[Type]-[Role]-[Number]-[Revision]
+Example: PRJ01-ARC-XX-01-M3-ARC-0001-P01.rvt
+Folder structure: 00_WIP / 01_SHARED / 02_PUBLISHED / 03_ARCHIVE
+
+**Quality Tools:** 
+- Navisworks: Weekly clash detection, BIM Coordinator, 48hr resolution
+- Solibri: Milestone IFC validation, Information Manager, model rejection on failure
+- Custom scripts: Daily naming checks, CDE Admin, automated rejection
+
+**Training:** 
+- All team: ISO 19650 workshop (Week 1), 80% pass quiz
+- BIM Authors: Naming conventions training (Week 1-2), practical test
+- Coordinators: Navisworks certification (pre-project/refresher)
+
+**KPIs:** 
+- Clash density <5/1000 elements (weekly)
+- 95% on-time delivery (per milestone)
+- 90% first-time validation pass (per data drop)
+- 40% RFI reduction vs baseline (monthly cumulative)
+
+**Alignment Maintenance:** Monthly client workshops validating EIR alignment. Continuous KPI monitoring with >10% deviation triggering corrective actions. Quarterly BEP reviews with stakeholders. Change management integration for scope variations.`
+      },
+      {
+        title: 'Essential IM Strategy (Medium Residential Project)',
+        content: `**Meetings:** Bi-weekly coordination (60 min): BIM Manager + Coordinators. Monthly design review (90 min): All leads + client.
+
+**RACI:** See Section 3.3. Key accountability: Model approval - BIM Manager; Design sign-off - Project Architect; Information delivery - Information Manager.
+
+**Naming:** Standard ISO 19650 format: RES24-[Disc]-[Zone]-[Level]-[Type]-[Role]-[Num]-[Rev]
+Folders: WIP / Shared / Published / Archive
+
+**Quality Tools:** Navisworks clash detection (bi-weekly), Revit health checks (before milestones).
+
+**Training:** Team ISO 19650 overview (Project start), tool-specific as needed.
+
+**KPIs:** <10 critical clashes per coordination session, 90% milestone delivery on-time.
+
+**Alignment:** Monthly client review of deliverables against EIR checklist. Quarterly BEP effectiveness review.`
+      },
+      {
+        title: 'Lean IM Strategy (Small Extension Project)',
+        content: `**Meetings:** Weekly 30-minute virtual coordination check-ins. Monthly client review meeting.
+
+**RACI:** Project Lead accountable for all information delivery. Discipline leads responsible for their models.
+
+**Naming:** Project standard format with simplified zones. Cloud folder structure: Draft / Review / Approved.
+
+**Quality Tools:** Basic Revit warnings check before sharing. Simple coordination review in viewer.
+
+**Training:** Brief project BIM requirements session at kickoff. Reference materials on shared drive.
+
+**KPIs:** All models clash-free before client review. Deliverables submitted on agreed dates.
+
+**Alignment:** Direct client communication. Informal monthly check that deliverables meet expectations.`
+      }
+    ],
+
+    commonMistakes: [
+      '❌ **Generic statements without specifics:** "We will have regular meetings and use quality tools" - Define exactly what, when, who, how often.',
+      
+      '❌ **Missing measurement criteria:** Strategy describes processes but no KPIs to measure effectiveness. Must include measurable targets.',
+      
+      '❌ **No responsibility assignment:** Processes defined but unclear who owns each activity. Must reference RACI or assign explicit accountability.',
+      
+      '❌ **Ignoring training needs:** Assumes team knows all processes and tools. Must address competency verification and training plans.',
+      
+      '❌ **Static approach:** No provision for reviews, updates, or continuous improvement. Must show how alignment will be maintained throughout lifecycle.',
+      
+      '❌ **Disconnected from project specifics:** Generic IM strategy not tailored to project type, size, complexity. Must align with actual project needs.',
+      
+      '❌ **No integration with appointing party requirements:** Strategy doesn\'t demonstrate how it delivers against specific EIR requirements.'
+    ],
+
+    relatedFields: ['coordinationMeetings', 'informationManagementResponsibilities', 'qaFramework', 'responsibilityMatrix', 'trainingPlan']
   },
 
   // ====================================================================

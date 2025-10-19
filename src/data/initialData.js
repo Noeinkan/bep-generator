@@ -344,7 +344,180 @@ All resources will be tested for collaborative production capability before full
   bimGoals: 'The BIM goals for this project are to enhance design coordination through clash detection reducing RFIs by 40%, improve construction sequencing through 4D modeling resulting in 20% schedule compression, enable accurate cost forecasting through 5D integration achieving ±2% budget variance, and deliver comprehensive digital asset information for lifecycle management supporting 25% reduction in operational costs over the first 5 years.',
   primaryObjectives: 'Primary objectives include: eliminating design conflicts before construction through rigorous clash detection protocols, optimising building performance through integrated analysis and simulation, enabling efficient construction through accurate quantity extraction and sequencing models, supporting sustainability targets through embedded carbon analysis and energy modeling, and facilitating seamless handover with structured asset data for predictive maintenance and space management.',
   collaborativeProductionGoals: 'Collaborative production goals focus on establishing unified data standards across all disciplines, implementing real-time model coordination through federated workflows, ensuring consistent information delivery at all project milestones, maintaining version control integrity throughout design development, facilitating transparent communication through shared visualisation platforms, and creating comprehensive audit trails for decision-making accountability whilst adhering to ISO 19650 information management principles.',
-  alignmentStrategy: 'Our alignment strategy implements weekly coordination meetings with federated model reviews, establishes clear responsibility matrices for information production and validation, deploys standardised naming conventions and file structures across all disciplines, utilises automated quality checking workflows to ensure compliance, maintains continuous training programmes for team competency development, and implements performance monitoring through defined KPIs including model accuracy, delivery timeliness, and information completeness metrics.',
+  
+  alignmentStrategy: {
+    meetingSchedule: {
+      columns: ['Meeting Type', 'Frequency', 'Key Participants', 'Standard Agenda Items', 'Duration'],
+      data: [
+        { 
+          'Meeting Type': 'BIM Coordination Meeting', 
+          'Frequency': 'Weekly', 
+          'Key Participants': 'BIM Manager, Lead Coordinators (Arch/Struct/MEP)', 
+          'Standard Agenda Items': 'Model status review, clash detection results, coordination issues resolution, upcoming milestones', 
+          'Duration': '90 minutes' 
+        },
+        { 
+          'Meeting Type': 'Design Team Workshop', 
+          'Frequency': 'Bi-weekly', 
+          'Key Participants': 'All discipline leads, Project Manager, Client Representative', 
+          'Standard Agenda Items': 'Design decisions, technical queries, RFI review, change management', 
+          'Duration': '2 hours' 
+        },
+        { 
+          'Meeting Type': 'Information Management Review', 
+          'Frequency': 'Monthly', 
+          'Key Participants': 'Information Manager, BIM Manager, CDE Administrator', 
+          'Standard Agenda Items': 'Naming convention compliance, data quality audit, CDE access review, KPI reporting', 
+          'Duration': '60 minutes' 
+        },
+        { 
+          'Meeting Type': 'Client Progress Review', 
+          'Frequency': 'Monthly', 
+          'Key Participants': 'Project Director, Client PM, BIM Manager', 
+          'Standard Agenda Items': 'Progress against EIR, milestone deliverables, risk register updates, upcoming requirements', 
+          'Duration': '90 minutes' 
+        }
+      ]
+    },
+    raciReference: 'Responsibility matrices are defined in Section 3.3 Responsibility Matrix. Key decision points include:\n\n- Model Federation Approval: Accountable - Lead BIM Coordinator; Responsible - Discipline Coordinators; Consulted - Design Team; Informed - Client\n- Design Coordination Sign-off: Accountable - Design Manager; Responsible - Discipline Leads; Consulted - BIM Manager; Informed - Project Director\n- Information Delivery Approval: Accountable - Information Manager; Responsible - BIM Manager; Consulted - Task Team; Informed - Client Representative\n- CDE Access Management: Accountable - Information Manager; Responsible - CDE Administrator; Consulted - IT Security; Informed - Project Team\n- Change Request Processing: Accountable - Project Manager; Responsible - Design Manager; Consulted - Affected Disciplines; Informed - All Stakeholders',
+    namingStandards: 'File naming follows ISO 19650-2 convention structure:\n\n[Project Code]-[Originator]-[Volume/System]-[Level/Location]-[Type]-[Role]-[Number]-[Revision]\n\nExample: GF24-SAA-XX-GF-M3-ARC-0001-P01.rvt\n\nFolder Structure Hierarchy:\n├── 00_WIP (Work in Progress - active development)\n├── 01_SHARED (Shared for coordination and review)\n├── 02_PUBLISHED (Published deliverables - approved)\n├── 03_ARCHIVE (Superseded versions with audit trail)\n\nNaming Components:\n- Project Code: GF24 (Greenfield 2024)\n- Originator: SAA (Smith Associates Architects), EXL (Engineering Excellence), ASG (Advanced Systems Group)\n- Volume: XX (Whole building), 01 (Core/Stair), 02 (Office wings)\n- Level: GF (Ground Floor), 01-08 (Floors 1-8), RF (Roof), B1 (Basement)\n- Type: M3 (Model), DR (Drawing), SP (Specification), RP (Report)\n- Role: ARC (Architecture), STR (Structural), MEP (MEP), FAC (Facades)\n- Number: Sequential 4-digit\n- Revision: S1-S4 (Design stages), P01+ (Construction issue)',
+    qualityTools: {
+      columns: ['Tool/Software', 'Check Type', 'Check Frequency', 'Responsible Role', 'Action on Failure'],
+      data: [
+        { 
+          'Tool/Software': 'Autodesk Navisworks Manage', 
+          'Check Type': 'Clash Detection (Hard/Soft clashes)', 
+          'Check Frequency': 'Weekly for WIP models', 
+          'Responsible Role': 'BIM Coordinator', 
+          'Action on Failure': 'Issue clash report; Discipline team resolution within 48 hours; Re-test before milestone' 
+        },
+        { 
+          'Tool/Software': 'Solibri Model Checker', 
+          'Check Type': 'IFC compliance, information completeness, parameter validation', 
+          'Check Frequency': 'At each data drop/milestone', 
+          'Responsible Role': 'Information Manager', 
+          'Action on Failure': 'Model rejected; Detailed non-compliance report issued; Resubmission required' 
+        },
+        { 
+          'Tool/Software': 'BIMcollab Zoom', 
+          'Check Type': 'Issue tracking and coordination workflow validation', 
+          'Check Frequency': 'Continuous (real-time)', 
+          'Responsible Role': 'Discipline Coordinators', 
+          'Action on Failure': 'Automatic notification; Issue escalation if unresolved >72 hours; Progress report impact' 
+        },
+        { 
+          'Tool/Software': 'Custom Python Scripts', 
+          'Check Type': 'Naming convention compliance, metadata validation', 
+          'Check Frequency': 'Daily automated scans', 
+          'Responsible Role': 'CDE Administrator', 
+          'Action on Failure': 'Automated rejection; Email notification to author; Correction required before publication' 
+        },
+        { 
+          'Tool/Software': 'Revit Model Review Tools', 
+          'Check Type': 'Model health, warnings, links integrity', 
+          'Check Frequency': 'Before each coordination session', 
+          'Responsible Role': 'Discipline BIM Authors', 
+          'Action on Failure': 'Model cleanup required; Warning log maintained; Critical warnings prevent milestone submission' 
+        }
+      ]
+    },
+    trainingPlan: {
+      columns: ['Role/Personnel', 'Training Topic', 'Provider/Method', 'Timeline', 'Competency Verification'],
+      data: [
+        { 
+          'Role/Personnel': 'All Team Members', 
+          'Training Topic': 'ISO 19650-2 Information Management Principles', 
+          'Provider/Method': 'Internal workshop by Information Manager', 
+          'Timeline': 'Week 1 (Project mobilization)', 
+          'Competency Verification': 'Completion certificate; Knowledge assessment quiz (80% pass)' 
+        },
+        { 
+          'Role/Personnel': 'BIM Authors (all disciplines)', 
+          'Training Topic': 'Project naming conventions and CDE workflows', 
+          'Provider/Method': 'Hands-on training session with CDE Administrator', 
+          'Timeline': 'Week 1-2 (Before model initiation)', 
+          'Competency Verification': 'Practical test: Submit sample file following all conventions' 
+        },
+        { 
+          'Role/Personnel': 'BIM Coordinators', 
+          'Training Topic': 'Navisworks clash detection and coordination workflows', 
+          'Provider/Method': 'Autodesk certified training (external)', 
+          'Timeline': 'Pre-project (if not certified); Refresher Month 3', 
+          'Competency Verification': 'Autodesk certification; Successful clash report submission' 
+        },
+        { 
+          'Role/Personnel': 'Design Team Leads', 
+          'Training Topic': 'Quality checking procedures and compliance requirements', 
+          'Provider/Method': 'Workshop by BIM Manager with live demonstrations', 
+          'Timeline': 'Week 2; Refresher at Stage transitions', 
+          'Competency Verification': 'Review and sign-off quality checklist; Successful milestone submission' 
+        },
+        { 
+          'Role/Personnel': 'New Joiners (ongoing)', 
+          'Training Topic': 'Project BEP induction and tool-specific training', 
+          'Provider/Method': 'Onboarding package with mentoring from BIM Manager', 
+          'Timeline': 'Within 1 week of joining project', 
+          'Competency Verification': 'BEP comprehension test; Supervised work period (2 weeks)' 
+        }
+      ]
+    },
+    kpis: {
+      columns: ['KPI Name', 'Measurement Metric', 'Target Value', 'Monitoring Frequency', 'Owner'],
+      data: [
+        { 
+          'KPI Name': 'Model Coordination Effectiveness', 
+          'Measurement Metric': 'Number of clashes per 1000 model elements', 
+          'Target Value': '<5 clashes/1000 elements', 
+          'Monitoring Frequency': 'Weekly', 
+          'Owner': 'BIM Coordinator' 
+        },
+        { 
+          'KPI Name': 'Information Delivery Timeliness', 
+          'Measurement Metric': 'Percentage of deliverables submitted on/before deadline', 
+          'Target Value': '≥95% on-time', 
+          'Monitoring Frequency': 'Per milestone', 
+          'Owner': 'Information Manager' 
+        },
+        { 
+          'KPI Name': 'Data Quality Compliance', 
+          'Measurement Metric': 'Percentage of models passing first-time validation checks', 
+          'Target Value': '≥90% first-time pass', 
+          'Monitoring Frequency': 'Per data drop', 
+          'Owner': 'Information Manager' 
+        },
+        { 
+          'KPI Name': 'RFI Reduction from BIM', 
+          'Measurement Metric': 'Reduction in RFIs compared to baseline/similar projects', 
+          'Target Value': '≥40% reduction', 
+          'Monitoring Frequency': 'Monthly cumulative', 
+          'Owner': 'Project Manager' 
+        },
+        { 
+          'KPI Name': 'Design Change Efficiency', 
+          'Measurement Metric': 'Average time from change request to updated model', 
+          'Target Value': '≤5 working days', 
+          'Monitoring Frequency': 'Monthly average', 
+          'Owner': 'BIM Manager' 
+        },
+        { 
+          'KPI Name': 'Team Competency Level', 
+          'Measurement Metric': 'Percentage of team members meeting competency requirements', 
+          'Target Value': '100% compliant', 
+          'Monitoring Frequency': 'Quarterly', 
+          'Owner': 'Information Manager' 
+        },
+        { 
+          'KPI Name': 'CDE Usage and Adoption', 
+          'Measurement Metric': 'Percentage of information exchanges through CDE vs. email', 
+          'Target Value': '≥98% via CDE', 
+          'Monitoring Frequency': 'Monthly', 
+          'Owner': 'CDE Administrator' 
+        }
+      ]
+    },
+    alignmentStrategy: 'Ongoing alignment with appointing party information requirements will be maintained through:\n\n1. MONTHLY STAKEHOLDER REVIEWS: Regular workshops with client representatives to validate that delivered information continues to meet evolving project needs and strategic objectives. EIR alignment matrix updated and signed off monthly.\n\n2. CONTINUOUS KPI MONITORING: Real-time dashboard tracking all performance indicators with traffic light system. Deviations >10% from targets trigger immediate corrective action plans with root cause analysis and preventive measures.\n\n3. QUARTERLY BEP REVIEWS: Formal review of BEP effectiveness with all stakeholders. Assessment of whether processes remain fit-for-purpose. Updates issued as controlled documents with change logs and approval workflows.\n\n4. CHANGE MANAGEMENT INTEGRATION: All project scope changes assessed for information management impact. BEP updated accordingly through formal change request process with client approval. Information requirements matrix revised to reflect new/modified requirements.\n\n5. LESSONS LEARNED SESSIONS: Bi-monthly retrospectives capturing what\'s working well and improvement opportunities. Action items tracked to completion. Best practices documented and shared across project team.\n\n6. TECHNOLOGY ROADMAP REVIEWS: Quarterly assessment of whether software/tools remain optimal for project needs. Evaluation of new technologies that could enhance information delivery quality or efficiency.\n\n7. CONTINUOUS COMMUNICATION: Open channels maintained with appointing party Information Manager. Weekly status updates on information production progress. Proactive escalation of risks or issues affecting information delivery timelines or quality.'
+  },
+  
   cdeStrategy: 'The project employs a federated CDE approach utilizing multiple specialized platforms to optimize workflow efficiency and data management across different information types and project phases. Each platform is selected for its specific strengths while maintaining seamless integration and unified information governance through standardized protocols, consistent naming conventions, and automated synchronization processes.',
   cdePlatforms: [
     { 'Platform/Service': 'Microsoft SharePoint Online', 'Usage/Purpose': 'WIP collaboration and document management', 'Information Types': 'MS Office documents, specifications, reports, meeting minutes, correspondence', 'Workflow States': 'WIP, Review, Approved', 'Access Control': 'Team member authentication, version control, document check-out/in' },
