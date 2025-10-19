@@ -12,6 +12,9 @@ import {
 } from 'lucide-react';
 import EditableTable from '../base/EditableTable';
 import FieldHeader from '../base/FieldHeader';
+import TipTapEditor from '../editors/TipTapEditor';
+import RACIReferenceBuilder from './RACIReferenceBuilder';
+import NamingConventionBuilder from './NamingConventionBuilder';
 
 /**
  * IMStrategyBuilder - Information Management Strategy Builder
@@ -48,15 +51,79 @@ const IMStrategyBuilder = ({ field, value = {}, onChange, error, disabled = fals
   // Initialize with default structure if empty
   const defaultValue = {
     meetingSchedule: { columns: [], data: [] },
-    raciReference: '',
-    namingStandards: '',
+    raciReference: {
+      referenceText: 'Detailed RACI (Responsible, Accountable, Consulted, Informed) matrices are defined in Section 6.6 (Information Deliverables Responsibility Matrix) and Section 6.7 (Information Management Activities Responsibility Matrix per ISO 19650-2 Annex A). These matrices establish clear accountability for all information production, coordination, approval, and delivery activities throughout the project lifecycle.',
+      keyDecisionPoints: { 
+        columns: ['Key Decision/Activity', 'Accountable', 'Responsible', 'Consulted', 'Informed'],
+        data: [
+          {
+            'Key Decision/Activity': 'Model Federation Approval',
+            'Accountable': 'Lead BIM Coordinator',
+            'Responsible': 'Discipline Coordinators',
+            'Consulted': 'Design Team',
+            'Informed': 'Client'
+          },
+          {
+            'Key Decision/Activity': 'Design Coordination Sign-off',
+            'Accountable': 'Design Manager',
+            'Responsible': 'Discipline Leads',
+            'Consulted': 'BIM Manager',
+            'Informed': 'Project Director'
+          },
+          {
+            'Key Decision/Activity': 'Information Delivery Approval',
+            'Accountable': 'Information Manager',
+            'Responsible': 'BIM Manager',
+            'Consulted': 'Task Team',
+            'Informed': 'Client Representative'
+          },
+          {
+            'Key Decision/Activity': 'CDE Access Management',
+            'Accountable': 'Information Manager',
+            'Responsible': 'CDE Administrator',
+            'Consulted': 'IT Security',
+            'Informed': 'Project Team'
+          },
+          {
+            'Key Decision/Activity': 'Change Request Processing',
+            'Accountable': 'Project Manager',
+            'Responsible': 'Design Manager',
+            'Consulted': 'Affected Disciplines',
+            'Informed': 'All Stakeholders'
+          }
+        ]
+      }
+    },
+    namingStandards: {
+      overview: '<p>File naming follows <strong>ISO 19650-2</strong> convention to ensure consistency, traceability, and efficient information management across all project deliverables.</p>',
+      namingFields: [],
+      namingPattern: '<p><strong>Pattern:</strong> [Project Code]-[Originator]-[Volume/System]-[Level/Location]-[Type]-[Role]-[Number]-[Revision]</p><p><strong>Example:</strong> <code>PRJ001-ARC-XX-GF-M3-ARC-0001-P01.rvt</code></p>',
+      deliverableAttributes: [],
+      folderStructure: '<ul><li><strong>00_WIP</strong> - Work in Progress (active development, not shared)</li><li><strong>01_SHARED</strong> - Shared for review and coordination</li><li><strong>02_PUBLISHED</strong> - Published/Approved information</li><li><strong>03_ARCHIVE</strong> - Superseded versions and historical records</li></ul><p>Each folder follows the CDE workflow states aligned with ISO 19650-2 information container strategy.</p>'
+    },
     qualityTools: { columns: [], data: [] },
     trainingPlan: { columns: [], data: [] },
     kpis: { columns: [], data: [] },
     alignmentStrategy: ''
   };
 
-  const currentValue = { ...defaultValue, ...value };
+  // Deep merge to handle existing values while preserving default structure
+  const currentValue = { ...defaultValue };
+  if (value && typeof value === 'object') {
+    Object.keys(value).forEach(key => {
+      if (key === 'raciReference' || key === 'namingStandards') {
+        // Special handling for complex objects - ensure they're objects
+        if (value[key] && typeof value[key] === 'object' && !Array.isArray(value[key])) {
+          currentValue[key] = value[key];
+        } else {
+          // If it's a string or other type, use default
+          currentValue[key] = defaultValue[key];
+        }
+      } else {
+        currentValue[key] = value[key];
+      }
+    });
+  }
 
   // Toggle section expansion
   const toggleSection = (sectionKey) => {
@@ -79,6 +146,7 @@ const IMStrategyBuilder = ({ field, value = {}, onChange, error, disabled = fals
   const sections = [
     {
       key: 'meetingSchedule',
+      number: '4.8.1',
       title: 'Coordination Meeting Schedule',
       icon: Calendar,
       description: 'Define regular coordination meetings for information management',
@@ -94,24 +162,23 @@ const IMStrategyBuilder = ({ field, value = {}, onChange, error, disabled = fals
     },
     {
       key: 'raciReference',
+      number: '4.8.2',
       title: 'RACI Responsibility Matrices',
       icon: Users,
       description: 'Reference to responsibility assignment matrices and key decision points',
-      type: 'textarea',
-      rows: 4,
-      placeholder: 'Example: RACI matrices are defined in Section 3.3 Responsibility Matrix. Key decision points include: Model federation approval (Accountable: Lead BIM Coordinator), Design coordination sign-off (Accountable: Design Manager), Information delivery approval (Accountable: Information Manager)...'
+      type: 'raci-reference'
     },
     {
       key: 'namingStandards',
+      number: '4.8.3',
       title: 'Naming and File Structure Standards',
       icon: FileText,
       description: 'Standardized conventions for files, folders, and information containers',
-      type: 'textarea',
-      rows: 5,
-      placeholder: 'Example: File naming follows ISO 19650-2 convention: [Project Code]-[Originator]-[Volume/System]-[Level/Location]-[Type]-[Role]-[Number]-[Revision]\n\nFolder Structure:\n- 00_WIP (Work in Progress)\n- 01_SHARED (Shared for review)\n- 02_PUBLISHED (Published/Approved)\n- 03_ARCHIVE (Superseded versions)\n\nModel file naming: PRJ001-ARC-XX-GF-M3-ARC-0001-P01.rvt'
+      type: 'naming-convention'
     },
     {
       key: 'qualityTools',
+      number: '4.8.4',
       title: 'Automated Quality Checking Tools',
       icon: CheckCircle,
       description: 'Tools and processes for automated quality assurance',
@@ -127,6 +194,7 @@ const IMStrategyBuilder = ({ field, value = {}, onChange, error, disabled = fals
     },
     {
       key: 'trainingPlan',
+      number: '4.8.5',
       title: 'Training and Competency Requirements',
       icon: GraduationCap,
       description: 'Training programs and competency verification processes',
@@ -142,6 +210,7 @@ const IMStrategyBuilder = ({ field, value = {}, onChange, error, disabled = fals
     },
     {
       key: 'kpis',
+      number: '4.8.6',
       title: 'Performance Monitoring and KPIs',
       icon: BarChart3,
       description: 'Key Performance Indicators for information management effectiveness',
@@ -157,6 +226,7 @@ const IMStrategyBuilder = ({ field, value = {}, onChange, error, disabled = fals
     },
     {
       key: 'alignmentStrategy',
+      number: '4.8.7',
       title: 'Ongoing Alignment Maintenance Strategy',
       icon: Target,
       description: 'Approach to maintaining alignment throughout project lifecycle',
@@ -188,7 +258,10 @@ const IMStrategyBuilder = ({ field, value = {}, onChange, error, disabled = fals
               <Icon className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900">{section.title}</h3>
+              <h3 className="font-semibold text-gray-900">
+                {section.number && <span className="text-blue-600 mr-2">{section.number}</span>}
+                {section.title}
+              </h3>
               <p className="text-sm text-gray-500 mt-0.5">{section.description}</p>
             </div>
           </div>
@@ -228,14 +301,42 @@ const IMStrategyBuilder = ({ field, value = {}, onChange, error, disabled = fals
                 }}
                 error={null}
               />
-            ) : (
-              <textarea
-                value={sectionValue || ''}
-                onChange={(e) => handleSectionChange(section.key, e.target.value)}
+            ) : section.type === 'raci-reference' ? (
+              <RACIReferenceBuilder
+                field={{
+                  name: section.key,
+                  label: section.title
+                }}
+                value={sectionValue}
+                onChange={(fieldName, newValue) => {
+                  handleSectionChange(section.key, newValue);
+                }}
+                error={null}
                 disabled={disabled}
-                rows={section.rows}
+              />
+            ) : section.type === 'naming-convention' ? (
+              <NamingConventionBuilder
+                field={{
+                  name: section.key,
+                  label: section.title
+                }}
+                value={sectionValue}
+                onChange={(fieldName, newValue) => {
+                  handleSectionChange(section.key, newValue);
+                }}
+                error={null}
+                disabled={disabled}
+              />
+            ) : (
+              <TipTapEditor
+                id={`im-strategy-${section.key}`}
+                value={sectionValue || ''}
+                onChange={(newValue) => handleSectionChange(section.key, newValue)}
                 placeholder={section.placeholder}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none disabled:bg-gray-50 disabled:cursor-not-allowed text-sm"
+                minHeight={`${(section.rows || 3) * 24}px`}
+                autoSaveKey={`im-strategy-${section.key}`}
+                fieldName={section.key}
+                className=""
               />
             )}
           </div>
@@ -249,6 +350,15 @@ const IMStrategyBuilder = ({ field, value = {}, onChange, error, disabled = fals
     const sectionValue = currentValue[section.key];
     if (section.type === 'table') {
       return sectionValue?.data?.length > 0;
+    }
+    if (section.type === 'raci-reference') {
+      return (sectionValue?.referenceText?.trim().length > 0) || 
+             (sectionValue?.keyDecisionPoints?.data?.length > 0);
+    }
+    if (section.type === 'naming-convention') {
+      return (sectionValue?.overview?.trim().length > 0) ||
+             (sectionValue?.namingFields?.length > 0) ||
+             (sectionValue?.deliverableAttributes?.length > 0);
     }
     return sectionValue && sectionValue.trim().length > 0;
   }).length;
