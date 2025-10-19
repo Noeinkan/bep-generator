@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FileText, Plus, Trash2, ChevronDown, ChevronUp, Info } from 'lucide-react';
 import TipTapEditor from '../editors/TipTapEditor';
+import FieldHeader from '../base/FieldHeader';
+import NamingPatternVisualizer from './NamingPatternVisualizer';
+import DeliverableAttributesVisualizer from './DeliverableAttributesVisualizer';
 
 /**
  * NamingConventionBuilder
- * Component for Section 4.8.3: Naming and File Structure Standards
+ * Component for Section 9.2: Naming Conventions
  * 
  * Provides a structured interface for defining:
  * 1. Naming Convention Fields - Components of the file naming pattern
@@ -16,59 +19,51 @@ const NamingConventionBuilder = ({ field, value = {}, onChange, error, disabled 
   const [expandedSections, setExpandedSections] = useState({
     overview: true,
     namingFields: true,
-    pattern: false,
-    attributes: false,
-    folderStructure: false
+    pattern: true,
+    attributes: false
   });
-
-  // Safety check (after all hooks)
-  if (!field) {
-    return <div className="text-red-600">Error: Field configuration is missing</div>;
-  }
-
-  const { name } = field;
 
   // Initialize with default structure
   const defaultValue = {
     overview: '<p>File naming follows <strong>ISO 19650-2</strong> convention to ensure consistency, traceability, and efficient information management across all project deliverables.</p>',
     namingFields: [
       {
-        fieldName: 'Project Code',
+        fieldName: '[Project Code]',
         exampleValue: 'PRJ001',
         description: 'Unique project identifier assigned by the appointing party'
       },
       {
-        fieldName: 'Originator',
+        fieldName: '[Originator]',
         exampleValue: 'ARC',
         description: 'Organization/discipline creating the information (e.g., ARC=Architecture, STR=Structural, MEP=MEP)'
       },
       {
-        fieldName: 'Volume/System',
+        fieldName: '[Volume/System]',
         exampleValue: 'XX',
         description: 'Building zone, system, or spatial reference (XX if not applicable)'
       },
       {
-        fieldName: 'Level/Location',
+        fieldName: '[Level/Location]',
         exampleValue: 'GF',
         description: 'Floor level or location code (e.g., GF=Ground Floor, B1=Basement 1)'
       },
       {
-        fieldName: 'Type',
+        fieldName: '[Type]',
         exampleValue: 'M3',
         description: 'Information type (e.g., M3=Model, DR=Drawing, SP=Specification, SC=Schedule)'
       },
       {
-        fieldName: 'Role',
+        fieldName: '[Role]',
         exampleValue: 'ARC',
         description: 'Discipline or role responsible for the content'
       },
       {
-        fieldName: 'Number',
+        fieldName: '[Number]',
         exampleValue: '0001',
         description: 'Sequential number for the deliverable'
       },
       {
-        fieldName: 'Revision',
+        fieldName: '[Revision]',
         exampleValue: 'P01',
         description: 'Revision status (e.g., P01=First Issue, C01=First Construction Issue)'
       }
@@ -99,10 +94,30 @@ const NamingConventionBuilder = ({ field, value = {}, onChange, error, disabled 
         attributeName: 'Suitability Code',
         exampleValue: 'S2 - Suitable for Information',
         description: 'Document status/suitability per ISO 19650'
+      },
+      {
+        attributeName: 'Revision Code',
+        exampleValue: 'P01',
+        description: 'Revision code indicating version and status: P=First Production (P01-P99), C=Construction (C01-C99), A=As-Built (A01-A99), S=Spatial Coordination (S1-S4), D=Developed Design (D1-D9)'
       }
-    ],
-    folderStructure: '<ul><li><strong>00_WIP</strong> - Work in Progress (active development, not shared)</li><li><strong>01_SHARED</strong> - Shared for review and coordination</li><li><strong>02_PUBLISHED</strong> - Published/Approved information</li><li><strong>03_ARCHIVE</strong> - Superseded versions and historical records</li></ul><p>Each folder follows the CDE workflow states aligned with ISO 19650-2 information container strategy.</p>'
+    ]
   };
+
+  // Initialize with default values if the value is empty or missing namingFields
+  useEffect(() => {
+    if (field && field.name && onChange) {
+      if (!value || !value.namingFields || value.namingFields.length === 0) {
+        onChange(field.name, defaultValue);
+      }
+    }
+  }, []); // Run only once on mount
+
+  // Safety check (after all hooks)
+  if (!field) {
+    return <div className="text-red-600">Error: Field configuration is missing</div>;
+  }
+
+  const { name } = field;
 
   // Handle different value types
   let currentValue = defaultValue;
@@ -111,8 +126,7 @@ const NamingConventionBuilder = ({ field, value = {}, onChange, error, disabled 
       overview: value.overview || defaultValue.overview,
       namingFields: value.namingFields || defaultValue.namingFields,
       namingPattern: value.namingPattern || defaultValue.namingPattern,
-      deliverableAttributes: value.deliverableAttributes || defaultValue.deliverableAttributes,
-      folderStructure: value.folderStructure || defaultValue.folderStructure
+      deliverableAttributes: value.deliverableAttributes || defaultValue.deliverableAttributes
     };
   }
 
@@ -136,14 +150,6 @@ const NamingConventionBuilder = ({ field, value = {}, onChange, error, disabled 
     onChange(name, {
       ...currentValue,
       namingPattern: newValue
-    });
-  };
-
-  // Handle folder structure change
-  const handleFolderStructureChange = (newValue) => {
-    onChange(name, {
-      ...currentValue,
-      folderStructure: newValue
     });
   };
 
@@ -239,6 +245,14 @@ const NamingConventionBuilder = ({ field, value = {}, onChange, error, disabled 
 
   return (
     <div className="space-y-4">
+      {/* Field Header */}
+      <FieldHeader 
+        fieldName={name}
+        label={field.label}
+        number={field.number}
+        required={field.required}
+      />
+
       {/* Info Banner */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <div className="flex items-start gap-3">
@@ -348,15 +362,7 @@ const NamingConventionBuilder = ({ field, value = {}, onChange, error, disabled 
         {renderSectionHeader('pattern', 'Naming Pattern & Example', FileText, 'Complete pattern and example filename')}
         {expandedSections.pattern && (
           <div className="p-4">
-            <TipTapEditor
-              id="naming-pattern"
-              value={currentValue.namingPattern || ''}
-              onChange={handlePatternChange}
-              placeholder="Define the complete naming pattern and provide examples..."
-              minHeight="100px"
-              autoSaveKey="naming-pattern"
-              fieldName="namingPattern"
-            />
+            <NamingPatternVisualizer namingFields={currentValue.namingFields} />
           </div>
         )}
 
@@ -429,22 +435,13 @@ const NamingConventionBuilder = ({ field, value = {}, onChange, error, disabled 
               <Plus className="w-4 h-4" />
               <span className="text-sm font-medium">Add Deliverable Attribute</span>
             </button>
-          </div>
-        )}
 
-        {/* Folder Structure Section */}
-        {renderSectionHeader('folderStructure', 'Folder Structure', FileText, 'Directory organization and CDE workflow alignment')}
-        {expandedSections.folderStructure && (
-          <div className="p-4">
-            <TipTapEditor
-              id="folder-structure"
-              value={currentValue.folderStructure || ''}
-              onChange={handleFolderStructureChange}
-              placeholder="Define the folder structure and organization strategy..."
-              minHeight="120px"
-              autoSaveKey="folder-structure"
-              fieldName="folderStructure"
-            />
+            {/* Deliverable Attributes Visualizer */}
+            {currentValue.deliverableAttributes && currentValue.deliverableAttributes.length > 0 && (
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <DeliverableAttributesVisualizer deliverableAttributes={currentValue.deliverableAttributes} />
+              </div>
+            )}
           </div>
         )}
       </div>
