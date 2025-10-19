@@ -18,7 +18,8 @@ const FULL_WIDTH_FIELD_TYPES = [
   'tidp-reference',
   'tidp-section',
   'deliverables-matrix',
-  'im-activities-matrix'
+  'im-activities-matrix',
+  'im-strategy-builder'
 ];
 
 // Field types that should span all 3 columns
