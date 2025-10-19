@@ -722,6 +722,612 @@ class ExportService {
   }
 
   /**
+   * Export Responsibility Matrices to Excel
+   * @param {Object} data - Matrix data
+   * @param {Array} data.imActivities - IM activities
+   * @param {Array} data.deliverables - Deliverables
+   * @param {Object} data.project - Project info
+   * @param {Object} data.options - Export options
+   * @returns {Promise<string>} File path
+   */
+  async exportResponsibilityMatricesToExcel(data) {
+    const { imActivities = [], deliverables = [], project = {}, options = {} } = data;
+    const workbook = new ExcelJS.Workbook();
+
+    workbook.creator = 'BEP Generator';
+    workbook.created = new Date();
+    workbook.title = 'ISO 19650 Responsibility Matrices';
+
+    // Summary Sheet (if requested)
+    if (options.includeSummary !== false) {
+      const summarySheet = workbook.addWorksheet('Summary');
+      this.createMatrixSummarySheet(summarySheet, { imActivities, deliverables, project });
+    }
+
+    // Matrix 1: Information Management Activities
+    if (options.includeImActivities !== false && imActivities.length > 0) {
+      const imSheet = workbook.addWorksheet('IM Activities Matrix');
+      this.createIMActivitiesSheet(imSheet, imActivities, options);
+    }
+
+    // Matrix 2: Information Deliverables
+    if (options.includeDeliverables !== false && deliverables.length > 0) {
+      const delivSheet = workbook.addWorksheet('Deliverables Matrix');
+      this.createDeliverablesSheet(delivSheet, deliverables, options);
+    }
+
+    // TIDP Sync Status (if requested and data available)
+    if (options.includeSyncStatus && data.syncStatus) {
+      const syncSheet = workbook.addWorksheet('TIDP Sync Status');
+      this.createSyncStatusSheet(syncSheet, data.syncStatus);
+    }
+
+    const filename = `Responsibility_Matrices_${project.name?.replace(/\s+/g, '_') || 'Project'}_${format(new Date(), 'yyyyMMdd_HHmmss')}.xlsx`;
+    const filepath = path.join(this.tempDir, filename);
+
+    await workbook.xlsx.writeFile(filepath);
+    return filepath;
+  }
+
+  /**
+   * Create Matrix Summary Sheet
+   */
+  createMatrixSummarySheet(sheet, data) {
+    const { imActivities, deliverables, project } = data;
+
+    // Title
+    sheet.mergeCells('A1:F1');
+    sheet.getCell('A1').value = 'ISO 19650 Responsibility Matrices Summary';
+    sheet.getCell('A1').font = { size: 16, bold: true };
+    sheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' };
+    sheet.getCell('A1').fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF2563EB' }
+    };
+    sheet.getCell('A1').font.color = { argb: 'FFFFFFFF' };
+    sheet.getRow(1).height = 30;
+
+    // Project Info
+    let row = 3;
+    sheet.getCell(`A${row}`).value = 'Project Information';
+    sheet.getCell(`A${row}`).font = { bold: true, size: 14 };
+    row++;
+
+    sheet.getCell(`A${row}`).value = 'Project Name:';
+    sheet.getCell(`A${row}`).font = { bold: true };
+    sheet.getCell(`B${row}`).value = project.name || 'N/A';
+    row++;
+
+    sheet.getCell(`A${row}`).value = 'Generated:';
+    sheet.getCell(`A${row}`).font = { bold: true };
+    sheet.getCell(`B${row}`).value = format(new Date(), 'PPP p');
+    row += 2;
+
+    // Statistics
+    sheet.getCell(`A${row}`).value = 'Matrix Statistics';
+    sheet.getCell(`A${row}`).font = { bold: true, size: 14 };
+    row++;
+
+    // IM Activities stats
+    sheet.getCell(`A${row}`).value = 'Information Management Activities:';
+    sheet.getCell(`A${row}`).font = { bold: true };
+    sheet.getCell(`B${row}`).value = imActivities.length;
+    row++;
+
+    const customActivities = imActivities.filter(a => a.is_custom === 1).length;
+    sheet.getCell(`A${row}`).value = '  - Custom Activities:';
+    sheet.getCell(`B${row}`).value = customActivities;
+    row++;
+
+    sheet.getCell(`A${row}`).value = '  - ISO 19650 Standard:';
+    sheet.getCell(`B${row}`).value = imActivities.length - customActivities;
+    row += 2;
+
+    // Deliverables stats
+    sheet.getCell(`A${row}`).value = 'Information Deliverables:';
+    sheet.getCell(`A${row}`).font = { bold: true };
+    sheet.getCell(`B${row}`).value = deliverables.length;
+    row++;
+
+    const autoPopulated = deliverables.filter(d => d.is_auto_populated === 1).length;
+    sheet.getCell(`A${row}`).value = '  - Auto-populated from TIDPs:';
+    sheet.getCell(`B${row}`).value = autoPopulated;
+    row++;
+
+    sheet.getCell(`A${row}`).value = '  - Manually Created:';
+    sheet.getCell(`B${row}`).value = deliverables.length - autoPopulated;
+    row += 2;
+
+    // Status breakdown
+    const statuses = {};
+    deliverables.forEach(d => {
+      const status = d.status || 'Planned';
+      statuses[status] = (statuses[status] || 0) + 1;
+    });
+
+    sheet.getCell(`A${row}`).value = 'Deliverables by Status:';
+    sheet.getCell(`A${row}`).font = { bold: true };
+    row++;
+
+    Object.entries(statuses).forEach(([status, count]) => {
+      sheet.getCell(`A${row}`).value = `  - ${status}:`;
+      sheet.getCell(`B${row}`).value = count;
+      row++;
+    });
+
+    // Column widths
+    sheet.columns = [
+      { width: 30 },
+      { width: 20 },
+      { width: 20 },
+      { width: 20 },
+      { width: 20 },
+      { width: 20 }
+    ];
+  }
+
+  /**
+   * Create IM Activities Matrix Sheet
+   */
+  createIMActivitiesSheet(sheet, activities, options) {
+    // Title
+    sheet.mergeCells('A1:G1');
+    sheet.getCell('A1').value = 'Information Management Activities Responsibility Matrix (ISO 19650-2 Annex A)';
+    sheet.getCell('A1').font = { size: 14, bold: true };
+    sheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' };
+    sheet.getCell('A1').fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF2563EB' }
+    };
+    sheet.getCell('A1').font.color = { argb: 'FFFFFFFF' };
+    sheet.getRow(1).height = 25;
+
+    // Headers
+    const headerRow = sheet.getRow(3);
+    headerRow.values = [
+      'Activity / Function',
+      'Appointing Party (Client)',
+      'Lead Appointed Party',
+      'Appointed Parties (Task Teams)',
+      'Third Parties',
+      'Phase',
+      options.includeIsoReferences !== false ? 'ISO Reference' : null
+    ].filter(Boolean);
+
+    headerRow.font = { bold: true };
+    headerRow.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFE5E7EB' }
+    };
+    headerRow.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+    headerRow.height = 40;
+
+    // Group by phase
+    const phases = {};
+    activities.forEach(activity => {
+      const phase = activity.activity_phase || 'Other';
+      if (!phases[phase]) phases[phase] = [];
+      phases[phase].push(activity);
+    });
+
+    let currentRow = 4;
+
+    // Add activities grouped by phase
+    Object.entries(phases).forEach(([phase, phaseActivities]) => {
+      // Phase header
+      sheet.mergeCells(`A${currentRow}:G${currentRow}`);
+      sheet.getCell(`A${currentRow}`).value = phase;
+      sheet.getCell(`A${currentRow}`).font = { bold: true, size: 12 };
+      sheet.getCell(`A${currentRow}`).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFDBEAFE' }
+      };
+      currentRow++;
+
+      // Activities in this phase
+      phaseActivities.forEach(activity => {
+        const row = sheet.getRow(currentRow);
+        const values = [
+          activity.activity_name,
+          activity.appointing_party_role || 'N/A',
+          activity.lead_appointed_party_role || 'N/A',
+          activity.appointed_parties_role || 'N/A',
+          activity.third_parties_role || 'N/A',
+          activity.activity_phase || '',
+          options.includeIsoReferences !== false ? (activity.iso_reference || '') : null
+        ].filter((_, index) => index < headerRow.values.length);
+
+        row.values = values;
+        row.alignment = { vertical: 'top', wrapText: true };
+
+        // Color code RACI cells
+        [2, 3, 4, 5].forEach(col => {
+          const cell = row.getCell(col);
+          const value = cell.value;
+          if (value === 'A') {
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDBEAFE' } };
+          } else if (value === 'R') {
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD1FAE5' } };
+          } else if (value === 'C') {
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEF3C7' } };
+          } else if (value === 'I') {
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE9D5FF' } };
+          }
+        });
+
+        currentRow++;
+      });
+
+      currentRow++; // Space between phases
+    });
+
+    // RACI Legend
+    currentRow += 2;
+    sheet.getCell(`A${currentRow}`).value = 'RACI Legend:';
+    sheet.getCell(`A${currentRow}`).font = { bold: true };
+    currentRow++;
+    sheet.getCell(`A${currentRow}`).value = 'A = Accountable (Approves/has final authority)';
+    currentRow++;
+    sheet.getCell(`A${currentRow}`).value = 'R = Responsible (Performs the work)';
+    currentRow++;
+    sheet.getCell(`A${currentRow}`).value = 'C = Consulted (Provides input)';
+    currentRow++;
+    sheet.getCell(`A${currentRow}`).value = 'I = Informed (Kept updated)';
+
+    // Column widths
+    sheet.columns = [
+      { width: 45 },
+      { width: 15 },
+      { width: 15 },
+      { width: 20 },
+      { width: 15 },
+      { width: 20 },
+      { width: 25 }
+    ];
+
+    // Freeze panes
+    sheet.views = [{ state: 'frozen', xSplit: 0, ySplit: 3 }];
+  }
+
+  /**
+   * Create Deliverables Matrix Sheet
+   */
+  createDeliverablesSheet(sheet, deliverables, options) {
+    // Title
+    sheet.mergeCells('A1:J1');
+    sheet.getCell('A1').value = 'Information Deliverables Responsibility Matrix';
+    sheet.getCell('A1').font = { size: 14, bold: true };
+    sheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' };
+    sheet.getCell('A1').fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF4F46E5' }
+    };
+    sheet.getCell('A1').font.color = { argb: 'FFFFFFFF' };
+    sheet.getRow(1).height = 25;
+
+    // Headers
+    const headerRow = sheet.getRow(3);
+    headerRow.values = [
+      'Deliverable',
+      'Responsible Team',
+      'Accountable Party',
+      'Exchange Stage',
+      'Due Date',
+      'Format',
+      'LOD/LOIN',
+      'Status',
+      options.includeSyncStatus !== false ? 'Source' : null,
+      options.includeDescriptions !== false ? 'Description' : null
+    ].filter(Boolean);
+
+    headerRow.font = { bold: true };
+    headerRow.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFE5E7EB' }
+    };
+    headerRow.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+    headerRow.height = 35;
+
+    // Sort by exchange stage and due date
+    const sorted = [...deliverables].sort((a, b) => {
+      const stageCompare = (a.exchange_stage || '').localeCompare(b.exchange_stage || '');
+      if (stageCompare !== 0) return stageCompare;
+      return (a.due_date || '').localeCompare(b.due_date || '');
+    });
+
+    // Group by stage
+    const stages = {};
+    sorted.forEach(deliverable => {
+      const stage = deliverable.exchange_stage || 'Unassigned';
+      if (!stages[stage]) stages[stage] = [];
+      stages[stage].push(deliverable);
+    });
+
+    let currentRow = 4;
+
+    Object.entries(stages).forEach(([stage, stageDeliverables]) => {
+      // Stage header
+      sheet.mergeCells(`A${currentRow}:J${currentRow}`);
+      sheet.getCell(`A${currentRow}`).value = stage;
+      sheet.getCell(`A${currentRow}`).font = { bold: true, size: 12 };
+      sheet.getCell(`A${currentRow}`).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFC7D2FE' }
+      };
+      currentRow++;
+
+      stageDeliverables.forEach(deliverable => {
+        const row = sheet.getRow(currentRow);
+        const values = [
+          deliverable.deliverable_name,
+          deliverable.responsible_task_team || '',
+          deliverable.accountable_party || '',
+          deliverable.exchange_stage || '',
+          deliverable.due_date ? format(new Date(deliverable.due_date), 'dd/MM/yyyy') : '',
+          deliverable.format || '',
+          deliverable.loin_lod || '',
+          deliverable.status || 'Planned',
+          options.includeSyncStatus !== false ? (deliverable.is_auto_populated === 1 ? 'TIDP (Auto)' : 'Manual') : null,
+          options.includeDescriptions !== false ? (deliverable.description || '') : null
+        ].filter((_, index) => index < headerRow.values.length);
+
+        row.values = values;
+        row.alignment = { vertical: 'top', wrapText: true };
+
+        // Color code status
+        const statusCell = row.getCell(8);
+        const status = statusCell.value;
+        if (status === 'Planned') {
+          statusCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF3F4F6' } };
+        } else if (status === 'In Progress') {
+          statusCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDBEAFE' } };
+        } else if (status === 'Delivered') {
+          statusCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD1FAE5' } };
+        } else if (status === 'Approved') {
+          statusCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE9D5FF' } };
+        }
+
+        // Highlight overdue
+        if (deliverable.due_date && new Date(deliverable.due_date) < new Date() &&
+            status !== 'Delivered' && status !== 'Approved') {
+          row.getCell(5).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFECACA' } };
+          row.getCell(5).font = { color: { argb: 'FFDC2626' }, bold: true };
+        }
+
+        currentRow++;
+      });
+
+      currentRow++; // Space between stages
+    });
+
+    // Column widths
+    sheet.columns = [
+      { width: 40 },
+      { width: 20 },
+      { width: 20 },
+      { width: 25 },
+      { width: 12 },
+      { width: 12 },
+      { width: 12 },
+      { width: 15 },
+      { width: 15 },
+      { width: 40 }
+    ];
+
+    // Freeze panes
+    sheet.views = [{ state: 'frozen', xSplit: 0, ySplit: 3 }];
+  }
+
+  /**
+   * Create Sync Status Sheet
+   */
+  createSyncStatusSheet(sheet, syncStatus) {
+    // Title
+    sheet.mergeCells('A1:E1');
+    sheet.getCell('A1').value = 'TIDP Synchronization Status';
+    sheet.getCell('A1').font = { size: 14, bold: true };
+    sheet.getCell('A1').alignment = { horizontal: 'center' };
+    sheet.getCell('A1').fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF2563EB' }
+    };
+    sheet.getCell('A1').font.color = { argb: 'FFFFFFFF' };
+
+    // Summary
+    let row = 3;
+    sheet.getCell(`A${row}`).value = 'Total TIDPs:';
+    sheet.getCell(`A${row}`).font = { bold: true };
+    sheet.getCell(`B${row}`).value = syncStatus.totalTIDPs;
+    row++;
+
+    sheet.getCell(`A${row}`).value = 'Synced TIDPs:';
+    sheet.getCell(`A${row}`).font = { bold: true };
+    sheet.getCell(`B${row}`).value = syncStatus.syncedTIDPs;
+    row++;
+
+    sheet.getCell(`A${row}`).value = 'Unsynced TIDPs:';
+    sheet.getCell(`A${row}`).font = { bold: true };
+    sheet.getCell(`B${row}`).value = syncStatus.unsyncedTIDPs;
+    row += 2;
+
+    // TIDP Details
+    if (syncStatus.tidpDetails && syncStatus.tidpDetails.length > 0) {
+      const headerRow = sheet.getRow(row);
+      headerRow.values = ['TIDP Name', 'Containers', 'Synced Deliverables', 'Status', 'Needs Sync'];
+      headerRow.font = { bold: true };
+      headerRow.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFE5E7EB' }
+      };
+      row++;
+
+      syncStatus.tidpDetails.forEach(tidp => {
+        const detailRow = sheet.getRow(row);
+        detailRow.values = [
+          tidp.tidpName,
+          tidp.containersCount,
+          tidp.syncedDeliverablesCount,
+          tidp.isSynced ? 'In Sync' : 'Out of Sync',
+          tidp.needsSync ? 'Yes' : 'No'
+        ];
+
+        if (!tidp.isSynced) {
+          detailRow.getCell(4).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFED7AA' } };
+        }
+
+        row++;
+      });
+    }
+
+    sheet.columns = [
+      { width: 30 },
+      { width: 15 },
+      { width: 20 },
+      { width: 15 },
+      { width: 15 }
+    ];
+  }
+
+  /**
+   * Export Responsibility Matrices to PDF
+   * @param {Object} data - Matrix data
+   * @returns {Promise<string>} File path
+   */
+  async exportResponsibilityMatricesToPDF(data) {
+    const { imActivities = [], deliverables = [], project = {}, options = {} } = data;
+
+    const filename = `Responsibility_Matrices_${project.name?.replace(/\s+/g, '_') || 'Project'}_${format(new Date(), 'yyyyMMdd_HHmmss')}.pdf`;
+    const filepath = path.join(this.tempDir, filename);
+
+    const doc = new PDFDocument({ margin: 50, size: 'A4' });
+    doc.pipe(fs.createWriteStream(filepath));
+
+    // Cover Page
+    doc.fontSize(24).text('ISO 19650 Responsibility Matrices', { align: 'center' });
+    doc.moveDown();
+    doc.fontSize(14).text(project.name || 'Project', { align: 'center' });
+    doc.moveDown(2);
+    doc.fontSize(12).text(`Generated: ${format(new Date(), 'PPP p')}`, { align: 'center' });
+    doc.moveDown(10);
+
+    // Table of Contents
+    doc.fontSize(16).text('Contents', { underline: true });
+    doc.moveDown();
+    doc.fontSize(12);
+    let pageNum = 2;
+    if (options.includeImActivities !== false && imActivities.length > 0) {
+      doc.text(`1. Information Management Activities Matrix ............. ${pageNum}`);
+      pageNum += Math.ceil(imActivities.length / 10) + 1;
+    }
+    if (options.includeDeliverables !== false && deliverables.length > 0) {
+      doc.text(`2. Information Deliverables Matrix .................... ${pageNum}`);
+    }
+
+    // Matrix 1: IM Activities
+    if (options.includeImActivities !== false && imActivities.length > 0) {
+      doc.addPage();
+      doc.fontSize(18).text('1. Information Management Activities Matrix', { underline: true });
+      doc.moveDown();
+      doc.fontSize(10).text('ISO 19650-2 Annex A - RACI Responsibility Assignments');
+      doc.moveDown();
+
+      // Group by phase
+      const phases = {};
+      imActivities.forEach(activity => {
+        const phase = activity.activity_phase || 'Other';
+        if (!phases[phase]) phases[phase] = [];
+        phases[phase].push(activity);
+      });
+
+      Object.entries(phases).forEach(([phase, phaseActivities]) => {
+        doc.fontSize(14).text(phase, { underline: true });
+        doc.moveDown(0.5);
+
+        phaseActivities.forEach(activity => {
+          if (doc.y > 700) doc.addPage();
+
+          doc.fontSize(11).font('Helvetica-Bold').text(activity.activity_name);
+          doc.font('Helvetica').fontSize(9);
+          doc.text(`  Appointing Party: ${activity.appointing_party_role || 'N/A'}`);
+          doc.text(`  Lead Appointed Party: ${activity.lead_appointed_party_role || 'N/A'}`);
+          doc.text(`  Appointed Parties: ${activity.appointed_parties_role || 'N/A'}`);
+          doc.text(`  Third Parties: ${activity.third_parties_role || 'N/A'}`);
+          if (options.includeIsoReferences !== false && activity.iso_reference) {
+            doc.fontSize(8).fillColor('#666666').text(`  Ref: ${activity.iso_reference}`).fillColor('#000000');
+          }
+          doc.moveDown(0.5);
+        });
+
+        doc.moveDown();
+      });
+    }
+
+    // Matrix 2: Deliverables
+    if (options.includeDeliverables !== false && deliverables.length > 0) {
+      doc.addPage();
+      doc.fontSize(18).text('2. Information Deliverables Matrix', { underline: true });
+      doc.moveDown();
+      doc.fontSize(10).text('Information Deliverables Schedule with Responsibilities');
+      doc.moveDown();
+
+      // Group by stage
+      const stages = {};
+      deliverables.forEach(deliverable => {
+        const stage = deliverable.exchange_stage || 'Unassigned';
+        if (!stages[stage]) stages[stage] = [];
+        stages[stage].push(deliverable);
+      });
+
+      Object.entries(stages).forEach(([stage, stageDeliverables]) => {
+        doc.fontSize(14).text(stage, { underline: true });
+        doc.moveDown(0.5);
+
+        stageDeliverables.forEach(deliverable => {
+          if (doc.y > 700) doc.addPage();
+
+          doc.fontSize(11).font('Helvetica-Bold').text(deliverable.deliverable_name);
+          doc.font('Helvetica').fontSize(9);
+          doc.text(`  Responsible: ${deliverable.responsible_task_team || 'N/A'}`);
+          doc.text(`  Accountable: ${deliverable.accountable_party || 'N/A'}`);
+          doc.text(`  Due Date: ${deliverable.due_date ? format(new Date(deliverable.due_date), 'dd/MM/yyyy') : 'N/A'}`);
+          doc.text(`  Format: ${deliverable.format || 'N/A'} | LOD/LOIN: ${deliverable.loin_lod || 'N/A'}`);
+          doc.text(`  Status: ${deliverable.status || 'Planned'}`);
+          if (options.includeDescriptions !== false && deliverable.description) {
+            doc.fontSize(8).fillColor('#666666').text(`  ${deliverable.description}`, { width: 500 }).fillColor('#000000');
+          }
+          doc.moveDown(0.5);
+        });
+
+        doc.moveDown();
+      });
+    }
+
+    // Footer on all pages
+    const pages = doc.bufferedPageRange();
+    for (let i = 0; i < pages.count; i++) {
+      doc.switchToPage(i);
+      doc.fontSize(8).text(
+        `Page ${i + 1} of ${pages.count}`,
+        50,
+        doc.page.height - 50,
+        { align: 'center' }
+      );
+    }
+
+    doc.end();
+    return filepath;
+  }
+
+  /**
    * Clean up temporary files
    * @param {string} filepath - File path to clean up
    */

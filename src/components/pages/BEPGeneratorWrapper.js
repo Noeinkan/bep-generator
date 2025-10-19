@@ -60,6 +60,21 @@ const BEPGeneratorWrapper = () => {
     }
   }, [user, showDraftManager]);
 
+  // Initialize default milestones for step 5 (Information Delivery Planning)
+  React.useEffect(() => {
+    if (currentStep === 5 && (!formData.keyMilestones || formData.keyMilestones.length === 0)) {
+      setFormData(prev => ({
+        ...prev,
+        keyMilestones: [
+          { stage: 'Stage 3', description: 'Spatial Coordination', deliverables: 'Federated Models', dueDate: '' },
+          { stage: 'Stage 4', description: 'Technical Design', deliverables: 'Construction Models', dueDate: '' },
+          { stage: 'Stage 5', description: 'Manufacturing & Construction', deliverables: 'As-Built Models', dueDate: '' },
+          { stage: 'Stage 6', description: 'Handover', deliverables: 'COBie Data', dueDate: '' }
+        ]
+      }));
+    }
+  }, [currentStep, formData.keyMilestones]);
+
   // Draft name validation
   const newDraftNameValidation = React.useMemo(() => {
     if (!newDraftName) return { isValid: false, error: null, sanitized: '' };
