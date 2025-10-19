@@ -4,21 +4,19 @@ import React, { useState } from 'react';
 import CONFIG from '../../../config/bepConfig';
 import EditableTable from './EditableTable';
 import IntroTableField from './IntroTableField';
+import FieldHeader from './FieldHeader';
 import FileStructureDiagram from '../diagrams/FileStructureDiagram';
 import CDEDiagramBuilderV2 from '../diagrams/CDEDiagramBuilder';
 import VolumeStrategyMindmap from '../diagrams/VolumeStrategyMindmap';
 import TipTapEditor from '../editors/TipTapEditor';
 import TimelineInput from '../specialized/TimelineInput';
 import BudgetInput from '../specialized/BudgetInput';
-import FieldHelpTooltip from '../controls/FieldHelpTooltip';
 import StandardsTable from '../tables/StandardsTable';
-import HELP_CONTENT from '../../../data/helpContentData';
 import { Calendar, Plus, Table2, FileText } from 'lucide-react';
 
 const InputField = React.memo(({ field, value, onChange, error, formData = {} }) => {
   const { name, label, number, type, required, rows, placeholder, options: fieldOptions } = field;
   const optionsList = fieldOptions ? CONFIG.options[fieldOptions] : null;
-  const helpContent = HELP_CONTENT[name]; // Get help content for this field
 
   const baseClasses = "w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500";
 
@@ -29,18 +27,6 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
       : [...current, option];
     onChange(name, updated);
   };
-
-  // Helper component for label with optional help tooltip
-  const FieldLabel = ({ htmlFor, children, className = "block text-sm font-medium mb-2" }) => (
-    <div className="flex items-center gap-2 mb-2">
-      <label htmlFor={htmlFor} className={className}>
-        {children}
-      </label>
-      {helpContent && (
-        <FieldHelpTooltip fieldName={name} helpContent={helpContent} />
-      )}
-    </div>
-  );
 
   switch (type) {
     case 'timeline':
@@ -154,9 +140,13 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
     case 'textarea':
       return (
         <div>
-          <FieldLabel htmlFor={name}>
-            {number ? `${number} ` : ''}{label} {required && '*'}
-          </FieldLabel>
+          <FieldHeader 
+            fieldName={name}
+            label={label}
+            number={number}
+            required={required}
+            htmlFor={name}
+          />
           <TipTapEditor
             id={name}
             aria-required={required}
@@ -175,9 +165,13 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
     case 'select':
       return (
         <div>
-          <FieldLabel htmlFor={name}>
-            {number ? `${number} ` : ''}{label} {required && '*'}
-          </FieldLabel>
+          <FieldHeader 
+            fieldName={name}
+            label={label}
+            number={number}
+            required={required}
+            htmlFor={name}
+          />
           <select
             id={name}
             aria-required={required}
@@ -197,9 +191,12 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
     case 'checkbox':
       return (
         <div>
-          <FieldLabel>
-            {number ? `${number} ` : ''}{label} {required && '*'}
-          </FieldLabel>
+          <FieldHeader 
+            fieldName={name}
+            label={label}
+            number={number}
+            required={required}
+          />
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-60 overflow-y-auto border rounded-lg p-3">
             {optionsList?.map(option => (
               <label key={option} htmlFor={`${name}-${option}`} className="flex items-center space-x-2 p-2 border rounded cursor-pointer hover:bg-gray-50">
@@ -237,9 +234,13 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
     default:
       return (
         <div>
-          <FieldLabel htmlFor={name}>
-            {number ? `${number} ` : ''}{label} {required && '*'}
-          </FieldLabel>
+          <FieldHeader 
+            fieldName={name}
+            label={label}
+            number={number}
+            required={required}
+            htmlFor={name}
+          />
           <input
             id={name}
             aria-required={required}
@@ -277,9 +278,12 @@ const MilestonesTableField = ({ field, value, onChange, error }) => {
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        {number ? `${number} ` : ''}{label} {required && <span className="text-red-500">*</span>}
-      </label>
+      <FieldHeader 
+        fieldName={name}
+        label={label}
+        number={number}
+        required={required}
+      />
       <div className="overflow-x-auto">
         <table className="min-w-full border border-gray-300 rounded-lg">
           <thead className="bg-gray-50">
@@ -388,9 +392,12 @@ const TidpReferenceField = ({ field, value, onChange, error, formData }) => {
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        {number ? `${number} ` : ''}{label}
-      </label>
+      <FieldHeader 
+        fieldName={field.name}
+        label={label}
+        number={number}
+        required={field.required}
+      />
 
       {showManager ? (
         <React.Suspense fallback={<div className="p-4 text-center">Loading TIDP Manager...</div>}>
@@ -492,9 +499,12 @@ const TidpSectionField = ({ field, value, onChange, error, formData }) => {
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        {number ? `${number} ` : ''}{label}
-      </label>
+      <FieldHeader 
+        fieldName={name}
+        label={label}
+        number={number}
+        required={field.required}
+      />
 
       {showManager ? (
         <React.Suspense fallback={<div>Loading...</div>}>
@@ -536,9 +546,12 @@ const DeliverablesMatrixField = ({ field, value, onChange, error, formData }) =>
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        {number ? `${number} ` : ''}{label}
-      </label>
+      <FieldHeader 
+        fieldName={field.name}
+        label={label}
+        number={number}
+        required={field.required}
+      />
 
       {showMatrixManager ? (
         <React.Suspense fallback={<div>Loading...</div>}>
@@ -586,9 +599,12 @@ const ImActivitiesMatrixField = ({ field, value, onChange, error, formData }) =>
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        {number ? `${number} ` : ''}{label}
-      </label>
+      <FieldHeader 
+        fieldName={field.name}
+        label={label}
+        number={number}
+        required={field.required}
+      />
 
       {showMatrixManager ? (
         <React.Suspense fallback={<div>Loading...</div>}>

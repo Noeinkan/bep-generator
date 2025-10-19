@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { DollarSign, Euro, TrendingUp, Coins } from 'lucide-react';
+import FieldHeader from '../base/FieldHeader';
 
 const BudgetInput = ({ field, value, onChange, error }) => {
-  const { name, label, required, placeholder } = field;
+  const { name, label, number, required, placeholder } = field;
 
   // Parse existing value (e.g., "£12.5 million" or "£8M - £12M")
   const parseExistingValue = (val) => {
@@ -116,9 +117,12 @@ const BudgetInput = ({ field, value, onChange, error }) => {
 
   return (
     <div className="space-y-3">
-      <label className="block text-sm font-medium text-gray-700">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
+      <FieldHeader 
+        fieldName={name}
+        label={label}
+        number={number}
+        required={required}
+      />
 
       {/* Currency Selector */}
       <div>

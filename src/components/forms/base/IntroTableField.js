@@ -1,9 +1,10 @@
 import React from 'react';
 import TipTapEditor from '../editors/TipTapEditor';
 import EditableTable from './EditableTable';
+import FieldHeader from './FieldHeader';
 
 const IntroTableField = React.memo(({ field, value, onChange, error }) => {
-  const { name, label, required, introPlaceholder, tableColumns } = field;
+  const { name, label, number, required, introPlaceholder, tableColumns } = field;
 
   // The value should be an object with 'intro' and 'table' properties
   const currentValue = value || { intro: '', table: [] };
@@ -26,9 +27,12 @@ const IntroTableField = React.memo(({ field, value, onChange, error }) => {
 
   return (
     <div className="w-full">
-      <label className="block text-lg font-semibold mb-4 text-gray-800">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
+      <FieldHeader 
+        fieldName={name}
+        label={label}
+        number={number}
+        required={required}
+      />
 
       {/* Intro Text Editor */}
       <div className="mb-4 w-full">

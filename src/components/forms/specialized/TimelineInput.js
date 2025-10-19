@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Calendar, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
+import FieldHeader from '../base/FieldHeader';
 
 const CustomDatePicker = ({ value, onChange, label, placeholder }) => {
   const [showPicker, setShowPicker] = useState(false);
@@ -167,7 +168,7 @@ const CustomDatePicker = ({ value, onChange, label, placeholder }) => {
 };
 
 const TimelineInput = ({ field, value, onChange, error }) => {
-  const { name, label, required, placeholder } = field;
+  const { name, label, number, required, placeholder } = field;
 
   // Parse existing value if it exists (e.g., "24 months (Jan 2025 - Dec 2026)")
   const parseExistingValue = (val) => {
@@ -296,9 +297,12 @@ const TimelineInput = ({ field, value, onChange, error }) => {
 
   return (
     <div className="space-y-3">
-      <label className="block text-sm font-medium text-gray-700">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
+      <FieldHeader 
+        fieldName={name}
+        label={label}
+        number={number}
+        required={required}
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Start Date */}

@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Plus, X, Edit2, GripVertical, AlertTriangle } from 'lucide-react';
+import FieldHeader from '../base/FieldHeader';
 
 const StandardsTable = React.memo(({ field, value, onChange, error }) => {
-  const { name, label, required } = field;
+  const { name, label, number, required } = field;
 
   // Default data structure
   const defaultData = {
@@ -192,9 +193,12 @@ const StandardsTable = React.memo(({ field, value, onChange, error }) => {
   return (
     <div className="mb-8">
       {label && (
-        <label className="block text-lg font-semibold mb-4 text-gray-800">
-          {label} {required && <span className="text-red-500">*</span>}
-        </label>
+        <FieldHeader 
+          fieldName={name}
+          label={label}
+          number={number}
+          required={required}
+        />
       )}
 
       {/* Validation Errors */}
