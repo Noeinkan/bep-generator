@@ -1,12 +1,15 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import FieldHeader from '../base/FieldHeader';
 
 /**
- * Dynamic table that reads data from organizationalStructure (OrgStructureChart)
- * and displays Lead Appointed Parties and their Information Managers
+ * Dynamic matrix table that reads data from organizationalStructure (OrgStructureChart)
+ * and displays Lead Appointed Parties with all their Appointed Parties
  */
 const OrgStructureDataTable = ({ value, field, formData }) => {
-  // Extract data from organizationalStructure
+  const [expandedRows, setExpandedRows] = useState(new Set());
+
+  // Extract data from organizationalStructure as a matrix
   const tableData = useMemo(() => {
     const orgStructure = formData?.organizationalStructure;
     
@@ -17,15 +20,40 @@ const OrgStructureDataTable = ({ value, field, formData }) => {
     
     if (!tree || !tree.leadGroups) return [];
 
-    // Map lead groups to table rows
+    // Map lead groups with their appointed parties
     return tree.leadGroups.map((lead, index) => ({
       id: lead.id || `lead_${index}`,
       leadAppointedParty: lead.name || '',
       role: lead.role || 'Lead Appointed Party',
       informationManager: lead.contact || '',
-      appointedPartiesCount: (lead.children || []).length
+      appointedParties: (lead.children || []).map(child => ({
+        id: child.id,
+        name: child.name || '',
+        role: child.role || 'Appointed Party',
+        contact: child.contact || ''
+      }))
     }));
   }, [formData?.organizationalStructure]);
+
+  const toggleRow = (rowId) => {
+    setExpandedRows(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(rowId)) {
+        newSet.delete(rowId);
+      } else {
+        newSet.add(rowId);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleAll = () => {
+    if (expandedRows.size === tableData.length) {
+      setExpandedRows(new Set());
+    } else {
+      setExpandedRows(new Set(tableData.map(row => row.id)));
+    }
+  };
 
   return (
     <div className="w-full max-w-full">
@@ -44,53 +72,132 @@ const OrgStructureDataTable = ({ value, field, formData }) => {
             </p>
           </div>
         ) : (
-          <div className="w-full overflow-x-auto border border-gray-300 rounded-lg shadow-sm">
-            <table className="w-full table-fixed divide-y divide-gray-300">
-              <thead className="bg-gradient-to-r from-indigo-50 to-blue-50">
-                <tr>
-                  <th className="w-12 px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-300">
-                    #
-                  </th>
-                  <th className="w-[30%] px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-300">
-                    Lead Appointed Party
-                  </th>
-                  <th className="w-[25%] px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-300">
-                    Role
-                  </th>
-                  <th className="w-[30%] px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-300">
-                    Information Manager
-                  </th>
-                  <th className="w-[15%] px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Appointed Parties
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {tableData.map((row, index) => (
-                  <tr key={row.id} className="hover:bg-blue-50 transition-colors">
-                    <td className="w-12 px-4 py-3 text-sm text-gray-700 border-r border-gray-200 font-medium">
-                      {index + 1}
-                    </td>
-                    <td className="w-[30%] px-4 py-3 text-sm text-gray-900 border-r border-gray-200 font-medium break-words">
-                      {row.leadAppointedParty}
-                    </td>
-                    <td className="w-[25%] px-4 py-3 text-sm text-gray-600 border-r border-gray-200 break-words">
-                      {row.role}
-                    </td>
-                    <td className="w-[30%] px-4 py-3 text-sm text-gray-600 border-r border-gray-200 break-words">
-                      {row.informationManager || (
-                        <span className="text-gray-400 italic">Not specified</span>
-                      )}
-                    </td>
-                    <td className="w-[15%] px-4 py-3 text-sm text-center">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                        {row.appointedPartiesCount}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="w-full space-y-2">
+            {/* Header controls */}
+            <div className="flex items-center justify-between bg-gradient-to-r from-indigo-50 to-blue-50 px-4 py-2 rounded-lg border border-gray-300">
+              <div className="flex items-center space-x-2">
+                <span className="text-sm font-semibold text-gray-700">
+                  {tableData.length} Lead Appointed {tableData.length === 1 ? 'Party' : 'Parties'}
+                </span>
+                <span className="text-xs text-gray-500">
+                  • {tableData.reduce((sum, row) => sum + row.appointedParties.length, 0)} Total Appointed Parties
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={toggleAll}
+                className="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline"
+              >
+                {expandedRows.size === tableData.length ? 'Collapse All' : 'Expand All'}
+              </button>
+            </div>
+
+            {/* Matrix rows */}
+            <div className="w-full border border-gray-300 rounded-lg shadow-sm overflow-hidden">
+              {tableData.map((row, index) => (
+                <div key={row.id} className="border-b border-gray-200 last:border-b-0">
+                  {/* Lead Appointed Party header row */}
+                  <div 
+                    className={`bg-gradient-to-r from-indigo-50 to-blue-50 hover:from-indigo-100 hover:to-blue-100 transition-colors cursor-pointer ${
+                      expandedRows.has(row.id) ? 'border-b border-gray-300' : ''
+                    }`}
+                    onClick={() => toggleRow(row.id)}
+                  >
+                    <div className="flex items-center px-4 py-3">
+                      {/* Expand/Collapse icon */}
+                      <div className="flex-shrink-0 mr-3">
+                        {expandedRows.has(row.id) ? (
+                          <ChevronDown className="w-5 h-5 text-gray-600" />
+                        ) : (
+                          <ChevronRight className="w-5 h-5 text-gray-600" />
+                        )}
+                      </div>
+                      
+                      {/* Number */}
+                      <div className="flex-shrink-0 w-8 mr-4">
+                        <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold">
+                          {index + 1}
+                        </span>
+                      </div>
+
+                      {/* Lead info grid */}
+                      <div className="flex-1 grid grid-cols-12 gap-4 items-center">
+                        <div className="col-span-4">
+                          <div className="text-xs text-gray-500 uppercase font-semibold mb-1">Lead Appointed Party</div>
+                          <div className="text-sm font-bold text-gray-900">{row.leadAppointedParty}</div>
+                        </div>
+                        <div className="col-span-3">
+                          <div className="text-xs text-gray-500 uppercase font-semibold mb-1">Role</div>
+                          <div className="text-sm text-gray-700">{row.role}</div>
+                        </div>
+                        <div className="col-span-4">
+                          <div className="text-xs text-gray-500 uppercase font-semibold mb-1">Information Manager</div>
+                          <div className="text-sm text-gray-700">
+                            {row.informationManager || <span className="text-gray-400 italic">Not specified</span>}
+                          </div>
+                        </div>
+                        <div className="col-span-1 text-right">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-600 text-white">
+                            {row.appointedParties.length}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Appointed Parties matrix (expandable) */}
+                  {expandedRows.has(row.id) && row.appointedParties.length > 0 && (
+                    <div className="bg-white">
+                      <table className="w-full">
+                        <thead className="bg-gray-50 border-b border-gray-200">
+                          <tr>
+                            <th className="w-16 px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
+                              #
+                            </th>
+                            <th className="w-[40%] px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
+                              Appointed Party Name
+                            </th>
+                            <th className="w-[30%] px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
+                              Role/Discipline
+                            </th>
+                            <th className="w-[30%] px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
+                              Contact/Manager
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                          {row.appointedParties.map((party, partyIndex) => (
+                            <tr key={party.id} className="hover:bg-blue-50 transition-colors">
+                              <td className="w-16 px-4 py-3 text-sm text-gray-500 text-center">
+                                {partyIndex + 1}
+                              </td>
+                              <td className="w-[40%] px-4 py-3 text-sm text-gray-900 font-medium">
+                                {party.name}
+                              </td>
+                              <td className="w-[30%] px-4 py-3 text-sm text-gray-600">
+                                {party.role}
+                              </td>
+                              <td className="w-[30%] px-4 py-3 text-sm text-gray-600">
+                                {party.contact || <span className="text-gray-400 italic">Not specified</span>}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {/* Empty state for expanded row with no parties */}
+                  {expandedRows.has(row.id) && row.appointedParties.length === 0 && (
+                    <div className="bg-gray-50 px-4 py-6 text-center">
+                      <p className="text-sm text-gray-500 italic">
+                        No appointed parties assigned to this lead yet.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         )}
         
@@ -101,11 +208,11 @@ const OrgStructureDataTable = ({ value, field, formData }) => {
             </svg>
           </div>
           <div>
-            <p className="font-medium text-gray-700 mb-1">📝 Auto-synced Data</p>
+            <p className="font-medium text-gray-700 mb-1">📝 Auto-synced Matrix Data</p>
             <p className="text-xs">
-              This table automatically reflects the Lead Appointed Parties and Information Managers 
+              This matrix automatically reflects the organizational hierarchy with Lead Appointed Parties and their associated Appointed Parties 
               defined in the <strong>Delivery Team's Organisational Structure and Composition</strong> diagram above. 
-              Any changes made to the organizational chart will be instantly reflected here.
+              Click on any row to expand and view all appointed parties under each lead. Any changes made to the organizational chart will be instantly reflected here.
             </p>
           </div>
         </div>

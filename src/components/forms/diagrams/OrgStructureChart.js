@@ -233,16 +233,72 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
     notifyChange(newOrgData);
   };
 
-  // Color palettes for different lead columns
+  // Enhanced color palettes with lighter, more visible button colors
   const colorPalettes = [
-    { lead: '#2196f3', appointed: '#e3f2fd', border: '#1976d2' }, // Blue
-    { lead: '#4caf50', appointed: '#e8f5e8', border: '#388e3c' }, // Green
-    { lead: '#ff9800', appointed: '#fff3e0', border: '#f57c00' }, // Orange
-    { lead: '#9c27b0', appointed: '#f3e5f5', border: '#7b1fa2' }, // Purple
-    { lead: '#f44336', appointed: '#ffebee', border: '#d32f2f' }, // Red
-    { lead: '#00bcd4', appointed: '#e0f2f1', border: '#0097a7' }, // Cyan
-    { lead: '#795548', appointed: '#efebe9', border: '#5d4037' }, // Brown
-    { lead: '#607d8b', appointed: '#eceff1', border: '#455a64' }  // Blue Grey
+    { 
+      lead: '#2196f3', 
+      appointed: '#e3f2fd', 
+      border: '#1976d2',
+      buttonEdit: '#1976d2',    // Medium blue (lighter)
+      buttonDelete: '#e53935',  // Bright red (lighter)
+      buttonAdd: '#43a047'      // Bright green (lighter)
+    }, // Blue
+    { 
+      lead: '#4caf50', 
+      appointed: '#e8f5e8', 
+      border: '#388e3c',
+      buttonEdit: '#2e7d32',    // Medium green (lighter)
+      buttonDelete: '#e53935',  // Bright red
+      buttonAdd: '#00897b'      // Teal (lighter)
+    }, // Green
+    { 
+      lead: '#ff9800', 
+      appointed: '#fff3e0', 
+      border: '#f57c00',
+      buttonEdit: '#f57c00',    // Medium orange (lighter)
+      buttonDelete: '#d32f2f',  // Medium red (lighter)
+      buttonAdd: '#43a047'      // Bright green
+    }, // Orange
+    { 
+      lead: '#9c27b0', 
+      appointed: '#f3e5f5', 
+      border: '#7b1fa2',
+      buttonEdit: '#7b1fa2',    // Medium purple (lighter)
+      buttonDelete: '#e53935',  // Bright red
+      buttonAdd: '#43a047'      // Bright green
+    }, // Purple
+    { 
+      lead: '#f44336', 
+      appointed: '#ffebee', 
+      border: '#d32f2f',
+      buttonEdit: '#c62828',    // Medium red (lighter)
+      buttonDelete: '#8e24aa',  // Bright purple (lighter)
+      buttonAdd: '#43a047'      // Bright green
+    }, // Red
+    { 
+      lead: '#00bcd4', 
+      appointed: '#e0f2f1', 
+      border: '#0097a7',
+      buttonEdit: '#0097a7',    // Medium cyan (lighter)
+      buttonDelete: '#e53935',  // Bright red
+      buttonAdd: '#43a047'      // Bright green
+    }, // Cyan
+    { 
+      lead: '#795548', 
+      appointed: '#efebe9', 
+      border: '#5d4037',
+      buttonEdit: '#5d4037',    // Medium brown (lighter)
+      buttonDelete: '#e53935',  // Bright red
+      buttonAdd: '#43a047'      // Bright green
+    }, // Brown
+    { 
+      lead: '#607d8b', 
+      appointed: '#eceff1', 
+      border: '#455a64',
+      buttonEdit: '#455a64',    // Medium grey (lighter)
+      buttonDelete: '#e53935',  // Bright red
+      buttonAdd: '#43a047'      // Bright green
+    }  // Blue Grey
   ];
 
   if (!orgData || !orgData.leadGroups) {
@@ -484,11 +540,12 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
                         style={{
                           fontSize: '11px',
                           padding: '3px 6px',
-                          backgroundColor: '#2196f3',
+                          backgroundColor: colors.buttonEdit,
                           color: 'white',
                           border: 'none',
                           borderRadius: '3px',
-                          cursor: 'pointer'
+                          cursor: 'pointer',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.3)'
                         }}
                       >
                         Edit
@@ -498,11 +555,12 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
                         style={{
                           fontSize: '11px',
                           padding: '3px 6px',
-                          backgroundColor: '#f44336',
+                          backgroundColor: colors.buttonDelete,
                           color: 'white',
                           border: 'none',
                           borderRadius: '3px',
-                          cursor: 'pointer'
+                          cursor: 'pointer',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.3)'
                         }}
                       >
                         Delete
@@ -512,11 +570,12 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
                         style={{
                           fontSize: '11px',
                           padding: '3px 6px',
-                          backgroundColor: '#ff9800',
+                          backgroundColor: colors.buttonAdd,
                           color: 'white',
                           border: 'none',
                           borderRadius: '3px',
-                          cursor: 'pointer'
+                          cursor: 'pointer',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.3)'
                         }}
                       >
                         Add Appointed
@@ -633,11 +692,12 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
                             style={{
                               fontSize: '10px',
                               padding: '2px 4px',
-                              backgroundColor: '#2196f3',
+                              backgroundColor: colors.buttonEdit,
                               color: 'white',
                               border: 'none',
                               borderRadius: '2px',
-                              cursor: 'pointer'
+                              cursor: 'pointer',
+                              boxShadow: '0 1px 2px rgba(0,0,0,0.3)'
                             }}
                           >
                             Edit
@@ -647,11 +707,12 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
                             style={{
                               fontSize: '10px',
                               padding: '2px 4px',
-                              backgroundColor: '#f44336',
+                              backgroundColor: colors.buttonDelete,
                               color: 'white',
                               border: 'none',
                               borderRadius: '2px',
-                              cursor: 'pointer'
+                              cursor: 'pointer',
+                              boxShadow: '0 1px 2px rgba(0,0,0,0.3)'
                             }}
                           >
                             Del
