@@ -285,12 +285,84 @@ All resources will be tested for collaborative production capability before full
     { 'Standard/Guideline': 'AIA LOD Specification', 'Version': '2019', 'Application Area': 'Level of development', 'Compliance Level': 'Mandatory' },
     { 'Standard/Guideline': 'Company Modeling Guide', 'Version': 'v3.2', 'Application Area': 'Internal procedures', 'Compliance Level': 'Required' }
   ],
-  namingConventions: [
-    { 'Element Type': 'Project Models', 'Naming Format': 'PP-OO-VV-DD-###', 'Example': 'GF-SAA-L02-ARC-001', 'Description': 'PP=Project, OO=Originator, VV=Volume/Level, DD=Discipline, ###=Sequential' },
-    { 'Element Type': 'Drawings', 'Naming Format': 'PP-OO-VV-DD-DR-T-####', 'Example': 'GF-SAA-ZZ-ARC-DR-A-1001', 'Description': 'Additional DR=Drawing, T=Type (A/S/M), ####=Drawing number' },
-    { 'Element Type': 'Documents', 'Naming Format': 'PP-OO-VV-DD-TT-###', 'Example': 'GF-SAA-ZZ-ARC-SP-001', 'Description': 'TT=Document type (SP=Specification, RP=Report, etc.)' },
-    { 'Element Type': 'MEP Equipment', 'Naming Format': 'PP-OO-VV-MEP-EQ-###', 'Example': 'GF-TSS-L03-MEP-EQ-001', 'Description': 'EQ=Equipment designation with sequential numbering' }
-  ],
+  namingConventions: {
+    overview: '<p>File naming follows <strong>ISO 19650-2</strong> convention to ensure consistency, traceability, and efficient information management across all project deliverables.</p>',
+    namingFields: [
+      {
+        fieldName: '[Project Code]',
+        exampleValue: 'GF24',
+        description: 'Unique project identifier assigned by the appointing party (e.g., GF24 for Greenfield 2024)'
+      },
+      {
+        fieldName: '[Originator]',
+        exampleValue: 'SAA',
+        description: 'Organization/discipline creating the information (e.g., SAA=Smith Associates Architects, STR=Structural, MEP=MEP)'
+      },
+      {
+        fieldName: '[Volume/System]',
+        exampleValue: 'XX',
+        description: 'Building zone, system, or spatial reference (XX=Whole building, 01=Core/Stair, 02=Office wings)'
+      },
+      {
+        fieldName: '[Level/Location]',
+        exampleValue: 'GF',
+        description: 'Floor level or location code (e.g., GF=Ground Floor, 01-08=Floors, RF=Roof, B1=Basement)'
+      },
+      {
+        fieldName: '[Type]',
+        exampleValue: 'M3',
+        description: 'Information type (e.g., M3=Model, DR=Drawing, SP=Specification, RP=Report, SC=Schedule)'
+      },
+      {
+        fieldName: '[Role]',
+        exampleValue: 'ARC',
+        description: 'Discipline or role responsible for the content (ARC=Architecture, STR=Structural, MEP=MEP, FAC=Facades)'
+      },
+      {
+        fieldName: '[Number]',
+        exampleValue: '0001',
+        description: 'Sequential 4-digit number for the deliverable'
+      },
+      {
+        fieldName: '[Revision]',
+        exampleValue: 'P01',
+        description: 'Revision status (e.g., S1-S4=Design stages, P01+=Construction issue, C01+=As-built)'
+      }
+    ],
+    namingPattern: '<p><strong>Pattern:</strong> [Project Code]-[Originator]-[Volume/System]-[Level/Location]-[Type]-[Role]-[Number]-[Revision]</p><p><strong>Examples:</strong></p><ul><li><code>GF24-SAA-XX-GF-M3-ARC-0001-P01.rvt</code> - Architecture model, ground floor, first issue</li><li><code>GF24-SAA-ZZ-ARC-DR-A-1001-P02.dwg</code> - Architecture drawing, second revision</li><li><code>GF24-EXL-01-STR-M3-STR-0015-C01.rvt</code> - Structural model, core area, as-built</li></ul>',
+    deliverableAttributes: [
+      {
+        attributeName: 'File Format',
+        exampleValue: '.rvt, .dwg, .pdf, .ifc',
+        description: 'Acceptable file formats for each deliverable type'
+      },
+      {
+        attributeName: 'Classification System',
+        exampleValue: 'Uniclass 2015',
+        description: 'Classification framework for organizing information'
+      },
+      {
+        attributeName: 'Level of Information Need',
+        exampleValue: 'LOD 300 / LOI 300',
+        description: 'Required level of detail/information for the deliverable'
+      },
+      {
+        attributeName: 'Security Classification',
+        exampleValue: 'Confidential',
+        description: 'Information security level (e.g., Public, Internal, Confidential, Restricted)'
+      },
+      {
+        attributeName: 'Suitability Code',
+        exampleValue: 'S2 - Suitable for Information',
+        description: 'Document status/suitability per ISO 19650 (S0-S9, A1-A7, B1-B7, CR, etc.)'
+      },
+      {
+        attributeName: 'Revision Code',
+        exampleValue: 'P01',
+        description: 'Revision code indicating version and status: P=First Production (P01-P99), C=Construction (C01-C99), A=As-Built (A01-A99), S=Spatial Coordination (S1-S4), D=Developed Design (D1-D9)'
+      }
+    ]
+  },
   fileStructure: 'Organized by discipline and project phase with clear folder hierarchies, version control through file naming, and linked file management protocols.',
   fileStructureDiagram: '📁 WIP (Work in Progress)\n📁 SHARED (Coordination)\n📁 PUBLISHED (Approved)',
   dataExchangeProtocols: [

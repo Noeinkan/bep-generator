@@ -274,7 +274,7 @@ const CONFIG = {
       title: 'Information Production Methods and Procedures',
       fields: [
         { number: '9.1', name: 'modelingStandards', label: 'Modeling Standards', required: true, type: 'table', columns: ['Standard/Guideline', 'Version', 'Application Area', 'Compliance Level'] },
-        { number: '9.2', name: 'namingConventions', label: 'Naming Conventions', required: true, type: 'table', columns: ['Element Type', 'Naming Format', 'Example', 'Description'] },
+        { number: '9.2', name: 'namingConventions', label: 'Naming Conventions', required: true, type: 'naming-conventions' },
         { number: '9.3', name: 'fileStructure', label: 'File Structure', type: 'textarea', rows: 3 },
         { number: '9.4', name: 'fileStructureDiagram', label: 'File Structure Diagram', type: 'fileStructure' },
         { number: '9.5', name: 'volumeStrategy', label: 'Volume Strategy and Model Breakdown', required: true, type: 'mindmap' },
