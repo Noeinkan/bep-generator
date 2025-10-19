@@ -5,6 +5,8 @@ const fs = require('fs');
 const exportService = require('../services/exportService');
 const tidpService = require('../services/tidpService');
 const midpService = require('../services/midpService');
+const responsibilityMatrixService = require('../services/responsibilityMatrixService');
+const tidpSyncService = require('../services/tidpSyncService');
 
 /**
  * POST /api/export/tidp/:id/excel
@@ -419,6 +421,133 @@ router.post('/preview/midp/:id', async (req, res, next) => {
         error: error.message
       });
     }
+    next(error);
+  }
+});
+
+/**
+ * POST /api/export/responsibility-matrix/excel
+ * Export Responsibility Matrices to Excel
+ */
+router.post('/responsibility-matrix/excel', async (req, res, next) => {
+  try {
+    const { projectId, projectName, options = {} } = req.body;
+
+    if (!projectId) {
+      return res.status(400).json({
+        success: false,
+        error: 'projectId is required'
+      });
+    }
+
+    // Fetch IM Activities
+    const imActivities = responsibilityMatrixService.getIMActivities(projectId);
+
+    // Fetch Deliverables
+    const deliverables = responsibilityMatrixService.getDeliverables(projectId);
+
+    // Get sync status if requested
+    let syncStatus = null;
+    if (options.includeSyncStatus) {
+      syncStatus = tidpSyncService.getSyncStatus(projectId);
+    }
+
+    // Prepare export data
+    const exportData = {
+      imActivities,
+      deliverables,
+      project: {
+        id: projectId,
+        name: projectName || 'Project'
+      },
+      syncStatus,
+      options: {
+        includeSummary: options.summary !== false,
+        includeImActivities: options.matrices?.imActivities !== false,
+        includeDeliverables: options.matrices?.deliverables !== false,
+        includeIsoReferences: options.details?.isoReferences !== false,
+        includeDescriptions: options.details?.descriptions !== false,
+        includeSyncStatus: options.details?.syncStatus !== false
+      }
+    };
+
+    const filepath = await exportService.exportResponsibilityMatricesToExcel(exportData);
+    const filename = path.basename(filepath);
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+    const fileStream = fs.createReadStream(filepath);
+    fileStream.pipe(res);
+
+    fileStream.on('end', () => {
+      setTimeout(() => exportService.cleanupFile(filepath), 5000);
+    });
+
+    fileStream.on('error', (error) => {
+      next(error);
+    });
+  } catch (error) {
+    console.error('Error exporting responsibility matrices to Excel:', error);
+    next(error);
+  }
+});
+
+/**
+ * POST /api/export/responsibility-matrix/pdf
+ * Export Responsibility Matrices to PDF
+ */
+router.post('/responsibility-matrix/pdf', async (req, res, next) => {
+  try {
+    const { projectId, projectName, options = {} } = req.body;
+
+    if (!projectId) {
+      return res.status(400).json({
+        success: false,
+        error: 'projectId is required'
+      });
+    }
+
+    // Fetch IM Activities
+    const imActivities = responsibilityMatrixService.getIMActivities(projectId);
+
+    // Fetch Deliverables
+    const deliverables = responsibilityMatrixService.getDeliverables(projectId);
+
+    // Prepare export data
+    const exportData = {
+      imActivities,
+      deliverables,
+      project: {
+        id: projectId,
+        name: projectName || 'Project'
+      },
+      options: {
+        includeImActivities: options.matrices?.imActivities !== false,
+        includeDeliverables: options.matrices?.deliverables !== false,
+        includeIsoReferences: options.details?.isoReferences !== false,
+        includeDescriptions: options.details?.descriptions !== false
+      }
+    };
+
+    const filepath = await exportService.exportResponsibilityMatricesToPDF(exportData);
+    const filename = path.basename(filepath);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+    const fileStream = fs.createReadStream(filepath);
+    fileStream.pipe(res);
+
+    fileStream.on('end', () => {
+      setTimeout(() => exportService.cleanupFile(filepath), 5000);
+    });
+
+    fileStream.on('error', (error) => {
+      next(error);
+    });
+  } catch (error) {
+    console.error('Error exporting responsibility matrices to PDF:', error);
     next(error);
   }
 });

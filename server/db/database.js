@@ -77,6 +77,50 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_tidps_projectId ON tidps(projectId);
   CREATE INDEX IF NOT EXISTS idx_containers_tidp_id ON containers(tidp_id);
   CREATE INDEX IF NOT EXISTS idx_midps_projectId ON midps(projectId);
+
+  CREATE TABLE IF NOT EXISTS information_management_activities (
+    id TEXT PRIMARY KEY,
+    project_id TEXT,
+    activity_name TEXT NOT NULL,
+    activity_description TEXT,
+    appointing_party_role TEXT,
+    lead_appointed_party_role TEXT,
+    appointed_parties_role TEXT,
+    third_parties_role TEXT,
+    notes TEXT,
+    iso_reference TEXT,
+    activity_phase TEXT,
+    display_order INTEGER,
+    is_custom INTEGER DEFAULT 0,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS information_deliverables (
+    id TEXT PRIMARY KEY,
+    project_id TEXT,
+    deliverable_name TEXT NOT NULL,
+    description TEXT,
+    responsible_task_team TEXT,
+    accountable_party TEXT,
+    exchange_stage TEXT,
+    due_date TEXT,
+    format TEXT,
+    loin_lod TEXT,
+    dependencies TEXT,
+    tidp_id TEXT,
+    tidp_container_id TEXT,
+    status TEXT DEFAULT 'Planned',
+    is_auto_populated INTEGER DEFAULT 0,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    FOREIGN KEY (tidp_id) REFERENCES tidps(id) ON DELETE SET NULL
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_im_activities_project_id ON information_management_activities(project_id);
+  CREATE INDEX IF NOT EXISTS idx_deliverables_project_id ON information_deliverables(project_id);
+  CREATE INDEX IF NOT EXISTS idx_deliverables_tidp_id ON information_deliverables(tidp_id);
+  CREATE INDEX IF NOT EXISTS idx_deliverables_status ON information_deliverables(status);
 `);
 
 console.log('Database initialized at:', dbPath);

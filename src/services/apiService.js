@@ -347,6 +347,213 @@ class ApiService {
   }
 
   // ======================
+  // Responsibility Matrix Services
+  // ======================
+
+  // IM Activities (Matrix 1)
+  async getIMActivities(projectId) {
+    try {
+      const response = await apiClient.get('/responsibility-matrix/im-activities', {
+        params: { projectId }
+      });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to fetch IM activities');
+    }
+  }
+
+  async getIMActivity(id) {
+    try {
+      const response = await apiClient.get(`/responsibility-matrix/im-activities/${id}`);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, `Failed to fetch IM activity ${id}`);
+    }
+  }
+
+  async createIMActivity(activityData) {
+    try {
+      const response = await apiClient.post('/responsibility-matrix/im-activities', activityData);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to create IM activity');
+    }
+  }
+
+  async updateIMActivity(id, updates) {
+    try {
+      const response = await apiClient.put(`/responsibility-matrix/im-activities/${id}`, updates);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, `Failed to update IM activity ${id}`);
+    }
+  }
+
+  async deleteIMActivity(id) {
+    try {
+      const response = await apiClient.delete(`/responsibility-matrix/im-activities/${id}`);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, `Failed to delete IM activity ${id}`);
+    }
+  }
+
+  async bulkCreateIMActivities(activities) {
+    try {
+      const response = await apiClient.post('/responsibility-matrix/im-activities/bulk', {
+        activities
+      });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to bulk create IM activities');
+    }
+  }
+
+  // Information Deliverables (Matrix 2)
+  async getDeliverables(projectId, filters = {}) {
+    try {
+      const response = await apiClient.get('/responsibility-matrix/deliverables', {
+        params: { projectId, ...filters }
+      });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to fetch deliverables');
+    }
+  }
+
+  async getDeliverablesGroupedByStage(projectId) {
+    try {
+      const response = await apiClient.get('/responsibility-matrix/deliverables/grouped-by-stage', {
+        params: { projectId }
+      });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to fetch grouped deliverables');
+    }
+  }
+
+  async getDeliverablesByTIDP(tidpId) {
+    try {
+      const response = await apiClient.get(`/responsibility-matrix/deliverables/by-tidp/${tidpId}`);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, `Failed to fetch deliverables for TIDP ${tidpId}`);
+    }
+  }
+
+  async getDeliverable(id) {
+    try {
+      const response = await apiClient.get(`/responsibility-matrix/deliverables/${id}`);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, `Failed to fetch deliverable ${id}`);
+    }
+  }
+
+  async createDeliverable(deliverableData) {
+    try {
+      const response = await apiClient.post('/responsibility-matrix/deliverables', deliverableData);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to create deliverable');
+    }
+  }
+
+  async updateDeliverable(id, updates) {
+    try {
+      const response = await apiClient.put(`/responsibility-matrix/deliverables/${id}`, updates);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, `Failed to update deliverable ${id}`);
+    }
+  }
+
+  async deleteDeliverable(id) {
+    try {
+      const response = await apiClient.delete(`/responsibility-matrix/deliverables/${id}`);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, `Failed to delete deliverable ${id}`);
+    }
+  }
+
+  // TIDP Synchronization
+  async syncTIDPs(projectId, options = {}) {
+    try {
+      const response = await apiClient.post('/responsibility-matrix/sync-tidps', {
+        projectId,
+        ...options
+      });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to sync TIDPs');
+    }
+  }
+
+  async syncSingleTIDP(tidpId, projectId, options = {}) {
+    try {
+      const response = await apiClient.post(`/responsibility-matrix/sync-tidps/${tidpId}`, {
+        projectId,
+        ...options
+      });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, `Failed to sync TIDP ${tidpId}`);
+    }
+  }
+
+  async getSyncStatus(projectId) {
+    try {
+      const response = await apiClient.get('/responsibility-matrix/sync-status', {
+        params: { projectId }
+      });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to get sync status');
+    }
+  }
+
+  async unsyncTIDP(tidpId) {
+    try {
+      const response = await apiClient.delete(`/responsibility-matrix/sync-tidps/${tidpId}`);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, `Failed to unsync TIDP ${tidpId}`);
+    }
+  }
+
+  // Responsibility Matrix Exports
+  async exportResponsibilityMatricesExcel(projectId, projectName, options = {}) {
+    try {
+      const response = await apiClient.post('/export/responsibility-matrix/excel', {
+        projectId,
+        projectName,
+        options
+      }, {
+        responseType: 'blob'
+      });
+      return this.downloadFile(response, `Responsibility_Matrices_${projectName?.replace(/\s+/g, '_') || 'Project'}.xlsx`);
+    } catch (error) {
+      throw this.handleError(error, 'Failed to export responsibility matrices to Excel');
+    }
+  }
+
+  async exportResponsibilityMatricesPDF(projectId, projectName, options = {}) {
+    try {
+      const response = await apiClient.post('/export/responsibility-matrix/pdf', {
+        projectId,
+        projectName,
+        options
+      }, {
+        responseType: 'blob'
+      });
+      return this.downloadFile(response, `Responsibility_Matrices_${projectName?.replace(/\s+/g, '_') || 'Project'}.pdf`);
+    } catch (error) {
+      throw this.handleError(error, 'Failed to export responsibility matrices to PDF');
+    }
+  }
+
+  // ======================
   // Export Services
   // ======================
 

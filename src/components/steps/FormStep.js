@@ -1,7 +1,6 @@
 import React from 'react';
 import InputField from '../forms/base/InputField';
 import CONFIG from '../../config/bepConfig';
-import InformationDeliveryPlanning from '../pages/InformationDeliveryPlanning';
 
 // Field types that should span full width (both columns) in the grid layout
 const FULL_WIDTH_FIELD_TYPES = [
@@ -12,7 +11,13 @@ const FULL_WIDTH_FIELD_TYPES = [
   'fileStructure',
   'cdeDiagram',
   'mindmap',
-  'orgchart'
+  'orgchart',
+  // Step 5 specialized types
+  'milestones-table',
+  'tidp-reference',
+  'tidp-section',
+  'deliverables-matrix',
+  'im-activities-matrix'
 ];
 
 // Field types that should span all 3 columns
@@ -24,18 +29,6 @@ const FormStep = ({ stepIndex, formData, updateFormData, errors, bepType }) => {
   // Safety check - ensure we have the required props
   if (!formData || !bepType) {
     return <div>Loading...</div>;
-  }
-
-  // Step 5 is Information Delivery Planning - use specialized component
-  if (stepIndex === 5) {
-    return (
-      <InformationDeliveryPlanning
-        formData={formData}
-        updateFormData={updateFormData}
-        errors={errors}
-        bepType={bepType}
-      />
-    );
   }
 
   const stepConfig = CONFIG.getFormFields(bepType, stepIndex);

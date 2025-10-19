@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Calendar, Plus, FileText, Download, RefreshCw, AlertCircle, CheckCircle, Users, Target } from 'lucide-react';
+import { Calendar, Plus, FileText, Download, RefreshCw, AlertCircle, CheckCircle, Users, Target, Table2 } from 'lucide-react';
 import ApiService from '../../services/apiService';
 import TidpMidpManager from './tidp-midp/TidpMidpManager';
 import ExcelTIDPEditor from '../tidp/ExcelTIDPEditor';
+import ResponsibilityMatrixManager from '../responsibility-matrix/ResponsibilityMatrixManager';
 
 const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType }) => {
   const [tidps, setTidps] = useState([]);
@@ -12,6 +13,7 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
   // selection state is handled inside the inline manager; remove unused local state
   const [serverConnected, setServerConnected] = useState(false);
   const [showManager, setShowManager] = useState(false);
+  const [showMatrixManager, setShowMatrixManager] = useState(false);
 
   // Check server connection on mount
   const loadTidpsAndMidps = useCallback(async () => {
@@ -114,6 +116,63 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
             rows={3}
             placeholder="TIDPs define discipline-specific delivery requirements: Architecture TIDP delivers spatial models and specification schedules biweekly, Structural TIDP provides analysis models and connection details monthly..."
           />
+        </div>
+
+        {/* Responsibility Matrix Fields */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            6.5 Information Management Activities Responsibility Matrix (ISO 19650-2 Annex A)
+          </label>
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-lg p-6">
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <Table2 className="w-6 h-6 text-white" />
+                </div>
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-gray-900 mb-1">RACI Matrix for ISO 19650-2 Annex A Activities</h4>
+                <p className="text-sm text-gray-600 mb-4">
+                  Define responsibility assignments (Responsible, Accountable, Consulted, Informed) for 25 pre-defined information management activities across project phases
+                </p>
+                <button
+                  onClick={() => setShowMatrixManager(true)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors flex items-center space-x-2 font-medium"
+                >
+                  <Table2 className="w-5 h-5" />
+                  <span>Open Responsibility Matrix Manager</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            6.5.1 Information Deliverables Responsibility Matrix
+          </label>
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg p-6">
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center">
+                  <FileText className="w-6 h-6 text-white" />
+                </div>
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-gray-900 mb-1">Deliverables Schedule with TIDP Sync</h4>
+                <p className="text-sm text-gray-600 mb-4">
+                  Track information deliverables with responsibilities, due dates, formats, and LOD/LOIN requirements. Auto-syncs from TIDP containers.
+                </p>
+                <button
+                  onClick={() => setShowMatrixManager(true)}
+                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors flex items-center space-x-2 font-medium"
+                >
+                  <FileText className="w-5 h-5" />
+                  <span>Open Responsibility Matrix Manager</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div>
@@ -515,11 +574,16 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
         )}
       </div>
 
-      {showManager ? (
-        <TidpMidpManager 
-          onClose={() => setShowManager(false)} 
-          initialShowTidpForm={activeTab === 'tidp-form'} 
-          initialShowMidpForm={activeTab === 'midp-form'} 
+      {showMatrixManager ? (
+        <ResponsibilityMatrixManager
+          projectId={formData.projectName || 'current'}
+          onClose={() => setShowMatrixManager(false)}
+        />
+      ) : showManager ? (
+        <TidpMidpManager
+          onClose={() => setShowManager(false)}
+          initialShowTidpForm={activeTab === 'tidp-form'}
+          initialShowMidpForm={activeTab === 'midp-form'}
         />
       ) : (
         serverConnected ? <AdvancedInterface /> : <BasicFormInterface />
