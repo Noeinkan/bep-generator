@@ -1,4 +1,5 @@
 import OrgStructureField from '../specialized/OrgStructureField';
+import OrgStructureDataTable from '../specialized/OrgStructureDataTable';
 // ...existing code...
 import React, { useState } from 'react';
 import CONFIG from '../../../config/bepConfig';
@@ -77,6 +78,16 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
           formData={formData}
         />
       );
+    
+    case 'orgstructure-data-table':
+      return (
+        <OrgStructureDataTable
+          field={field}
+          value={value}
+          formData={formData}
+        />
+      );
+    
     case 'table':
       return (
         <EditableTable

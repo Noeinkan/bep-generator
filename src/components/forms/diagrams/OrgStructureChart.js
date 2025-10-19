@@ -45,6 +45,7 @@ function buildOrgChartData(data) {
       id: `lead_${Date.now()}_${index}_${Math.random().toString(36).slice(2)}`,
       name: lead,
       role: 'Lead Appointed Party',
+      contact: '', // Information Manager field
       children: appointedMap[lead] || []
     }))
   };
@@ -106,7 +107,11 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
     if (type === 'appointing') {
       setEditValues({ name: orgData.name, role: orgData.role, contact: '' });
     } else if (type === 'lead') {
-      setEditValues({ name: orgData.leadGroups[index].name, role: orgData.leadGroups[index].role, contact: '' });
+      setEditValues({ 
+        name: orgData.leadGroups[index].name, 
+        role: orgData.leadGroups[index].role, 
+        contact: orgData.leadGroups[index].contact || '' 
+      });
     } else if (type === 'appointed') {
       const appointed = orgData.leadGroups[index].children[appointedIndex];
       setEditValues({ name: appointed.name, role: appointed.role, contact: appointed.contact || '' });
@@ -130,7 +135,9 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
       newOrgData = { ...orgData, name: editValues.name };
     } else if (editing.type === 'lead') {
       const newLeadGroups = orgData.leadGroups.map((group, index) =>
-        index === editing.index ? { ...group, name: editValues.name, role: editValues.role } : group
+        index === editing.index 
+          ? { ...group, name: editValues.name, role: editValues.role, contact: editValues.contact } 
+          : group
       );
       newOrgData = { ...orgData, leadGroups: newLeadGroups };
     } else if (editing.type === 'appointed') {
@@ -167,6 +174,7 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
       id: `lead_${Date.now()}_${Math.random().toString(36).slice(2)}`,
       name: 'New Lead',
       role: 'Lead Appointed Party',
+      contact: '', // Information Manager field
       children: [] // Always empty for new leads
     };
 
@@ -413,6 +421,18 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
                       borderRadius: '4px'
                     }}
                   />
+                  <input
+                    type="text"
+                    value={editValues.contact}
+                    onChange={(e) => setEditValues({ ...editValues, contact: e.target.value })}
+                    placeholder="Information Manager"
+                    style={{
+                      fontSize: '12px',
+                      padding: '4px',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '4px'
+                    }}
+                  />
                   <div style={{ display: 'flex', gap: '4px', justifyContent: 'center' }}>
                     <button
                       onClick={saveEdits}
@@ -452,6 +472,11 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
                   <div style={{ fontSize: '0.8em', color: 'rgba(255,255,255,0.9)', marginBottom: '4px' }}>
                     {lead.role}
                   </div>
+                  {lead.contact && (
+                    <div style={{ fontSize: '0.75em', color: 'rgba(255,255,255,0.85)', marginBottom: '4px' }}>
+                      IM: {lead.contact}
+                    </div>
+                  )}
                   {editable && (
                     <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', flexWrap: 'wrap' }}>
                       <button
@@ -549,7 +574,7 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
                         type="text"
                         value={editValues.contact}
                         onChange={(e) => setEditValues({ ...editValues, contact: e.target.value })}
-                        placeholder="Contact"
+                        placeholder="Information Manager"
                         style={{
                           fontSize: '12px',
                           padding: '4px',
@@ -598,7 +623,7 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
                       </div>
                       {appointed.contact && (
                         <div style={{ fontSize: '0.7em', color: colors.border, marginBottom: '4px', opacity: 0.7 }}>
-                          {appointed.contact}
+                          IM: {appointed.contact}
                         </div>
                       )}
                       {editable && (
