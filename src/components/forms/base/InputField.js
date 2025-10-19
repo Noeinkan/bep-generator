@@ -6,6 +6,7 @@ import CONFIG from '../../../config/bepConfig';
 import EditableTable from './EditableTable';
 import IntroTableField from './IntroTableField';
 import FieldHeader from './FieldHeader';
+import CheckboxGroup from './CheckboxGroup';
 import FileStructureDiagram from '../diagrams/FileStructureDiagram';
 import CDEDiagramBuilderV2 from '../diagrams/CDEDiagramBuilder';
 import VolumeStrategyMindmap from '../diagrams/VolumeStrategyMindmap';
@@ -201,29 +202,12 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
 
     case 'checkbox':
       return (
-        <div>
-          <FieldHeader 
-            fieldName={name}
-            label={label}
-            number={number}
-            required={required}
-          />
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-60 overflow-y-auto border rounded-lg p-3">
-            {optionsList?.map(option => (
-              <label key={option} htmlFor={`${name}-${option}`} className="flex items-center space-x-2 p-2 border rounded cursor-pointer hover:bg-gray-50">
-                <input
-                  id={`${name}-${option}`}
-                  type="checkbox"
-                  checked={(value || []).includes(option)}
-                  onChange={() => handleCheckboxChange(option)}
-                  className="rounded"
-                />
-                <span className="text-sm">{option}</span>
-              </label>
-            ))}
-          </div>
-          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-        </div>
+        <CheckboxGroup
+          field={field}
+          value={value}
+          onChange={onChange}
+          error={error}
+        />
       );
 
     // Step 5 specialized field types
