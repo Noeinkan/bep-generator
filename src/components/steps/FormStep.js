@@ -12,6 +12,7 @@ const FULL_WIDTH_FIELD_TYPES = [
   'cdeDiagram',
   'mindmap',
   'orgchart',
+  'orgstructure-data-table',
   // Step 5 specialized types
   'milestones-table',
   'tidp-reference',
