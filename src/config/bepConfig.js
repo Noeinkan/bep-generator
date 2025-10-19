@@ -275,8 +275,8 @@ const CONFIG = {
       fields: [
         { number: '9.1', name: 'modelingStandards', label: 'Modeling Standards', required: true, type: 'table', columns: ['Standard/Guideline', 'Version', 'Application Area', 'Compliance Level'] },
         { number: '9.2', name: 'namingConventions', label: 'Naming Conventions', required: true, type: 'naming-conventions' },
-        { number: '9.3', name: 'fileStructure', label: 'File Structure', type: 'textarea', rows: 3 },
-        { number: '9.4', name: 'fileStructureDiagram', label: 'File Structure Diagram', type: 'fileStructure' },
+        { number: '9.3', name: 'fileStructure', label: 'Folder Structure', type: 'textarea', rows: 3 },
+        { number: '9.4', name: 'fileStructureDiagram', label: 'Folder Structure Diagram', type: 'fileStructure' },
         { number: '9.5', name: 'volumeStrategy', label: 'Volume Strategy and Model Breakdown', required: true, type: 'mindmap' },
         { number: '9.6', name: 'classificationSystems', label: 'Classification Systems and Coding', required: true, type: 'table', columns: ['Classification System', 'Application Area', 'Code Format', 'Responsibility'] },
         { number: '9.7', name: 'classificationStandards', label: 'Classification Standards Implementation', type: 'table', columns: ['Element Category', 'Classification System', 'Code Format', 'Example Code', 'Description'] },

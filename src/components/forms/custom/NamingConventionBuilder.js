@@ -259,10 +259,10 @@ const NamingConventionBuilder = ({ field, value = {}, onChange, error, disabled 
           <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
           <div className="flex-1">
             <h4 className="font-semibold text-blue-900 mb-1">
-              Naming and File Structure Standards
+              Naming and Folder Structure Standards
             </h4>
             <p className="text-sm text-blue-800">
-              Define standardized naming conventions and file structure to ensure consistency, 
+              Define standardized naming conventions and folder structure to ensure consistency, 
               traceability, and efficient information management per ISO 19650-2.
             </p>
           </div>

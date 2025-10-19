@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import FieldHeader from '../base/FieldHeader';
 
-const FileStructureDiagram = ({ field, value, onChange, error }) => {
+const FolderStructureDiagram = ({ field, value, onChange, error }) => {
   const { name, label, number, required } = field;
 
   // Parse the value (could be string or object)
@@ -436,4 +436,4 @@ const FileStructureDiagram = ({ field, value, onChange, error }) => {
   );
 };
 
-export default FileStructureDiagram;
+export default FolderStructureDiagram;

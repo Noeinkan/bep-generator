@@ -9,7 +9,7 @@ import EditableTable from './EditableTable';
 import IntroTableField from './IntroTableField';
 import FieldHeader from './FieldHeader';
 import CheckboxGroup from './CheckboxGroup';
-import FileStructureDiagram from '../diagrams/FileStructureDiagram';
+import FolderStructureDiagram from '../diagrams/FolderStructureDiagram';
 import CDEDiagramBuilderV2 from '../diagrams/CDEDiagramBuilder';
 import VolumeStrategyMindmap from '../diagrams/VolumeStrategyMindmap';
 import TipTapEditor from '../editors/TipTapEditor';
@@ -123,7 +123,7 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
 
     case 'fileStructure':
       return (
-        <FileStructureDiagram
+        <FolderStructureDiagram
           field={field}
           value={value}
           onChange={onChange}

@@ -1799,7 +1799,7 @@ Collaborative production goals should establish how task teams will work togethe
 The Information Management Strategy Builder provides an interactive interface to document:
 1. **Coordination Meeting Schedule** - Regular meetings for information management oversight
 2. **RACI Responsibility Matrices** - Clear accountability for information production and approval
-3. **Naming and File Structure Standards** - Standardized conventions ensuring consistency
+3. **Naming and Folder Structure Standards** - Standardized conventions ensuring consistency
 4. **Quality Checking Tools** - Automated validation processes for compliance
 5. **Training and Competency Requirements** - Ensuring team capability
 6. **Performance Monitoring and KPIs** - Measurable indicators of effectiveness
@@ -3396,7 +3396,7 @@ Format: [Project]-[Survey Type]-[Zone]-[Date]
   },
 
   fileStructure: {
-    description: `Define the folder hierarchy and file organization structure for the project CDE and local working environments.
+    description: `Define the folder hierarchy and organization structure for the project CDE and local working environments.
 
 Establish structure for:
 • Top-level folder organization
@@ -3408,7 +3408,7 @@ Establish structure for:
 
     iso19650: `ISO 19650-1:2018 Section 5.5 - Common Data Environment
 
-A well-organized file structure enables efficient information retrieval, reduces duplication, and supports the CDE workflow states throughout the project lifecycle.`,
+A well-organized folder structure enables efficient information retrieval, reduces duplication, and supports the CDE workflow states throughout the project lifecycle.`,
 
     bestPractices: [
       'Align top-level structure with CDE workflow states (WIP/Shared/Published/Archive)',
@@ -3540,7 +3540,7 @@ Visual representation of the information container structure helps all project p
     ],
 
     examples: {
-      'Commercial Building': `Use the File Structure Diagram builder to create a visual tree showing:
+      'Commercial Building': `Use the Folder Structure Diagram builder to create a visual tree showing:
 
 **Root Level:**
 📁 Project CDE

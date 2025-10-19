@@ -23,7 +23,7 @@ import NamingConventionBuilder from './NamingConventionBuilder';
  * Provides a structured interface for defining 7 key aspects of IM strategy per ISO 19650-2:
  * 1. Coordination Meeting Schedule
  * 2. RACI Responsibility Matrices
- * 3. Naming and File Structure Standards
+ * 3. Naming and Folder Structure Standards
  * 4. Quality Checking Tools
  * 5. Training and Competency Requirements
  * 6. Performance Monitoring and KPIs
@@ -171,7 +171,7 @@ const IMStrategyBuilder = ({ field, value = {}, onChange, error, disabled = fals
     {
       key: 'namingStandards',
       number: '4.8.3',
-      title: 'Naming and File Structure Standards',
+      title: 'Naming and Folder Structure Standards',
       icon: FileText,
       description: 'Standardized conventions for files, folders, and information containers',
       type: 'naming-convention'
