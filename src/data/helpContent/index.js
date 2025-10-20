@@ -91,18 +91,18 @@ const extractAllFieldsFromConfig = () => {
 const buildHelpContentMap = () => {
   const allFields = extractAllFieldsFromConfig();
   const helpContentMap = new Map();
-  
+
   // Combine all available help content sources
   const allHelpContent = {
     ...LEGACY_HELP_CONTENT,  // Base layer
     ...projectInfoHelp,       // Modular overrides
     // Add more modules here as they're created
   };
-  
+
   // For each field in bepConfig, try to find help content
   allFields.forEach((fieldInfo, fieldName) => {
     const helpContent = allHelpContent[fieldName];
-    
+
     helpContentMap.set(fieldName, {
       field: fieldInfo,
       helpContent: helpContent || null,
@@ -110,7 +110,27 @@ const buildHelpContentMap = () => {
       source: helpContent ? (projectInfoHelp[fieldName] ? 'modular' : 'legacy') : 'missing'
     });
   });
-  
+
+  // Also add help content for fields that exist ONLY in helpContentData (virtual subsection fields)
+  // These are fields like namingConventions_overview that are not in bepConfig but have help
+  Object.keys(allHelpContent).forEach(fieldName => {
+    if (!helpContentMap.has(fieldName)) {
+      helpContentMap.set(fieldName, {
+        field: {
+          name: fieldName,
+          label: fieldName,
+          type: 'virtual',
+          required: false,
+          step: 'N/A',
+          bepType: 'virtual'
+        },
+        helpContent: allHelpContent[fieldName],
+        hasHelp: true,
+        source: projectInfoHelp[fieldName] ? 'modular' : 'legacy'
+      });
+    }
+  });
+
   return helpContentMap;
 };
 

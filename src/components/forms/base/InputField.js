@@ -1,6 +1,5 @@
 import OrgStructureField from '../specialized/OrgStructureField';
 import OrgStructureDataTable from '../specialized/OrgStructureDataTable';
-import IMStrategyBuilder from '../custom/IMStrategyBuilder';
 import NamingConventionBuilder from '../custom/NamingConventionBuilder';
 // ...existing code...
 import React, { useState } from 'react';
@@ -144,16 +143,6 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
     case 'mindmap':
       return (
         <VolumeStrategyMindmap
-          field={field}
-          value={value}
-          onChange={onChange}
-          error={error}
-        />
-      );
-
-    case 'im-strategy-builder':
-      return (
-        <IMStrategyBuilder
           field={field}
           value={value}
           onChange={onChange}
