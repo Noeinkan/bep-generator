@@ -132,11 +132,11 @@ export const useMindmapD3 = (svgRef, mindmapData, selectedNode, setSelectedNode,
         // Update links in real-time
         g.selectAll('.link').each(function(linkData) {
           if (linkData.parent.id === d.id || linkData.child.id === d.id) {
+            const dx = linkData.child.x - linkData.parent.x;
+            const dy = linkData.child.y - linkData.parent.y;
+            const dr = Math.sqrt(dx * dx + dy * dy) * 0.3;
             d3.select(this)
-              .attr('x1', linkData.parent.x)
-              .attr('y1', linkData.parent.y)
-              .attr('x2', linkData.child.x)
-              .attr('y2', linkData.child.y);
+              .attr('d', `M${linkData.parent.x},${linkData.parent.y} Q${linkData.parent.x + dx / 2},${linkData.parent.y + dy / 2 - dr} ${linkData.child.x},${linkData.child.y}`);
           }
         });
       })
@@ -153,18 +153,23 @@ export const useMindmapD3 = (svgRef, mindmapData, selectedNode, setSelectedNode,
         isDragging = false;
       });
 
-    // Draw links
+    // Draw links with curves
     g.selectAll('.link')
       .data(allLinks)
-      .join('line')
+      .join('path')
       .attr('class', 'link')
-      .attr('x1', d => d.parent.x)
-      .attr('y1', d => d.parent.y)
-      .attr('x2', d => d.child.x)
-      .attr('y2', d => d.child.y)
-      .attr('stroke', '#6B7280')
-      .attr('stroke-width', 2)
-      .attr('opacity', 0.6);
+      .attr('d', d => {
+        const dx = d.child.x - d.parent.x;
+        const dy = d.child.y - d.parent.y;
+        const dr = Math.sqrt(dx * dx + dy * dy) * 0.3; // Control point distance
+        return `M${d.parent.x},${d.parent.y} Q${d.parent.x + dx / 2},${d.parent.y + dy / 2 - dr} ${d.child.x},${d.child.y}`;
+      })
+      .attr('stroke', '#9CA3AF')
+      .attr('stroke-width', 2.5)
+      .attr('fill', 'none')
+      .attr('opacity', 0.4)
+      .style('filter', 'drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.1))')
+      .style('transition', 'all 0.3s ease');
 
     // Draw nodes
     const nodes = g.selectAll('.node-group')
@@ -184,15 +189,66 @@ export const useMindmapD3 = (svgRef, mindmapData, selectedNode, setSelectedNode,
       const isHighlighted = highlightedNodes.includes(d.id);
 
       if (nodeTypeConfig.shape === 'circle') {
+        // Add glow effect for selected/highlighted nodes
+        if (isSelected || isHighlighted) {
+          nodeGroup.append('circle')
+            .attr('r', 45)
+            .attr('cx', 0)
+            .attr('cy', 0)
+            .attr('fill', isSelected ? '#EF4444' : '#F59E0B')
+            .attr('opacity', 0.2)
+            .attr('class', 'animate-pulse-ring');
+        }
+
+        // Create gradient
+        const gradientId = `gradient-${d.id}`;
+        const gradient = svg.append('defs')
+          .append('linearGradient')
+          .attr('id', gradientId)
+          .attr('x1', '0%')
+          .attr('y1', '0%')
+          .attr('x2', '0%')
+          .attr('y2', '100%');
+
+        gradient.append('stop')
+          .attr('offset', '0%')
+          .attr('stop-color', nodeTypeConfig.bgColor)
+          .attr('stop-opacity', 1);
+
+        gradient.append('stop')
+          .attr('offset', '100%')
+          .attr('stop-color', d3.rgb(nodeTypeConfig.bgColor).darker(0.3))
+          .attr('stop-opacity', 1);
+
         // Create circle for root node
         nodeGroup.append('circle')
           .attr('r', 40)
           .attr('cx', 0)
           .attr('cy', 0)
-          .attr('fill', nodeTypeConfig.bgColor)
+          .attr('fill', `url(#${gradientId})`)
           .attr('stroke', isSelected ? '#EF4444' : isHighlighted ? '#F59E0B' : '#374151')
-          .attr('stroke-width', isSelected ? 3 : isHighlighted ? 2 : 1)
+          .attr('stroke-width', isSelected ? 3 : isHighlighted ? 2 : 1.5)
           .attr('cursor', 'pointer')
+          .style('filter', 'drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.15))')
+          .style('transition', 'all 0.3s ease')
+          .on('mouseenter', function() {
+            if (!isDragging) {
+              d3.select(this)
+                .transition()
+                .duration(200)
+                .attr('r', 43)
+                .style('filter', 'drop-shadow(0px 6px 12px rgba(0, 0, 0, 0.25))');
+            }
+          })
+          .on('mouseleave', function() {
+            if (!isDragging) {
+              d3.select(this)
+                .transition()
+                .duration(200)
+                .attr('r', 40)
+                .style('filter', 'drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.15))');
+            }
+          })
           .on('click', (event) => {
             // Only handle click if we weren't dragging
             if (!isDragging) {
@@ -214,16 +270,74 @@ export const useMindmapD3 = (svgRef, mindmapData, selectedNode, setSelectedNode,
       } else {
         // Create rectangle for child nodes
         const textLength = d.name.length * 8;
+        const width = Math.max(120, textLength);
+        const height = 30;
+
+        // Add glow effect for selected/highlighted nodes
+        if (isSelected || isHighlighted) {
+          nodeGroup.append('rect')
+            .attr('width', width + 8)
+            .attr('height', height + 8)
+            .attr('x', -Math.max(60, textLength / 2) - 4)
+            .attr('y', -19)
+            .attr('rx', 7)
+            .attr('fill', isSelected ? '#EF4444' : '#F59E0B')
+            .attr('opacity', 0.2)
+            .attr('class', 'animate-pulse-ring');
+        }
+
+        // Create gradient
+        const gradientId = `gradient-${d.id}`;
+        const gradient = svg.append('defs')
+          .append('linearGradient')
+          .attr('id', gradientId)
+          .attr('x1', '0%')
+          .attr('y1', '0%')
+          .attr('x2', '0%')
+          .attr('y2', '100%');
+
+        gradient.append('stop')
+          .attr('offset', '0%')
+          .attr('stop-color', nodeTypeConfig.bgColor)
+          .attr('stop-opacity', 1);
+
+        gradient.append('stop')
+          .attr('offset', '100%')
+          .attr('stop-color', d3.rgb(nodeTypeConfig.bgColor).darker(0.2))
+          .attr('stop-opacity', 1);
+
         nodeGroup.append('rect')
-          .attr('width', Math.max(120, textLength))
-          .attr('height', 30)
+          .attr('width', width)
+          .attr('height', height)
           .attr('x', -Math.max(60, textLength / 2))
           .attr('y', -15)
-          .attr('rx', 5)
-          .attr('fill', nodeTypeConfig.bgColor)
+          .attr('rx', 6)
+          .attr('fill', `url(#${gradientId})`)
           .attr('stroke', isSelected ? '#EF4444' : isHighlighted ? '#F59E0B' : '#374151')
-          .attr('stroke-width', isSelected ? 3 : isHighlighted ? 2 : 1)
+          .attr('stroke-width', isSelected ? 3 : isHighlighted ? 2 : 1.5)
           .attr('cursor', 'pointer')
+          .style('filter', 'drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.12))')
+          .style('transition', 'all 0.3s ease')
+          .on('mouseenter', function() {
+            if (!isDragging) {
+              d3.select(this)
+                .transition()
+                .duration(200)
+                .attr('y', -17)
+                .attr('height', height + 4)
+                .style('filter', 'drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2))');
+            }
+          })
+          .on('mouseleave', function() {
+            if (!isDragging) {
+              d3.select(this)
+                .transition()
+                .duration(200)
+                .attr('y', -15)
+                .attr('height', height)
+                .style('filter', 'drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.12))');
+            }
+          })
           .on('click', (event) => {
             // Only handle click if we weren't dragging
             if (!isDragging) {

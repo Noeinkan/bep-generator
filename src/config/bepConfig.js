@@ -124,7 +124,8 @@ const CONFIG = {
         number: '1',
         title: 'Project Information and Confirmed Objectives',
         fields: [
-          { number: '1.1', name: 'projectName', label: 'Project Name', required: true, type: 'text', placeholder: 'Greenfield Office Complex Phase 2' },
+          { number: '1.1', type: 'section-header', label: 'Project Info' },
+          { number: '', name: 'projectName', label: 'Project Name', required: true, type: 'text', placeholder: 'Greenfield Office Complex Phase 2' },
           { number: '', name: 'projectNumber', label: 'Project Number', type: 'text', placeholder: 'GF-2024-017' },
           { number: '', name: 'projectType', label: 'Project Type', required: true, type: 'select', options: 'projectTypes' },
           { number: '', name: 'appointingParty', label: 'Appointing Party', required: true, type: 'text', placeholder: 'ABC Development Corporation' },

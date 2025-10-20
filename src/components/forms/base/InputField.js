@@ -232,6 +232,16 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
         />
       );
 
+    case 'section-header':
+      return (
+        <div className="mb-4">
+          <h4 className="text-lg font-semibold text-gray-900 border-b-2 border-gray-300 pb-2">
+            {number && <span className="text-blue-600">{number} </span>}
+            {label}
+          </h4>
+        </div>
+      );
+
     // Step 5 specialized field types
     case 'milestones-table':
       return <MilestonesTableField field={field} value={value} onChange={onChange} error={error} />;
