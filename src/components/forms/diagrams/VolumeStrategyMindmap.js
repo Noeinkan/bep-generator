@@ -290,6 +290,14 @@ const VolumeStrategyMindmap = ({ field, value, onChange, error }) => {
     updateValue(organizedData);
   }, [mindmapData, updateValue]);
 
+  // Auto-layout to tree on initial load
+  useEffect(() => {
+    if (mindmapData && !mindmapData.x && !mindmapData.y) {
+      const organizedData = organizeNodes(mindmapData, 'tree');
+      updateValue(organizedData, true); // Skip history for initial layout
+    }
+  }, []);
+
   const handleSnapToGrid = () => {
     const snappedData = snapToGrid(mindmapData);
     updateValue(snappedData);

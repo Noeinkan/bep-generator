@@ -3292,6 +3292,318 @@ Consistent modeling standards ensure that information is produced to a defined q
     relatedFields: ['geometricalInfo', 'alphanumericalInfo', 'volumeStrategy', 'classificationSystems']
   },
 
+  namingConventions_overview: {
+    description: `Provide a high-level overview of your project's naming convention philosophy and approach. This section establishes the strategic foundation for how information will be named and organized throughout the project lifecycle.
+
+Key aspects to address:
+• Overall naming philosophy aligned with ISO 19650-2
+• Consistency objectives across all project deliverables
+• How naming supports information retrieval and management
+• Integration with project information management goals
+• Stakeholder communication about naming standards`,
+
+    iso19650: `ISO 19650-2:2018 Section 5.1.6 - Information Standard
+
+The overview should demonstrate how your naming approach supports the project information standard and facilitates effective information management across the entire delivery team.`,
+
+    bestPractices: [
+      'Reference ISO 19650-2 naming principles as foundation',
+      'Explain how naming supports project-specific objectives',
+      'Acknowledge client EIR requirements for naming standards',
+      'Describe how consistency will be maintained across disciplines',
+      'Outline governance approach for naming convention adherence',
+      'Reference any industry-specific naming standards being adopted',
+      'Explain how naming facilitates automation and data exchange'
+    ],
+
+    examples: {
+      'Commercial Building': `Example Overview:
+
+"File naming follows ISO 19650-2 convention to ensure consistency, traceability, and efficient information management across all project deliverables. Our approach implements a structured naming format that enables:
+
+• Immediate identification of file origin, purpose, and status
+• Automated file sorting and filtering in the CDE
+• Clear version control and audit trails
+• Seamless integration with project classification systems
+• Support for downstream asset management systems
+
+All team members receive naming convention training during project mobilization, and automated validation checks in the CDE ensure compliance before file publication."`,
+
+      'Infrastructure': `Example Overview:
+
+"This project adopts ISO 19650-2 naming conventions adapted for linear infrastructure delivery. The naming strategy supports:
+
+• Geographic reference through chainage/station identifiers
+• Multi-disciplinary coordination across highway, structures, and drainage
+• Integration with GIS and asset management systems
+• Compatibility with construction sequencing and handover requirements
+
+Naming standards are enforced through CDE configuration, project templates, and regular compliance audits throughout delivery phases."`
+    },
+
+    commonMistakes: [
+      'Generic overview without project-specific context',
+      'No reference to ISO 19650-2 or client requirements',
+      'Failing to explain how naming supports project objectives',
+      'Not addressing governance and compliance mechanisms',
+      'Missing explanation of stakeholder training approach'
+    ],
+
+    relatedFields: ['namingConventions_fields', 'namingConventions_pattern', 'namingConventions_attributes', 'fileStructure', 'cdeStrategy']
+  },
+
+  namingConventions_fields: {
+    description: `Define each component (field) of your file naming pattern in detail. Each field serves a specific purpose in creating unique, meaningful, and structured file names that support information management.
+
+Common naming fields include:
+• Project Code - Unique project identifier
+• Originator - Organization/discipline creating information
+• Volume/System - Spatial or functional subdivision
+• Level/Location - Floor level or geographic reference
+• Type - Information container type (model, drawing, document)
+• Role - Discipline responsible for content
+• Number - Sequential identifier
+• Revision - Version and status indicator`,
+
+    iso19650: `ISO 19650-2:2018 Section 5.1.6 - Information Standard
+
+Field definitions should align with ISO 19650 naming structure: [Project]-[Originator]-[Volume]-[Level]-[Type]-[Role]-[Number]-[Revision]
+
+Each field must have clear definitions, allowed values, and examples to ensure consistent application across the delivery team.`,
+
+    bestPractices: [
+      'Define 6-8 core naming fields for structured identification',
+      'Provide clear examples for each field with multiple scenarios',
+      'Specify allowed characters and format (uppercase, length limits)',
+      'Include abbreviation glossary for originators and roles',
+      'Define "not applicable" convention (e.g., XX, ZZ, 00)',
+      'Align volume/system codes with project breakdown structure',
+      'Establish revision code scheme (P=Prelim, C=Construction, A=As-built)',
+      'Document exceptions and special cases'
+    ],
+
+    examples: {
+      'Commercial Building': `Example Field Definitions:
+
+**[Project Code]**: GF24
+- Format: 4 characters, alphanumeric
+- Description: Unique identifier for Greenfield 2024 project
+- Example: GF24
+
+**[Originator]**: SAA | EXL | ASG
+- Format: 3 characters, uppercase
+- Description: Organization code
+- Examples: SAA (Smith Architects), EXL (Engineering Excellence), ASG (Advanced Systems Group)
+
+**[Volume/System]**: XX | A | B | C1 | C2
+- Format: 1-2 characters
+- Description: Building zone or system
+- Examples: XX (whole building), A (Tower A), B (Tower B), C1 (Core 1)
+
+**[Level]**: GF | 01-08 | RF | B1
+- Format: 2 characters
+- Description: Floor level
+- Examples: GF (Ground), 01-08 (Floors), RF (Roof), B1 (Basement)
+
+**[Type]**: M3 | DR | SP | SC | RP
+- Format: 2 characters
+- Description: Information container type
+- Examples: M3 (Model), DR (Drawing), SP (Specification), SC (Schedule), RP (Report)
+
+**[Role]**: ARC | STR | MEP | FAC
+- Format: 3 characters
+- Description: Discipline
+- Examples: ARC (Architecture), STR (Structural), MEP (MEP Services), FAC (Facades)
+
+**[Number]**: 0001-9999
+- Format: 4 digits with leading zeros
+- Description: Sequential file number
+- Examples: 0001, 0002, 0125
+
+**[Revision]**: P01 | C01 | A01
+- Format: 1 letter + 2 digits
+- Description: Status and version
+- Examples: P01-P99 (Design), C01-C99 (Construction), A01-A99 (As-built)`
+    },
+
+    commonMistakes: [
+      'Insufficient field descriptions causing inconsistent interpretation',
+      'No examples provided for field usage',
+      'Missing abbreviation glossary for codes',
+      'Overly complex fields with too many options',
+      'No clear guidance on when to use "not applicable" codes',
+      'Failing to align fields with project organizational structure'
+    ],
+
+    relatedFields: ['namingConventions_overview', 'namingConventions_pattern', 'volumeStrategy', 'organizationalStructure']
+  },
+
+  namingConventions_pattern: {
+    description: `Define the complete naming pattern showing how individual fields combine to create file names. This section provides the master template and real-world examples demonstrating correct naming application.
+
+The pattern should:
+• Show field order and separator characters
+• Provide multiple complete examples across disciplines
+• Demonstrate pattern application to different file types
+• Include edge cases and special scenarios
+• Show how extensions are handled`,
+
+    iso19650: `ISO 19650-2:2018 Section 5.1.6 - Information Standard
+
+The complete naming pattern should follow the ISO 19650 structure with consistent separators (typically hyphens) between fields. Pattern must be documented, communicated, and enforced across all project deliverables.`,
+
+    bestPractices: [
+      'Use hyphens (-) as standard field separators for clarity',
+      'Show pattern with field labels and example with actual values',
+      'Provide 5-10 examples covering different scenarios',
+      'Include examples for models, drawings, documents, schedules',
+      'Demonstrate revision progression (P01 → P02 → C01)',
+      'Show multi-discipline examples',
+      'Include edge cases (whole building files, site-wide documents)',
+      'Add file extension guidance (.rvt, .dwg, .pdf, .ifc)'
+    ],
+
+    examples: {
+      'Commercial Building': `Complete Naming Pattern:
+
+**Pattern Format:**
+[Project]-[Originator]-[Volume]-[Level]-[Type]-[Role]-[Number]-[Revision].[extension]
+
+**Examples:**
+
+Architecture Model:
+• GF24-SAA-XX-GF-M3-ARC-0001-P01.rvt
+• GF24-SAA-A-03-M3-ARC-0002-C01.rvt
+
+Structural Model:
+• GF24-EXL-XX-00-M3-STR-0001-P01.rvt
+• GF24-EXL-B-B1-M3-STR-0002-P03.rvt
+
+MEP Model:
+• GF24-ASG-XX-GF-M3-MEP-0001-P01.rvt
+• GF24-ASG-C1-05-M3-MEP-0005-C01.rvt
+
+Drawings:
+• GF24-SAA-XX-GF-DR-ARC-1001-P01.pdf
+• GF24-EXL-XX-RF-DR-STR-2050-C01.pdf
+
+Specifications:
+• GF24-SAA-XX-XX-SP-ARC-0001-P01.pdf
+• GF24-ASG-XX-XX-SP-MEP-0001-C01.pdf
+
+Schedules:
+• GF24-SAA-XX-XX-SC-ARC-0001-P02.xlsx
+• GF24-EXL-XX-XX-SC-STR-0001-P01.xlsx
+
+Reports:
+• GF24-PMT-XX-XX-RP-PM-0001-P01.pdf (Project Management Report)
+• GF24-ASG-XX-XX-RP-MEP-0010-P01.pdf (Energy Analysis Report)`
+    },
+
+    commonMistakes: [
+      'No visual representation of pattern structure',
+      'Insufficient examples covering different scenarios',
+      'Inconsistent separator usage (mixing hyphens and underscores)',
+      'Missing file extension guidance',
+      'Not showing revision progression examples',
+      'Failing to demonstrate "not applicable" field usage'
+    ],
+
+    relatedFields: ['namingConventions_overview', 'namingConventions_fields', 'fileFormats', 'deliverableTemplates']
+  },
+
+  namingConventions_attributes: {
+    description: `Define the metadata attributes and properties that accompany deliverables beyond the file name. These attributes provide additional context, classification, and management information essential for the asset lifecycle.
+
+Key deliverable attributes include:
+• File format and software version requirements
+• Classification system codes (Uniclass, Omniclass)
+• Level of Information Need (LOIN) specifications
+• Security classification levels
+• Suitability codes (ISO 19650 status indicators)
+• Revision codes and version history
+• Authorship and approval metadata`,
+
+    iso19650: `ISO 19650-2:2018 Section 5.1.4 - Information Delivery Planning
+
+Deliverable attributes support the project information standard and enable effective filtering, searching, and management within the CDE. Attributes should be captured as metadata to support lifecycle information management and asset handover.`,
+
+    bestPractices: [
+      'Define mandatory vs. optional attributes for each deliverable type',
+      'Specify controlled vocabularies for attribute values',
+      'Align attributes with client asset management requirements',
+      'Include suitability codes per ISO 19650 (S0-S8)',
+      'Define revision code conventions and progression rules',
+      'Specify file format standards and version requirements',
+      'Link attributes to classification systems (Uniclass 2015)',
+      'Define security classification scheme',
+      'Document where attributes are stored (filename, metadata, CDE properties)'
+    ],
+
+    examples: {
+      'Commercial Building': `Example Deliverable Attributes:
+
+**File Format:**
+- Models: .rvt (Revit 2024), .ifc (IFC 4.0)
+- Drawings: .pdf (PDF/A-1b for archive)
+- Documents: .docx (Office 2019+), .pdf
+- Schedules: .xlsx (Office 2019+)
+
+**Classification System:**
+- Standard: Uniclass 2015
+- Format: Table_Code_Description
+- Example: Ss_25_30_20 (Curtain wall systems)
+
+**Level of Information Need:**
+- Design Stage 3: LOD 300 (Defined geometry)
+- Design Stage 4: LOD 350 (Coordinated geometry)
+- Construction: LOD 400 (Fabrication detail)
+- As-built: LOD 500 (Verified record)
+
+**Security Classification:**
+- Public: General project information
+- Internal: Working documents within delivery team
+- Confidential: Commercial or sensitive information
+- Strictly Confidential: Board-level or contractual
+
+**Suitability Code (ISO 19650):**
+- S0: Work in Progress (WIP)
+- S1: Suitable for Coordination
+- S2: Suitable for Information
+- S3: Suitable for Review and Comment
+- S4: Suitable for Stage Approval
+- A1-A7: Client authorized (various levels)
+
+**Revision Code:**
+- P01-P99: Design development (Prelim/Proposal)
+- C01-C99: Construction issue
+- A01-A99: As-built/As-constructed
+- Format: Letter indicates phase, number indicates iteration
+
+**Metadata Properties:**
+- Author: Full name of creator
+- Checked: Name of quality checker
+- Approved: Name of authorizing person
+- Issue Date: YYYY-MM-DD format
+- Project Phase: RIBA Stage (e.g., "Stage 4")
+- Discipline: Architecture/Structure/MEP/etc.
+- Keywords: Search tags for CDE filtering`
+    },
+
+    commonMistakes: [
+      'Attributes not documented or inconsistently applied',
+      'No controlled vocabularies leading to data quality issues',
+      'Suitability codes not aligned with ISO 19650',
+      'Security classification not defined or enforced',
+      'Revision codes conflicting with file version numbers',
+      'Attributes stored inconsistently (sometimes filename, sometimes metadata)',
+      'No link between classification codes and naming conventions',
+      'Missing guidance on attribute population and validation'
+    ],
+
+    relatedFields: ['namingConventions_overview', 'namingConventions_pattern', 'classificationSystems', 'informationFormats', 'dataClassification']
+  },
+
   namingConventions: {
     description: `Establish comprehensive naming conventions for all project files, models, drawings, views, families, and elements to ensure consistency and facilitate information retrieval.
 

@@ -71,10 +71,39 @@ export const useMindmapD3 = (svgRef, mindmapData, selectedNode, setSelectedNode,
     }
   }, []);
 
+  // Calculate bounds and centroid of the diagram
+  const calculateBounds = useCallback((nodes) => {
+    if (!nodes || nodes.length === 0) return null;
+
+    let minX = Infinity, maxX = -Infinity;
+    let minY = Infinity, maxY = -Infinity;
+    let sumX = 0, sumY = 0;
+
+    nodes.forEach(node => {
+      if (node.x < minX) minX = node.x;
+      if (node.x > maxX) maxX = node.x;
+      if (node.y < minY) minY = node.y;
+      if (node.y > maxY) maxY = node.y;
+      sumX += node.x;
+      sumY += node.y;
+    });
+
+    const width = maxX - minX;
+    const height = maxY - minY;
+    const centroidX = sumX / nodes.length;
+    const centroidY = sumY / nodes.length;
+
+    return { minX, maxX, minY, maxY, width, height, centroidX, centroidY };
+  }, []);
+
   const drawMindmap = useCallback(() => {
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
     const g = svg.append('g');
+
+    // Get all nodes and calculate bounds
+    const allNodes = getPreorderNodes(mindmapData);
+    const bounds = calculateBounds(allNodes);
 
     // Custom zoom behavior that only responds to right mouse button and scroll
     const zoomBehavior = d3.zoom()
@@ -89,6 +118,30 @@ export const useMindmapD3 = (svgRef, mindmapData, selectedNode, setSelectedNode,
       });
 
     svg.call(zoomBehavior);
+
+    // Auto-fit diagram to view with padding
+    if (bounds && allNodes.length > 0) {
+      const svgWidth = 1000; // viewBox width
+      const svgHeight = 700; // viewBox height
+      const padding = 100; // Padding around the diagram
+
+      // Calculate scale to fit entire diagram with padding
+      const scaleX = (svgWidth - padding * 2) / (bounds.width || 1);
+      const scaleY = (svgHeight - padding * 2) / (bounds.height || 1);
+      const autoScale = Math.min(scaleX, scaleY, 1); // Don't zoom in beyond 100%
+
+      // Calculate translation to center the diagram
+      const translateX = svgWidth / 2 - bounds.centroidX * autoScale;
+      const translateY = svgHeight / 2 - bounds.centroidY * autoScale;
+
+      // Apply initial transform
+      const initialTransform = d3.zoomIdentity
+        .translate(translateX, translateY)
+        .scale(autoScale);
+
+      svg.call(zoomBehavior.transform, initialTransform);
+      setZoom(autoScale);
+    }
 
     // Prevent context menu on right click
     svg.on('contextmenu', (event) => {

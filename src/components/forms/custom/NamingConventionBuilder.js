@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { FileText, Plus, Trash2, ChevronDown, ChevronUp, Info } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { Plus, Trash2, Info } from 'lucide-react';
 import TipTapEditor from '../editors/TipTapEditor';
 import FieldHeader from '../base/FieldHeader';
 import NamingPatternVisualizer from './NamingPatternVisualizer';
@@ -8,20 +8,14 @@ import DeliverableAttributesVisualizer from './DeliverableAttributesVisualizer';
 /**
  * NamingConventionBuilder
  * Component for Section 9.2: Naming Conventions
- * 
+ *
  * Provides a structured interface for defining:
- * 1. Naming Convention Fields - Components of the file naming pattern
- * 2. Deliverable Attributes - Metadata and properties associated with deliverables
- * 3. Folder Structure - Directory organization standards
+ * 9.2.1 Overview - General approach to naming conventions
+ * 9.2.2 Naming Convention Fields - Components of the file naming pattern
+ * 9.2.3 Naming Pattern & Example - Complete pattern and example filename
+ * 9.2.4 Deliverable Attributes - Metadata and properties associated with deliverables
  */
 const NamingConventionBuilder = ({ field, value = {}, onChange, error, disabled = false }) => {
-  // React hooks must be called before any conditional returns
-  const [expandedSections, setExpandedSections] = useState({
-    overview: true,
-    namingFields: true,
-    pattern: true,
-    attributes: false
-  });
 
   // Initialize with default structure
   const defaultValue = {
@@ -130,13 +124,6 @@ const NamingConventionBuilder = ({ field, value = {}, onChange, error, disabled 
     };
   }
 
-  const toggleSection = (section) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
-  };
-
   // Handle overview change
   const handleOverviewChange = (newValue) => {
     onChange(name, {
@@ -211,37 +198,6 @@ const NamingConventionBuilder = ({ field, value = {}, onChange, error, disabled 
     });
   };
 
-  // Render collapsible section header
-  const renderSectionHeader = (sectionKey, title, icon, description) => {
-    const isExpanded = expandedSections[sectionKey];
-    const Icon = icon;
-
-    return (
-      <button
-        type="button"
-        onClick={() => toggleSection(sectionKey)}
-        disabled={disabled}
-        className={`w-full flex items-center justify-between p-4 text-left transition-colors border-b ${
-          disabled ? 'cursor-not-allowed opacity-60' : 'hover:bg-gray-50'
-        }`}
-      >
-        <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-lg ${isExpanded ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600'}`}>
-            <Icon className="w-5 h-5" />
-          </div>
-          <div>
-            <h4 className="font-semibold text-gray-900">{title}</h4>
-            <p className="text-sm text-gray-500 mt-0.5">{description}</p>
-          </div>
-        </div>
-        {isExpanded ? (
-          <ChevronUp className="w-5 h-5 text-gray-400" />
-        ) : (
-          <ChevronDown className="w-5 h-5 text-gray-400" />
-        )}
-      </button>
-    );
-  };
 
   return (
     <div className="space-y-4">
@@ -269,27 +225,39 @@ const NamingConventionBuilder = ({ field, value = {}, onChange, error, disabled 
         </div>
       </div>
 
-      <div className="border border-gray-200 rounded-lg bg-white">
-        {/* Overview Section */}
-        {renderSectionHeader('overview', 'Overview', FileText, 'General approach to naming conventions')}
-        {expandedSections.overview && (
-          <div className="p-4">
-            <TipTapEditor
-              id="naming-overview"
-              value={currentValue.overview || ''}
-              onChange={handleOverviewChange}
-              placeholder="Describe the overall approach to file naming and structure..."
-              minHeight="80px"
-              autoSaveKey="naming-overview"
-              fieldName="namingOverview"
-            />
-          </div>
-        )}
+      <div className="space-y-6">
+        {/* 9.2.1 Overview Section */}
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <FieldHeader
+            fieldName="namingConventions_overview"
+            label="Overview"
+            number="9.2.1"
+            required={false}
+            asSectionHeader={true}
+          />
+          <p className="text-sm text-gray-600 mb-3">General approach to naming conventions</p>
+          <TipTapEditor
+            id="naming-overview"
+            value={currentValue.overview || ''}
+            onChange={handleOverviewChange}
+            placeholder="Describe the overall approach to file naming and structure..."
+            minHeight="80px"
+            autoSaveKey="naming-overview"
+            fieldName="namingOverview"
+          />
+        </div>
 
-        {/* Naming Convention Fields Section */}
-        {renderSectionHeader('namingFields', 'Naming Convention Fields', FileText, 'Define each component of the file naming pattern')}
-        {expandedSections.namingFields && (
-          <div className="p-4 space-y-3">
+        {/* 9.2.2 Naming Convention Fields Section */}
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <FieldHeader
+            fieldName="namingConventions_fields"
+            label="Naming Convention Fields"
+            number="9.2.2"
+            required={false}
+            asSectionHeader={true}
+          />
+          <p className="text-sm text-gray-600 mb-3">Define each component of the file naming pattern</p>
+          <div className="space-y-3">
             {currentValue.namingFields.map((field, index) => (
               <div key={index} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
                 <div className="flex items-start justify-between mb-3">
@@ -356,20 +324,32 @@ const NamingConventionBuilder = ({ field, value = {}, onChange, error, disabled 
               <span className="text-sm font-medium">Add Naming Field</span>
             </button>
           </div>
-        )}
+        </div>
 
-        {/* Naming Pattern Section */}
-        {renderSectionHeader('pattern', 'Naming Pattern & Example', FileText, 'Complete pattern and example filename')}
-        {expandedSections.pattern && (
-          <div className="p-4">
-            <NamingPatternVisualizer namingFields={currentValue.namingFields} />
-          </div>
-        )}
+        {/* 9.2.3 Naming Pattern Section */}
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <FieldHeader
+            fieldName="namingConventions_pattern"
+            label="Naming Pattern & Example"
+            number="9.2.3"
+            required={false}
+            asSectionHeader={true}
+          />
+          <p className="text-sm text-gray-600 mb-3">Complete pattern and example filename</p>
+          <NamingPatternVisualizer namingFields={currentValue.namingFields} />
+        </div>
 
-        {/* Deliverable Attributes Section */}
-        {renderSectionHeader('attributes', 'Deliverable Attributes', FileText, 'Metadata and properties associated with deliverables')}
-        {expandedSections.attributes && (
-          <div className="p-4 space-y-3">
+        {/* 9.2.4 Deliverable Attributes Section */}
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <FieldHeader
+            fieldName="namingConventions_attributes"
+            label="Deliverable Attributes"
+            number="9.2.4"
+            required={false}
+            asSectionHeader={true}
+          />
+          <p className="text-sm text-gray-600 mb-3">Metadata and properties associated with deliverables</p>
+          <div className="space-y-3">
             {currentValue.deliverableAttributes.map((attr, index) => (
               <div key={index} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
                 <div className="flex items-start justify-between mb-3">
@@ -443,7 +423,7 @@ const NamingConventionBuilder = ({ field, value = {}, onChange, error, disabled 
               </div>
             )}
           </div>
-        )}
+        </div>
       </div>
 
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}

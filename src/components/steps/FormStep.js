@@ -20,7 +20,6 @@ const FULL_WIDTH_FIELD_TYPES = [
   'tidp-section',
   'deliverables-matrix',
   'im-activities-matrix',
-  'im-strategy-builder',
   'naming-conventions'
 ];
 
