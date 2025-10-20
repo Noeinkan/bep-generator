@@ -2,10 +2,11 @@ import { useCallback, useEffect } from 'react';
 import * as d3 from 'd3';
 import { getNodeTypeConfig, NODE_TYPES } from '../utils/nodeTypes';
 
-export const useMindmapD3 = (svgRef, mindmapData, selectedNode, setSelectedNode, setEditingNode, setEditingText, setZoom, updateValue, highlightedNodes = []) => {
+export const useMindmapD3 = (svgRef, mindmapData, selectedNode, setSelectedNode, setZoom, updateValue, highlightedNodes = []) => {
 
   // Helper function to traverse tree in preorder
   const getPreorderNodes = useCallback((node, result = []) => {
+    if (!node) return result;
     result.push(node);
     if (node.children) {
       node.children.forEach(child => getPreorderNodes(child, result));
@@ -97,6 +98,8 @@ export const useMindmapD3 = (svgRef, mindmapData, selectedNode, setSelectedNode,
   }, []);
 
   const drawMindmap = useCallback(() => {
+    if (!svgRef.current) return;
+
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
     const g = svg.append('g');
@@ -155,12 +158,14 @@ export const useMindmapD3 = (svgRef, mindmapData, selectedNode, setSelectedNode,
       }
     });
 
-    // Get all nodes and links
-    const allNodes = getPreorderNodes(mindmapData);
+    // Get all links
     const allLinks = getAllLinks(mindmapData);
 
     // Drag behavior - only responds to left mouse button with proper click separation
     let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    const dragThreshold = 5; // Minimum pixels to move before considering it a drag
 
     const drag = d3.drag()
       .filter((event) => {
@@ -169,11 +174,21 @@ export const useMindmapD3 = (svgRef, mindmapData, selectedNode, setSelectedNode,
       })
       .on('start', function(event, d) {
         isDragging = false; // Reset drag flag
-        console.log('Drag start detected for:', d.id);
+        dragStartX = event.x;
+        dragStartY = event.y;
       })
       .on('drag', function(event, d) {
+        // Calculate distance moved from start
+        const dx = event.x - dragStartX;
+        const dy = event.y - dragStartY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Only start dragging if moved beyond threshold
+        if (!isDragging && distance < dragThreshold) {
+          return; // Ignore small movements
+        }
+
         if (!isDragging) {
-          console.log('First drag movement for:', d.id);
           isDragging = true;
           d3.select(this).raise().select('circle, rect').attr('stroke', '#EF4444').attr('stroke-width', 3);
         }
@@ -195,7 +210,6 @@ export const useMindmapD3 = (svgRef, mindmapData, selectedNode, setSelectedNode,
       })
       .on('end', function(event, d) {
         if (isDragging) {
-          console.log('Drag ended for:', d.id);
           const isSelected = selectedNode === d.id;
           const isHighlighted = highlightedNodes.includes(d.id);
           d3.select(this).select('circle, rect')
@@ -314,11 +328,6 @@ export const useMindmapD3 = (svgRef, mindmapData, selectedNode, setSelectedNode,
             } else {
               console.log('Click ignored - was dragging');
             }
-          })
-          .on('dblclick', (event) => {
-            event.stopPropagation();
-            setEditingNode(d.id);
-            setEditingText(d.name);
           });
       } else {
         // Create rectangle for child nodes
@@ -403,11 +412,6 @@ export const useMindmapD3 = (svgRef, mindmapData, selectedNode, setSelectedNode,
             } else {
               console.log('Click ignored - was dragging');
             }
-          })
-          .on('dblclick', (event) => {
-            event.stopPropagation();
-            setEditingNode(d.id);
-            setEditingText(d.name);
           });
       }
 
@@ -415,20 +419,54 @@ export const useMindmapD3 = (svgRef, mindmapData, selectedNode, setSelectedNode,
       renderText(nodeGroup, d);
     });
 
-  }, [mindmapData, selectedNode, updateValue, getPreorderNodes, getAllLinks, setSelectedNode, setEditingNode, setEditingText, setZoom, renderText, highlightedNodes, svgRef]);
+  }, [mindmapData, selectedNode, updateValue, getPreorderNodes, getAllLinks, setSelectedNode, setZoom, renderText, highlightedNodes, svgRef, calculateBounds]);
 
   useEffect(() => {
     drawMindmap();
   }, [drawMindmap]);
 
-  const resetView = useCallback(() => {
-    const svg = d3.select(svgRef.current);
-    svg.transition().duration(750).call(
-      d3.zoom().transform,
-      d3.zoomIdentity
-    );
-    setZoom(1);
-  }, [svgRef, setZoom]);
+  // Force redraw function
+  const forceRedraw = useCallback(() => {
+    drawMindmap();
+  }, [drawMindmap]);
 
-  return { resetView };
+  const resetView = useCallback(() => {
+    if (!svgRef.current) return;
+
+    const svg = d3.select(svgRef.current);
+    const allNodes = getPreorderNodes(mindmapData);
+    const bounds = calculateBounds(allNodes);
+
+    if (bounds && allNodes.length > 0) {
+      const svgWidth = 1000;
+      const svgHeight = 700;
+      const padding = 100;
+
+      const scaleX = (svgWidth - padding * 2) / (bounds.width || 1);
+      const scaleY = (svgHeight - padding * 2) / (bounds.height || 1);
+      const autoScale = Math.min(scaleX, scaleY, 1);
+
+      const translateX = svgWidth / 2 - bounds.centroidX * autoScale;
+      const translateY = svgHeight / 2 - bounds.centroidY * autoScale;
+
+      const resetTransform = d3.zoomIdentity
+        .translate(translateX, translateY)
+        .scale(autoScale);
+
+      svg.transition().duration(750).call(
+        d3.zoom().transform,
+        resetTransform
+      );
+      setZoom(autoScale);
+    } else {
+      // Fallback to identity transform if no bounds
+      svg.transition().duration(750).call(
+        d3.zoom().transform,
+        d3.zoomIdentity
+      );
+      setZoom(1);
+    }
+  }, [svgRef, setZoom, mindmapData, getPreorderNodes, calculateBounds]);
+
+  return { resetView, forceRedraw };
 };

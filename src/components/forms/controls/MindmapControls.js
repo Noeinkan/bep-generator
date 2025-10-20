@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Trash2, Maximize2, Brain, ChevronDown, Undo, Redo } from 'lucide-react';
+import { Plus, Trash2, Maximize2, Brain, ChevronDown, Undo, Redo, Minimize2 } from 'lucide-react';
 import NodeTypeSelector from './NodeTypeSelector';
 import LayoutControls from './LayoutControls';
 import { NODE_TYPES } from '../../../utils/nodeTypes';
@@ -15,7 +15,8 @@ const MindmapControls = ({
   canUndo,
   canRedo,
   onOrganizeNodes,
-  onSnapToGrid
+  onSnapToGrid,
+  onFullscreen
 }) => {
   const [showTypeSelector, setShowTypeSelector] = useState(false);
   const [selectedNodeType, setSelectedNodeType] = useState(NODE_TYPES.DISCIPLINE);
@@ -132,8 +133,19 @@ const MindmapControls = ({
             title="Reset View"
             aria-label="Reset View"
           >
-            <Maximize2 className="w-4 h-4" />
+            <Minimize2 className="w-4 h-4" />
           </button>
+
+          {onFullscreen && (
+            <button
+              onClick={onFullscreen}
+              className="p-2 text-purple-600 hover:bg-purple-100 rounded"
+              title="Fullscreen Mode"
+              aria-label="Fullscreen Mode"
+            >
+              <Maximize2 className="w-4 h-4" />
+            </button>
+          )}
 
           <span className="text-sm text-gray-600 min-w-12 text-center">
             {Math.round(zoom * 100)}%
