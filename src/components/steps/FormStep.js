@@ -4,6 +4,7 @@ import CONFIG from '../../config/bepConfig';
 
 // Field types that should span full width (both columns) in the grid layout
 const FULL_WIDTH_FIELD_TYPES = [
+  'section-header',
   'textarea',
   'checkbox',
   'table',

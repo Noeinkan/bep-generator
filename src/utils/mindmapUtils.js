@@ -214,3 +214,72 @@ export const findNodeById = (rootNode, nodeId) => {
 
   return null;
 };
+
+export const duplicateNodeInTree = (mindmapData, nodeId) => {
+  if (!nodeId || nodeId === 'root') return null;
+
+  const newData = JSON.parse(JSON.stringify(mindmapData));
+
+  const duplicateNode = (node) => {
+    if (!node.children) return false;
+
+    for (let i = 0; i < node.children.length; i++) {
+      if (node.children[i].id === nodeId) {
+        // Found the node to duplicate
+        const originalNode = node.children[i];
+        const duplicatedNode = JSON.parse(JSON.stringify(originalNode));
+
+        // Generate new IDs for the duplicated node and all its descendants
+        const generateNewIds = (n) => {
+          n.id = `${n.id}-copy-${Date.now()}`;
+          // Offset position slightly
+          n.x += 50;
+          n.y += 50;
+          if (n.children) {
+            n.children.forEach(generateNewIds);
+          }
+        };
+
+        generateNewIds(duplicatedNode);
+
+        // Insert the duplicated node right after the original
+        node.children.splice(i + 1, 0, duplicatedNode);
+        return true;
+      }
+
+      // Recursively search in children
+      if (duplicateNode(node.children[i])) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  return duplicateNode(newData) ? newData : null;
+};
+
+export const changeNodeTypeInTree = (mindmapData, nodeId, newType) => {
+  if (!nodeId || nodeId === 'root') return null;
+
+  const newData = JSON.parse(JSON.stringify(mindmapData));
+
+  const changeType = (node) => {
+    if (node.id === nodeId) {
+      node.type = newType;
+      return true;
+    }
+
+    if (node.children) {
+      for (const child of node.children) {
+        if (changeType(child)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  };
+
+  return changeType(newData) ? newData : null;
+};
