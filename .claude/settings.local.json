@@ -15,7 +15,12 @@
       "Bash(find:*)",
       "Bash(npm run build)",
       "Bash(npm install:*)",
-      "Bash(npm config get prefix)"
+      "Bash(npm config get prefix)",
+      "Bash(mkdir:*)",
+      "Bash(if exist ml-servicevenv rmdir /s /q ml-servicevenv)",
+      "Bash(cmd /c \"if exist ml-service\\venv rmdir /s /q ml-service\\venv\")",
+      "Bash(cmd /c setup-ai.bat)",
+      "Bash(ml-service/venv/Scripts/python.exe:*)"
     ],
     "deny": [],
     "ask": []
