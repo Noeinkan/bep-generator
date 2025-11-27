@@ -22,7 +22,10 @@
       "Bash(cmd /c setup-ai.bat)",
       "Bash(ml-service/venv/Scripts/python.exe:*)",
       "Bash(dir:*)",
-      "Bash(venv/Scripts/python.exe:*)"
+      "Bash(venv/Scripts/python.exe:*)",
+      "Bash(copy \"ml-service\\data\\training_data.txt\" \"ml-service\\data\\training_documents\\txt\\example_bep.txt\")",
+      "Bash(powershell -ExecutionPolicy Bypass -File \"ml-service\\install_cuda_pytorch.ps1\")",
+      "Bash(ml-service\\venv\\Scripts\\python.exe:*)"
     ],
     "deny": [],
     "ask": []
