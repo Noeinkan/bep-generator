@@ -29,7 +29,12 @@
       "Bash(tasklist:*)",
       "Bash(start cmd /k start_service.bat)",
       "Bash(curl:*)",
-      "Bash(venvScriptspython.exe api.py)"
+      "Bash(venvScriptspython.exe api.py)",
+      "Bash(git for-each-ref:*)",
+      "Bash(git update-ref:*)",
+      "Bash(git reflog expire:*)",
+      "Bash(git gc:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
