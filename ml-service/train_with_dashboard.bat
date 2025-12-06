@@ -1,50 +1,62 @@
 @echo off
 echo ============================================================
-echo BEP AI Training with Real-time Dashboard
+echo BEP AI Training with TensorBoard Dashboard
 echo ============================================================
 echo.
 
 REM Activate virtual environment
 call venv\Scripts\activate.bat
 
-echo Starting training dashboard server...
+echo Starting TensorBoard dashboard server...
 echo.
-echo The dashboard will open at: http://localhost:5000
-echo.
-echo Starting training in 3 seconds...
-echo Open the dashboard URL in your browser NOW!
+echo Dashboard URL: http://localhost:6006
 echo.
 
-REM Start dashboard in background
-start /B python training_dashboard.py
+REM Start TensorBoard in background
+start "TensorBoard Dashboard" cmd /c "venv\Scripts\tensorboard.exe --logdir=runs --port=6006"
 
-REM Wait a bit for dashboard to start
+REM Wait for TensorBoard to start
 timeout /t 3 /nobreak >nul
 
-REM Start training with arguments (default 100 epochs)
+REM Open browser
+start http://localhost:6006
+
+REM Get epochs from argument (default 100)
 set EPOCHS=%1
 if "%EPOCHS%"=="" set EPOCHS=100
 
 echo.
 echo ============================================================
-echo Training will run for %EPOCHS% epochs
-echo Watch progress at: http://localhost:5000
+echo Training Configuration
+echo ============================================================
+echo Epochs: %EPOCHS%
+echo Dashboard: http://localhost:6006
+echo.
+echo The browser will open automatically
+echo Training will start in 2 seconds...
 echo ============================================================
 echo.
 
-python scripts\train_model.py --epochs %EPOCHS%
+timeout /t 2 /nobreak >nul
+
+REM Start training with live output
+python -u scripts\train_model.py --epochs %EPOCHS%
 
 echo.
 echo ============================================================
-echo Training complete!
-echo Dashboard is still running at http://localhost:5000
-echo Press any key to stop the dashboard...
+echo Training Complete!
+echo ============================================================
+echo.
+echo TensorBoard is still running at: http://localhost:6006
+echo You can view the training results and graphs
+echo.
+echo Press any key to stop TensorBoard and exit...
 echo ============================================================
 pause >nul
 
-REM Kill the dashboard server
-taskkill /F /IM python.exe /FI "WINDOWTITLE eq training_dashboard*" >nul 2>&1
+REM Kill TensorBoard
+taskkill /F /FI "WINDOWTITLE eq TensorBoard Dashboard*" >nul 2>&1
 
 echo.
-echo Dashboard stopped.
+echo TensorBoard stopped.
 echo.

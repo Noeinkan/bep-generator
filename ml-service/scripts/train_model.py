@@ -17,6 +17,9 @@ import os
 import json
 import argparse
 from pathlib import Path
+from datetime import datetime
+from torch.utils.tensorboard import SummaryWriter
+from tqdm import tqdm
 
 
 class CharLSTM(nn.Module):
@@ -79,14 +82,41 @@ def prepare_dataset(text, seq_length=100):
     return dataX, dataY, char_to_int, int_to_char, n_vocab
 
 
-def train_model(model, X, y, n_vocab, epochs=100, learning_rate=0.001, device='cpu', batch_size=128):
-    """Train the LSTM model using mini-batches"""
+def train_model(model, X, y, n_vocab, epochs=100, learning_rate=0.001, device='cpu', batch_size=128,
+                char_to_int=None, int_to_char=None):
+    """Train the LSTM model using mini-batches with TensorBoard logging"""
+
+    # Setup TensorBoard
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    log_dir = Path(__file__).parent.parent / 'runs' / f'bep_training_{timestamp}'
+    writer = SummaryWriter(log_dir=str(log_dir))
+
+    print(f"\n{'='*60}")
+    print(f"TensorBoard initialized!")
+    print(f"Log directory: {log_dir}")
+    print(f"\nTo view training in real-time, run:")
+    print(f"  tensorboard --logdir={log_dir.parent}")
+    print(f"Then open: http://localhost:6006")
+    print(f"{'='*60}\n")
+
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
-    print(f"\nTraining on device: {device}")
-    print(f"Model parameters: {sum(p.numel() for p in model.parameters())}")
+    print(f"Training on device: {device}")
+    print(f"Model parameters: {sum(p.numel() for p in model.parameters()):,}")
     print(f"Batch size: {batch_size}")
+
+    # Log hyperparameters to TensorBoard
+    writer.add_text('Hyperparameters', f'''
+    - Epochs: {epochs}
+    - Learning Rate: {learning_rate}
+    - Hidden Size: {model.hidden_size}
+    - Num Layers: {model.num_layers}
+    - Batch Size: {batch_size}
+    - Device: {device}
+    - Vocabulary Size: {n_vocab}
+    - Total Parameters: {sum(p.numel() for p in model.parameters()):,}
+    ''')
 
     # Convert to numpy arrays first for efficient batching
     X = np.array(X, dtype=np.float32)
@@ -95,16 +125,26 @@ def train_model(model, X, y, n_vocab, epochs=100, learning_rate=0.001, device='c
     n_samples = len(X)
     n_batches = n_samples // batch_size
 
-    for epoch in range(epochs):
+    best_loss = float('inf')
+
+    print(f"\nStarting training with {n_batches} batches per epoch...\n")
+
+    # Training loop with progress bar
+    for epoch in tqdm(range(epochs), desc="Training Progress", unit="epoch"):
         model.train()
         total_loss = 0
+        batch_losses = []
 
         # Shuffle data each epoch
         indices = np.random.permutation(n_samples)
         X_shuffled = X[indices]
         y_shuffled = y[indices]
 
-        for i in range(n_batches):
+        # Batch progress bar
+        batch_pbar = tqdm(range(n_batches), desc=f"Epoch {epoch+1}/{epochs}",
+                         leave=False, unit="batch")
+
+        for i in batch_pbar:
             # Get batch
             start_idx = i * batch_size
             end_idx = start_idx + batch_size
@@ -126,15 +166,101 @@ def train_model(model, X, y, n_vocab, epochs=100, learning_rate=0.001, device='c
 
             # Backward pass
             loss.backward()
+
+            # Gradient clipping
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=5.0)
+
             optimizer.step()
 
-            total_loss += loss.item()
+            batch_loss = loss.item()
+            total_loss += batch_loss
+            batch_losses.append(batch_loss)
+
+            # Update batch progress bar
+            batch_pbar.set_postfix({'loss': f'{batch_loss:.4f}'})
 
         avg_loss = total_loss / n_batches
-        if (epoch + 1) % 10 == 0:
-            print(f'Epoch [{epoch+1}/{epochs}], Loss: {avg_loss:.4f}')
+
+        # Track best loss
+        if avg_loss < best_loss:
+            best_loss = avg_loss
+
+        # Log to TensorBoard
+        writer.add_scalar('Loss/train', avg_loss, epoch)
+        writer.add_scalar('Loss/best', best_loss, epoch)
+        writer.add_scalar('Loss/batch_std', np.std(batch_losses), epoch)
+
+        # Log learning rate
+        writer.add_scalar('Learning_Rate', optimizer.param_groups[0]['lr'], epoch)
+
+        # Log gradient norms
+        total_norm = 0
+        for p in model.parameters():
+            if p.grad is not None:
+                param_norm = p.grad.data.norm(2)
+                total_norm += param_norm.item() ** 2
+        total_norm = total_norm ** 0.5
+        writer.add_scalar('Gradients/norm', total_norm, epoch)
+
+        # Generate sample text every 10 epochs
+        if (epoch + 1) % 10 == 0 and char_to_int is not None and int_to_char is not None:
+            sample_text = generate_sample_during_training(
+                model, char_to_int, int_to_char, n_vocab,
+                device=device, max_length=150
+            )
+            writer.add_text('Generated_Samples', sample_text, epoch)
+
+            tqdm.write(f'\n{"="*60}')
+            tqdm.write(f'Epoch [{epoch+1}/{epochs}]')
+            tqdm.write(f'Avg Loss: {avg_loss:.4f} | Best Loss: {best_loss:.4f}')
+            tqdm.write(f'Sample: {sample_text[:100]}...')
+            tqdm.write(f'{"="*60}\n')
+
+    writer.close()
+    print(f"\n\nTraining complete! TensorBoard logs saved to: {log_dir}")
+    print(f"View results: tensorboard --logdir={log_dir.parent}")
 
     return model
+
+
+def generate_sample_during_training(model, char_to_int, int_to_char, n_vocab,
+                                   device='cpu', max_length=150):
+    """Generate sample text during training for monitoring"""
+    model.eval()
+    prompts = [
+        "The BEP establishes",
+        "Information Manager is responsible for",
+        "The primary objectives include"
+    ]
+
+    # Pick a random prompt
+    start_text = np.random.choice(prompts)
+
+    with torch.no_grad():
+        inputs = [char_to_int.get(ch, 0) for ch in start_text]
+        inputs = torch.tensor(inputs, dtype=torch.float32).reshape(1, len(inputs), 1) / float(n_vocab)
+        inputs = inputs.to(device)
+
+        result = start_text
+        hidden = None
+
+        for _ in range(max_length):
+            output, hidden = model(inputs, hidden)
+            prob = torch.softmax(output, dim=1).cpu().detach().numpy()
+            char_idx = np.random.choice(range(n_vocab), p=prob[0])
+            char = int_to_char[char_idx]
+            result += char
+
+            # Stop at sentence end
+            if char == '.' and len(result) > 50:
+                break
+
+            new_input = torch.tensor([[char_idx]], dtype=torch.float32).reshape(1, 1, 1) / float(n_vocab)
+            new_input = new_input.to(device)
+            inputs = new_input
+
+    model.train()
+    return result
 
 
 def save_model(model, char_to_int, int_to_char, save_dir):
@@ -232,7 +358,9 @@ def main():
         model, dataX, dataY, n_vocab,
         epochs=args.epochs,
         learning_rate=args.learning_rate,
-        device=device
+        device=device,
+        char_to_int=char_to_int,
+        int_to_char=int_to_char
     )
 
     # Save model

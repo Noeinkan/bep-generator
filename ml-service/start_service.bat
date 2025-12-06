@@ -21,11 +21,34 @@ echo Checking for trained model...
 if not exist "models\bep_model.pth" (
     echo.
     echo WARNING: Trained model not found!
-    echo Please train the model first by running:
-    echo   python scripts\train_model.py
     echo.
-    echo Training with default settings now...
-    python scripts\train_model.py --epochs 50
+    echo ============================================================
+    echo Starting TensorBoard Dashboard
+    echo ============================================================
+    echo TensorBoard will open automatically in your browser
+    echo Dashboard URL: http://localhost:6006
+    echo.
+
+    REM Start TensorBoard in background
+    start "TensorBoard" cmd /c "venv\Scripts\tensorboard.exe --logdir=runs --port=6006"
+
+    REM Wait for TensorBoard to start
+    timeout /t 3 /nobreak >nul
+
+    REM Open TensorBoard in browser
+    start http://localhost:6006
+
+    echo.
+    echo ============================================================
+    echo Starting Model Training with Live Monitoring
+    echo ============================================================
+    echo Training: 50 epochs with progress bars
+    echo Monitor live in TensorBoard dashboard
+    echo.
+
+    python -u scripts\train_model.py --epochs 50
+    echo.
+    echo Training completed!
     echo.
 )
 

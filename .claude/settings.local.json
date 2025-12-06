@@ -23,7 +23,11 @@
       "Bash(ml-service/venv/Scripts/python.exe:*)",
       "Bash(dir:*)",
       "Bash(venv/Scripts/python.exe:*)",
-      "Bash(where.exe:*)"
+      "Bash(where.exe:*)",
+      "Bash(cmd /c \"if exist ml-service\\venv\\Scripts\\python.exe (echo Virtual environment exists) else (echo Virtual environment not found)\")",
+      "Bash(ml-service\\venv\\Scripts\\python.exe:*)",
+      "Bash(nvidia-smi:*)",
+      "Bash(ml-service/venv/Scripts/pip.exe uninstall:*)"
     ],
     "deny": [],
     "ask": []
