@@ -22,7 +22,8 @@
       "Bash(cmd /c setup-ai.bat)",
       "Bash(ml-service/venv/Scripts/python.exe:*)",
       "Bash(dir:*)",
-      "Bash(venv/Scripts/python.exe:*)"
+      "Bash(venv/Scripts/python.exe:*)",
+      "Bash(where.exe:*)"
     ],
     "deny": [],
     "ask": []
