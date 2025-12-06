@@ -27,9 +27,11 @@ import {
   ZoomOut,
   FileText,
   ChevronDown,
+  Sparkles,
 } from 'lucide-react';
 import TemplateSelector from '../controls/TemplateSelector';
 import TableInsertDialog from '../dialogs/TableInsertDialog';
+import AISuggestionButton from '../ai/AISuggestionButton';
 
 const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldName }) => {
   const [showLinkInput, setShowLinkInput] = useState(false);
@@ -540,6 +542,20 @@ const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldN
         <FileText size={18} />
         <span className="text-sm">Example Text</span>
       </button>
+
+      {/* AI Suggestion Button */}
+      <AISuggestionButton
+        fieldName={fieldName}
+        fieldType={fieldName}
+        currentValue={editor?.getText() || ''}
+        onSuggestion={(suggestion) => {
+          if (editor && suggestion) {
+            // Insert AI suggestion at cursor position
+            editor.chain().focus().insertContent(suggestion).run();
+          }
+        }}
+        className="ml-2"
+      />
 
       {/* Template Selector Dialog */}
       {showTemplateSelector && (
