@@ -23,7 +23,8 @@
       "Bash(ml-service/venv/Scripts/python.exe:*)",
       "Bash(dir:*)",
       "Bash(venv/Scripts/python.exe:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(cmd /c \"if exist ml-service\\models\\bep_model.pth (echo File trovato: ml-service\\models\\bep_model.pth) else (echo File NON trovato)\")"
     ],
     "deny": [],
     "ask": []
