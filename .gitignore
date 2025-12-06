@@ -24,3 +24,12 @@ yarn-error.log*
 
 # Windows special files
 nul
+
+# Python virtual environments and pip cache
+venv/
+env/
+*.pyc
+__pycache__/
+temp_pip_cache/
+pip-cache/
+.Python
