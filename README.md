@@ -10,14 +10,12 @@ A React-based application for generating comprehensive BIM Execution Plans (BEPs
 - Export capabilities (PDF, DOCX)
 - User authentication and project management
 - Real-time collaboration features
-- **AI-Powered Text Generation** - ML-based content suggestions for BEP sections
 
 ## Documentation
 
 For detailed information about BIM concepts and standards:
 
 - [TIDP and MIDP Relationship](TIDP_MIDP_Relationship.md) - Understanding the relationship between Task Information Delivery Plans and Master Information Delivery Plans in ISO 19650 context.
-- [AI Integration Guide](AI_INTEGRATION_GUIDE.md) - Complete guide for setting up and using the AI text generation feature.
 
 ## Getting Started
 
@@ -35,21 +33,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
    ```bash
    npm install
    ```
-3. **(Optional) Set up AI text generation:**
-   ```bash
-   setup-ai.bat
-   ```
-   This will install Python dependencies and train the AI model. See [AI Integration Guide](AI_INTEGRATION_GUIDE.md) for details.
-
-4. Start the development server:
+3. Start the development server:
    ```bash
    npm start
-   ```
-
-   If using AI features, also start the ML service in a separate terminal:
-   ```bash
-   cd ml-service
-   start_service.bat
    ```
 
 ### Available Scripts

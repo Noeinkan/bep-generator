@@ -13,7 +13,6 @@
 
 # misc
 .DS_Store
-.env
 .env.local
 .env.development.local
 .env.test.local
@@ -25,34 +24,3 @@ yarn-error.log*
 
 # Windows special files
 nul
-
-# Database files - DO NOT COMMIT
-*.db
-*.sqlite
-*.sqlite3
-server/db/*.db
-
-# Server logs
-server/logs/
-server/*.log
-
-# ML Service
-ml-service/models/*.pth
-ml-service/models/*.h5
-ml-service/models/*.pkl
-ml-service/venv/
-ml-service/__pycache__/
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~

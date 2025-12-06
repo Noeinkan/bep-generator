@@ -45,15 +45,13 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-    "prestart": "node scripts/kill-port.js 3000",
     "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
     "start:frontend": "cross-env NODE_OPTIONS=--max-old-space-size=8192 react-scripts start",
     "start:backend": "node server/server.js",
     "start:3000": "cross-env NODE_OPTIONS=--max-old-space-size=8192 react-scripts start",
     "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "kill-port": "node scripts/kill-port.js"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

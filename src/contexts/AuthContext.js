@@ -25,16 +25,10 @@ export const AuthProvider = ({ children }) => {
           return;
         }
 
-        // Auto-login with default credentials from environment variables
-        const email = process.env.REACT_APP_DEFAULT_USER_EMAIL;
-        const password = process.env.REACT_APP_DEFAULT_USER_PASSWORD;
-        const name = process.env.REACT_APP_DEFAULT_USER_NAME || 'Demo User';
-
-        // Only auto-login if credentials are provided (development mode)
-        if (!email || !password) {
-          setLoading(false);
-          return;
-        }
+        // Auto-login with default credentials
+        const email = 'nome.cognome@libero.it';
+        const password = 'Password1234';
+        const name = 'Nome Cognome';
 
         const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
         let user = existingUsers.find(u => u.email === email);
