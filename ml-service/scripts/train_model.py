@@ -22,6 +22,93 @@ from tqdm import tqdm
 import time
 
 
+class DashboardUpdater:
+    """Helper class to update training dashboard state"""
+
+    def __init__(self, state_file):
+        self.state_file = Path(state_file)
+        self.state = {
+            'status': 'idle',
+            'current_epoch': 0,
+            'total_epochs': 0,
+            'current_batch': 0,
+            'total_batches': 0,
+            'current_loss': 0.0,
+            'avg_loss': 0.0,
+            'best_loss': float('inf'),
+            'losses': [],
+            'batch_losses': [],
+            'epoch_times': [],
+            'device': 'unknown',
+            'start_time': None,
+            'last_update': None,
+            'training_params': {}
+        }
+
+    def update(self, **kwargs):
+        """Update state and save to file"""
+        self.state.update(kwargs)
+        self.state['last_update'] = time.time()
+        self._save()
+
+    def _save(self):
+        """Save state to JSON file"""
+        try:
+            self.state['last_update'] = time.time()
+            with open(self.state_file, 'w') as f:
+                json.dump(self.state, f, indent=2)
+        except Exception as e:
+            # Don't crash training if dashboard update fails
+            pass
+
+    def start_training(self, total_epochs, device, **params):
+        """Mark training as started"""
+        self.state['status'] = 'running'
+        self.state['total_epochs'] = total_epochs
+        self.state['device'] = str(device)
+        self.state['start_time'] = time.time()
+        self.state['training_params'] = params
+        self.state['losses'] = []
+        self.state['batch_losses'] = []
+        self.state['epoch_times'] = []
+        self._save()
+
+    def update_batch(self, epoch, batch, total_batches, loss):
+        """Update batch progress"""
+        self.state['current_epoch'] = epoch
+        self.state['current_batch'] = batch
+        self.state['total_batches'] = total_batches
+        self.state['current_loss'] = loss
+
+        # Keep only recent batch losses (last 100)
+        self.state['batch_losses'].append(loss)
+        if len(self.state['batch_losses']) > 100:
+            self.state['batch_losses'] = self.state['batch_losses'][-100:]
+
+        self._save()
+
+    def update_epoch(self, epoch, avg_loss, best_loss, epoch_time):
+        """Update epoch completion"""
+        self.state['current_epoch'] = epoch
+        self.state['avg_loss'] = avg_loss
+        self.state['best_loss'] = best_loss
+        self.state['losses'].append([epoch, avg_loss])
+        self.state['epoch_times'].append(epoch_time)
+        self.state['batch_losses'] = []  # Reset for next epoch
+        self._save()
+
+    def complete_training(self):
+        """Mark training as completed"""
+        self.state['status'] = 'completed'
+        self._save()
+
+    def error(self, message):
+        """Mark training as errored"""
+        self.state['status'] = 'error'
+        self.state['error_message'] = message
+        self._save()
+
+
 class CharLSTM(nn.Module):
     """Character-level LSTM language model for text generation"""
 
@@ -112,7 +199,7 @@ def prepare_dataset(text, seq_length=100, step=3):
 
 def train_model(model, X, y, n_vocab, epochs=100, learning_rate=0.001, device='cpu',
                 batch_size=128, checkpoint_dir=None, resume_from=None, use_dataloader=False,
-                seq_length=100):
+                seq_length=100, dashboard_state_file=None):
     """Train the LSTM model using mini-batches with checkpointing and progress bars
 
     Args:
@@ -128,9 +215,15 @@ def train_model(model, X, y, n_vocab, epochs=100, learning_rate=0.001, device='c
         resume_from: Path to checkpoint to resume from (None = start fresh)
         use_dataloader: Use PyTorch DataLoader (better for CPU training)
         seq_length: Sequence length (needed for DataLoader)
+        dashboard_state_file: Path to dashboard state file for real-time updates
     """
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+
+    # Initialize dashboard updater
+    dashboard = None
+    if dashboard_state_file:
+        dashboard = DashboardUpdater(dashboard_state_file)
 
     start_epoch = 0
     best_loss = float('inf')
@@ -212,6 +305,16 @@ def train_model(model, X, y, n_vocab, epochs=100, learning_rate=0.001, device='c
 
     print(f"Starting training from epoch {start_epoch + 1}...\n")
 
+    # Start dashboard tracking
+    if dashboard:
+        dashboard.start_training(
+            total_epochs=epochs,
+            device=device,
+            batch_size=batch_size,
+            learning_rate=learning_rate,
+            hidden_size=model.hidden_size
+        )
+
     # Training loop with progress bar
     for epoch in range(start_epoch, epochs):
         model.train()
@@ -240,6 +343,10 @@ def train_model(model, X, y, n_vocab, epochs=100, learning_rate=0.001, device='c
 
                 total_loss += loss.item()
                 batch_count += 1
+
+                # Update dashboard
+                if dashboard and batch_count % 5 == 0:  # Update every 5 batches
+                    dashboard.update_batch(epoch + 1, batch_count, len(dataloader), loss.item())
 
                 # Update progress bar
                 pbar.set_postfix({'loss': f'{loss.item():.4f}'})
@@ -283,6 +390,10 @@ def train_model(model, X, y, n_vocab, epochs=100, learning_rate=0.001, device='c
                 total_loss += loss.item()
                 batch_count += 1
 
+                # Update dashboard
+                if dashboard and i % 5 == 0:  # Update every 5 batches
+                    dashboard.update_batch(epoch + 1, i + 1, n_batches, loss.item())
+
                 # Update progress bar
                 pbar.set_postfix({'loss': f'{loss.item():.4f}'})
 
@@ -290,6 +401,10 @@ def train_model(model, X, y, n_vocab, epochs=100, learning_rate=0.001, device='c
         epoch_time = time.time() - epoch_start_time
 
         print(f'Epoch [{epoch+1}/{epochs}] - Loss: {avg_loss:.4f} - Time: {epoch_time:.1f}s')
+
+        # Update dashboard with epoch completion
+        if dashboard:
+            dashboard.update_epoch(epoch + 1, avg_loss, best_loss if avg_loss < best_loss else best_loss, epoch_time)
 
         # Early stopping check
         if avg_loss < best_loss:
@@ -317,6 +432,11 @@ def train_model(model, X, y, n_vocab, epochs=100, learning_rate=0.001, device='c
             print(f"Checkpoint saved: {checkpoint_path}")
 
     print(f"\nTraining complete! Best loss: {best_loss:.4f}")
+
+    # Mark training as complete in dashboard
+    if dashboard:
+        dashboard.complete_training()
+
     return model
 
 
@@ -461,6 +581,10 @@ def main():
 
     # Train model
     print("\nStarting training...")
+
+    # Setup dashboard state file
+    dashboard_state_file = project_root / 'training_state.json'
+
     model = train_model(
         model, dataX, dataY, n_vocab,
         epochs=args.epochs,
@@ -470,7 +594,8 @@ def main():
         checkpoint_dir=checkpoint_dir,
         resume_from=args.resume,
         use_dataloader=False,  # Use manual GPU pre-loading for better performance
-        seq_length=args.seq_length
+        seq_length=args.seq_length,
+        dashboard_state_file=dashboard_state_file
     )
 
     # Save model

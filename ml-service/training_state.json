@@ -1,0 +1,21 @@
+{
+  "status": "running",
+  "current_epoch": 0,
+  "total_epochs": 100,
+  "current_batch": 0,
+  "total_batches": 0,
+  "current_loss": 0.0,
+  "avg_loss": 0.0,
+  "best_loss": Infinity,
+  "losses": [],
+  "batch_losses": [],
+  "epoch_times": [],
+  "device": "cuda:0",
+  "start_time": 1764545732.8072083,
+  "last_update": 1764545732.8072112,
+  "training_params": {
+    "batch_size": 1024,
+    "learning_rate": 0.001,
+    "hidden_size": 1024
+  }
+}

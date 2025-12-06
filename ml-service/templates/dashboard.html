@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BEP AI Training Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .status-bar {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .status-badge {
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-idle { background: #e2e8f0; color: #64748b; }
+        .status-running { background: #10b981; color: white; animation: pulse 2s infinite; }
+        .status-completed { background: #3b82f6; color: white; }
+        .status-error { background: #ef4444; color: white; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .metric-label {
+            color: #64748b;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            color: #1e293b;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .metric-subtext {
+            color: #94a3b8;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        .charts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .chart-title {
+            font-size: 1.3em;
+            color: #1e293b;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .progress-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .progress-bar-bg {
+            background: #e2e8f0;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .device-info {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .device-icon {
+            font-size: 1.5em;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 BEP AI Training Dashboard</h1>
+            <p class="subtitle">Real-time monitoring of LSTM model training progress</p>
+        </header>
+
+        <div class="status-bar">
+            <div>
+                <span id="statusBadge" class="status-badge status-idle">Idle</span>
+                <div class="device-info">
+                    <span class="device-icon" id="deviceIcon">💻</span>
+                    <span id="deviceInfo">Waiting for training to start...</span>
+                </div>
+            </div>
+            <div id="timeInfo" style="text-align: right;">
+                <div style="color: #64748b; font-size: 0.9em;">ESTIMATED TIME REMAINING</div>
+                <div style="font-size: 1.8em; font-weight: bold; color: #1e293b;">--:--:--</div>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <h3 class="chart-title">Overall Progress</h3>
+            <div class="progress-bar-bg">
+                <div id="progressBar" class="progress-bar-fill" style="width: 0%">0%</div>
+            </div>
+            <div style="margin-top: 15px; color: #64748b; text-align: center;" id="progressText">
+                Epoch 0 / 0
+            </div>
+        </div>
+
+        <div class="metrics">
+            <div class="metric-card">
+                <div class="metric-label">Current Epoch</div>
+                <div class="metric-value" id="currentEpoch">0</div>
+                <div class="metric-subtext" id="epochSubtext">of 0 total</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Current Loss</div>
+                <div class="metric-value" id="currentLoss">--</div>
+                <div class="metric-subtext">Latest batch loss</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Average Loss</div>
+                <div class="metric-value" id="avgLoss">--</div>
+                <div class="metric-subtext">Current epoch average</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Best Loss</div>
+                <div class="metric-value" id="bestLoss">--</div>
+                <div class="metric-subtext">Across all epochs</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Batch Progress</div>
+                <div class="metric-value" id="batchProgress">0 / 0</div>
+                <div class="metric-subtext">Current epoch</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Avg Epoch Time</div>
+                <div class="metric-value" id="avgEpochTime">--</div>
+                <div class="metric-subtext">Seconds per epoch</div>
+            </div>
+        </div>
+
+        <div class="charts">
+            <div class="chart-card">
+                <h3 class="chart-title">Epoch Loss History</h3>
+                <canvas id="lossChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3 class="chart-title">Recent Batch Losses</h3>
+                <canvas id="batchLossChart"></canvas>
+            </div>
+        </div>
+
+        <footer>
+            <p>BEP AI Text Generator Training Dashboard v1.0</p>
+            <p>Updates every 2 seconds</p>
+        </footer>
+    </div>
+
+    <script>
+        // Chart.js configuration
+        const lossChartCtx = document.getElementById('lossChart').getContext('2d');
+        const batchLossChartCtx = document.getElementById('batchLossChart').getContext('2d');
+
+        const lossChart = new Chart(lossChartCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Average Loss',
+                    data: [],
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Loss'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Epoch'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        const batchLossChart = new Chart(batchLossChartCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Batch Loss',
+                    data: [],
+                    borderColor: '#764ba2',
+                    backgroundColor: 'rgba(118, 75, 162, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Loss'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Batch'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        function formatTime(seconds) {
+            if (!seconds || seconds < 0) return '--:--:--';
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function updateDashboard() {
+            fetch('/api/status')
+                .then(response => response.json())
+                .then(data => {
+                    // Update status badge
+                    const statusBadge = document.getElementById('statusBadge');
+                    statusBadge.className = `status-badge status-${data.status}`;
+                    statusBadge.textContent = data.status;
+
+                    // Update device info
+                    const deviceIcon = document.getElementById('deviceIcon');
+                    const deviceInfo = document.getElementById('deviceInfo');
+                    if (data.device.includes('cuda')) {
+                        deviceIcon.textContent = '🎮';
+                        deviceInfo.textContent = data.device.replace('cuda:0', 'GPU Training Active');
+                    } else {
+                        deviceIcon.textContent = '💻';
+                        deviceInfo.textContent = data.device === 'unknown' ? 'No training active' : 'CPU Training Active';
+                    }
+
+                    // Update progress bar
+                    const progress = data.total_epochs > 0 ? (data.current_epoch / data.total_epochs) * 100 : 0;
+                    document.getElementById('progressBar').style.width = `${progress}%`;
+                    document.getElementById('progressBar').textContent = `${Math.round(progress)}%`;
+                    document.getElementById('progressText').textContent = `Epoch ${data.current_epoch} / ${data.total_epochs}`;
+
+                    // Update metrics
+                    document.getElementById('currentEpoch').textContent = data.current_epoch;
+                    document.getElementById('epochSubtext').textContent = `of ${data.total_epochs} total`;
+                    document.getElementById('currentLoss').textContent = data.current_loss > 0 ? data.current_loss.toFixed(4) : '--';
+                    document.getElementById('avgLoss').textContent = data.avg_loss > 0 ? data.avg_loss.toFixed(4) : '--';
+                    document.getElementById('bestLoss').textContent = data.best_loss < Infinity ? data.best_loss.toFixed(4) : '--';
+                    document.getElementById('batchProgress').textContent = `${data.current_batch} / ${data.total_batches}`;
+                    document.getElementById('avgEpochTime').textContent = data.avg_epoch_time ? data.avg_epoch_time.toFixed(1) + 's' : '--';
+
+                    // Update time remaining
+                    const timeInfo = document.getElementById('timeInfo');
+                    if (data.estimated_remaining_seconds) {
+                        timeInfo.innerHTML = `
+                            <div style="color: #64748b; font-size: 0.9em;">ESTIMATED TIME REMAINING</div>
+                            <div style="font-size: 1.8em; font-weight: bold; color: #1e293b;">${formatTime(data.estimated_remaining_seconds)}</div>
+                        `;
+                    } else {
+                        timeInfo.innerHTML = `
+                            <div style="color: #64748b; font-size: 0.9em;">ESTIMATED TIME REMAINING</div>
+                            <div style="font-size: 1.8em; font-weight: bold; color: #1e293b;">--:--:--</div>
+                        `;
+                    }
+
+                    // Update loss chart
+                    if (data.losses && data.losses.length > 0) {
+                        lossChart.data.labels = data.losses.map((_, idx) => idx + 1);
+                        lossChart.data.datasets[0].data = data.losses.map(item => item[1]);
+                        lossChart.update('none');
+                    }
+
+                    // Update batch loss chart
+                    if (data.batch_losses && data.batch_losses.length > 0) {
+                        const maxBatches = 50; // Show last 50 batches
+                        const recentBatches = data.batch_losses.slice(-maxBatches);
+                        batchLossChart.data.labels = recentBatches.map((_, idx) => idx + 1);
+                        batchLossChart.data.datasets[0].data = recentBatches;
+                        batchLossChart.update('none');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching status:', error);
+                });
+        }
+
+        // Update every 2 seconds
+        setInterval(updateDashboard, 2000);
+        updateDashboard(); // Initial update
+    </script>
+</body>
+</html>

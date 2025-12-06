@@ -159,12 +159,15 @@ async def generate_text(request: GenerateRequest):
         )
 
 
-@app.post("/suggest", response_model=GenerateResponse, tags=["Generation"])
-async def suggest_for_field(
-    field_type: str = Field(..., description="Type of BEP field"),
-    partial_text: str = Field("", description="Existing text in the field"),
+class SuggestRequest(BaseModel):
+    """Request model for field suggestions"""
+    field_type: str = Field(..., description="Type of BEP field")
+    partial_text: str = Field("", description="Existing text in the field")
     max_length: int = Field(200, ge=50, le=1000, description="Maximum characters to generate")
-):
+
+
+@app.post("/suggest", response_model=GenerateResponse, tags=["Generation"])
+async def suggest_for_field(request: SuggestRequest):
     """
     Generate field-specific suggestions
 
@@ -186,16 +189,16 @@ async def suggest_for_field(
 
         # Generate field-specific suggestion
         suggestion = generator.suggest_for_field(
-            field_type=field_type,
-            partial_text=partial_text,
-            max_length=max_length
+            field_type=request.field_type,
+            partial_text=request.partial_text,
+            max_length=request.max_length
         )
 
-        logger.info(f"Generated suggestion for {field_type}: {len(suggestion)} chars")
+        logger.info(f"Generated suggestion for {request.field_type}: {len(suggestion)} chars")
 
         return GenerateResponse(
             text=suggestion,
-            prompt_used=partial_text or generator.field_prompts.get(field_type, '')
+            prompt_used=request.partial_text or generator.field_prompts.get(request.field_type, '')
         )
 
     except Exception as e:
@@ -206,20 +209,48 @@ async def suggest_for_field(
         )
 
 
+def find_available_port(start_port=8000, max_attempts=10):
+    """Find an available port starting from start_port"""
+    import socket
+
+    for port in range(start_port, start_port + max_attempts):
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.bind(('0.0.0.0', port))
+                return port
+        except OSError:
+            continue
+
+    raise RuntimeError(f"Could not find available port in range {start_port}-{start_port + max_attempts}")
+
+
 if __name__ == "__main__":
     import uvicorn
+    import os
 
-    # Run the API server
-    print("="*60)
-    print("Starting BEP AI Text Generator API")
-    print("="*60)
-    print("API will be available at: http://localhost:8000")
-    print("API documentation: http://localhost:8000/docs")
-    print("="*60)
+    # Try to use port from environment variable, otherwise find available port
+    preferred_port = int(os.environ.get('BEP_API_PORT', '8000'))
 
-    uvicorn.run(
-        app,
-        host="0.0.0.0",
-        port=8000,
-        log_level="info"
-    )
+    try:
+        port = find_available_port(preferred_port)
+
+        # Run the API server
+        print("="*60)
+        print("Starting BEP AI Text Generator API")
+        print("="*60)
+        print(f"API will be available at: http://localhost:{port}")
+        print(f"API documentation: http://localhost:{port}/docs")
+        if port != preferred_port:
+            print(f"NOTE: Port {preferred_port} was busy, using port {port} instead")
+        print("="*60)
+
+        uvicorn.run(
+            app,
+            host="0.0.0.0",
+            port=port,
+            log_level="info"
+        )
+    except RuntimeError as e:
+        print(f"ERROR: {e}")
+        print("Please close some applications and try again.")
+        exit(1)

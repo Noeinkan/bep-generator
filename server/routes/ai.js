@@ -150,12 +150,10 @@ router.post('/suggest', async (req, res) => {
     console.log(`AI suggestion request: field_type=${field_type}, partial_length=${partial_text.length}`);
 
     // Call ML service
-    const response = await mlClient.post('/suggest', null, {
-      params: {
-        field_type,
-        partial_text,
-        max_length: Math.min(Math.max(max_length, 50), 1000)
-      }
+    const response = await mlClient.post('/suggest', {
+      field_type,
+      partial_text,
+      max_length: Math.min(Math.max(max_length, 50), 1000)
     });
 
     res.json({
