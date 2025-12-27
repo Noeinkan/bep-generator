@@ -18,14 +18,11 @@ import json
 import argparse
 import subprocess
 import sys
-import webbrowser
-import time
-import atexit
 import re
 from pathlib import Path
 from datetime import datetime
-from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import Dataset, DataLoader
+from tensorboard_logger import TensorBoardLogger
 from torch.nn.utils.rnn import pad_sequence
 from torch.cuda.amp import autocast, GradScaler
 from tqdm import tqdm
@@ -159,7 +156,7 @@ def load_training_data(data_path):
         if not text or len(text.strip()) == 0:
             raise ValueError(f"Training data file is empty: {data_path}")
 
-        print(f"✅ Loaded {len(text):,} characters from {data_path}")
+        print(f"[OK] Loaded {len(text):,} characters from {data_path}")
 
         # Preprocessing steps
         # 1. Convert to lowercase to reduce vocabulary size
@@ -173,8 +170,8 @@ def load_training_data(data_path):
         # Keep: letters, numbers, basic punctuation, newlines
         text = re.sub(r'[^\w\s.,;:!?()\-\n\'\"]+', '', text)
 
-        print(f"✅ Text preprocessing completed")
-        print(f"📝 Total characters after preprocessing: {len(text):,}")
+        print(f"[OK] Text preprocessing completed")
+        print(f"[NOTE] Total characters after preprocessing: {len(text):,}")
 
         # Final validation
         if len(text) < 100:
@@ -183,19 +180,19 @@ def load_training_data(data_path):
         return text
 
     except FileNotFoundError as e:
-        print(f"\n❌ Error: {e}")
-        print(f"💡 Please ensure the training data file exists at the specified path.")
+        print(f"\n[ERROR] Error: {e}")
+        print(f"[TIP] Please ensure the training data file exists at the specified path.")
         raise
     except PermissionError as e:
-        print(f"\n❌ Error: {e}")
-        print(f"💡 Please check file permissions.")
+        print(f"\n[ERROR] Error: {e}")
+        print(f"[TIP] Please check file permissions.")
         raise
     except UnicodeDecodeError as e:
-        print(f"\n❌ Error: Could not decode file as UTF-8: {e}")
-        print(f"💡 Please ensure the file is encoded as UTF-8.")
+        print(f"\n[ERROR] Error: Could not decode file as UTF-8: {e}")
+        print(f"[TIP] Please ensure the file is encoded as UTF-8.")
         raise
     except Exception as e:
-        print(f"\n❌ Unexpected error loading training data: {e}")
+        print(f"\n[ERROR] Unexpected error loading training data: {e}")
         raise
 
 
@@ -208,10 +205,12 @@ def prepare_dataset(text, seq_length=100, validation_split=0.2):
 
     # Create character mappings (PAD must be index 0 for easier masking)
     chars = sorted(list(set(text)))
-    # Ensure PAD is first (index 0)
+    # Ensure PAD is first (index 0) and EOS is included
     if PAD_TOKEN in chars:
         chars.remove(PAD_TOKEN)
-    chars = [PAD_TOKEN] + chars
+    if EOS_TOKEN in chars:
+        chars.remove(EOS_TOKEN)
+    chars = [PAD_TOKEN] + chars + [EOS_TOKEN]
 
     char_to_int = {c: i for i, c in enumerate(chars)}
     int_to_char = {i: c for i, c in enumerate(chars)}
@@ -266,7 +265,7 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
     # Setup TensorBoard
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     log_dir = Path(__file__).parent.parent / 'runs' / f'bep_training_{timestamp}'
-    writer = SummaryWriter(log_dir=str(log_dir))
+    logger = TensorBoardLogger(log_dir=str(log_dir), auto_start=True, port=6006)
 
     # Setup WandB if enabled
     wandb_run = None
@@ -289,52 +288,13 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
                     'device': str(device),
                 }
             )
-            print(f"✅ Weights & Biases initialized: {wandb.run.url}")
+            print(f"[OK] Weights & Biases initialized: {wandb.run.url}")
         except Exception as e:
-            print(f"⚠️  Could not initialize WandB: {e}")
+            print(f"[WARNING]  Could not initialize WandB: {e}")
             wandb_run = None
     elif use_wandb and not WANDB_AVAILABLE:
-        print(f"⚠️  WandB requested but not installed. Install with: pip install wandb")
+        print(f"[WARNING]  WandB requested but not installed. Install with: pip install wandb")
 
-    # Start TensorBoard automatically
-    tensorboard_process = None
-    try:
-        print(f"\n{'='*60}")
-        print(f"🚀 Starting TensorBoard...")
-        print(f"Log directory: {log_dir}")
-
-        # Start TensorBoard in background
-        tensorboard_cmd = [sys.executable, '-m', 'tensorboard.main',
-                          '--logdir', str(log_dir.parent), '--port', '6006']
-        tensorboard_process = subprocess.Popen(
-            tensorboard_cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0
-        )
-
-        # Register cleanup on exit
-        def cleanup_tensorboard():
-            if tensorboard_process and tensorboard_process.poll() is None:
-                tensorboard_process.terminate()
-                print("\n🛑 TensorBoard stopped.")
-
-        atexit.register(cleanup_tensorboard)
-
-        # Wait for TensorBoard to start
-        time.sleep(3)
-
-        # Open browser
-        tensorboard_url = 'http://localhost:6006'
-        print(f"✅ TensorBoard started!")
-        print(f"📊 Opening dashboard: {tensorboard_url}")
-        webbrowser.open(tensorboard_url)
-        print(f"{'='*60}\n")
-
-    except Exception as e:
-        print(f"⚠️  Could not start TensorBoard automatically: {e}")
-        print(f"You can start it manually: tensorboard --logdir={log_dir.parent}")
-        print(f"{'='*60}\n")
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
@@ -344,9 +304,7 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
         optimizer,
         mode='min',
         factor=0.5,
-        patience=lr_scheduler_patience,
-        verbose=True,
-        min_lr=1e-6
+        patience=lr_scheduler_patience
     )
 
     # Early stopping variables
@@ -369,27 +327,29 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
     # Determine optimal number of workers based on CPU cores
     num_workers = min(8, os.cpu_count() or 4) if device.type == 'cuda' else 0
 
-    print(f"🚀 Training on device: {device}")
-    print(f"📊 Model parameters: {sum(p.numel() for p in model.parameters()):,}")
-    print(f"📦 Batch size: {batch_size}")
-    print(f"⚡ Mixed precision (AMP): {use_amp}")
-    print(f"👷 DataLoader workers: {num_workers}")
+    print(f"[START] Training on device: {device}")
+    print(f"[CHART] Model parameters: {sum(p.numel() for p in model.parameters()):,}")
+    print(f"[BATCH] Batch size: {batch_size}")
+    print(f"[FAST] Mixed precision (AMP): {use_amp}")
+    print(f"[WORKERS] DataLoader workers: {num_workers}")
 
     # Log hyperparameters to TensorBoard
-    writer.add_text('Hyperparameters', f'''
-    - Epochs: {epochs}
-    - Learning Rate: {learning_rate}
-    - RNN Type: {model.rnn_type.upper()}
-    - Embedding Dimension: {model.embed_dim}
-    - Hidden Size: {model.hidden_size}
-    - Num Layers: {model.num_layers}
-    - Batch Size: {batch_size}
-    - Device: {device}
-    - Mixed Precision: {use_amp}
-    - DataLoader Workers: {num_workers}
-    - Vocabulary Size: {n_vocab}
-    - Total Parameters: {sum(p.numel() for p in model.parameters()):,}
-    ''')
+    logger.log_hyperparameters({
+        'epochs': epochs,
+        'learning_rate': learning_rate,
+        'rnn_type': model.rnn_type.upper(),
+        'embed_dim': model.embed_dim,
+        'hidden_size': model.hidden_size,
+        'num_layers': model.num_layers,
+        'batch_size': batch_size,
+        'device': str(device),
+        'mixed_precision': use_amp,
+        'dataloader_workers': num_workers,
+        'vocab_size': n_vocab,
+        'total_parameters': f"{sum(p.numel() for p in model.parameters()):,}",
+        'early_stopping_patience': early_stopping_patience,
+        'lr_scheduler_patience': lr_scheduler_patience,
+    })
 
     # Convert to numpy arrays (integers for embedding layer)
     train_X = np.array(train_X, dtype=np.int64)
@@ -421,11 +381,11 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
 
     n_batches = len(train_dataloader)
 
-    print(f"\n🏃 Starting training with {n_batches} batches per epoch...")
-    print(f"📉 Early stopping patience: {early_stopping_patience} epochs")
-    print(f"📊 LR scheduler patience: {lr_scheduler_patience} epochs")
+    print(f"\n[RUNNING] Starting training with {n_batches} batches per epoch...")
+    print(f"[PATIENCE] Early stopping patience: {early_stopping_patience} epochs")
+    print(f"[CHART] LR scheduler patience: {lr_scheduler_patience} epochs")
     if start_epoch > 0:
-        print(f"🔄 Resuming from epoch {start_epoch}")
+        print(f"[RESUME] Resuming from epoch {start_epoch}")
     print()
 
     # Training loop with progress bar
@@ -560,28 +520,29 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
                 'int_to_char': {int(k): v for k, v in int_to_char.items()},
                 'n_vocab': n_vocab,
             }, checkpoint_path)
-            tqdm.write(f'💾 Checkpoint saved: {checkpoint_path}')
+            tqdm.write(f'[SAVE] Checkpoint saved: {checkpoint_path}')
 
-        # Log to TensorBoard
-        writer.add_scalar('Loss/train', avg_train_loss, epoch)
-        writer.add_scalar('Loss/validation', avg_val_loss, epoch)
-        writer.add_scalar('Loss/best_val', best_val_loss, epoch)
-        writer.add_scalar('Loss/batch_std', np.std(batch_losses), epoch)
-        writer.add_scalar('Accuracy/val_top1', val_acc_top1, epoch)
-        writer.add_scalar('Accuracy/val_top5', val_acc_top5, epoch)
-        writer.add_scalar('EarlyStopping/epochs_without_improvement', epochs_without_improvement, epoch)
-
-        # Log learning rate
-        writer.add_scalar('Learning_Rate', optimizer.param_groups[0]['lr'], epoch)
-
-        # Log gradient norms
+        # Calculate gradient norm
         total_norm = 0
         for p in model.parameters():
             if p.grad is not None:
                 param_norm = p.grad.data.norm(2)
                 total_norm += param_norm.item() ** 2
         total_norm = total_norm ** 0.5
-        writer.add_scalar('Gradients/norm', total_norm, epoch)
+
+        # Log comprehensive metrics to TensorBoard
+        logger.log_epoch_metrics(
+            epoch=epoch,
+            train_loss=avg_train_loss,
+            val_loss=avg_val_loss,
+            val_acc_top1=val_acc_top1,
+            val_acc_top5=val_acc_top5,
+            learning_rate=optimizer.param_groups[0]['lr'],
+            gradient_norm=total_norm,
+            batch_losses=batch_losses,
+            epochs_without_improvement=epochs_without_improvement,
+            best_val_loss=best_val_loss
+        )
 
         # Log to WandB if enabled
         if wandb_run is not None:
@@ -604,7 +565,7 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
                 model, char_to_int, int_to_char, n_vocab,
                 device=device, max_length=150
             )
-            writer.add_text('Generated_Samples', sample_text, epoch)
+            logger.log_text_sample(sample_text, epoch, tag='Generated_Samples')
 
             tqdm.write(f'\n{"="*60}')
             tqdm.write(f'Epoch [{epoch+1}/{epochs}]')
@@ -617,31 +578,31 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
         # Early stopping check
         if epochs_without_improvement >= early_stopping_patience:
             tqdm.write(f'\n{"="*60}')
-            tqdm.write(f'⏹️  Early stopping triggered after {epoch+1} epochs')
+            tqdm.write(f'[STOP]  Early stopping triggered after {epoch+1} epochs')
             tqdm.write(f'No improvement for {early_stopping_patience} consecutive epochs')
             tqdm.write(f'Best validation loss: {best_val_loss:.4f}')
             tqdm.write(f'{"="*60}\n')
             break
 
-    writer.close()
+    logger.close()
 
     # Finalize WandB if used
     if wandb_run is not None:
         wandb.finish()
-        print("✅ Weights & Biases run completed")
+        print("[OK] Weights & Biases run completed")
 
     # Training completion notification
     print(f"\n\n{'='*60}")
-    print(f"🎉 TRAINING COMPLETATO! 🎉")
+    print(f"[SUCCESS] TRAINING COMPLETATO! [SUCCESS]")
     print(f"{'='*60}")
-    print(f"✅ Epochs completate: {epochs}")
-    print(f"✅ Train Loss finale: {avg_train_loss:.4f}")
-    print(f"✅ Val Loss finale: {avg_val_loss:.4f}")
-    print(f"✅ Best Val Loss: {best_val_loss:.4f}")
-    print(f"✅ TensorBoard logs: {log_dir}")
-    print(f"📊 Dashboard disponibile su: http://localhost:6006")
+    print(f"[OK] Epochs completate: {epochs}")
+    print(f"[OK] Train Loss finale: {avg_train_loss:.4f}")
+    print(f"[OK] Val Loss finale: {avg_val_loss:.4f}")
+    print(f"[OK] Best Val Loss: {best_val_loss:.4f}")
+    print(f"[OK] TensorBoard logs: {log_dir}")
+    print(f"[CHART] Dashboard disponibile su: http://localhost:6006")
     if best_model_path:
-        print(f"💾 Best model salvato in: {best_model_path}")
+        print(f"[SAVE] Best model salvato in: {best_model_path}")
     print(f"{'='*60}\n")
 
     # Try to show a system notification (Windows)
@@ -733,13 +694,13 @@ def load_checkpoint(checkpoint_path, model, optimizer=None, scheduler=None, devi
         or (0, inf) for fine-tuning
     """
     try:
-        print(f"\n📥 Loading checkpoint from: {checkpoint_path}")
+        print(f"\n[DOWNLOAD] Loading checkpoint from: {checkpoint_path}")
         checkpoint = torch.load(checkpoint_path, map_location=device)
 
         # Load model weights
         model_to_load = model.module if isinstance(model, nn.DataParallel) else model
         model_to_load.load_state_dict(checkpoint['model_state_dict'])
-        print(f"✅ Model weights loaded")
+        print(f"[OK] Model weights loaded")
 
         start_epoch = 0
         best_val_loss = float('inf')
@@ -747,28 +708,28 @@ def load_checkpoint(checkpoint_path, model, optimizer=None, scheduler=None, devi
         # If optimizer and scheduler are provided, load their states (resuming training)
         if optimizer is not None and 'optimizer_state_dict' in checkpoint:
             optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-            print(f"✅ Optimizer state loaded")
+            print(f"[OK] Optimizer state loaded")
 
         if scheduler is not None and 'scheduler_state_dict' in checkpoint:
             scheduler.load_state_dict(checkpoint['scheduler_state_dict'])
-            print(f"✅ Scheduler state loaded")
+            print(f"[OK] Scheduler state loaded")
 
         # Get epoch and validation loss if available
         if 'epoch' in checkpoint:
             start_epoch = checkpoint['epoch'] + 1
-            print(f"✅ Resuming from epoch {start_epoch}")
+            print(f"[OK] Resuming from epoch {start_epoch}")
 
         if 'val_loss' in checkpoint:
             best_val_loss = checkpoint['val_loss']
-            print(f"✅ Previous best validation loss: {best_val_loss:.4f}")
+            print(f"[OK] Previous best validation loss: {best_val_loss:.4f}")
 
         return start_epoch, best_val_loss
 
     except FileNotFoundError:
-        print(f"\n❌ Checkpoint file not found: {checkpoint_path}")
+        print(f"\n[ERROR] Checkpoint file not found: {checkpoint_path}")
         raise
     except Exception as e:
-        print(f"\n❌ Error loading checkpoint: {e}")
+        print(f"\n[ERROR] Error loading checkpoint: {e}")
         raise
 
 
@@ -815,18 +776,18 @@ def save_model(model, char_to_int, int_to_char, save_dir):
         model_size = os.path.getsize(model_path) / (1024 * 1024)  # MB
         mappings_size = os.path.getsize(mappings_path) / 1024  # KB
 
-        print(f"\n✅ Model saved to: {model_path} ({model_size:.2f} MB)")
-        print(f"✅ Mappings saved to: {mappings_path} ({mappings_size:.2f} KB)")
+        print(f"\n[OK] Model saved to: {model_path} ({model_size:.2f} MB)")
+        print(f"[OK] Mappings saved to: {mappings_path} ({mappings_size:.2f} KB)")
 
     except PermissionError as e:
-        print(f"\n❌ Error: Cannot write to directory {save_dir}: {e}")
-        print(f"💡 Please check write permissions for the models directory.")
+        print(f"\n[ERROR] Error: Cannot write to directory {save_dir}: {e}")
+        print(f"[TIP] Please check write permissions for the models directory.")
         raise
     except IOError as e:
-        print(f"\n❌ Error saving model: {e}")
+        print(f"\n[ERROR] Error saving model: {e}")
         raise
     except Exception as e:
-        print(f"\n❌ Unexpected error during model save: {e}")
+        print(f"\n[ERROR] Unexpected error during model save: {e}")
         raise
 
 
@@ -974,12 +935,12 @@ def main():
     if device.type == 'cuda':
         torch.backends.cudnn.benchmark = True
         torch.backends.cudnn.enabled = True
-        print(f"✅ cuDNN benchmark enabled for faster GPU training")
+        print(f"[OK] cuDNN benchmark enabled for faster GPU training")
     else:
         # CPU optimizations: set number of threads
         num_threads = os.cpu_count() or 4
         torch.set_num_threads(num_threads)
-        print(f"✅ CPU threads set to {num_threads} for faster training")
+        print(f"[OK] CPU threads set to {num_threads} for faster training")
 
     # Auto-detect optimal batch size based on device
     if args.batch_size is None:
@@ -1005,40 +966,40 @@ def main():
             # Parse GPU IDs from comma-separated string
             gpu_ids = [int(x.strip()) for x in args.gpu_ids.split(',')]
             num_gpus = len(gpu_ids)
-            print(f"🎮 Multi-GPU enabled: Using GPUs {gpu_ids}")
+            print(f"[GPU] Multi-GPU enabled: Using GPUs {gpu_ids}")
         else:
             # Use all available GPUs
             num_gpus = torch.cuda.device_count()
             gpu_ids = list(range(num_gpus))
-            print(f"🎮 Multi-GPU enabled: Using all {num_gpus} available GPUs")
+            print(f"[GPU] Multi-GPU enabled: Using all {num_gpus} available GPUs")
 
         # Adjust batch size for multi-GPU
         if args.batch_size is None:
             batch_size = batch_size * num_gpus
-            print(f"📦 Batch size scaled for {num_gpus} GPUs: {batch_size}")
+            print(f"[BATCH] Batch size scaled for {num_gpus} GPUs: {batch_size}")
     elif args.multi_gpu and not torch.cuda.is_available():
-        print("⚠️  Multi-GPU requested but CUDA not available. Using CPU.")
+        print("[WARNING]  Multi-GPU requested but CUDA not available. Using CPU.")
 
-    print(f"🖥️  Using device: {device}")
+    print(f"[DEVICE]  Using device: {device}")
     if device.type == 'cuda':
         gpu_name = torch.cuda.get_device_name(0)
         gpu_mem = torch.cuda.get_device_properties(0).total_memory / 1024**3
-        print(f"🎮 GPU: {gpu_name}")
-        print(f"💾 VRAM: {gpu_mem:.1f} GB")
+        print(f"[GPU] GPU: {gpu_name}")
+        print(f"[SAVE] VRAM: {gpu_mem:.1f} GB")
         if num_gpus > 1:
             for i in range(1, num_gpus):
                 gpu_name_i = torch.cuda.get_device_name(i)
                 gpu_mem_i = torch.cuda.get_device_properties(i).total_memory / 1024**3
-                print(f"🎮 GPU {i}: {gpu_name_i}")
-                print(f"💾 VRAM {i}: {gpu_mem_i:.1f} GB")
-    print(f"📦 Batch size: {batch_size}")
+                print(f"[GPU] GPU {i}: {gpu_name_i}")
+                print(f"[SAVE] VRAM {i}: {gpu_mem_i:.1f} GB")
+    print(f"[BATCH] Batch size: {batch_size}")
 
     # Load and prepare data with error handling
     try:
-        print("\n📖 Loading training data...")
+        print("\n[LOAD] Loading training data...")
         text = load_training_data(data_path)
 
-        print("\n🔧 Preparing dataset...")
+        print("\n[CONFIG] Preparing dataset...")
         train_X, train_Y, val_X, val_Y, char_to_int, int_to_char, n_vocab = prepare_dataset(text, args.seq_length)
 
         # Validate we have enough data
@@ -1048,18 +1009,18 @@ def main():
             raise ValueError(f"Validation set too small ({len(val_X)} sequences). Need at least 10 sequences.")
 
     except (FileNotFoundError, PermissionError, ValueError, UnicodeDecodeError) as e:
-        print(f"\n❌ Fatal error during data loading: {e}")
-        print(f"\n💡 Training cannot continue without valid data. Exiting...")
+        print(f"\n[ERROR] Fatal error during data loading: {e}")
+        print(f"\n[TIP] Training cannot continue without valid data. Exiting...")
         return
     except Exception as e:
-        print(f"\n❌ Unexpected error during data preparation: {e}")
+        print(f"\n[ERROR] Unexpected error during data preparation: {e}")
         import traceback
         traceback.print_exc()
         return
 
     # Create model with error handling
     try:
-        print("\n🧠 Initializing model...")
+        print("\n[MODEL] Initializing model...")
         print(f"Model architecture: {args.rnn_type.upper()}")
         print(f"Embedding dimension: {args.embed_dim}")
         print(f"Hidden size: {args.hidden_size}")
@@ -1082,38 +1043,38 @@ def main():
                 model = nn.DataParallel(model, device_ids=gpu_ids)
             else:
                 model = nn.DataParallel(model)
-            print(f"✅ Model wrapped with DataParallel for {num_gpus} GPUs")
+            print(f"[OK] Model wrapped with DataParallel for {num_gpus} GPUs")
 
-        print(f"✅ Model initialized with {sum(p.numel() for p in model.parameters()):,} parameters")
+        print(f"[OK] Model initialized with {sum(p.numel() for p in model.parameters()):,} parameters")
 
         # Load pre-trained weights if specified
         if args.resume_from:
             # Resume training: load model, optimizer, and scheduler states
-            print("\n🔄 Resuming training from checkpoint...")
+            print("\n[RESUME] Resuming training from checkpoint...")
             # Note: Optimizer and scheduler will be created in train_model, so we'll handle this there
             load_checkpoint(args.resume_from, model, device=device)
         elif args.finetune_from:
             # Fine-tuning: load only model weights
-            print("\n🎯 Fine-tuning from pre-trained model...")
+            print("\n[FINETUNE] Fine-tuning from pre-trained model...")
             load_checkpoint(args.finetune_from, model, device=device)
 
     except RuntimeError as e:
         if "out of memory" in str(e).lower():
-            print(f"\n❌ GPU out of memory error: {e}")
-            print(f"💡 Try reducing --batch-size, --hidden-size, or --embed-dim")
-            print(f"💡 Current settings: batch_size={batch_size}, hidden_size={args.hidden_size}, embed_dim={args.embed_dim}")
+            print(f"\n[ERROR] GPU out of memory error: {e}")
+            print(f"[TIP] Try reducing --batch-size, --hidden-size, or --embed-dim")
+            print(f"[TIP] Current settings: batch_size={batch_size}, hidden_size={args.hidden_size}, embed_dim={args.embed_dim}")
         else:
-            print(f"\n❌ Runtime error creating model: {e}")
+            print(f"\n[ERROR] Runtime error creating model: {e}")
         return
     except Exception as e:
-        print(f"\n❌ Unexpected error creating model: {e}")
+        print(f"\n[ERROR] Unexpected error creating model: {e}")
         import traceback
         traceback.print_exc()
         return
 
     # Train model with error handling
     try:
-        print("\n🏋️ Starting training...")
+        print("\n[TRAIN] Starting training...")
         model = train_model(
             model, train_X, train_Y, val_X, val_Y, n_vocab,
             epochs=args.epochs,
@@ -1133,32 +1094,32 @@ def main():
         )
 
     except KeyboardInterrupt:
-        print(f"\n\n⚠️  Training interrupted by user (Ctrl+C)")
-        print(f"💡 Attempting to save current model state...")
+        print(f"\n\n[WARNING]  Training interrupted by user (Ctrl+C)")
+        print(f"[TIP] Attempting to save current model state...")
         # Model will be saved below if it exists
     except RuntimeError as e:
         if "out of memory" in str(e).lower():
-            print(f"\n❌ GPU out of memory during training: {e}")
-            print(f"💡 Try reducing --batch-size from {batch_size}")
-            print(f"💡 Or reduce model size (--hidden-size, --embed-dim, --num-layers)")
+            print(f"\n[ERROR] GPU out of memory during training: {e}")
+            print(f"[TIP] Try reducing --batch-size from {batch_size}")
+            print(f"[TIP] Or reduce model size (--hidden-size, --embed-dim, --num-layers)")
         else:
-            print(f"\n❌ Runtime error during training: {e}")
+            print(f"\n[ERROR] Runtime error during training: {e}")
             import traceback
             traceback.print_exc()
         return
     except Exception as e:
-        print(f"\n❌ Unexpected error during training: {e}")
+        print(f"\n[ERROR] Unexpected error during training: {e}")
         import traceback
         traceback.print_exc()
         return
 
     # Save model with error handling
     try:
-        print("\n💾 Saving model...")
+        print("\n[SAVE] Saving model...")
         save_model(model, char_to_int, int_to_char, models_dir)
     except Exception as e:
-        print(f"\n⚠️  Warning: Could not save model: {e}")
-        print(f"💡 Model training completed but save failed. Check disk space and permissions.")
+        print(f"\n[WARNING]  Warning: Could not save model: {e}")
+        print(f"[TIP] Model training completed but save failed. Check disk space and permissions.")
 
     # Generate sample text with different strategies
     print("\n" + "="*60)
@@ -1190,13 +1151,13 @@ def main():
     print("="*60)
 
     # Final completion message
-    print("\n" + "🎊"*30)
-    print("🎉" + " "*26 + "TRAINING COMPLETATO!" + " "*26 + "🎉")
-    print("🎊"*30)
-    print("\n✅ Il modello è stato salvato con successo!")
-    print("✅ TensorBoard rimane aperto per visualizzare i risultati")
-    print("📊 Dashboard: http://localhost:6006")
-    print("\n💡 Premi CTRL+C per chiudere tutto\n")
+    print("\n" + "***"*30)
+    print("[SUCCESS]" + " "*26 + "TRAINING COMPLETATO!" + " "*26 + "[SUCCESS]")
+    print("***"*30)
+    print("\n[OK] Il modello è stato salvato con successo!")
+    print("[OK] TensorBoard rimane aperto per visualizzare i risultati")
+    print("[CHART] Dashboard: http://localhost:6006")
+    print("\n[TIP] Premi CTRL+C per chiudere tutto\n")
 
 
 if __name__ == '__main__':
