@@ -16,10 +16,32 @@ import numpy as np
 import os
 import json
 import argparse
+import subprocess
+import sys
+import webbrowser
+import time
+import atexit
+import re
 from pathlib import Path
 from datetime import datetime
 from torch.utils.tensorboard import SummaryWriter
+from torch.utils.data import Dataset, DataLoader
+from torch.cuda.amp import autocast, GradScaler
 from tqdm import tqdm
+
+
+class CharDataset(Dataset):
+    """PyTorch Dataset for character sequences"""
+
+    def __init__(self, X, y, n_vocab):
+        self.X = torch.tensor(X, dtype=torch.float32).reshape(len(X), -1, 1) / float(n_vocab)
+        self.y = torch.tensor(y, dtype=torch.long)
+
+    def __len__(self):
+        return len(self.X)
+
+    def __getitem__(self, idx):
+        return self.X[idx], self.y[idx]
 
 
 class CharLSTM(nn.Module):
@@ -49,15 +71,35 @@ class CharLSTM(nn.Module):
 
 
 def load_training_data(data_path):
-    """Load and return training text"""
+    """Load and return training text with preprocessing"""
     with open(data_path, 'r', encoding='utf-8') as f:
         text = f.read()
+
+    # Preprocessing steps
+    # 1. Convert to lowercase to reduce vocabulary size
+    text = text.lower()
+
+    # 2. Remove multiple consecutive spaces/newlines
+    text = re.sub(r'\n{3,}', '\n\n', text)  # Max 2 consecutive newlines
+    text = re.sub(r' {2,}', ' ', text)  # Remove multiple spaces
+
+    # 3. Remove special characters that don't add meaning (keep basic punctuation)
+    # Keep: letters, numbers, basic punctuation, newlines
+    text = re.sub(r'[^\w\s.,;:!?()\-\n\'\"]+', '', text)
+
+    print(f"Text preprocessing completed")
+    print(f"Total characters after preprocessing: {len(text)}")
+
     return text
 
 
-def prepare_dataset(text, seq_length=100):
-    """Prepare character mappings and training sequences"""
-    # Create character mappings
+def prepare_dataset(text, seq_length=100, validation_split=0.2):
+    """Prepare character mappings and training sequences with train/val split"""
+    # Add EOS (End of Sequence) token
+    EOS_TOKEN = '<EOS>'
+    text = text + EOS_TOKEN
+
+    # Create character mappings (including EOS token)
     chars = sorted(list(set(text)))
     char_to_int = {c: i for i, c in enumerate(chars)}
     int_to_char = {i: c for i, c in enumerate(chars)}
@@ -66,6 +108,7 @@ def prepare_dataset(text, seq_length=100):
     print(f"Total characters: {len(text)}")
     print(f"Unique characters: {n_vocab}")
     print(f"Sample characters: {chars[:20]}")
+    print(f"EOS token: '{EOS_TOKEN}' (index: {char_to_int[EOS_TOKEN]})")
 
     # Create training sequences
     dataX = []
@@ -77,34 +120,86 @@ def prepare_dataset(text, seq_length=100):
         dataY.append(char_to_int[seq_out])
 
     n_patterns = len(dataX)
-    print(f"Training sequences: {n_patterns}")
 
-    return dataX, dataY, char_to_int, int_to_char, n_vocab
+    # Split into training and validation sets
+    split_idx = int(n_patterns * (1 - validation_split))
+
+    train_X = dataX[:split_idx]
+    train_Y = dataY[:split_idx]
+    val_X = dataX[split_idx:]
+    val_Y = dataY[split_idx:]
+
+    print(f"Total sequences: {n_patterns}")
+    print(f"Training sequences: {len(train_X)} ({(1-validation_split)*100:.0f}%)")
+    print(f"Validation sequences: {len(val_X)} ({validation_split*100:.0f}%)")
+
+    return train_X, train_Y, val_X, val_Y, char_to_int, int_to_char, n_vocab
 
 
-def train_model(model, X, y, n_vocab, epochs=100, learning_rate=0.001, device='cpu', batch_size=128,
-                char_to_int=None, int_to_char=None):
-    """Train the LSTM model using mini-batches with TensorBoard logging"""
+def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, learning_rate=0.001,
+                device='cpu', batch_size=128, char_to_int=None, int_to_char=None, models_dir=None):
+    """Train the LSTM model using mini-batches with TensorBoard logging and validation"""
 
     # Setup TensorBoard
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     log_dir = Path(__file__).parent.parent / 'runs' / f'bep_training_{timestamp}'
     writer = SummaryWriter(log_dir=str(log_dir))
 
-    print(f"\n{'='*60}")
-    print(f"TensorBoard initialized!")
-    print(f"Log directory: {log_dir}")
-    print(f"\nTo view training in real-time, run:")
-    print(f"  tensorboard --logdir={log_dir.parent}")
-    print(f"Then open: http://localhost:6006")
-    print(f"{'='*60}\n")
+    # Start TensorBoard automatically
+    tensorboard_process = None
+    try:
+        print(f"\n{'='*60}")
+        print(f"🚀 Starting TensorBoard...")
+        print(f"Log directory: {log_dir}")
+
+        # Start TensorBoard in background
+        tensorboard_cmd = [sys.executable, '-m', 'tensorboard.main',
+                          '--logdir', str(log_dir.parent), '--port', '6006']
+        tensorboard_process = subprocess.Popen(
+            tensorboard_cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0
+        )
+
+        # Register cleanup on exit
+        def cleanup_tensorboard():
+            if tensorboard_process and tensorboard_process.poll() is None:
+                tensorboard_process.terminate()
+                print("\n🛑 TensorBoard stopped.")
+
+        atexit.register(cleanup_tensorboard)
+
+        # Wait for TensorBoard to start
+        time.sleep(3)
+
+        # Open browser
+        tensorboard_url = 'http://localhost:6006'
+        print(f"✅ TensorBoard started!")
+        print(f"📊 Opening dashboard: {tensorboard_url}")
+        webbrowser.open(tensorboard_url)
+        print(f"{'='*60}\n")
+
+    except Exception as e:
+        print(f"⚠️  Could not start TensorBoard automatically: {e}")
+        print(f"You can start it manually: tensorboard --logdir={log_dir.parent}")
+        print(f"{'='*60}\n")
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
-    print(f"Training on device: {device}")
-    print(f"Model parameters: {sum(p.numel() for p in model.parameters()):,}")
-    print(f"Batch size: {batch_size}")
+    # Enable mixed precision training for GPU speedup
+    use_amp = device.type == 'cuda'
+    scaler = GradScaler() if use_amp else None
+
+    # Determine optimal number of workers based on CPU cores
+    num_workers = min(8, os.cpu_count() or 4) if device.type == 'cuda' else 0
+
+    print(f"🚀 Training on device: {device}")
+    print(f"📊 Model parameters: {sum(p.numel() for p in model.parameters()):,}")
+    print(f"📦 Batch size: {batch_size}")
+    print(f"⚡ Mixed precision (AMP): {use_amp}")
+    print(f"👷 DataLoader workers: {num_workers}")
 
     # Log hyperparameters to TensorBoard
     writer.add_text('Hyperparameters', f'''
@@ -114,80 +209,132 @@ def train_model(model, X, y, n_vocab, epochs=100, learning_rate=0.001, device='c
     - Num Layers: {model.num_layers}
     - Batch Size: {batch_size}
     - Device: {device}
+    - Mixed Precision: {use_amp}
+    - DataLoader Workers: {num_workers}
     - Vocabulary Size: {n_vocab}
     - Total Parameters: {sum(p.numel() for p in model.parameters()):,}
     ''')
 
-    # Convert to numpy arrays first for efficient batching
-    X = np.array(X, dtype=np.float32)
-    y = np.array(y, dtype=np.int64)
+    # Convert to numpy arrays
+    train_X = np.array(train_X, dtype=np.float32)
+    train_y = np.array(train_y, dtype=np.int64)
+    val_X = np.array(val_X, dtype=np.float32)
+    val_y = np.array(val_y, dtype=np.int64)
 
-    n_samples = len(X)
-    n_batches = n_samples // batch_size
+    # Create Dataset and DataLoader for training
+    train_dataset = CharDataset(train_X, train_y, n_vocab)
+    train_dataloader = DataLoader(
+        train_dataset,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=num_workers,
+        pin_memory=True if device.type == 'cuda' else False,
+        persistent_workers=True if num_workers > 0 else False
+    )
 
-    best_loss = float('inf')
+    # Create Dataset and DataLoader for validation
+    val_dataset = CharDataset(val_X, val_y, n_vocab)
+    val_dataloader = DataLoader(
+        val_dataset,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers,
+        pin_memory=True if device.type == 'cuda' else False,
+        persistent_workers=True if num_workers > 0 else False
+    )
 
-    print(f"\nStarting training with {n_batches} batches per epoch...\n")
+    n_batches = len(train_dataloader)
+    best_val_loss = float('inf')
+    best_model_path = None
+
+    print(f"\n🏃 Starting training with {n_batches} batches per epoch...\n")
 
     # Training loop with progress bar
     for epoch in tqdm(range(epochs), desc="Training Progress", unit="epoch"):
+        # Training phase
         model.train()
-        total_loss = 0
+        total_train_loss = 0
         batch_losses = []
 
-        # Shuffle data each epoch
-        indices = np.random.permutation(n_samples)
-        X_shuffled = X[indices]
-        y_shuffled = y[indices]
-
         # Batch progress bar
-        batch_pbar = tqdm(range(n_batches), desc=f"Epoch {epoch+1}/{epochs}",
+        batch_pbar = tqdm(train_dataloader, desc=f"Epoch {epoch+1}/{epochs}",
                          leave=False, unit="batch")
 
-        for i in batch_pbar:
-            # Get batch
-            start_idx = i * batch_size
-            end_idx = start_idx + batch_size
+        for batch_X, batch_y in batch_pbar:
+            # Move to device
+            batch_X = batch_X.to(device, non_blocking=True)
+            batch_y = batch_y.to(device, non_blocking=True)
 
-            batch_X = X_shuffled[start_idx:end_idx]
-            batch_y = y_shuffled[start_idx:end_idx]
+            # Forward pass with mixed precision
+            optimizer.zero_grad(set_to_none=True)
 
-            # Convert to tensors
-            batch_X = torch.tensor(batch_X, dtype=torch.float32).reshape(batch_size, -1, 1) / float(n_vocab)
-            batch_y = torch.tensor(batch_y, dtype=torch.long)
+            if use_amp:
+                with autocast():
+                    output, _ = model(batch_X)
+                    loss = criterion(output, batch_y)
 
-            batch_X = batch_X.to(device)
-            batch_y = batch_y.to(device)
-
-            # Forward pass
-            optimizer.zero_grad()
-            output, _ = model(batch_X)
-            loss = criterion(output, batch_y)
-
-            # Backward pass
-            loss.backward()
-
-            # Gradient clipping
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=5.0)
-
-            optimizer.step()
+                # Backward pass with gradient scaling
+                scaler.scale(loss).backward()
+                scaler.unscale_(optimizer)
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=5.0)
+                scaler.step(optimizer)
+                scaler.update()
+            else:
+                output, _ = model(batch_X)
+                loss = criterion(output, batch_y)
+                loss.backward()
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=5.0)
+                optimizer.step()
 
             batch_loss = loss.item()
-            total_loss += batch_loss
+            total_train_loss += batch_loss
             batch_losses.append(batch_loss)
 
             # Update batch progress bar
             batch_pbar.set_postfix({'loss': f'{batch_loss:.4f}'})
 
-        avg_loss = total_loss / n_batches
+        avg_train_loss = total_train_loss / n_batches
 
-        # Track best loss
-        if avg_loss < best_loss:
-            best_loss = avg_loss
+        # Validation phase
+        model.eval()
+        total_val_loss = 0
+        with torch.no_grad():
+            for batch_X, batch_y in val_dataloader:
+                batch_X = batch_X.to(device, non_blocking=True)
+                batch_y = batch_y.to(device, non_blocking=True)
+
+                if use_amp:
+                    with autocast():
+                        output, _ = model(batch_X)
+                        loss = criterion(output, batch_y)
+                else:
+                    output, _ = model(batch_X)
+                    loss = criterion(output, batch_y)
+
+                total_val_loss += loss.item()
+
+        avg_val_loss = total_val_loss / len(val_dataloader)
+
+        # Track best validation loss and save best model
+        if avg_val_loss < best_val_loss:
+            best_val_loss = avg_val_loss
+            # Save best model checkpoint
+            if models_dir is not None:
+                best_model_path = models_dir / 'best_model_checkpoint.pth'
+                torch.save({
+                    'epoch': epoch,
+                    'model_state_dict': model.state_dict(),
+                    'hidden_size': model.hidden_size,
+                    'num_layers': model.num_layers,
+                    'optimizer_state_dict': optimizer.state_dict(),
+                    'train_loss': avg_train_loss,
+                    'val_loss': avg_val_loss,
+                }, best_model_path)
 
         # Log to TensorBoard
-        writer.add_scalar('Loss/train', avg_loss, epoch)
-        writer.add_scalar('Loss/best', best_loss, epoch)
+        writer.add_scalar('Loss/train', avg_train_loss, epoch)
+        writer.add_scalar('Loss/validation', avg_val_loss, epoch)
+        writer.add_scalar('Loss/best_val', best_val_loss, epoch)
         writer.add_scalar('Loss/batch_std', np.std(batch_losses), epoch)
 
         # Log learning rate
@@ -212,13 +359,35 @@ def train_model(model, X, y, n_vocab, epochs=100, learning_rate=0.001, device='c
 
             tqdm.write(f'\n{"="*60}')
             tqdm.write(f'Epoch [{epoch+1}/{epochs}]')
-            tqdm.write(f'Avg Loss: {avg_loss:.4f} | Best Loss: {best_loss:.4f}')
+            tqdm.write(f'Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f} | Best Val: {best_val_loss:.4f}')
             tqdm.write(f'Sample: {sample_text[:100]}...')
             tqdm.write(f'{"="*60}\n')
 
     writer.close()
-    print(f"\n\nTraining complete! TensorBoard logs saved to: {log_dir}")
-    print(f"View results: tensorboard --logdir={log_dir.parent}")
+
+    # Training completion notification
+    print(f"\n\n{'='*60}")
+    print(f"🎉 TRAINING COMPLETATO! 🎉")
+    print(f"{'='*60}")
+    print(f"✅ Epochs completate: {epochs}")
+    print(f"✅ Train Loss finale: {avg_train_loss:.4f}")
+    print(f"✅ Val Loss finale: {avg_val_loss:.4f}")
+    print(f"✅ Best Val Loss: {best_val_loss:.4f}")
+    print(f"✅ TensorBoard logs: {log_dir}")
+    print(f"📊 Dashboard disponibile su: http://localhost:6006")
+    if best_model_path:
+        print(f"💾 Best model salvato in: {best_model_path}")
+    print(f"{'='*60}\n")
+
+    # Try to show a system notification (Windows)
+    try:
+        if sys.platform == 'win32':
+            subprocess.run([
+                'powershell', '-Command',
+                f'New-BurntToastNotification -Text "Training Completato!", "Il modello BEP ha finito il training con val loss: {best_val_loss:.4f}"'
+            ], check=False, capture_output=True)
+    except:
+        pass  # Silently fail if notification doesn't work
 
     return model
 
@@ -320,6 +489,7 @@ def main():
     parser.add_argument('--hidden-size', type=int, default=512, help='LSTM hidden size')
     parser.add_argument('--seq-length', type=int, default=100, help='Sequence length')
     parser.add_argument('--learning-rate', type=float, default=0.001, help='Learning rate')
+    parser.add_argument('--batch-size', type=int, default=None, help='Batch size (auto-detected based on device)')
     args = parser.parse_args()
 
     # Setup paths
@@ -334,17 +504,40 @@ def main():
 
     # Check for GPU
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print(f"Using device: {device}")
+
+    # Auto-detect optimal batch size based on device
+    if args.batch_size is None:
+        if device.type == 'cuda':
+            # Check available VRAM
+            gpu_mem_gb = torch.cuda.get_device_properties(0).total_memory / 1024**3
+            if gpu_mem_gb >= 8:
+                batch_size = 1024  # Large batch for 8GB+ VRAM
+            elif gpu_mem_gb >= 4:
+                batch_size = 512
+            else:
+                batch_size = 256
+        else:
+            batch_size = 128  # Conservative for CPU
+    else:
+        batch_size = args.batch_size
+
+    print(f"🖥️  Using device: {device}")
+    if device.type == 'cuda':
+        gpu_name = torch.cuda.get_device_name(0)
+        gpu_mem = torch.cuda.get_device_properties(0).total_memory / 1024**3
+        print(f"🎮 GPU: {gpu_name}")
+        print(f"💾 VRAM: {gpu_mem:.1f} GB")
+    print(f"📦 Auto-selected batch size: {batch_size}")
 
     # Load and prepare data
-    print("\nLoading training data...")
+    print("\n📖 Loading training data...")
     text = load_training_data(data_path)
 
-    print("\nPreparing dataset...")
-    dataX, dataY, char_to_int, int_to_char, n_vocab = prepare_dataset(text, args.seq_length)
+    print("\n🔧 Preparing dataset...")
+    train_X, train_Y, val_X, val_Y, char_to_int, int_to_char, n_vocab = prepare_dataset(text, args.seq_length)
 
     # Create model
-    print("\nInitializing model...")
+    print("\n🧠 Initializing model...")
     model = CharLSTM(
         input_size=1,
         hidden_size=args.hidden_size,
@@ -353,14 +546,16 @@ def main():
     ).to(device)
 
     # Train model
-    print("\nStarting training...")
+    print("\n🏋️ Starting training...")
     model = train_model(
-        model, dataX, dataY, n_vocab,
+        model, train_X, train_Y, val_X, val_Y, n_vocab,
         epochs=args.epochs,
         learning_rate=args.learning_rate,
         device=device,
+        batch_size=batch_size,
         char_to_int=char_to_int,
-        int_to_char=int_to_char
+        int_to_char=int_to_char,
+        models_dir=models_dir
     )
 
     # Save model
@@ -380,7 +575,14 @@ def main():
     print(sample)
     print("="*60)
 
-    print("\nTraining complete!")
+    # Final completion message
+    print("\n" + "🎊"*30)
+    print("🎉" + " "*26 + "TRAINING COMPLETATO!" + " "*26 + "🎉")
+    print("🎊"*30)
+    print("\n✅ Il modello è stato salvato con successo!")
+    print("✅ TensorBoard rimane aperto per visualizzare i risultati")
+    print("📊 Dashboard: http://localhost:6006")
+    print("\n💡 Premi CTRL+C per chiudere tutto\n")
 
 
 if __name__ == '__main__':
