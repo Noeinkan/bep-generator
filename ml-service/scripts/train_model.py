@@ -26,8 +26,16 @@ from pathlib import Path
 from datetime import datetime
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import Dataset, DataLoader
+from torch.nn.utils.rnn import pad_sequence
 from torch.cuda.amp import autocast, GradScaler
 from tqdm import tqdm
+
+# Optional WandB support
+try:
+    import wandb
+    WANDB_AVAILABLE = True
+except ImportError:
+    WANDB_AVAILABLE = False
 
 
 class CharDataset(Dataset):
@@ -43,6 +51,26 @@ class CharDataset(Dataset):
 
     def __getitem__(self, idx):
         return self.X[idx], self.y[idx]
+
+
+def collate_fn_with_padding(batch, pad_idx=0):
+    """Custom collate function for variable-length sequences with padding
+
+    Args:
+        batch: List of (X, y) tuples where X can be variable length
+        pad_idx: Index of the PAD token (default: 0)
+
+    Returns:
+        Padded batch_X and batch_y tensors
+    """
+    # Separate sequences and targets
+    sequences, targets = zip(*batch)
+
+    # Pad sequences to max length in batch
+    padded_sequences = pad_sequence(sequences, batch_first=True, padding_value=pad_idx)
+    targets = torch.stack(targets)
+
+    return padded_sequences, targets
 
 
 class CharRNN(nn.Module):
@@ -173,12 +201,18 @@ def load_training_data(data_path):
 
 def prepare_dataset(text, seq_length=100, validation_split=0.2):
     """Prepare character mappings and training sequences with train/val split"""
-    # Add EOS (End of Sequence) token
+    # Add special tokens
+    PAD_TOKEN = '<PAD>'
     EOS_TOKEN = '<EOS>'
     text = text + EOS_TOKEN
 
-    # Create character mappings (including EOS token)
+    # Create character mappings (PAD must be index 0 for easier masking)
     chars = sorted(list(set(text)))
+    # Ensure PAD is first (index 0)
+    if PAD_TOKEN in chars:
+        chars.remove(PAD_TOKEN)
+    chars = [PAD_TOKEN] + chars
+
     char_to_int = {c: i for i, c in enumerate(chars)}
     int_to_char = {i: c for i, c in enumerate(chars)}
     n_vocab = len(chars)
@@ -186,6 +220,7 @@ def prepare_dataset(text, seq_length=100, validation_split=0.2):
     print(f"Total characters: {len(text)}")
     print(f"Unique characters: {n_vocab}")
     print(f"Sample characters: {chars[:20]}")
+    print(f"PAD token: '{PAD_TOKEN}' (index: {char_to_int[PAD_TOKEN]})")
     print(f"EOS token: '{EOS_TOKEN}' (index: {char_to_int[EOS_TOKEN]})")
 
     # Create training sequences
@@ -216,13 +251,50 @@ def prepare_dataset(text, seq_length=100, validation_split=0.2):
 
 def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, learning_rate=0.001,
                 device='cpu', batch_size=128, char_to_int=None, int_to_char=None, models_dir=None,
-                early_stopping_patience=15, lr_scheduler_patience=5):
-    """Train the RNN model with early stopping, LR scheduling, and comprehensive monitoring"""
+                early_stopping_patience=15, lr_scheduler_patience=5, checkpoint_every=10, use_wandb=False,
+                wandb_project='bep-text-generation', wandb_run_name=None, resume_checkpoint=None):
+    """Train the RNN model with early stopping, LR scheduling, and comprehensive monitoring
+
+    Args:
+        checkpoint_every: Save checkpoint every N epochs (default: 10)
+        use_wandb: Enable Weights & Biases logging (default: False)
+        wandb_project: WandB project name (default: 'bep-text-generation')
+        wandb_run_name: WandB run name (default: auto-generated)
+        resume_checkpoint: Path to checkpoint to resume training from (default: None)
+    """
 
     # Setup TensorBoard
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     log_dir = Path(__file__).parent.parent / 'runs' / f'bep_training_{timestamp}'
     writer = SummaryWriter(log_dir=str(log_dir))
+
+    # Setup WandB if enabled
+    wandb_run = None
+    if use_wandb and WANDB_AVAILABLE:
+        try:
+            wandb_run = wandb.init(
+                project=wandb_project,
+                name=wandb_run_name or f'bep_training_{timestamp}',
+                config={
+                    'epochs': epochs,
+                    'learning_rate': learning_rate,
+                    'batch_size': batch_size,
+                    'rnn_type': model.rnn_type,
+                    'embed_dim': model.embed_dim,
+                    'hidden_size': model.hidden_size,
+                    'num_layers': model.num_layers,
+                    'vocab_size': n_vocab,
+                    'early_stopping_patience': early_stopping_patience,
+                    'lr_scheduler_patience': lr_scheduler_patience,
+                    'device': str(device),
+                }
+            )
+            print(f"✅ Weights & Biases initialized: {wandb.run.url}")
+        except Exception as e:
+            print(f"⚠️  Could not initialize WandB: {e}")
+            wandb_run = None
+    elif use_wandb and not WANDB_AVAILABLE:
+        print(f"⚠️  WandB requested but not installed. Install with: pip install wandb")
 
     # Start TensorBoard automatically
     tensorboard_process = None
@@ -281,6 +353,14 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
     best_val_loss = float('inf')
     epochs_without_improvement = 0
     best_model_path = None
+    start_epoch = 0
+
+    # Load checkpoint if resuming
+    if resume_checkpoint:
+        start_epoch, best_val_loss = load_checkpoint(
+            resume_checkpoint, model, optimizer, scheduler, device
+        )
+        print(f"📍 Resuming from epoch {start_epoch} with best val loss: {best_val_loss:.4f}")
 
     # Enable mixed precision training for GPU speedup
     use_amp = device.type == 'cuda'
@@ -343,10 +423,13 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
 
     print(f"\n🏃 Starting training with {n_batches} batches per epoch...")
     print(f"📉 Early stopping patience: {early_stopping_patience} epochs")
-    print(f"📊 LR scheduler patience: {lr_scheduler_patience} epochs\n")
+    print(f"📊 LR scheduler patience: {lr_scheduler_patience} epochs")
+    if start_epoch > 0:
+        print(f"🔄 Resuming from epoch {start_epoch}")
+    print()
 
     # Training loop with progress bar
-    for epoch in tqdm(range(epochs), desc="Training Progress", unit="epoch"):
+    for epoch in tqdm(range(start_epoch, epochs), desc="Training Progress", unit="epoch", initial=start_epoch, total=epochs):
         # Training phase
         model.train()
         total_train_loss = 0
@@ -433,13 +516,15 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
             # Save best model checkpoint
             if models_dir is not None:
                 best_model_path = models_dir / 'best_model_checkpoint.pth'
+                # Unwrap DataParallel if necessary
+                model_to_save = model.module if isinstance(model, nn.DataParallel) else model
                 torch.save({
                     'epoch': epoch,
-                    'model_state_dict': model.state_dict(),
-                    'hidden_size': model.hidden_size,
-                    'num_layers': model.num_layers,
-                    'embed_dim': model.embed_dim,
-                    'rnn_type': model.rnn_type,
+                    'model_state_dict': model_to_save.state_dict(),
+                    'hidden_size': model_to_save.hidden_size,
+                    'num_layers': model_to_save.num_layers,
+                    'embed_dim': model_to_save.embed_dim,
+                    'rnn_type': model_to_save.rnn_type,
                     'optimizer_state_dict': optimizer.state_dict(),
                     'scheduler_state_dict': scheduler.state_dict(),
                     'train_loss': avg_train_loss,
@@ -452,6 +537,30 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
 
         # Learning rate scheduler step (based on validation loss)
         scheduler.step(avg_val_loss)
+
+        # Save regular checkpoint every N epochs
+        if (epoch + 1) % checkpoint_every == 0 and models_dir is not None:
+            checkpoint_path = models_dir / f'checkpoint_epoch_{epoch+1}.pth'
+            # Unwrap DataParallel if necessary
+            model_to_save = model.module if isinstance(model, nn.DataParallel) else model
+            torch.save({
+                'epoch': epoch,
+                'model_state_dict': model_to_save.state_dict(),
+                'hidden_size': model_to_save.hidden_size,
+                'num_layers': model_to_save.num_layers,
+                'embed_dim': model_to_save.embed_dim,
+                'rnn_type': model_to_save.rnn_type,
+                'optimizer_state_dict': optimizer.state_dict(),
+                'scheduler_state_dict': scheduler.state_dict(),
+                'train_loss': avg_train_loss,
+                'val_loss': avg_val_loss,
+                'val_acc_top1': val_acc_top1,
+                'val_acc_top5': val_acc_top5,
+                'char_to_int': char_to_int,
+                'int_to_char': {int(k): v for k, v in int_to_char.items()},
+                'n_vocab': n_vocab,
+            }, checkpoint_path)
+            tqdm.write(f'💾 Checkpoint saved: {checkpoint_path}')
 
         # Log to TensorBoard
         writer.add_scalar('Loss/train', avg_train_loss, epoch)
@@ -473,6 +582,21 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
                 total_norm += param_norm.item() ** 2
         total_norm = total_norm ** 0.5
         writer.add_scalar('Gradients/norm', total_norm, epoch)
+
+        # Log to WandB if enabled
+        if wandb_run is not None:
+            wandb.log({
+                'epoch': epoch + 1,
+                'train_loss': avg_train_loss,
+                'val_loss': avg_val_loss,
+                'best_val_loss': best_val_loss,
+                'val_acc_top1': val_acc_top1,
+                'val_acc_top5': val_acc_top5,
+                'learning_rate': optimizer.param_groups[0]['lr'],
+                'gradient_norm': total_norm,
+                'epochs_without_improvement': epochs_without_improvement,
+                'batch_loss_std': np.std(batch_losses),
+            })
 
         # Generate sample text every 5 epochs for qualitative assessment
         if (epoch + 1) % 5 == 0 and char_to_int is not None and int_to_char is not None:
@@ -500,6 +624,11 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
             break
 
     writer.close()
+
+    # Finalize WandB if used
+    if wandb_run is not None:
+        wandb.finish()
+        print("✅ Weights & Biases run completed")
 
     # Training completion notification
     print(f"\n\n{'='*60}")
@@ -589,20 +718,80 @@ def generate_sample_during_training(model, char_to_int, int_to_char, n_vocab,
     return result
 
 
+def load_checkpoint(checkpoint_path, model, optimizer=None, scheduler=None, device='cpu'):
+    """Load a checkpoint for resuming training or fine-tuning
+
+    Args:
+        checkpoint_path: Path to the checkpoint file
+        model: The model to load weights into
+        optimizer: Optional optimizer to load state into (for resuming)
+        scheduler: Optional scheduler to load state into (for resuming)
+        device: Device to load the model on
+
+    Returns:
+        Tuple of (start_epoch, best_val_loss) for resuming training,
+        or (0, inf) for fine-tuning
+    """
+    try:
+        print(f"\n📥 Loading checkpoint from: {checkpoint_path}")
+        checkpoint = torch.load(checkpoint_path, map_location=device)
+
+        # Load model weights
+        model_to_load = model.module if isinstance(model, nn.DataParallel) else model
+        model_to_load.load_state_dict(checkpoint['model_state_dict'])
+        print(f"✅ Model weights loaded")
+
+        start_epoch = 0
+        best_val_loss = float('inf')
+
+        # If optimizer and scheduler are provided, load their states (resuming training)
+        if optimizer is not None and 'optimizer_state_dict' in checkpoint:
+            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+            print(f"✅ Optimizer state loaded")
+
+        if scheduler is not None and 'scheduler_state_dict' in checkpoint:
+            scheduler.load_state_dict(checkpoint['scheduler_state_dict'])
+            print(f"✅ Scheduler state loaded")
+
+        # Get epoch and validation loss if available
+        if 'epoch' in checkpoint:
+            start_epoch = checkpoint['epoch'] + 1
+            print(f"✅ Resuming from epoch {start_epoch}")
+
+        if 'val_loss' in checkpoint:
+            best_val_loss = checkpoint['val_loss']
+            print(f"✅ Previous best validation loss: {best_val_loss:.4f}")
+
+        return start_epoch, best_val_loss
+
+    except FileNotFoundError:
+        print(f"\n❌ Checkpoint file not found: {checkpoint_path}")
+        raise
+    except Exception as e:
+        print(f"\n❌ Error loading checkpoint: {e}")
+        raise
+
+
 def save_model(model, char_to_int, int_to_char, save_dir):
-    """Save model and character mappings with error handling"""
+    """Save model and character mappings with error handling
+
+    Handles both regular models and DataParallel wrapped models.
+    """
     try:
         # Create directory if it doesn't exist
         os.makedirs(save_dir, exist_ok=True)
 
+        # Unwrap DataParallel if necessary
+        model_to_save = model.module if isinstance(model, nn.DataParallel) else model
+
         # Save model weights
         model_path = os.path.join(save_dir, 'bep_model.pth')
         torch.save({
-            'model_state_dict': model.state_dict(),
-            'hidden_size': model.hidden_size,
-            'num_layers': model.num_layers,
-            'embed_dim': model.embed_dim,
-            'rnn_type': model.rnn_type,
+            'model_state_dict': model_to_save.state_dict(),
+            'hidden_size': model_to_save.hidden_size,
+            'num_layers': model_to_save.num_layers,
+            'embed_dim': model_to_save.embed_dim,
+            'rnn_type': model_to_save.rnn_type,
         }, model_path)
 
         # Verify model was saved
@@ -732,6 +921,28 @@ def main():
                        help='Number of epochs to wait for improvement before stopping')
     parser.add_argument('--lr-scheduler-patience', type=int, default=5,
                        help='Number of epochs to wait before reducing learning rate')
+    parser.add_argument('--checkpoint-every', type=int, default=10,
+                       help='Save checkpoint every N epochs (default: 10)')
+
+    # Logging parameters
+    parser.add_argument('--use-wandb', action='store_true',
+                       help='Enable Weights & Biases logging')
+    parser.add_argument('--wandb-project', type=str, default='bep-text-generation',
+                       help='WandB project name')
+    parser.add_argument('--wandb-run-name', type=str, default=None,
+                       help='WandB run name (auto-generated if not specified)')
+
+    # Multi-GPU parameters
+    parser.add_argument('--multi-gpu', action='store_true',
+                       help='Use all available GPUs with DataParallel')
+    parser.add_argument('--gpu-ids', type=str, default=None,
+                       help='Comma-separated GPU IDs to use (e.g., "0,1,2"). If not specified, uses all available GPUs')
+
+    # Pre-trained model parameters
+    parser.add_argument('--resume-from', type=str, default=None,
+                       help='Path to checkpoint to resume training from')
+    parser.add_argument('--finetune-from', type=str, default=None,
+                       help='Path to pre-trained model to finetune (loads only weights, not optimizer state)')
 
     # Text generation parameters
     parser.add_argument('--temperature', type=float, default=0.8,
@@ -786,13 +997,41 @@ def main():
     else:
         batch_size = args.batch_size
 
+    # Multi-GPU setup
+    gpu_ids = None
+    num_gpus = 1
+    if args.multi_gpu and torch.cuda.is_available():
+        if args.gpu_ids:
+            # Parse GPU IDs from comma-separated string
+            gpu_ids = [int(x.strip()) for x in args.gpu_ids.split(',')]
+            num_gpus = len(gpu_ids)
+            print(f"🎮 Multi-GPU enabled: Using GPUs {gpu_ids}")
+        else:
+            # Use all available GPUs
+            num_gpus = torch.cuda.device_count()
+            gpu_ids = list(range(num_gpus))
+            print(f"🎮 Multi-GPU enabled: Using all {num_gpus} available GPUs")
+
+        # Adjust batch size for multi-GPU
+        if args.batch_size is None:
+            batch_size = batch_size * num_gpus
+            print(f"📦 Batch size scaled for {num_gpus} GPUs: {batch_size}")
+    elif args.multi_gpu and not torch.cuda.is_available():
+        print("⚠️  Multi-GPU requested but CUDA not available. Using CPU.")
+
     print(f"🖥️  Using device: {device}")
     if device.type == 'cuda':
         gpu_name = torch.cuda.get_device_name(0)
         gpu_mem = torch.cuda.get_device_properties(0).total_memory / 1024**3
         print(f"🎮 GPU: {gpu_name}")
         print(f"💾 VRAM: {gpu_mem:.1f} GB")
-    print(f"📦 Auto-selected batch size: {batch_size}")
+        if num_gpus > 1:
+            for i in range(1, num_gpus):
+                gpu_name_i = torch.cuda.get_device_name(i)
+                gpu_mem_i = torch.cuda.get_device_properties(i).total_memory / 1024**3
+                print(f"🎮 GPU {i}: {gpu_name_i}")
+                print(f"💾 VRAM {i}: {gpu_mem_i:.1f} GB")
+    print(f"📦 Batch size: {batch_size}")
 
     # Load and prepare data with error handling
     try:
@@ -837,7 +1076,26 @@ def main():
             dropout=args.dropout
         ).to(device)
 
+        # Wrap model with DataParallel for multi-GPU if requested
+        if args.multi_gpu and num_gpus > 1 and torch.cuda.is_available():
+            if gpu_ids:
+                model = nn.DataParallel(model, device_ids=gpu_ids)
+            else:
+                model = nn.DataParallel(model)
+            print(f"✅ Model wrapped with DataParallel for {num_gpus} GPUs")
+
         print(f"✅ Model initialized with {sum(p.numel() for p in model.parameters()):,} parameters")
+
+        # Load pre-trained weights if specified
+        if args.resume_from:
+            # Resume training: load model, optimizer, and scheduler states
+            print("\n🔄 Resuming training from checkpoint...")
+            # Note: Optimizer and scheduler will be created in train_model, so we'll handle this there
+            load_checkpoint(args.resume_from, model, device=device)
+        elif args.finetune_from:
+            # Fine-tuning: load only model weights
+            print("\n🎯 Fine-tuning from pre-trained model...")
+            load_checkpoint(args.finetune_from, model, device=device)
 
     except RuntimeError as e:
         if "out of memory" in str(e).lower():
@@ -866,7 +1124,12 @@ def main():
             int_to_char=int_to_char,
             models_dir=models_dir,
             early_stopping_patience=args.early_stopping_patience,
-            lr_scheduler_patience=args.lr_scheduler_patience
+            lr_scheduler_patience=args.lr_scheduler_patience,
+            checkpoint_every=args.checkpoint_every,
+            use_wandb=args.use_wandb,
+            wandb_project=args.wandb_project,
+            wandb_run_name=args.wandb_run_name,
+            resume_checkpoint=args.resume_from
         )
 
     except KeyboardInterrupt:
