@@ -1,0 +1,1627 @@
+Revision History
+Note: This BIM Execution Plan (BEP) Version 01 template is based on:
+-	TRSDC BIM Protocol Project BIM Execution Plan (Version 1.0) based on CIC BIM Protocol Second Edition 2018
+-	BS EN ISO 19650-1 & 19650-2
+-	National BIM Standard – United States Version 3
+-	BIM Project Execution Planning Guide by CIC Research Group, Department of Architectural Engineering, The Pennsylvania State University. (Version 2.1)
+Version History
+IMPORTANT NOTICE
+This document, R08-HE1D01-FOS-PLN-AR-0001 is the exclusive property of The Red Sea Development Company (“TRSDC”).
+This Document should be read in its entirety including the terms of this Important Notice. This Document or extracts of this Document may be disclosed to respective consultants and/or contractors, provided that such disclosure includes this Important Notice.
+Any use or reliance on this Document, or extracts thereof, by any party, is at that third party’s sole risk and responsibility. TRSDC, to the maximum extent permitted by law, disclaim all liability (including for losses or damages of whatsoever nature claimed on whatsoever basis including negligence or otherwise) to any third party howsoever arising with respect to or in connection with the use of this Document including any liability caused by negligent acts or omissions.
+This Document and its contents are valid only for the conditions reported in it and as of the date of this Document.
+DEFINITIONS
+BIM Execution Plan (BEP) – also referred to as the ‘Information Delivery Plan’ in the ISO 19650
+With each BIM project, the Project Information Manager (Appointing Party) will complete the guidelines and protocols document for each major stakeholder, relevant specifically to that project. This document is the template given by TRSDC as the baseline to be used for all BEP written by design and construction teams.
+Building Information Modelling (BIM)
+The process of designing, constructing and/or operating a building or infrastructure asset using electronic object-oriented information. 
+Clash Detection / Analysis 
+The process of identifying conflicts and issues between building systems by collaborating in 3D as part of the co-ordination process.
+Collaboration
+The sharing, and review of data between disciplines. Through BIM, this process can be smoother, quicker, and with each discipline adopting Project standards, the workflow can be realized with less disruption. The collaboration environment allows the sharing of models between disciplines aiding coordination and clash detection. Each discipline supplying BIMs, will be referred to as a Stakeholder in the coordination process.
+Common Data Environment (CDE) 
+Single source of information for any given project, used to collect, manage and disseminate all relevant approved project information for multi-disciplinary teams in a managed process. 
+Data Scope 
+The agreed minimum set of attributes or property fields for the model elements in a model as identified in this document. 
+Federated Model 
+Refers to the combined model which incorporates the relevant models from the project team at a specified phase of the project and is developed to the level of detail as defined in the BIM execution plan.
+FM / CAFM
+Facilities Management is the production of information via the BIM, to be added into the client/contractors CAFM (computer aided facilities management) software. This information needs to be understood early as possible in the process to determine final application and usage.
+GUID  
+Globally Unique Identifier. It is automatically produced by the software and assigned to each element. 
+Information Manager (Appointing Party)
+Not to be confused with the Project Information Manager (Appointing Party), Task Information Manger – Lead (Lead Appointed Party) or Task Information Manger (Appointed Party). The Information Manager will be a client appointed role to manage data within the Common Data Environment. He will typically be part of a wider appointment, for instance, part of the design team. 
+Level of Model Definition (LOMD)
+Level of Model Definition is used to describe a combination of Level of Detail (LOD) and Level of Information (LOI) contained in BIM models.  
+Level of Detail (LOD) 
+The description of geometrical content of models. 
+Level of Information (LOI) 
+The description of non-geometrical content (attributes or information) of models. 
+Level of Information Need
+Framework which defines the extent and granularity of information. This is a broader concept than level of model definition, level of model detail or level of model information, which can be considered as specific examples of level of information need. 
+Model Element 
+A Model Element is a portion of geometrical content of models representing a component, system or assembly within a building or infrastructure asset. 
+Model Element Author (MEA)
+A Model Element Author is a responsible party for developing the geometrical and non-geometrical content of a specific model elements to required LOD and LOI specified in Model Production Delivery Table. 
+INTRODUCTION
+This document is the BIM Execution Plan (BEP) produced on behalf of The Red Sea Development Company (TRSDC) (the Employer) for The Red Sea Project R08-HE1D01 - Shurayrah East Hotel #1.
+At a strategic level it defines the BIM requirements for the project and methodology for delivering the project using a BIM process. At a technical level this document provides the requirements for delivering the project using BIM and defines the specific processes required to do so, in accordance with the standards listed in the Employer’s Information Requirements [EIR], utilizing the same terminology and definitions. This document is used to address ideals raised in the [EIR] document.
+This BEP remains a live document for the duration of the project and should be continuously monitored, updated and revised by the Task Information Manger – Lead (Lead Appointed Party) as aspects of the project covered by this BEP change.
+Purpose of this Project BEP
+This Project BEP is to ensure successful implementation of BIM of varying degrees described within this document. It also outlines the overall vision and deliverables of the project set out in per “R08-HE1D01 - Shurayrah East Hotel #1”-Design Consultant Contract-Schedule3 and defines the scope of BIM implementation needed.
+This document will be considered a form of ‘mutual agreement’ between the parties involved. The purpose of this BEP is to make sure the work that’s been done in BIM, is coordinated to provide the team with the maximum value for their effort. No part of this document should be considered obligatory, but once agreement has been reached, all parties involved will be expected to deliver up to the standards outlined.
+This document outlines the following to support collaborative processes and produce the information required by the team during design, procurement, construction and handover of The Red Sea Project R08-HE1D01 - Shurayrah East Hotel #1:
+Responsibilities
+Staffing
+Requirements and processes
+Best practices, methods, tools and protocols
+Relevant business processes
+Supporting software requirements
+No part of this document should be construed as preventing the Consultants, Specialist Subcontracts and Specialist Suppliers from sharing their respective models at any time and in any format if this is to be helpful to project progress and co-ordination.
+The typical model lifecycle for a building project is summarized below;
+Scope of this Project BEP
+This BEP applies to all parties and all work performed on The Red Sea R08-HE1D01 - Shurayrah East Hotel #1where Building Information Modeling (BIM) is utilized.
+Application of this Project BEP
+This BEP is to be read in conjunction with the Project Contract the Employers Information Requirements (EIR) and other briefing documents, in case of any discrepancy the consultant appointment prevails. To understand the strategies presented in the BEP, it is necessary that all parties comprehend the fundamental principles of BIM and appreciate that above all, BIM is a collaborative process in which they have a shared responsibility that requires the active participation of all contributing stakeholders to succeed.
+PROJECT INFORMATION
+Project Summary
+Document Authority
+All parties listed in Section 2.4 – Key Team Stakeholders agree to the terms of this document, unless otherwise stated. This document is owned and maintained by the nominated Task Information Manger – Lead (Lead Appointed Party) referred in section 4.2 BIM Responsibility Matrix Members Allocation.
+Project Program and Milestones
+All project milestones outlined and agreed for the delivery of information is expressed in the table below and it is important that the Project Team is focused on these delivery dates. These dates are taken from the project program, which should be referred to for updates. All specific deliveries and Level of Development is shown in Section 5 within this document.
+For all Milestones Submissions and Weekly Exchanges, please refer to Appendix M – BIM Timeline.
+Key Team Stakeholders
+Key team stakeholders are summarized below. For primary points of contact leading BIM Representatives from each organization involved in developing the Project Information Model (PIM) please see Section 4.1 – Roles and Responsibilities under Management.
+EMPLOYER’S INFORMATION REQUIREMENTS
+Strategic Objectives
+The following Strategic Objectives have been identified by the project which are also in alignment with the EIR: 
+An Integrated Approach
+Collaboration and Cooperation 
+Increased financial visibility, dynamic cost modelling, and reduced cost across the Program 
+BIM data at all stages, suited to procurement and asset type with a strong focus on faster decisions and actions
+The enabling of Smart functions to deliver the best Smart Destination
+Interoperability
+Minimize project risk
+Deliver our projects in the best way, to the highest quality and standards
+Optimize coordination of design and construction
+Improve sustainability of delivery and reduce waste
+Ensuring site teams go home safe everyday
+Engaging with project stakeholders
+BIM Uses
+BIM (both graphical models and non-graphical data) is normally started in engineering but built upon and in collaboration with other departments, suppliers and sub-contractors during the design phase of the project. This information will be consumed by later functions where that data is input into their work processes. Outlined below are the Client suggested BIM Uses as per Section 5 of the EIR. The BIM Uses to be developed at each stage will be the applicable ones (some BIM Uses are Construction only).
+For a more detailed information on the BIM Uses, please refer to [BIM Uses Matrix] (Appendix K).
+MANAGEMENT
+Roles and Responsibilities (functions) 
+The roles shall not be confused with the job titles of the individuals, which can differ from company to company. The important factors are the ownership, responsibility and authority.
+All parties with design responsibilities are to engage in BIM collaborative working environment for the benefit of the project, and to align themselves with the guidance set out in this document. 
+For all organizations with design responsibility, BIM duties will include: 
+Producing coordinated designs
+Producing 3D design models with embedded information in line with the information and protocols set out in the BEP
+Production of 2D drawings derived from the 3D models in accordance with contract scope
+Regular reviews of the BEP and feedback on amendments as required for specific project needs
+Weekly shared model with full set of coordination views uploaded to the CDE (BIM 360) in accordance with the EIR
+Feedback to lead designer any design coordination issues and action relevant issues in a timely manner
+Attend regular BIM supported design coordination meetings 
+Employ all the necessary IT infrastructure (software & hardware)
+The 3D Design Models will comply with all the mandatory BIM uses stipulated by the Appointing Party (Costing Information, BIM & Sustainability Evaluation, Visualization, Construction Systems & Prefabrications)
+BIM project deliverables (models and any associated information) according to the specifications and the agreed standards, in accordance to the project delivery schedule and the procedures set forth in place by the Appointing Party utilizing the Appointing Party’s CDE.
+Project Information Manager (Appointing Party)
+The Project Information Manager function will be assigned to one or more individuals from the Appointing Party’s staff. Project information management function involves leadership in establishing the project’s information standards and models production requirements, the production methods and procedures.
+Information Manager (Appointing Party)
+Not to be confused with the Project Information Manager; the Information Manager will be a client appointed role to manage data within the Common Data Environment. He will typically be part of a wider appointment, for instance, part of the design team.
+Responsibilities: CDE – Aconex & BIM 360 
+Task Information Manger – Lead (Lead Appointed Party)
+The Task Information Manager - Lead will be the primary point of contact who shall help define the BIM/Information strategy and act as primary liaison between all other project Task Teams on any BIM related issues. 
+The Task Information Manager - Lead shall liaise with the other design consultants as part of the same asset and determine the model configuration and advise consultants of the initial model setup and strategy that will define Project Information such as model origin, orientation, project level datum and units. He will instead methods and procedures for model coordination purposes and models quality controls. 
+Notes:
+The Task Information Manager – Lead (Lead Appointed Party) is in no direct contract agreement with any of the other consultants on this project. Having said that, if any matters will arise related to fulfilling this function tasks that are conditioned by the contribution of  other consultants the Task Information Manger - Lead (Lead Appointed Party) will inform the Project Information Manger (Appointing Party)which is expecting to mitigate and provide a resolution on a reasonable time. 
+Task Information Manger (Appointed Party)
+The Task Information Manager will be the primary point of contact at a Task Team level and will liaise directly with the Task Information Manager – Lead and the Project Information Manager (Appointing Party) to successfully implement the production of the BIM goals and responsibilities,  in compliance with the project requirements following the standards, methods and procedures and using agreed system at a asset level.     
+Interface Manager (Lead Appointed Party & Appointing Party)
+The Interface Manager will manage the spatial coordination process during coordination meeting and will propose resolutions to coordinate clashes (design clashes and modeling clashes). The role of the Interface Manager can be a joint venture between a BIM designated individual and / or lead deign discipline. 
+For detailed information on the responsibilities related to BIM that are assigned to each member of the team, please refer to [BIM Responsibility Matrix] (Appendix E) and [Discipline Interface] (Appendix N).
+BIM Responsibility Matrix Members Allocation
+*Project Consultant/Contractor Information Author (PCIA)
+Training/Induction
+It is the responsibility of all parties and each Design Sub-Contractor to supply competent staff trained in the applications and tools they will be required to use on The Red Sea R08-HE1 - Shurayrah East Hotel #1.
+The Consultants are responsible for providing guidance on the requirements applicable to the Project.
+BIM DELIVERABLES
+Matrix of Responsibilities across the Supply Chain
+The following table identifies BIM deliverables (high-level) and who models what (the BIM Author) and to what Level of Model Definition (LOMD) in a summarized format. The Model Production Delivery Table [MPDT] (Appendix D) will define the breakdown of individual model elements regarding their geometrical and information status as some elements will be required to be developed at different stages and with different levels of definition.
+* Some specific elements that need further developing would be later defined or Covered in Notes and Construction Details
+The BIM Timeline Table [BIM Timeline] (Appendix M) defines when all stakeholders should be exchanging and submitting their models to be used by the other consultants to coordinate and produce high quality drawings.
+Model Production Delivery Table
+The Model Production Delivery Table [MPDT] (Appendix D) represents a responsibility matrix for the various model elements as well as definitions for Level of Development (LOD) and Level of Information (LOI). 
+This matrix is essential to outline the following items:
+How the project is broken down into model elements at each project phase
+Which elements are to be modelled. 
+Who is responsible for modelling each element. 
+What the minimum LOD and LOI each element is to be modelled to
+If and when the responsibility of elements change ownership
+Each Model Element Author’s content is intended to be shared with subsequent Model Element Authors (MEA) and Model Users throughout the course of the Project. Abbreviations are inserted for each MEA identified in [MPDT] (Appendix D) such as “FOS – Architect,” or “KEP – Lead Engineer”. LODs must be adapted for the unique characteristics of each Project.
+The LOD Specification defines and illustrates characteristics of model elements of different building systems at different Levels of Development. This clear articulation allows model authors to define what their models can be relied on for and allows downstream users to clearly understand the usability and the limitations of models they are receiving. 
+The Model Production Delivery Table information will be collated by the Task Information Manger – Lead (Lead Appointed Party) once the contractors are onboard based on their Task Information Delivery Table TIDP. This will be an ongoing process and might be stretched during multiple design stages.  The Task Information Manger – Lead (Lead Appointed Party), will start the collection of TIDP’s on Schematic Design Stage. 
+The Red Sea Project Information Manger (Appointing Party) will review and follow up with a BIM meeting with all Task Information Mangers to confirm and clarify assigned responsibilities of element/component production assigned and outline any scope gaps or discrepancies with each party, concerning their required output for delivery. 
+Upon agreement this will then form the part of the guidelines to adhere to for BIM for the project which all parties will have to comply to. As stated in all Scope of services agreements issued with contract appointments the BEP and Appendices form the basis of what is required to be delivered by all parties on the project.
+Handover Deliverables
+In the circumstances of a project handover from Signature Architect to Executive Architect, it is expected that all BIM information will be transferred. This will be centred around the latest BIM Execution Plan (BEP) which will outline the current state of development for the project. This along with related BIM documentation such as the Model Production Delivery Table (MPDT) and the Asset Information Requirements (AIR) will be handed over alongside any and all models required to continue the development of the project. If non-BIM models are required for certain design aspects such as complex geometry or site context, they must be included in any package.
+At construction handover, the Client requires a complete Asset Information Model (AIM). Therefore, consultants on design stage and contractors on construction stage should work on an optimal way to make this happen.
+The model will be revised as work packages are completed to record the as-built status of the works. The LOD for completed objects recorded as constructed by field staff will be updated to LOD 500 (Please refer to the [Model Production Delivery Table] (Appendix D) for more information).
+The data structure which outlines requirements shall be further refined in the [AIR] to be developed following engagement with the Client FM team.
+The importance of the interoperability and transfer of data that will be created for Handover to the Client shall be understood by all parties. The Task Information Manger – Lead (Lead Appointed Party) will work closely with the Client in order to advise and ensure that the efficient transfer of data created integrates seamlessly with the desired FM system of choice by the Client. 
+Assets will be assessed with the intention of providing a list of proposed maintainable assets to the Client for discussion and agreement. 
+For a more detailed information on what should be delivered and when per project submission, please refer to [Master Information Delivery Plan (MIDT)] (Appendix J).
+TECHNICAL MODELLING PROTOCOL
+Modelling Methods
+Model information shall take account of construction methodology. Elements are to be modelled in line with how they are typically constructed e.g. walls span from structural floor to structural soffit and curtain walling is assigned to the ground floor level spanning multiple floors unless modular construction applies. 
+Some model elements may be modelled by using model in Place method when required, to take advantage of references in the main model and the modelling tools in this method, in particular during early stages such a: Concept Design and Schematic Design. Any in-Place modeled must be added to the Exemption list and approved by TRSDC.
+All model elements should only exist in a single model, by a single contributor so there is no duplication of the same information (e.g. only one contributor models any given floor at any given LOD).  A special attention needs to be considered between the Architect (Signature & Executive) while interfacing with the Interior Design contractor. The core walls ownership will stay with the Architect while finishes will be owned by the Interior Design Team. Areas and Rooms ownership will always fall under Architect responsibility.  
+All design changes will be done in the source Information Model with relevant drawings re-exported and not as amendments to any exports (i.e. no changes to the 2D drawing). All model elements shall be created adhering to the boundaries of the project volumes where specified. 
+Rhino models may be used during the design development, but they will be converted into native Revit elements once the design progresses. If the Rhino models are required at the later design stages due to the complexity of the designed geometry, additional guidance and clarifications will be provides by the Rhino models authors to TRSDC and enlarge project team. Such scenarios will be highlighted as part of the BIM Exemption List. Any native Rhino/Grasshopper scripts will be provided as part of the sharing information. If specifics plug-ins or add-ins were used to aid with the interoperability process between Rhino and Revit, those will be documented and named within the BIM Exemption List.
+The design review and approval process of 2D information derived from the models will be in accordance with the Design Management Procedure. 
+Each model contributors modelling obligations will be: 
+Contributors will concurrently develop the design and model as an iterative process.
+Any element within a model which is illustrated on drawings will be derived from the model.
+Contributors will use models as an explicit means to communicate design.
+Contributors will ensure accuracy of the attribute data applied to elements.
+Model Setup
+The Units for the projects shall be defined in metric units set to millimeters with rounding to the nearest millimeter. If alternate units are required, then dimensions shall be modified and developed to reflect alternate unit values.
+Angles to use the decimal degrees and to be round up to the fourth decimal after the full angle. Annotations related to angles should also be round up to the fourth decimal after the full angle.   
+E.G 20.57⁰
+Setting-out annotations related to building geolocations Easting, Northing and Site Elevation coordinates to be round up to the nearest millimeter and to be in sync’ed with the overall project set-up coordinates please see Section 6.3 – Model Coordinates. 
+Orientation to True North to follow where possible the angles round-up to the fourth decimal after the full angle. In order to avoid any confusion generated by the Revit sensibility over the model’s locations, it is recommended that the building locations are acquired, published or transferred between different consultants’ models rather than manually input them. Annotating the angle to True North will be round up to the fourth decimal after the full angle.  
+Model Coordinates
+Model Coordinates should always be set to world coordinates, including (where known) the elevation. Project base points should be located to a Grid intersection, to the bottom left of the building (in project north), and survey point, should be located on a Project coordinate system ‘WGS 1984 UTM Zone 37N’ tile intersection to ensure accuracy or left at 0,0,0 for reference. 
+Coordinates are shown below for each type. Care should be taken to ensure that coordinates are clipped and pinned in place, to avoid them being moved. If a project base or survey points require moving, the original and proposed coordinates should be documented, and the design team made aware of this change. 
+All vertical levels are relative to Mean Sea level (MSL) at Jeddah. Another commonly used vertical datum at the site is LAT at Al-Wajh.  Elevation (m MSL Jeddah) = Elevation (m LAT Al-Wajh) + 0.5954 m
+Federation Strategy
+Federation Strategy, also referred to as the Information Container Breakdown Structure will be used as a foundation for coordination. It will allocate volumes within the project to different disciplines into which they carry out their system model. The proposed overall modelling and coordination strategy for the project will enable concurrent work on models and will be developed based on numerous factors such as:
+Required project deliverables
+Overall project procurement strategy
+Coordination requirements and consultant/trade package split
+Unique project challenges and project BIM Uses
+Model file size – Consideration to be made of model performance. Model file size to be kept in within manageable extents. It´s recommended to keep models file size bigger than 300 MB.
+Capability of project team
+Information Security
+This will be further developed and updated as additional information and model authors are identified. 
+If trade contractors are unable to produce models for detailed design elements beyond the scope of the principle consultants, it shall be agreed between the relevant parties as to whether additional instructions are provided to the consultant to continue their design to an enhanced level or whether an independent modelling team are employed.
+Volume/System parameters to be included if necessary, once reviewed with all the Task Information Mangers so that a common strategy that accommodate all consultants’ necessities is achieved.
+All members of the supply chain are expected to review the table documenting volumes below and shall ensure that their models are developed in accordance with this strategy moving forward for the project.
+SIGNATURE ARCHITECTS
+Architectural Models Saved in BIM360
+Lead Engineering – WIP TBD
+Note: Sheets are contained within each model
+LANDSCAPE DIAGRAM
+*Amenities, Clusters and Hotel Cluster Containers and models are not developed yet (General Container only)
+Kitchen & Laundry Consultant
+Model Workflow
+- SPA DIAGRAM 
+SPA Models Saved in BIM360 
+SPA Sheet Model Workflow 
+Specialist Discipline Integration into BIM Environment.  
+This section of the BEP refers to the BIM Information that is produced by TRSDC Consultants that are not contractually appointed to produce BIM Models, but will provide valuable Design and BIM Information that will have to be embedded into other Consultants BIM Models. Such information can be described as reach metadata and will for part of the LOI’s requirements or might even influence the size, shape and orientation of the design elements consequently altering the LOD’s requirements.  
+To make sure that this information is captured within the exchange BIM model deliverables, it is crucial that a Specialist Discipline Integration into BIM Environment matrix is established so that every consultant understands what information is provided, when it is provided and by whom. 
+Responsibilities
+Specialist Discipline (No BIM Modelling Scope) Responsibilities. 
+To read and familiarize with the BEP and any other documentation related to overall project BIM Scope of Works
+To provide the information that will have to be embedded into other Consultant BIM Models as a clear format that is easy to understand, process and integrate and it is following the Master Information Delivery Table (MPDT) format
+To provide regular updates to all the Consultants with BIM Modelling Scope when new information is produced, or existing information has been altered. 
+To actively participate in BIM Weekly Meetings to make sure that relevant information is being captured
+Specialist Discipline (No BIM Modelling Scope) Responsibilities. 
+Provide feedback to Specialist Discipline regarding the format expected of the information required to be embedded 
+Incorporate the Specialist Discipline information following the Master Information Delivery Table MPDT matrix
+Specialist Discipline Integration Matrix
+File Naming Conventions 
+Also referred to as the Information Container Identification, the BIM project naming conventions will follow the Red Sea Naming Convention displayed in the PMIS Manual. This file naming system is to be used for drawings and models only and should be used as the drawing/model name and within the title block for drawings. 
+Project Number
+An alphanumeric code that is used by the project team to identify the project. The Program Code + Asset (Project) & Contract Code make up the Project Number.
+Originator Code
+An alphabetic code that represents the company responsible for that aspect of the work. The codes must represent the company name, and not the discipline.
+Volume/ System
+Two alphanumeric characters that relate to spatial sub-division of the project starting with Volume or System; ZZ is applied when all volumes are referred to.
+Building Levels
+2 alphanumeric characters that relate to Levels and Locations and is made up of two characters. This should align with the agreed project nomenclature outlined in Section 6.6 below. A guide to those codes as well as standard non-floor level codes is as follows in the Red Sea Naming Convention displayed in the PMIS Manual.
+Document Type
+A three-character alphanumeric code that indicates the type of information held within the information container.
+Refer to the Red Sea Naming Convention displayed in the PMIS Manual.
+Discipline / Role
+The is a two-character indicating the discipline. Refer to the Red Sea Project Document Management System in the PMIS Manual and to [Drawing Series Numbers] (Appendix O).
+Series Number
+This is a unique 5-character code. The first two characters of the number should be used to signify an ‘element code’ that further classifies the file. One classification code system should be chosen and consistently used by all project teams. This number should always be used sequentially with leading zeroes.
+i.e. Package Series (10XXX), multi-use number i.e. zone or building number (XX4XX) and the drawing number (XXX01)
+Refer to the Refer to the Red Sea Document Management System in the PMIS Manual and to [Drawing Series Numbers] (Appendix O).
+Additional Information for Submissions
+Additional information parameters and their values shall be added to each sheet/title block when uploading or submitting on Aconex. The Contract/Work Package code and Revision number should not be included in the drawing or models name but should be stated for data entries on Aconex upload only. 
+Contract/Work Package
+An alphabetic code that represents the work package. 
+Document Revision
+An alphabetic code that represents the revision of the drawing at each Project Stage. 
+Refer to the Red Sea Naming Convention displayed in the PMIS Manual.
+Level / Location Naming
+A two-character alphanumeric code that represents the level or story of the building.
+Refer to the Red Sea Naming Convention displayed in the PMIS Manual.
+Rooms & Doors Naming Convention & Codes
+Rooms naming convention should follow the design brief requirements and should be clearly identifiable. Rooms Codes should allow for unique rooms identification. 
+Doors codes provides every door in the building with an identification, which is further referred to in the door and ironmongery schedule. Doors are named after the room they are leading into. If more doors are present in the same room the ending number within the door code will receive and incremental number. 
+Revit Views Naming Convention 
+Revit views are to be named in a consistent way using clear, descriptive naming protocol following the “Camel Case” syntax. This is applicable to all Plan, Sections, Elevations, Schedules and Legend Views.
+Prior to publish the models to BIM360, a Publish Set should be created and including 3D views:
+Worksets
+Worksets should be named in a consistent and logical manner to aid navigation in the project browser. Workset organization should be carefully considered to provide the most efficient working environment for the Design Teams. 
+Worksets are named with a role code, optional zone code and a description of the content.
+Discipline - Identifies the owner of the object – Element author. 
+Zone - Once Zones are defined, worksets can used this optional field to define zone specific worksets
+Content - Content is a description of the use of the workset. E.g. Interior (internal wall systems, doors, ceilings, rooms etc.), cladding or furniture. If a project is split by zone or function only the content code can be omitted.
+Note:
+Shared Levels and Grids Worksets
+The Shared Levels and Grids worksets do not include the role code and is named Shared Levels and Grids as the default workset created in Revit. This is to enable all Design Disciplines to turn off all grids and levels from models linked in the sheet model(s). The grids and levels in the sheet model however will be placed in a workset with the role code. E.g. A-Shared Levels and Grids would be in the architectural sheet models
+Each Linked Revit File will be placed in its own Workset following the naming convention below:
+List of Worksets per Discipline:
+- SIGNATURE ARCHITECT
+- EXECUTIVE ARCHITECT (KAA)
+- Kitchen & Laundry consultant
+- Lead Engineer Consultant
+- Landscape consultant
+Landscape Worksets – Working Models
+Landscape Worksets – Amenities Container
+Landscape Worksets – Villas Container
+Landscape Worksets – Clusters Container
+- Interior Design Consultant
+SPA CONSULTANT
+Shared Parameters
+A set of Master Shared Parameters that incorporates the client requirements will be distributed consistently across all design disciplines by the Lead Appointed Party [Master Shared Parameters] (Appendix G). Any amendments involving shared parameters that form part of the master shared parameters core will require approval from the Appointing Party and Lead Appointed Party.
+For scenarios where design decisions are not yet finalized and multiple inputs may still be valid, the TRSDC Parameters will be filled in with all the current options listing first the Primary Option. For areas where the design has not yet progress that far to achieve a valid input the TRSDC Shared Parameters will be filled with TBC. At the handover stage the TRSDC Shared Parameters will be curated and will go through a final QA/QC that will only leave the Primary Option input.  
+E.G.  
+TRSDC_Material = Material_1 (Primary), Material_2, Material_3...etc 
+TRSDC_Material = TBC
+All other Shared Parameters required at a discipline level will fall under each Appointed Party responsibility and all shared parameters files should be saved on BIM360 under the folder:
+02_SHARED>XX>12_IM-Information Management>02_Supporting Files & Templates>02_Master Shared Parameters
+Object Naming Convention
+Model objects are to be named using clear, descriptive object naming for all object and family types prefixed by role or company reference. A list of object and family type codes are to be provided by each model contributor. 
+Where alternative object naming conventions have been used, these shall be detailed to the Project BIM Manager and TRSDC.  Room naming shall be in accordance with the [EIR] if there is a room naming schema in place.
+Best Practice 
+To get consistent results when searching for content, follow the specific rules set below: 
+All names should be in English
+Use full words when possible
+Names should be composed using characters A to Z, a to z, 0 to 9
+Name should use CamelCase (no spaces, and capital words) unless otherwise noted in the following chapters
+The following characters should not be used in any naming conventions:
+,. ! “ £ $ % ^ & * ( ) { }[ ] + = < > ? | \ / @ ’ ~ #¬ ` ‘
+Family Naming Convention
+Family Full Name including all Family Types shall be limited to a maximum of 50 characters.
+The name should use the underscore ”_” character as the delimiter between fields. The reason for this is that some programmatic scripts may interact with the hyphen. 
+Family files (.rfa) shall be named beginning with: <Role>_<Type>_<Subtype/Product>_<Descriptor1>  
+Role
+Identifies the owner of the object – Library author.
+Type
+This field is the first level of specialisation. In other words, this is the highest level of family information in terms of purpose. This field should not be confused with the Revit Family Categories, although sometimes it might coincide (every object or family in Revit needs a category to define the object behavior and template).  
+For example, a door or a window family has a “Type” field that coincides with the Category but a table or a sink does not coincide. A table belongs to the Furniture category, the sink belongs to the Plumbing Fixtures category. 
+For example: 
+A_Door 
+A_Wall
+A_Window
+Subtype / Product
+The Subtype / Product field forms the next logical level of information that distinguishes a family type from another.
+For example:
+A_Door_Sliding, 
+A_Door_Revolving
+They are both doors but the subtype helps to differentiate between them. This field shouldn’t contain manufacturers.
+If a new Subtype / Product needs to be created please discuss in the Information Management Meetings.
+Descriptor 1
+Optional - Brief User Description. The Descriptor 1 field is used to convey additional specialization information. It will help differentiate between subtypes.
+For example:
+A_Door_Sliding_GlassOpaque
+A_Door_Sliding_GlassClear	
+A_Door_Sliding_GlassTempered
+All families are sliding doors but the descriptor helps differentiate between them.
+In the case of system families: Walls, Floors, Ceilings and Roofs Descriptor1 is the overall thickness.
+For example:
+A_Wall_Int_75mm
+Type Naming Convention 
+All Revit Families should have at least 1 type. If this is not done, then the Family type name will inherit the family name when loaded into project. 
+If there is only one type don’t leave the field blank. Use ‘Type 1’
+Indicate sizing in mm (fractional inches in case of Imperial) for Family components
+Use Camel Case with spaces
+Avoid repeating information already in the family name
+Try using full words if possible; if needed, use abbreviations only from section 8 (Foster + Partners Abbreviations list)
+All names must be in English
+For example: 
+Family: A_Furniture_Chair                                        
+Family Type : Type 1
+                    Chair Barcelona
+Family: A_Casework_Suspended_SatinGloss
+Family Type : 900 x 1500 x 300
+As a best practice always use this syntax:	
+                    Width x Depth x Height
+Family: A_Furniture_Table_Conference
+Family Type : 900 x 1500 
+As a best practice always use this syntax:	
+                    Width x Length
+Miscellaneous Revit Content Naming Convention
+Groups and Assemblies
+Groups should never be named with the default Revit naming convention Group 1, Group 2, etc as that is non-descriptive. Groups should never be used for a single instance, a common descriptor is a good starting point. 
+If it is the purpose of the group or assembly is to be able to move and select several elements again later use selection sets instead of groups or assemblies.
+Scope Boxes
+Scope boxes should be named in a logical manner for other team members to be able to use and find. There is no naming convention for scope boxes, but please follow these general guidelines:
+Scope boxes should not be named according to packages, as the same scope box might very well be applicable for several drawing packages
+Scale and location are good codes for their names
+Scope boxes for GA drawings should use scale and the sheet number corresponding to the sheet their views are placed in
+Document Numbering
+Document Numbering Convention should be following the Red Sea Project Document Management System in the PMIS Manual. Drawings will be including a Volume/System Series related with the Island Wide (for Landscape, Civils, Marine) and another Volume/System Series related with the Asset.
+Island Wide
+Volume/System Series should be always the top left intersection grids following the grid system shared by TRSDC. Depending of the scale, the scope boxes should start from the top left to right.
+EX.: Two set of drawings at scale 1:100 (purple rectangles)
+Assets
+Volume/System Series should follow the asset series. It there is more than one asset in the same drawing, the lowest Volume System Serie should be used.
+EX: R08-HE1D01-FOS-13-00-DWG-AR-10100
+Accuracy and Dimensions
+No alterations/amendments to dimensions should ever be made when 2D drawings are extracted from the 3D models. The 2D drawings will form the contractual design information and so all dimensions for setting out is to be taken from them. By altering dimensions, the 3D models can no longer be used for reliable coordination reviews.
+Annotation Methods
+A strategy should be followed based on the methods listed below:
+Method 1 – Container file Strategy
+Method 2 – Multi file sheet production Strategy
+Method 3 – By Linked View Strategy
+Annotation Tags
+The following table identifies which parameters and methods are used per each consultant to tag the model elements.
+The following table must be filled with which parameters have been used in the annotation tags.
+Drawing Scales
+All drawings must be rendered and presented at one of several approved scales, which are typically defined by the ‘Task Team Manager’. All drawings created from model geometry must be presented at a scale showing appropriate detail. If the model is too large to be published at the agreed scale it should be subdivided over several sheets with reference to continuation sheets on the title block. Scales other than those approved should not be used. All model files/geometry must be created at 1:1 real world size.
+Any Schematic/Diagrams will not have any scale assigned
+The following table has been filled out indicatively. Please refer to the Design Management section of the Project Execution Plan and omit or amend sections to follow project requirements. Please remove this text following any changes.
+TECHNICAL DATA PROTOCOL
+The Task Information Manger (Appointed Party) will provide the model data requirements and responsibilities for each data contributor. 
+Guidance on data entry and shared parameters will be provided where required. Consultants are asked to supply details of their data entry and in-house data checking procedures to the rest of the BIM team for transparency. 
+On the agreed dates, all parties will submit their 3D Models and/or associated data drops, which will be coordinated by the Task Information Manger (Appointed Party). All data drops are to be fully checked and the information verified before issue.
+BIM Weekly (bi-weekly DWFx) Information Exchange 
+This exercise represents the WIP information exchange between consultants meant to help the design process. 
+Native discipline-based 3D model files product specific for all design and analysis models (RVT)
+Prior to publishing the models to BIM360 for creating a Design Collaboration Package Exchange, a Publish Set should be created and including 2D/3D views:
+BIM360-3DView-Architectural Elements – 3D view with Consultant design intent which is not yet designed/handed over by/to the consultant responsible for it
+BIM360-3DView-Export – 3D view only with Consultant´s elements visible which is under the scope. Tis view should be used to export the model to other BIM models formats: IFC, NWC and DWFx;
+BIM360-3DView-Federated Model – 3D View with all consultant’s elements visible.
+A 2D view Floor Plan for every different building level. 
+Naming conventions to be followed “XXX “- 2D View - Floor Plan “Description”  
+e.g. FOS - 2D View - Floor Plan Ground Floor
+Agreed 3D discipline-based models extracted from native files, for collaboration and clash detection.
+NWD Federated Model per discipline (One Model)
+NWC Models per building typologies all exported using the same location by each consultant
+Agreed 3D discipline-based models extracted from native files, for Dynamic Cost calculation.
+BI- WEEKLY DWFx Models with TRSDC Parameters added 
+Milestones Submission
+This exercise represents the data drops required for Milestones Submissions. 
+BIM Models
+Native discipline-based 3D model files product specific for all design and analysis models (RVT)
+Prior to publishing the models to BIM360 for creating a Design Collaboration Package Exchange, a Publish Set should be created and including 2D/3D views:
+BIM360-3DView-Architectural Elements – 3D view with Consultant design intent which is not yet designed/handed over by/to the consultant responsible for it
+BIM360-3DView-Export – 3D view only with Consultant´s elements visible which is under the scope. Tis view should be used to export the model to other BIM models formats: IFC, NWC and DWFx;
+BIM360-3DView-Federated Model – 3D View with all consultant’s elements visible.
+A 2D view Floor Plan for every different building level. 
+Naming conventions to be followed “XXX “- 2D View - Floor Plan “Description”  
+e.g. FOS - 2D View - Floor Plan Ground Floor
+Agreed 3D discipline-based models extracted from native files, for collaboration and clash detection.
+NWD Federated Model per discipline (One Model)
+NWC Models per building typologies all exported using the same location by each consultant
+Agreed 3D discipline-based models extracted from native files, for Dynamic Cost calculation.
+DWFx Models with TRSDC Parameters added 
+Agreed 3D discipline-based models extracted from native files, in open format.
+IFC 2x3
+Notes: 
+IFC 2x3. BIM Authoring Consultants cannot ensure the translation of the digital process to extract the information from the Revit model to IFC. The Revit file information prevails
+Native file formats and IFC formats are required with each model upload. Native file formats are to be referred to if discrepancies arise from IFC outputs. Correct mapping options to be selected for IFC exports refer to Section 7.3 for guidance.
+Drawings
+2D drawing files in dwg format cut from the submitted models
+PDF file format exported from Revit Drawings Sheets
+DWG file format exported from Revit Drawings Sheets
+Documents
+This section is reserved for the upload of documents such as BEP’s, Project Stage Reports, Area Comparisons…etc. File formats can be (PDF, Excel, Word…etc)Project File Format Overview
+Project Task Teams File Format Exchanges
+All base models (models containing the geometry) will be shared with TRSDC and project teams on a regular basis via the allocated space on the employer’s selected PMIS for the Red Sea Project.  
+The agreed model and drawing formats required for the data drops according with the information exchange schedules from Chapter 7 are:
+<For Revit Based projects, all disciplines MUST use the same version of Autodesk Revit>
+All file format exchanges must be agreed between parties at the beginning of the project and any further BIM workshops when new supply chain members are appointed. It must be adhered to throughout the life of the project. Deviations must only be made when exporting for Navisworks clash detection. File format will then be NWC, or for different platform collaboration, the use of IFC files is compulsory.
+Technological advances and software are being reviewed to allow federated models to be hosted and viewed for a more ‘up-to-date’ collaboration workflow.
+IFC Guidance
+To ensure effective collaboration between the multiple parties a series of trail/test IFC (International Foundation Class) exports will be scheduled. The export shall contain IFC objects for all discipline specific objects to be produced by each respective BIM author.
+IFC File Export Settings
+Following a successful IFC exchange trial each BIM author must specify their IFC export settings. These settings should be shared under Appendix P – BIM Guides.
+Data Reviews
+Data entry will be an ongoing process throughout the project, it will be carefully controlled with regular in-house data checks carried out by each discipline. Checks to include;
+Project data parameters have been correctly input. As a minimum the following information shall be contained within the model: 
+Family correctly assigned.  
+Type
+Level
+Ref. to the type specific data in the Specification if that data is not otherwise embedded
+Any other information specified in the Model Production Delivery Table
+Organization contact details are correct and up to date
+No data amendments once extracted from the 3D models
+Data has been entered in the correct fields and format (e.g. alphanumeric)
+Data has been entered at the correct type/instance level
+Model and project protocols have been followed (naming conventions, levels etc.)
+Duplicate objects removed from the models
+The responsibility for correct data lies with the model in the same way as the responsibility for providing the correct geometry. However, the Project Information Manger (Appointing Party) will conduct periodic data audits and issue reports documenting the results.
+PROJECT WORKSHARING & COLLABORATION
+Collaboration is vital to the success of a BIM Project. There are two aspects to collaboration; communication between people (under Meetings in Section 8.6), and the control and sharing of the project information and data described in the following sections.
+Model Collaboration
+As part of BIM, the design shall be authored using BIM software collaboratively and in real time. Where work is performed in multiple offices or where subcontractors and suppliers are major participants in the BIM, the Consultants will facilitate the maximize “live” collaboration practicably possible and minimize the frequency and time lag of BIM updates to the Consultant’s master BIM from external participants. The BIM shall not be created at the end of the project only to meet project deliverables.
+The Model Collaboration process will utilize the Autodesk BIM 360 platform – Design Collaboration module. 
+The Model Collaboration process will utilize the Autodesk BIM 360 platform – Design Collaboration module. It should follow the Appendix M – BIM Timeline.
+BIM360 Package Exchange
+The Work in Progress models should be shared by using BIM360 platform – Design Collaboration module. For a better understanding of the package exchanged, a naming convention should be used based in the following table:
+Program & Project Code
+This is a six-character indicating the Program Code and the Project Code.
+Originator Code
+An alphabetic code that represents the company responsible for that aspect of the work. The codes must represent the company name, and not the discipline – see sub-topic 6.5 File Naming Conventions.
+Discipline / Role
+This a two-character indicating the discipline. Refer to the Red Sea Naming Convention displayed in the PMIS Manual.
+Package Exchange Code
+The Package Exchange Code utilize the ISO 19650 Suitability Code (extracted from BS1192:2007+A2:2016), to define the status of the shared documents and Models between stakeholders.
+Volume Code
+Two alphanumeric characters that relate to spatial sub-division of the project starting with Volume or System; ZZ is applied when all volumes are referred to – see sub-topic 6.5 File Naming Conventions.
+Sequence Number
+Four digits sequential number – leading zeros should be used.
+Common Data Environment & PMIS
+The Common Data Environment is the working environment where all current, controlled project design information is stored and made available by controlled access. It is normally an application or group of applications that form the “single source of truth” for the building information. 
+A Common Data Environment (CDE) approach allows information to be shared effectively between all members of the project team; giving early access to information and avoiding risk of duplication. For this project Aconex and BIM 360 shall be the designated CDE’s. 
+BIM 360 will be utilized for all design related information which includes model uploads, PDFs and native design files. The following 3D views are required to be published on BIM 360:
+One that contains only the discipline elements
+Second that contains the federated model
+Third that is tailored for export purposes that free of elements duplication between various design disciplines.
+Aconex for other documentation such as word documents can be used as a check but formats unrelated to modelled information.
+There are four main environments:
+WIP (Work in Progress) – CDE
+The working area within an organization’s own systems.
+SHARED – CDE
+The models that are regularly shared for use of entire project team. The Executive Architect will federate all models and the Task Information Manager contact from each organization will ensure all the latest relevant models are downloaded and federated into their WIP files. 
+All team members should be using other parties’ information for their own internal coordination checks. To progress to the next stage the information must be authorized by the appropriate person.
+PUBLISHED – TRSDC PMIS
+This information will have been accepted by the nominated party, in which case it will be suitable for tender or construction (2D model output only)
+ARCHIVE – TRSDC PMIS
+History of project information stored within the CDE.
+Please refer to the BIM 360 User Guides and PMIS Manual for more information on folder structures and interaction with the systems. 
+Model Upload Process
+3D models must be shared at regular intervals to ensure the rest of the project team are coordinating with the latest information. This should happen following TRSDC BIM360 set-up environment. 
+BIM Models Exchange
+Depending on which BIM Model format, the process of exchanging the information across all teams is different.
+Revit Models Exchange
+All native models should be exchanged using the Collaboration Pro module in BIM360 on a weekly basis. A proper naming convention should be followed – please refer to sub-topic 8.1.1 BIM360 Package Exchange. All consultants should be adding a description informing the major changes.
+As the Interior Design consultants doesn´t have access to the Collaboration Pro module, Revit models must be exchanged manually. By having the models workshared in the work in progress folder – 01_WIP – all models should be copied into the folder by using the BIM360 feature: 02_SHARED>Asset folder>Discipline folder. Along with the Exchange, a communication should be sent out to all consultants informing the major changes.
+All consultants should access to the 02_SHARED>Asset folder>Discipline folder and do a copy of the models into the Consumed folder: 01_WIP>Discipline folder>Consumed>HW3_06_ID-Interior Design – this folder should be created manually.
+NWC and NWD Models Exchange
+All Revit models should be exported following the requirements needed – please refer to APPENDIX P – BIM Guides – and uploaded manually into a folder in BIM360 located at: 03_SUBMISSIONS>01_OnGoing Design Coordination>12_IM-Information Management>Asset folder>weekly folder>NWC>Discipline folder.
+DWFx Models Exchange
+All DWF models should be exported following the requirements needed – please refer to APPENDIX P – BIM Guides – and uploaded manually into a folder located at: 03_SUBMISSIONS>01_OnGoing Design Coordination>12_IM-Information Management>Asset folder>weekly folder>NWFx>Discipline folder.
+It´s required that the DWFx models contains 70% of the Omniclass codes included – please refer to APPENDIX J – Master Information Delivery Plan.
+IFC Models Exchange
+All IFC models should be exported following the requirements needed – please refer to APPENDIX P – BIM Guides. These models are only required to be exchanged on a gate submission and should be followed the workflow in place for the submissions.
+BIM Models should be shared according to the table below:
+Software Usage
+The following list only includes the software that is required to be compatible with the Client’s systems and will form part of the deliverables. These file formats will form the basis of coordination between all disciplines. All other software required for the project, including version, shall be agreed by each discipline in coordination with all parties. The versions are those agreed at project inception. Upgrades to subsequent versions of the software after commencement of the project shall be subject to agreement by TRSDC, in which case will occur at an agreed designated stage of the project and documented accordingly in this section.
+<For Revit Based projects, all disciplines MUST use the same version of Autodesk Revit, outlined above. For software updates, all parties must agree for upgrade. Software type can be determined by the EIR’s >
+Clash Rendition Viewer
+The clash rendition viewer to be used across the whole project. 
+BIM Meetings
+A BIM Kick-off meeting will be held with all known supply chain members in order to run through the BIM deliverables for the project. This will directly reference the EIR and the processes for delivering BIM for the project. This meeting will be chaired by the Project Information Manger (Appointing Party) and Task Information Manger – Lead (Lead Appointed Party) who will attend all related team meetings.
+This will then be followed by a meeting with all Task Information Managers from all project teams to go through the first draft of the BEP in a collaborative round table discussion and with agreement from all by its conclusion. 
+Moving forward; regular BIM meetings summarized below will commence with all Task Information Managers present from all relevant project team organizations. If not feasible for members of the project team to attend, then it is the team member’s responsibility to ensure arrangements are made for their members to still be in attendance through communication means.
+The BIM related meeting plan will be developed by the Task Information Manger – Lead (Lead Appointed Party) and the Interface Manager. The Design Coordination meeting frequency will vary through the contract period but in general will follow a weekly review or upon request for each of the Design Managers.
+Summary of Meetings:
+Clash Detection and Coordination Meetings Schedule
+The Clash Detection and Coordination Meetings will take place on a biweekly basis or as per client request. In order for this to happen there are several tasks that are required to be completed by each design consultant. The actual days will be confirmed, but the following cycle is intended to be followed. 
+Outlined below is the fortnightly plan of actions. This will be updated once the design coordination meeting schedule has been agreed.
+MODEL REVIEWS
+Quality Control Procedures
+Model audits are to be carried out regularly on the shared models for their compliance with this [BEP]. The process involves a combination of checks listed below to ensure there are no unresolved issues during construction or any significant loss of data upon transfer of as-built models and record documents at facility handover.
+Clash Detection Process Overview
+Automated clash detection is to be viewed as the last line of defense – it is always preferable to avoid unmanaged clashes through considered modelling than to rely on clash detection to identify and then resolve them.
+Each BIM participant is responsible to maintain the integrity of the models and information and check/review these with their team manager as part of standard model collaboration before issuing to the SHARED part of the CDE.
+If a clash is detected, according to the LOD per stage, that cannot be resolved by the construction, consultant and subcontracting team then the lead designer shall be involved in the discussion to reach an agreed solution. Individual subcontractors and consultants are responsible for making changes to their own model(s) only, and where/if required.
+Automated clash detection of single discipline models is to be carried out by Task Team Information Managers at all project stages on a >specify frequency< basis using Navisworks Manage or similar software, by implementing the clash rules defined in >insert doc reference<.  This is to ensure that coordination is proceeding as expected, and to give early warning of any common issues.
+The individual shared models shall be combined for design review and clash detection by the Executive Architect and a federated model shall be made available in read only format to the whole team for model-based reviews and coordination throughout the project lifecycle and issued on to a shared area of the CDE.
+Automated clash detection on the federated model will be carried out ahead of each BIM Workshop by the Executive Architect on behalf of the Client as the models are updated. The clash rules defined in >insert doc reference< allows us to efficiently break down clash results and clashes across models and different work packages. This is then broken up by buildings and floors within the site, allowing us to further focus on specific areas aligning with the critical path of the project program for construction to ensure delivery of the project is kept on track.
+Automated Clash reports (Grouping of clashes) and any coordination reports will be created and issued to supplement the read only combined model and SHARED on the CDE.
+Specialist clash detection should be discussed, costed with an agreed output prior to the project starting. Health and safety/CDM management
+BIM and the CDE should support the management of health and safety and CDM requirements. The CDM meetings are to be integral with the BIM Modelling review process and are to be model based. This is to ensure that compliance with CDM is incorporated as part of the spatial design and modelling process. The review process is to include all relevant project teams to ensure the CDM requirements are met. The interactive coordination workshops allow Health and Safety issues to be visualized and a coordinated mitigation established. Integration of BIM can be incorporated into on-site toolbox talks and site inductions.
+ Responsibilities and Requirements
+Each consultant will ensure that, they are using correct 3d view and Navisworks options editor setting for exporting any NWC files, KAA already provide the NWC export settings. 
+All consultant need to share their NWC files 
+Khatib and Alami will create NWC files for BOH  
+All consultants are responsible for submit a federated NWD file on a weekly basis.  
+Any NWC file naming changes should be inform Khatib and Alami and approved with TRSDC immediately with a proper mapping  strategy,  
+All consultants are responsible for correct NWC building coordinates. If a building have multiple site  position, we should all follow the architectural file export location,  
+All consultants can check the NWC file tracker for rectify their pending issues that uploaded on BIM360  
+Khatib and Alami will run clash detection and upload federated Navisworks models in BIM360,  
+All consultants are responsible to solve their own clashes,  
+Currently building are combine with respect of Volume/ System information of each assets and clash detection  information will be built within this Naviswork model. Additionally each assets overall federated model are generated for design review.  
+ Weekly Model Sharing & Clash Detection Road Map
+All Navisworks models are shared on a weekly basis in BIM360 by the consultants. Those models will be used to run clash detection analysis.  
+All disciplines model mapping,  
+Clash detection life cycle,
+ Clash Detection Criteria
+Discipline clashes are prioritized based on categories sets. Clash tolerance value are change when design reaches to next stage.  
+Type of Clashes  
+Hard Clash\Duplicated elements  
+Soft Clash\Clearance Clash  
+Hard clash\Duplicated elements  
+When two objects occupying the same space, it will be considered as a hard clash. For example, a duct placed where a beam designed or, a number of pipe running through a structural wall. Duplicated elements can show in the report and that’s when two elements had been placed in the same places which causes double count and generates a clash. For example, structural column copied on top of each other.  
+Soft clash\clearance refers to objects that demand certain spatial/geometric tolerances or buffers having objects within their buffer zone of access, insulation, maintenance or safety. For example, equipment placed in an unaccusable zone, access zones for maintenance of MEP systems.  
+ Matrix and Tolerance 
+Current clash matrix are using discipline clash method,  
+Recent clash detective schedule are presenting “Discipline A” vs “Discipline B” a detail matrix with clash tolerance. Each face of the design, KA will be update the stage code and Tolerance.   Currently KA is using 50mm tolerance.
+Clash Detection Rules 
+Below is an example of the type of clash detection rules and tolerances that may be undertaken.
+Note: All grey highlighted clashes will be managed by consultants.
+Note: Foster + Partners to share Clash tolerances as per previous TRSDC projects based on Stages.
+Health and safety/CDM management
+BIM and the CDE should support the management of health and safety and CDM requirements. The CDM meetings are to be integral with the BIM Modelling review process and are to be model based. This is to ensure that compliance with CDM is incorporated as part of the spatial design and modelling process. The review process is to include all relevant project teams to ensure the CDM requirements are met. The interactive coordination workshops allow Health and Safety issues to be visualized and a coordinated mitigation established. Integration of BIM can be incorporated into on-site toolbox talks and site inductions.
+APPENDIX A - BIM Documentation 
+The set of BIM Management documents are listed below, the forms are not mandatory for all projects, with the exception of the Model Production Delivery Table which is required for all BIM projects and the use of the various Toolkits is dictated by the project BIM Objectives defined in Section 3 of this BEP. All relevant BIM Toolkits will be available via the CDE.  
+APPENDIX B - BIM Capability Assessments
+TRSDC has developed a robust in-house BIM strategy that informs and steers the company’s BIM application within the business. It is based on live BIM project experience and sets out the processes and procedures required for successful BIM project delivery for the entire project team.  
+TRSDC regularly reviews and updates their live data base of BIM capabilities to identify and maximize the added value that BIM can bring to them during and after construction. Project specific capability assessments are summarized in the table below.
+APPENDIX C – LOD Descriptions
+Model LODs will follow the BIM Forum 2019 ‘Level of Development Specification’ document (Part I and Part II), unless stated otherwise by the Project BIM Team. 
+The definitions and authorized uses for each LOD as required in the BIM Deliverables and Model Production Delivery Table respectively are provided with the differences emboldened for ease of reference.
+Refer to Appendix D – Model Productivity Delivery Table for the LoI to be filled into the models.
+APPENDIX D – Model Production Delivery Table 
+The Model Production Delivery Table [MPDT] to be developed by Project Teams as per the specific LOD/LOI requirements for each Sub-Project.
+The MPDT provides the BIM Forum breakdown of the Levels of Development enabling us to provide a more granular discussion on the requirements for the project.
+APPENDIX E – BIM Responsibility Matrix
+ The BIM Responsibility Matrix sets out the responsibility to produce the information and models for each defined stage and to what Level of Definition.
+APPENDIX F – BIM360 Collaboration and Models Sharing Overview
+Sharing the Revit models with other project teams using BIM 360 Design. Through Controlled Sharing Consume Models from Packages. to share using this method:
+Publish your models from Revit to BIM 360 using Revit Cloud Worksharing. 
+Use the Design Collaboration module to create a package and share your models with other teams.
+Other teams choose to consume the shared models.
+The teams who have consumed the shared model use Revit to link to the model from their Consumed folder in the Document Management module.
+Tip: When adding a link in Revit as a team that has consumed a shared model, navigate to your team's Consumed folder in Document Management (BIM 360://Project Name/Project Files/Your Team Name/Consumed/TeamName/FileName.rvt).
+For BIM 360 Folder Structure Definitions refer to TRS-DS-GDL-0001 PMIS Design Review User Guide and TRS-PM-MNL-0013_BIM 360 - Design Collaboration user Guide.
+APPENDIX G – Master Shared Parameters 
+The Master Shared Parameters table contains all shared parameters required to be added into the BIM model per LOD.
+APPENDIX H – BIM Models QA/QC  
+The BIM Models QA/QC contains all the topics that needs to be checked to be consistent and comply with the BIM Standards used in the Project.
+APPENDIX I – Models Multiple Shared Location
+The Models Multiple Shared Location contains all shared coordinates from all buildings.
+APPENDIX J – Master Information Delivery Table
+The Master Information Delivery Table (MIDP) contains all information to be delivered per project stage, per consultant. Essentially is a collection of the Task Information Delivery Plans (TIDP) which includes details of when project information is to be prepared: Models, Drawings, Reports, Specifications, …
+APPENDIX K – BIM Uses Matrix
+The BIM Uses Matrix informs which are the BIM uses and how all consultants will drive the process to achieve it.
+APPENDIX L – Specialist Discipline Integration
+The Specialist Discipline Integration informs the responsibility chain of all consultants to make sure that the information produced and needed is captured within the final BIM model deliverables, so that every consultant understands what information is provided, when it is provided and by whom. 
+APPENDIX M – BIM Timeline
+BIM Timeline informs when the BIM models should be shared, when models are expected to be used before a submission and when all consultants have the gates submissions.
+BIM Timeline should be monitored by the Executive Architect for the information sharing frequency, agreed formats, and the level of completeness per the MPDT.
+APPENDIX N – Consultants Interface
+The Consultant Interface diagram illustrates the workflow and elements ownership between Architecture, Interior Design and Structural openings/doors.
+APPENDIX O – Drawing Series Numbers
+The Drawing Series Numbers informs which Series Number should be used in the Drawing Numbering Convention.
+APPENDIX P – BIM Guides
+All BIM Guides regarding workflows used during the project development.
+
+Rev. | Details | Name | Position | E-mail Address | Date | Signature
+00 | Prepared by: | Juan Pommarez Tarradas
+Radu Ionut Boeriu | BIM Lead
+BIM Manager | Jpommarez@fostrandpartners.com
+riboeriu@fosterandpartners.com | 10/08/2020
+00 | Reviewed by:
+00 | Approved by:
+01 | Prepared by: | Juan Pommarez Tarradas
+Radu Ionut Boeriu | BIM Lead
+BIM Manager | Jpommarez@fostrandpartners.com
+riboeriu@fosterandpartners.com | 25/09/2020
+01 | Reviewed by:
+01 | Approved by:
+02 | Prepared by: | Juan Pommarez Tarradas
+Radu Ionut Boeriu | BIM Lead
+BIM Manager | Jpommarez@fostrandpartners.com
+riboeriu@fosterandpartners.com | 20/10/2020
+02 | Reviewed by:
+02 | Approved by:
+03 | Prepared by: | Radu Ionut Boeriu
+Hugh O’ Connor | BIM Manager
+BDS Coordinator | riboeriu@fosterandpartners.com
+hoconnor@fosterandpartners.com | 23/10/2020
+03 | Reviewed by:
+03 | Approved by:
+04 | Prepared by: | Radu Ionut Boeriu
+Hugh O’ Connor
+ | BIM Manager
+BDS Coordinator
+ | riboeriu@fosterandpartners.com
+hoconnor@fosterandpartners.com
+ | 16/11/20
+04 | Reviewed by:
+04 | Approved by:
+05 | Prepared by: | Radu Ionut Boeriu
+Hugh O’ Connor | BIM Manager
+BDS Coordinator | riboeriu@fosterandpartners.com
+hoconnor@fosterandpartners.com | 23/10/2020
+05 | Reviewed by:
+05 | Approved by:
+06 | Prepared by: | Radu Ionut Boeriu
+Decio Ferreira
+Hugh O’ Connor | BIM Manager
+BIM Manager
+BDS Coordinator | riboeriu@fosterandpartners.com
+dferreira@fosterandpartners.com
+hoconnor@fosterandpartners.com | 23/12/2020
+06 | Reviewed by:
+06 | Approved by:
+07 | Prepared by: | Radu Ionut Boeriu
+Decio Ferreira
+Hugh O’ Connor | BIM Manager
+BIM Manager
+BDS Coordinator | riboeriu@fosterandpartners.com
+dferreira@fosterandpartners.com
+hoconnor@fosterandpartners.com | 08/02/2021
+07 | Reviewed by:
+07 | Approved by:
+08 | Prepared by: | Radu Ionut Boeriu
+Decio Ferreira
+Hugh O’ Connor | BIM Manager
+BIM Manager
+BDS Coordinator | riboeriu@fosterandpartners.com
+dferreira@fosterandpartners.com
+hoconnor@fosterandpartners.com | 24/02/2021
+08 | Reviewed by:
+08 | Approved by:
+09 | Prepared by: | Radu Ionut Boeriu
+Decio Ferreira
+Hugh O’ Connor | BIM Manager
+BIM Manager
+BDS Coordinator | riboeriu@fosterandpartners.com
+dferreira@fosterandpartners.com
+hoconnor@fosterandpartners.com | 30/04/2021
+09 | Reviewed by:
+09 | Approved by:
+10 | Prepared by: | Radu Ionut Boeriu
+Decio Ferreira
+Hugh O’ Connor | BIM Manager
+BIM Manager
+BDS Coordinator | riboeriu@fosterandpartners.com
+dferreira@fosterandpartners.com
+hoconnor@fosterandpartners.com | 09/08/2021
+10 | Reviewed by:
+10 | Approved by:
+11 | Prepared by: | Radu Ionut Boeriu
+Decio Ferreira
+Hugh O’ Connor | BIM Manager
+BIM Manager
+BDS Coordinator | riboeriu@fosterandpartners.com
+dferreira@fosterandpartners.com
+hoconnor@fosterandpartners.com | 20/09/2021
+11 | Reviewed by:
+11 | Approved by:
+12 | Prepared by: | Mohamad hamad | BIM Manager | Mohammad.hamad@khatibalami.com | 19/10/2021
+12 | Reviewed by:
+12 | Approved by:
+Version | Amendments
+00 | First Issue
+01 | Cover page note – Change to TRSDC BIM Protocol
+2.4 Key Team Stakeholders – Added positions
+4.2 Project Responsibilities – Added Coordination Views to align with updated EIR
+6.1 Modelling Methods – Added content
+6.3 Model Coordinates – Coordinate system amended to follow WGS. 
+6.5 File Naming Convention – Updated Volumes and Building Level codes
+8.2 Common Data Environment – Removed standard CDE process as this does not reflect BIM 360 environment. 
+8.7 Design Coordination Schedule – Updated table to include reference to EIR for Coordination Views
+02 | Cover page note – Change to TRSDC BIM Protocol
+General updated following Roles and Responsibilities terminology
+Updated per BIM Meeting 12/10/2020
+Provide native files (excel, etc) for the appendix BIM Responsibility Matrix
+Updated naming conventions – Drawing series included 
+Building numbering system to be agreed (volume/system)
+Provide pictorial details for model federation strategy and sheet production
+Update model coordinates as per actual
+Added concept stage in section 5.1 table
+Provided written description of BIM Uses; sync’ed this section with EIR
+6.1 Modelling Methods - Clarified the interface between the ID & Architect 
+Appendix G BIM Models QA/QC
+6.9 Workset Section Updates – Naming conventions and protocols
+Refresh Table of Contents
+03 | 100% Concept Design – Draft Milestone
+2.3 Project Program and Milestones – Dates Updated
+2.4 Key Team Stakeholders Table – Updated Table
+4.2 BIM responsibility Matrix members Allocation – Updated Table
+6.4 Federation Strategy – Model Federation Diagram
+6.9 Core Workset Table - Updates
+Appendix G – BIM Models QA/QC
+04 | 100% Concept Design 
+4 Key Team Stakeholders Table – Updated Table
+4.2 BIM responsibility Matrix members Allocation – Updated Table
+6.4 Federation Strategy – Model Federation Diagram
+6.5 File Naming convention, Discipline PL for Plumbing Added 
+6.9 Workset naming Updated
+05 | 2.2 Task Information Manger Lead - Decio Ferreira Replaced Juan Pommarez
+4.2 BIM responsibility Matrix members Allocation – Decio Ferreira Replaced Juan Pommarez
+APPENDIX D – Model Production Delivery Table- Updated Table
+APPENDIX I - Models Multiple Shared Location
+06 | Project Name and Project Use updated
+A note was added referencing the Responsibility Matrix
+All appendixes referred with a note
+4.3 Training / Induction
+A new table with stakeholder´s Training/induction added
+A note was added related to the Rhino models usage
+Worksets updated
+A new 6.15 subtopic added with the Annotation Methods strategy
+A new 8.1.1. subtopic about BIM360 Design Collaboration package exchange naming convention added
+Comments related with Shared Parameter file (txt) added
+6.6. Volume/System strategy schedule updated
+Table in Appendix A updated
+New Appendixes added:
+APPENDIX J – Master Information Delivery Table
+APPENDIX K – BIM Uses Matrix
+APPENDIX L – Specialist Discipline Integration
+APPENDIX M – BIM Timeline
+APPENDIX N – Consultants Interface
+07 | New Appendixes added:
+APPENDIX O – Drawing Series Numbers
+APPENDIX P – BIM Guides
+Package Exchange Naming Convention – Updated
+6.11 - Shared Parameters Update
+6.6. Volume/System strategy schedule updated
+08 | TRSDC Comments incorporated
+2.4 Key Team Stakeholders updated
+4.2 BIM Responsibilities Matrix Members Allocation updated
+5.1 Matrix of Responsibilities across the Supply Chain updated
+6.5 Specialist Discipline Integration into BIM Environment updated
+6.6 File Naming Convention updated:
+Volume/System Series updated
+6.9 Revit Views Naming Convention updated
+6.13 Document Numbering updated
+6.15 Annotation Tags updated
+Appendix F renamed
+09 | 6.4 Federation Strategy - Updated Model List + Children Area Building added
+6.4 Federation Strategy - Updated Federation Strategy Diagram
+6.6 File Naming Convention updated:
+Volume/System Series updated
+6.7 Level / Location Naming updated:
+New Level codes added for Room Typologies
+10 | 2.3 Project Program and Milestones
+Reference to Appendix M – BIM Timeline
+6.2 Model Setup
+Project units and rounding added
+6.4 Federation Strategy
+File names & Federation Strategy diagram updated 
+6.6 File Naming Convention updated:
+Volume/System Series updated
+6.7 Level / Location Naming updated:
+New Level codes added for Room Typologies
+6.12 Object Naming Convention updated
+Subtopic 6.12.1 Best Practice added
+Subtopic Family Naming Convention added
+Subtopic Type Naming Convention added
+Subtopic Miscellaneous Revit Content Naming Convention added
+7 Technical Data Protocol
+New text added about the Weekly and by-Weekly Information Exchange
+New text added about the Milestones Submission
+8.3.1 BIM Models Exchange
+New Sub-topic added
+8.6 BIM Meetings
+BIM Weekly Meetings and Clash Detection & Coordination Meetings added
+8.7 Clash Detection and Coordination Meetings
+New text added
+Schedule updated
+11 | 6.4 Federation Strategy
+File names & Federation Strategy diagram updated
+6.6 File Naming Convention updated:
+Volume/System 93-Privacy Screen added
+12 | KAA handling HE1 
+Client Name  | The Red Sea Development Company
+Project Name | Shurayrah East Hotel #1
+Project Use | Project use
+Contract type/ Delivery method | Design
+Project Code | R08-HE1
+Project Description
+Project Design Start Date | 16/10/2020
+Project Construction Start Date | TBC
+BIM Software used | refer to 8.4
+Contract Code | Discipline | Company Name
+(originator code in brackets) | Location
+N/A | Client | The Red Sea Development Company (TRSDC) | Riyadh
+N/A | Client BIM Representative | The Red Sea Development Company (TRSDC) | London
+TBC | The Operator | Fairmont Hotels and Resorts
+D01 | Signature Architect |  Foster + Partners (FOS) | London
+D02 | Lead Engineer | KEO International Consultants | Riyadh, KSA
+D03 | Executive Architect | Khatib & Alami | Lebanon, Beirut
+D04 | Interior Design | Richmond International
+D05 | Landscape Architect | EDSA, inc. | Baltimore / NYC , USA
+D07 | Spa Consultant | Barr & Wray | Dubai, UAE
+F05 | Kitchen & Laundry | Humble Arnold (HAA) | UK, South Africa
+F22 | Fire and Life Safety | WSP Middle East
+F28 | Sustainability | KEO International Consultants | Riyadh, KSA
+F30 | Vertical Transportation | Barker Mohandas
+F61 | Acoustic Engineer | Hann Tucker Associates Limited  | Surrey, UK
+M01 | Cost Consultant | Arcadis (ARC)
+I18 | Marine Engineer | Jacobs  | Dubai
+D02 | Civil Engineers | KEO International Consultants | Riyadh, KSA
+D02 | Lighting Design Specialist | CD+M Design Group | Dubai, UAE
+D02 | Security and ICT Consultant | Mediatech Design Group | Dubai, UAE
+TBC | Geotechnical Engineer | [To be appointed]
+TBC | Waste Management | [To be appointed]
+TBC | Signage and Wayfinding | [To be appointed]
+TBC | Main Contractor | [To be appointed]
+TBC | Environmental Consultant | [To be appointed]
+TBC | Water Features / Pool | [To be appointed]
+Program-wide TRSDC BIM Roles | Email | Phone
+TRSDC Information Manager | David.glennon@theredsea.sa
+TRSDC Project Information Manager | David.glennon@theredsea.sa
+R08-HE1D01 | Contract Code | Name | Company Name | Email | Phone
+Project Information Manager (Appointing Party) | N/A | Kapil Kumar  | TRSDC | Kapil.Kumar@theredsea.sa  
+Task Information Manger - Lead | D01 | Decio Ferreira | Foster + Partners |  dferreira@FosterandPartners.com | +44 (0)20 7738 0455
+Task Information Manger - Lead | D01 | Radu Ionut Boeriu | Foster + Partners | riboeriu@FosterandPartners.com | +44 (0)20 7738 0455
+Task Information Manager – Signature Architect | D01 | Hugh O’Connor | Foster + Partners | hoconnor@fosterandpartners.com | +44 (0)20 7738 0455
+Project Design Manager | D01 | David Mythen | Foster + Partners | Dmythen@fosterandpartners.com | +44 (0)20 7738 0455
+PCIA*– Architecture | D01 | Foster + Partners | +44 (0)20 7738 0455
+ Task Information Manager – Structure | D02 | Ahmad Elmani
+Sharanu Motgi
+Tiago Caldeira |  KEO | Ahmad.elmani@keoic.com
+Sharanu.Motgi@keoic.com
+tiago.caldeira@keoic.com | +971 2417 3263
++965 2461 6000
++351 962 655 789
+ Task Information Manager – MEP Design | D02 | Ahmad Elmani
+Sharanu Motgi
+Tiago Caldeira |  KEO | Ahmad.elmani@keoic.com
+Sharanu.Motgi@keoic.com
+tiago.caldeira@keoic.com | +971 2417 3263
++965 2461 6000
++351 962 655 789
+Task Information Manager – Executive Architect | D03 | Mohammad Hamad | Khatib & Alami | Mohammad.Hamad@khatibalami.com | +9613070987
+Task Information Manager – Executive Architect | D03 | Imran Khan | Khatib & Alami | Imran.Khan@Khatibalami.com | +971 6 5722445
+Task Information Manager– Interior Design | D04 | Gary Hilton | Richmond International | gary.hilton@richint.com
+Task Information Manager – Landscape | D05 | Florencia Mischelejis | EDSA | fmischelejis@edsaplan.com
+Task Information manager - Landscape | D05 | Martina Prieto | EDSA | mprieto@edsaplan.com
+Task Information Manager – SPA Consultant | D07 | Nero Camasinnca | Barr & Wray | ncamasin@barrandwray.com | +971 4 3206440    
+Task Information Manager - Kitchen & Laundry | F05 | Andrea Aita | Humble Arnold | Andrea.aita@humblearnold.com | +44 (0) 14 3882 1444
+Task Information Manager – Fire and Life Safety | F22 | WSP
+Task Information Manager – Sustainability | F28 | KEO
+Task Information Manager – Vertical Transportation | F30 | Barker Mohandas
+Task Information Manager – Vertical Transportation | F30 | Barker Mohandas
+Task Information Manager – Acoustics | F61 | Hann Tucker
+Task Information Manager – Cost Consulting | M01 | Arcadis
+Task Information Manager – Infrastructure | D02 | Ahmad Elmani
+Tiago Caldeira | KEO  | Ahmad.elmani@keoic.com
+Tiago.Caldeira@keoic.com
+PCIA*– MEP Fabrication
+Training / Induction | Consultant | Consultant | Consultant | Consultant | Consultant | Consultant | Consultant
+Training / Induction | FOS | KEO | KAA | HAA | EDS | RDL | BAR
+BIM 360
+BIM 360 Overview | √ | √ | √ | √ | √ | √
+Document Management Module | √ | √ | √ | √ | √ | √
+	Folder Structure | √ | √ | √ | √ | √ | √
+Project Management Module | √ | √ | v | √ | √
+	Setting-up Meetings | √ | √ | √ | √
+Design Collaboration Module | √ | √ | √ | √ | √ | √
+	Share Packages | √ | √ | √ | √ | √ | √
+	Consume Packages | √ | √ | √ | √ | √ | √
+Model Coordination Module | √
+Aconex
+Aconex | √ | √ | √ | √ | √ | √
+Design Phases | Concept Design  | Concept Design  | Schematic Design | Schematic Design | Design Development | Design Development | Construction Doc. | Construction Doc. | Shop Drawings | Shop Drawings | Handover & Closeout | Handover & Closeout
+Model | BIM Author | LOD | BIM Author | LOD | BIM Author | LOD | BIM Author | LOD | BIM Author | LOD | BIM Author | LOD
+Architecture Design (Sign) | FOS | 100 | FOS | 200 | FOS | 300 | N/A | N/A | N/A | N/A | N/A | N/A
+Architecture Design (Exe) | TBC | 100 | TBC | 200 | TBC | 300 | TBC | 300 350* | TBC | 400 | TBC | 500
+Structure Design | KEO | 100 | KEO | 200 | KEO | 300 | KEO | 300 350* | TBC | 400 | TBC | 500
+MEP Design | KEO | 100 | KEO | 200 | KEO | 300 | KEO | 300 350 | TBC | 400 | TBC | 500
+Road and Civil Design |  KEO | 100 |  KEO | 200 |  KEO | 300 | KEO | 300 350 | TBC | 400 | TBC | 500
+Landscape Design | EDS | 100 | EDS | 200 | EDS | 300 | EDS | 300 350 | TBC | 400 | TBC | 500
+Interior Design | RDL | 100 | RDL | 200 | RDL | 300 | RDL | 300 350 | TBC | 400 | TBC | 500
+Kitchen & Laundry | HAA | 100 | HAA | 200 | HAA | 300 | TBC | 300 350 | TBC | 400 | TBC | 500
+SPA Consultant | BAR | 100 | BAR | 200 | BAR | 300 | BAR | 300 350 | TBC | 500 | TBC | 500
+Project (0,0,0) Reference Point | Shared Site relative to WGS datum: (UTM84-37N)
+(Site Shared Coordinates name: R08-HE1D1)
+N/S 2,821,600.0 m
+E/W 293,000.0 m
+
+Elev 0.00 AOD 0.00 mm
+
+Angle to True North 0.00°
+
+Model Naming Code | Description
+R08-HE1D03-KAA-00-XX-MOD-AR-30001 | Site layout + Topography
+R08-HE1D03-KAA-15-XX-MOD-AR-04110 | SPA
+R08-HE1D03-KAA-16-XX-MOD-AR-05201 | Pool Bar & Grill
+R08-HE1D03-KAA-20-XX-MOD-AR-02119 | Central Amenities Buildings
+R08-HE1D03-KAA-22-XX-MOD-AR-05101 | Restaurants
+R08-HE1D03-KAA-33-XX-MOD-AR-03301 | Villa Type 1 - 3 Bedrooms
+R08-HE1D03-KAA-50-XX-MOD-AR-03010 | Roof
+R08-HE1D03-KAA-50-XX-MOD-AR-03101 | Module 1 - Executive King Room (2 party walls)
+R08-HE1D03-KAA-50-XX-MOD-AR-03102 | Module 1 - Executive Queen Room
+R08-HE1D03-KAA-50-XX-MOD-AR-03103 | Module 1 - 2 Bedrooms Suite
+R08-HE1D03-KAA-50-XX-MOD-AR-03106 | Module 1 - Service Pod
+R08-HE1D03-KAA-51-XX-MOD-AR-03201 | Module 2 - Executive King Room
+R08-HE1D03-KAA-59-XX-MOD-AR-00000
+R08-HE1D03-KAA-60-XX-MOD-AR-06101 | MAIN BOH
+R08-HE1D03-KAA-67-XX-MOD-AR-06701 | Substation (T1)
+R08-HE1D03-KAA-71-XX-MOD-AR-07101 | Building Support (T2)
+R08-HE1D03-KAA-00-XX-MOD-AR-00005 | Sheet File Typical hotel Layouts
+R08-HE1D03-KAA-00-XX-MOD-AR-00001 | Masterplan Sheet File
+Model Naming Code | Description
+STRUCTURE | STRUCTURE
+R08-HE1D02-KEO-10-XX-MOD-ST-10200 | Central Amenities
+R08-HE1D02-KEO-96-XX-MOD-ST-20200 | MEP Compound 
+ELECTRICAL | ELECTRICAL
+R08-HE1D02-KEO-XX-XX-MOD-EL-20100 | Main substation
+R08-HE1D02-KEO-XX-XX-MOD-EL-20300 | Secondary Substation
+R08-HE1D02-KEO-XX-XX-MOD-EL-40110 | Standard King Room
+MECHANICAL | MECHANICAL
+R08-HE1D02-KEO-XX-XX-MOD-ME-20300 | Secondary Substation + ETS Room
+R08-HE1D02-KEO-XX-XX-MOD-ME-40110 | Standard King Room
+R08-HE1D02-KEO-XX-XX-MOD-ME-40120 | Double Queen Room
+PLUMBING & FIRE FIGHTING  | PLUMBING & FIRE FIGHTING 
+R08-HE1D02-KEO-XX-XX-MOD-PL-20200 | MEP Compound
+R08-HE1D02-KEO-XX-XX-MOD-ME-40110 | Standard King Room
+R08-HE1D02-KEO-XX-XX-MOD-ME-40110 | Double Queen Room
+MODEL NAME .FORMAT | DESIGN MODEL DESCRIPTION | DISCIPLINE | Notes
+R08-HE2D02-KEO-00-XX-MOD-XX-00001.rvt | General Sheets Model  | ST-EL-IC-ME-PL-SL | General, notes, legend and details
+R08-HE2D02-KEO-29-XX-MOD-CS-00000.rvt | Buildings Combined - Overall Model | CS | Combined disciplines models for Exports
+R08-HE2D02-KEO-59-XX-MOD-CS-00001.rvt | Small Guestrooms - Clusters 1-4 - Overall Model | CS | Combined disciplines models for Exports
+R08-HE2D02-KEO-59-XX-MOD-CS-00002.rvt | Large Guestrooms - Cluster 5-7 - Overall Model | CS | Combined disciplines models for Exports
+R08-HE2D02-KEO-01-00-MOD-SL-00100.rvt | Site Lighting  | SL | Site External Lighting 
+R08-HE2D02-KEO-02-00-MOD-CI-00100.dwg | Irrigation Model | CI | Overall Site - Civil & Infrastructure Systems
+R08-HE2D02-KEO-02-00-MOD-CI-00200.dwg | Potable water (C/H) | CI | Overall Site - Civil & Infrastructure Systems
+R08-HE2D02-KEO-02-00-MOD-CI-00300.dwg | Firefighting | CI | Overall Site - Civil & Infrastructure Systems
+R08-HE2D02-KEO-02-00-MOD-CI-00400.dwg | Chilled Water | CI | Overall Site - Civil & Infrastructure Systems
+R08-HE2D02-KEO-02-00-MOD-CI-00500.dwg | LPG  | CI | Overall Site - Civil & Infrastructure Systems
+R08-HE2D02-KEO-02-00-MOD-CI-00600.dwg | Waste Water | CI | Overall Site - Civil & Infrastructure Systems
+R08-HE2D02-KEO-02-00-MOD-CI-00700.dwg | Electrical (LV+MV) | CI | Overall Site - Civil & Infrastructure Systems
+R08-HE2D02-KEO-02-00-MOD-CI-00800.dwg | Telecom ICT | CI | Overall Site - Civil & Infrastructure Systems
+R08- HE2D02-KEO-10-XX-MOD-XX-00100.rvt | Amenities – Main Hub  | ST-EL-IC-ME-PL-SL | Sheets are included within the model
+R08- HE2D02-KEO-15-XX-MOD-XX-00105.rvt  | Amenities - SPA and Fitness | ST-EL-IC-ME-PL-SL | Sheets are included within the model
+R08- HE2D02-KEO-20-XX-MOD-XX-00200.rvt  | Amenities - Recreation  | ST-EL-IC-ME-PL-SL | Sheets are included within the model
+R08- HE2D02-KEO-21-XX-MOD-XX-00201.rvt  | Amenities - Beach Bar | ST-EL-IC-ME-PL-SL | Sheets are included within the model
+R08- HE2D02-KEO-22-XX-MOD-XX-30300.rvt  | Specialty Restaurant & Specialty Bar  | ST-EL-IC-ME-PL-SL | Sheets are included within the model
+R08- HE2D02-KEO-45-XX-MOD-XX-00401.rvt  | Cluster 1 - 3 DBL Queen + 1 STD King  | ST-EL-IC-ME-PL-SL | Sheets are included within the model
+R08- HE2D02-KEO-46-XX-MOD-XX-00402.rvt  | Cluster  2 - 4 STD King  | ST-EL-IC-ME-PL-SL | Sheets are included within the model
+R08- HE2D02-KEO-47-XX-MOD-XX-00403.rvt  | Cluster 3 - 3 Bay Suite + 1 DBL Queen  | ST-EL-IC-ME-PL-SL | Sheets are included within the model
+R08- HE2D02-KEO-48-XX-MOD-XX-00404.rvt  | Cluster 4 - 1 Bed Suite + 1 DBL Queen + 1 STD King  | ST-EL-IC-ME-PL-SL | Sheets are included within the model
+R08- HE2D02-KEO-49-XX-MOD-XX-00405.rvt  | Cluster 5 - 2 DBL Queen + 1 JR Suite + 2 STD King  | ST-EL-IC-ME-PL-SL | Sheets are included within the model
+R08- HE2D02-KEO-49-XX-MOD-XX-00701.rvt | Cluster 5 - 2 DBL Queen + 1 JR Suite + 2 STD King – Support Room | EL-IC-ME-PL | Sheets are included within the model
+R08- HE2D02-KEO-50-XX-MOD-XX-0406.rvt  | Cluster 6 - 5 Bay Suite + 1 DBL Queen + 1 STD King  | ST-EL-IC-ME-PL-SL | Sheets are included within the model
+R08- HE2D02-KEO-51-XX-MOD-XX-00407.rvt  | Cluster 7 - 1 Bed Suite + 2 DBL Queen + 3 STD King  | ST-EL-IC-ME-PL-SL | Sheets are included within the model
+R08- HE2D02-KEO-51-XX-MOD-XX-00702.rvt  |  Cluster 7 - 1 Bed Suite + 2 DBL Queen + 3 STD King - Support Room | EL-IC-ME-PL
+R08- HE2D062-KEO-59-XX-MOD-XX-40011.rvt  | MAIN - Mockup Room  | ST-EL-IC-ME-PL-SL | Sheets are included within the model
+R08- HE2D062-KEO-59-K1-MOD-XX-40001.rvt  | Standard King Room Mockup | ST-ME-PL-SL | Sheets are included within the model
+R08- HE2D062-KEO-59-Q1-MOD-XX-40002.rvt  | Dbl. Queen Room Mockup | ST-ME-PL-SL | Sheets are included within the model
+R08- HE2D062-KEO-59-S1-MOD-XX-40002.rvt  | 1 Bed Suite Mockup | Sheets are included within the model
+R08- HE2D062-KEO-59-S1-MOD-XX-40002.rvt  | 2 Bed Suite Mockup | ST-EL-IC-ME-PL-SL | Sheets are included within the model
+R08- HE2D062-KEO-59-J1-MOD-XX-40002.rvt  | Junior Suite Mockup | ST-EL-IC-ME-PL-SL | Sheets are included within the model
+R08- HE2D062-KEO-59-XX-MOD-XX-00100.rvt  | Mockup Room | ST-EL-IC-ME-PL-SL | Sheets are included within the model
+R08- HE2D02-KEO-61-XX-MOD-XX-00601.rvt  | MEP Main Compound | ST-EL-IC-ME-PL-SL | Sheets are included within the model
+R08- HE2D062-KEO-61-XX-MOD-XX-00602.rvt  | MEP Compound Gate House  |  PL
+  | Sheets are included within the model
+R08- HE2D02-KEO-62-XX-MOD-XX-00602.rvt  | MEP Engineering & Maintenance  | IC-ME-PL-SL | Sheets are included within the model
+R08- HE2D02-KEO-67-XX-MOD-XX-00607.rvt  | Substation (T1)  | ST-EL-IC-ME-PL | Sheets are included within the model
+BIM Models | Description
+R08-HE1D05-EDS-00-XX-MOD-LS-00001 | Sheet File
+R08-HE1D05-EDS-01-ZZ-MOD-LS-05401 | Softscape Model
+R08-HE1D05-EDS-ZZ-XX-MOD-LS-00000 | General Container
+R08-HE1D05-EDS-10-ZZ-MOD-LS-11001 | Main Arrival
+R08-HE1D05-EDS-13-ZZ-MOD-LS-11004 | Meeting & Banquet
+R08-HE1D05-EDS-15-ZZ-MOD-LS-11006 | Spa
+R08-HE1D05-EDS-16-ZZ-MOD-LS-11002 | Main Pool Deck
+R08-HE1D05-EDS-22-ZZ-MOD-LS-11005 | Specialty Restaurant (Marina)
+R08-HE1D05-EDS-50-ZZ-MOD-LS-11003 | Hotel Cluster (Typical)
+File Name | Description
+R08-HE1F05-HAA-13-XX-MOD-KL-00130.rvt | Convention Centre
+R08-HE1F05-HAA-15-XX-MOD-KL-04101.rvt | Spa
+R08-HE1F05-HAA-16-XX-MOD-KL-05201.rvt | Pool Bar & Grill
+R08-HE1F05-HAA-16-XX-MOD-KL-05202.rvt | Teens + Kids
+R08-HE1F05-HAA-20-XX-MOD-KL-02106.rvt | Central Amenities
+R08-HE1F05-HAA-22-XX-MOD-KL-05101.rvt | Specialty Restaurant
+R08-HE1F05-HAA-60-XX-MOD-KL-06101.rvt | MAIN BOH
+R08-HE1F05-HAA-71-XX-MOD-KL-07101.rvt | Building Support (T2)
+Model Naming Code | Description
+R08-HE1D07-BAR-15-ZZ-MOD-SP-90001.rvt | Pools + Spa Model & Sheets
+SD-MATRIX | Consultants with BIM Modelling Scope | Consultants with BIM Modelling Scope | Consultants with BIM Modelling Scope | Consultants with BIM Modelling Scope | Consultants with BIM Modelling Scope | Consultants with BIM Modelling Scope | Consultants with BIM Modelling Scope | Consultants with BIM Modelling Scope
+Specialist Consultants  | Signature Architect | Executive Architect | Multi-Dis Engineer | Landscape Architect | Interior Design | Signage & Wayfinding | Kitchen & Laundry | SPA
+Cost Consultant |  | 
+Marine & Costal Consultant | န | 
+Sustainability Accreditation |  |  | 
+Spa Consultant |  |  |  | 
+Fire & Life Safety Consultant |  |  | 
+Acoustic Consultant |  | 
+Geotechnical Consultant |  |  | 
+Waste & Logistics Consultant | 
+Hospitality Audiovisual / IT Consultant | 
+Specialty Water Features Consultant | 
+Aviation - Helipads Consultant
+FF&E Procurement Agent
+OS&E Procurement Agent | 
+Irrigation Consultant | 
+Lighting Consultant | 
+Program Code
+ | Project & Contract Code | Originator Code | Volume/
+System | Levels/ Locations | Document
+Type | Discipline/
+Role Code | Series Number
+RXX | - | XXXXX | FOS | - | 01 | - | 00 | - | DWG | - | AR | - | 10100
+Project Number
+R08-HE1D01 (FOS)
+R08-HE1D02 (KEO)
+R08-HE1D03 (KAA)
+R08-HE1D04 (RDL)
+R08-HE1D05 (EDS)
+R08-HE1D06 (XXX)
+R08-HE1F05 (HAA)
+R08-HE1F22 (WSP)
+R08-HE1F28 (KEO)
+R08-HE1F30 (XXX)
+R08-HE1F61 (XXX)
+R08-HE1M01 (ARC)
+R08-HE1D07 (BAR)
+Code (Abbreviate to either 2 or 3 alphanumeric characters) | Originator Company Name
+FOS | Foster + Partners
+RDL | Richmond Design Limited
+KAA | Khatib & Alami
+KEO | KEO International Consultant
+EDS | EDSA, inc.
+HAA | Humble Arnold Associates
+WSP | WSP
+ARC | Arcadis
+BAR | Bar & Wray
+Barker Mohandas
+Hann Tucker
+Volume/System No. | Master Models/Sheets | Cluster | In Use  on HE1
+00 | General | Sheets file | √
+00 | General | Grids and Levels
+00 | General | Setting Out
+00 | General | Topography | √
+00 | General | Massing
+00 | General | Spiral
+00 | General | Vegetation
+01 | Site | Landscape
+02 | Site | Infrastructure
+03 | Site | Island Wide broad Walk
+04 | Site | Spare
+05 | Site | Spare
+06 | Site | Spare
+07 | Site | Spare
+08 | Site | Spare
+09 | Site | Spare
+10 | FOH | Arrival Hubs
+11 | FOH | Reception Buildings
+12 | FOH | Clubhouse
+13 | FOH | Meeting, Boardroom and Banquet
+14 | FOH | Children Area
+15 | FOH | Spa | √
+16 | FOH | Pool Bar & Grill | √
+17 | FOH | Gym
+18 | FOH | Educational
+19 | FOH | Prayer Rooms 
+20 | FOH | Recreation  | √
+21 | FOH | Beach Bar
+22 | FOH | Specialty Restaurant  | √
+23 | FOH | All Day Dinning
+24 | FOH | Fitness
+25 | FOH | Specialty Bar
+26 | FOH | Gourmet Bistro
+27 | FOH | Sport Area
+28 | FOH | Amenities Restaurants & Bars
+29 | FOH | Food & Beverage
+30 | Villas | Villa (T1) - 1 bedroom
+31 | Villas | Villa (T1) - 2 bedroom
+32 | Villas | Villa (T1) - 3 bedroom
+33 | Villas | Villa (T1) - 4 bedroom | √
+34 | Villas | Villa (T1) - 5 bedroom
+35 | Villas | Villa (T2) - 1 bedroom
+36 | Villas | Villa (T2) - 2 bedroom
+37 | Villas | Villa (T2) - 3 bedroom
+38 | Villas | Villa (T2) - 4 bedroom
+39 | Villas | Villa (T2) - 5 bedroom
+40 | Villas | Spare
+41 | Villas | Spare
+42 | Villas | Spare
+43 | Villas | Spare
+44 | Villas | Spare
+45 | Hotels | Hotel/Cluster (T1)
+46 | Hotels | Hotel/Cluster (T2)
+47 | Hotels | Hotel/Cluster (T3)
+48 | Hotels | Hotel/Cluster (T4)
+49 | Hotels | Hotel/Cluster (T5)
+50 | Hotels | Hotel/Cluster (T6) | √
+51 | Hotels | Hotel/Cluster (T7) | √
+52 | Hotels | Hotel/Cluster (T8)
+53 | Hotels | Hotel/Cluster (T9)
+54 | Hotels | Hotel/Cluster (T10)
+55 | Hotels | Hotel/Cluster (T11)
+56 | Hotels | Spare
+57 | Hotels | Spare
+58 | Hotels | Spare
+59 | Hotels | Room Typologies
+60 | BOH Buildings | Main BOH | √
+61 | BOH Buildings | MEP Compound
+62 | BOH Buildings | Spare
+63 | BOH Buildings | Housekeeping (T1)
+64 | BOH Buildings | Housekeeping (T2)
+65 | BOH Buildings | Spare
+66 | BOH Buildings | Spare
+67 | BOH Buildings | Substation (T1) | √
+68 | BOH Buildings | Substation (T1)
+69 | BOH Buildings | Spare
+70 | BOH Buildings | Building Support (T1)
+71 | BOH Buildings | Building Support (T2) | √
+72 | BOH Buildings | Building Support (T3)
+73 | BOH Buildings | Building Support (T4)
+74 | BOH Buildings | Pump Room
+75 | BOH Buildings | Spare
+76 | BOH Buildings | ETS
+77 | BOH Buildings | PPP
+78 | BOH Buildings | Electrical Communication Room
+79 | BOH Buildings | Spare
+80 | BOH Buildings | Guard House
+81 | BOH Buildings | Supervisors Accommodation
+82 | BOH Buildings | Managers Accommodation
+83 | BOH Buildings | Department Heads Accommodation
+84 | BOH Buildings | Executive Committee Accommodation
+85 | BOH Buildings | General Manager Accommodation
+86 | BOH Buildings | Staff accommodation 
+87 | Retail & Office | Spare
+88 | Retail & Office | Spare
+89 | Retail & Office | Retail & Office
+90 | Special Structures & Buildings  | Spare
+91 | Special Structures & Buildings  | Spare
+92 | Special Structures & Buildings  | Spare
+93 | Special Structures & Buildings  | Privacy Screen
+94 | Special Structures & Buildings  | Exterior Canopies
+95 | Marina  | Yacht Club
+96 | Marina  | Marina
+97 | Marina  | Boat House
+98 | Marina  | Spare
+99 | Marina  | Spare
+Code (2 or 3 alphanumeric characters) | Contract Name | Code (2 or 3 alphanumeric characters) | Contract Name
+Design | Design | Construction | Construction
+D01 | Design Consultancy ‐ Signature Architect ‐ Hotel East #1 | C04 | Construction Works ‐ MEP ‐ Hotel East #1
+D02 | Design consultancy ‐ Structural Engineering ‐ Hotel East #1 | C05 | Construction Works ‐ Hotel Fit‐Out ‐ Hotel East #1
+D02 | Design Consultancy ‐ MEP & Infrastructure Engineering ‐ Hotel East #1 | C06 | Construction Works ‐ Specialized Waterproofing and Roofing Systems ‐ Hotel East #1
+D04 | Design Consultancy ‐ Interior Design ‐ Hotel East #1 | C07 | Supply & Installation ‐ Aluminium and Glazing Façade System ‐ Hotel East #1
+D05 | Design Consultancy ‐ Landscape ‐ Hotel East #1 | C08 | Supply & Installation ‐ Bathroom Pods ‐ Hotel East #1
+D06 | Design Consultancy ‐ Executive Architect ‐ Hotel East #1 | C09 | Supply & Installation ‐ BMU System ‐ Hotel East #1
+D07 | Design Consultancy ‐ Pools & Spa ‐ Hotel #3    
+Framework Agreement | Framework Agreement | C10 | Supply & Installation ‐ Cladding Façade System (GRP/Precast) ‐ Hotel East #1
+F01 | Framework Agreement ‐ Acoustics ‐ Hotel East #1 | C11 | Supply & Installation ‐ Doors and Frames ‐ Hotel East #1
+F03 | ESIA (FA) ‐ Hotel East #1 | C12 | Supply & Installation ‐ FF&E ‐ Hotel East #1
+F04 | Fire and Life Safety Engineering (FA) ‐ Hotel East #1 | C13 | Supply & Installation ‐ Kitchen Equipment ‐ Hotel East #1
+F05 | Kitchen, Laundry, and Waste Management Design (FA) ‐ Hotel East #1 | C14 | Supply & Installation ‐ Laundry Equipment ‐ Hotel East #1
+F06 | Framework Agreement – Operator Supplies and Equipment (OS&E) ‐ Hotel East #1 | C15 | Supply & Installation ‐ Lifts and Vertical Transportation ‐ Hotel East #1
+F07 | Sustainability (FA) ‐ Hotel East #1 | C16 | Supply & Installation ‐ OS&E ‐ Hotel East #1
+F08 | Vertical Transportation (FA) ‐ Hotel East #1 | C17 | Supply & Installation ‐ Signage and Wayfinding ‐ Hotel East #1
+F09 | Framework Agreement – Wind Tunnelling ‐ Hotel East #1 | C18 | Supply & Installation ‐ Special Lighting ‐ Hotel East #1
+F10 | Survey Works ‐ Bathymetric/Topo/Geotech (FA) ‐ Hotel East #1 | C19 | Supply & Installation ‐ Special Theming ‐ Hotel East #1
+F11 | Framework Agreement – Independent Commissioning Agent ‐ Hotel East #1 | C20 | Supply & Installation ‐ Specialized Access System ‐ Hotel East #1
+F12 | Framework Agreement – O&M Technical Author, Testing Agency/Handover &
+Commissioning Consultant ‐ Hotel East #1 | C21 | Supply & Installation ‐ Stone Works ‐ Hotel East #1
+F13 | Framework Agreement – Spa & Wellness ‐ Hotel East #1 | C23 | Construction Works ‐ Landscaping & Irrigation ‐ Hotel East #1
+Construction | Construction | C24 | Construction Works ‐ Swimming Pool, Spa, Water Feature, and Gym ‐ Hotel East #1
+C01 | Enabling Works ‐ Hotel East #1 | C26 | Construction Works ‐ Beach Beautification ‐ Hotel East #1
+C02 | Construction Works ‐ Structural Concrete, Piling, Foundation, and Dewatering ‐
+Hotel East #1 | Operations | Operations
+C03 | Construction Works ‐ Structural Steel ‐ Hotel East #1 | O01 | Operation Services ‐ Hotel East #1
+Code | Description | Type | In use on HE1
+ZZ | Multiple Levels | Level
+XX | No Level Applicable | Level
+00 | Base level of building (where GF is not appropriate) | Level | √
+01 | Level 01 | Level
+02 | Level 02 | Level
+03 | Level 03 | Level
+B1 | Basement 1 | Level | √
+B2 | Basement 2 | Level
+GF | Ground Floor Level | Level | √
+RF | Roof Level | Level
+FN | Foundation level | Level
+PL | Piling Level | Level
+M1 | Mezzanine Above Level 01 | Level
+M2 | Mezzanine Above Level 02 | Level
+K1 | Standard King Type-1 | Location | √
+K2 | Standard King Type-2 | Location | √
+K3 | Standard King Type-3 | Location
+Q1 | Standard Queen Type-1 | Location | √
+Q2 | Standard Queen Type-2 | Location
+Q3 | Standard Double Queen Type-1 | Location
+Q4 | Standard Double Queen Type-2 | Location
+J1 | Junior Suite | Location | √
+J2 | Junior Beach Suite | Location
+J3 | Junior Beach Top Plaza | Location
+S1 | Bedroom Suite Type-1 | Location | √
+S2 | Bedroom Suite Type-2 | Location
+S3 | Bedroom Suite Type-3 | Location
+S4 | Bedroom Suite Type-4 | Location
+S5 | Bedroom Suite Type-5 | Location
+S6 | Bedroom Suite Type-6 | Location
+S7 | Bedroom Suite Type-7 | Location
+S8 | Bedroom Suite Type-8 | Location
+S9 | Bedroom Suite Type-9 | Location
+D1 | Duplex Suite | Location
+U1 | Guestroom MEP Type-1 | Location
+U2 | Guestroom MEP Type-2 | Location
+Discipline | Discipline | Zone | Content
+AR | - | T1 - | Cores
+Optional
+Link Name
+ZZ- | Revit Links- | Insert Link Name
+Workset | Description
+AR-MASSING | Insert Description Here – Contains…etc
+AR-INTERIOR | Interior Elements
+AR-CLADDING | Exterior Walls, Floors, doors
+AR-ROOF | Roof Elements
+AR-TOPOGRAPHY | Topography, Roads, Planting
+ZZ-REVITLINKS - SPECIALTY RESTAURANT | Link for restaurant File 
+ZZ-REVITLINKS - MEETING + BANQUETTING | Link for meeting + Banqueting file
+
+ZZ-REVITLINKS - CENTRAL AMIENITIES | Link for central amenities file
+ZZ-REVITLINKS - SPA | Link For spa file
+ZZ-REVITLINKS - TOPOGRAPHY | Link for topography sitewide
+ZZ-REVITLINKS - HOTEL ROOMS | Link For hotel room layout site wide
+AR_BOH_COMP | FOS BOH Components 
+XX-AR- Landscape Design | Elements In Landscape Consultant Scope
+XX- AR-Executive Architects | Elements In Executive Architect Consultant Scope
+XX- AR-Interior Design | Elements In Interior Design Consultant Scope
+XX- AR- Structural Engineer | Elements In Structural Consultant Scope
+XX- AR- MEP Engineer | Elements In MEP Consultant Scope
+Workset KAA | Description
+00.0_LVLS_GRID | All Levels and Grids Excluding Structural Levels
+00.1_ROAD_SIDE | External Roads and Sidewalks
+01.1_STRU_LVLS | Structural Levels
+01.2_STRU_COMP | Structural Components in the Architectural Models
+02.1_SKIN_COMP | Skin Components
+02.2_EXTR_FNSH | External Finishes (Cladding, Plastering, etc…)
+03.1_INTR_COMP | Architectural Internal Components (Walls, Doors, Flooring, etc..)
+03.2_INTR_CLNG | Ceiling Components
+03.3_INTR_ROOM | Room Components
+03.4_INTR_FURN | Furniture Components
+04.1_SITE_COMP | Building Related Site Components
+05.1_PLMG_COMP | Plumbing Fixtures Components in Architectural Models
+20.0_HIDE_ALL | Components that Needs to be Hidden in All Views
+20.1_LINK_DATM | Datum Link in Order to Control Separately
+20.2_LINK_ALL | All Linked Models
+20.3_LINK_MEP | MEP Linked Models
+20.4_REFR_PLAN | Reference Planes
+Workset (HAA) | Description
+ HAA-Desired wall location |  Walls and doors requested to achieve desired kitchen layouts and flow
+HAA-Catering |  All equipment and fabricated elements
+HAA-Number & Notes |  Annotations
+HAA- Catering Casework | Requested separate fronts and tops by interiors
+Workset (STR & MEP) Strategy | Description
+OVERALL DISCIPLINES STRATEY  | OVERALL DISCIPLINES STRATEY 
+ST_(Element Name) | Workset including Structural elements (ex: ST_Columns, ST_Beams, ST_Piles, ST_Steel, ST_Slab...etc)
+ME_(Element) | Workset Including Mechanical elements name (ex: ME_Pipies, ME_Ducts, ME_Accessories...etc)
+ME_(System) | Workset including name of the Mechanical system 
+EL_(Elements) | Workset including Electrical elements (ex: EL_Panels, EL_Sockets, EL_Trays..ect)
+PL_(System) | Workset including Plumbing system (ex: PL_Drainage, PL_Waste..etc)
+PL_(Element) | Workset Including Plumbing elements (ex: PL_Fixtures, PL_ Accessories...etc)
+$LR_(Model Name) | Workset including Linked Revit Model name (ex: $LR_ R08-HE2D02-KEO-51-XX-MOD-PL-40220)
+$LC_(Cad Drawing) | Workset including Linked Cad drawing(s)
+Workset (EDS) | Description
+LS_1_BIM CONTROL | BIM Management objects
+LS_2_GRADING | Topo Surfaces
+LS_3_HARDSCAPE HORIZONTAL | Paving, steps, ramps
+LS_4_HARDSCAPE VERTICAL | Walls, guardrails
+LS_5-1_PLANTING - TREES | Trees
+LS_5-2-1_PLANTING - SHRUBS - HIGH | Shrub – High Height
+LS_5-2-2_PLANTING - SHRUBS - MEDIUM | Shrub – Medium Height
+LS_5-2-3_PLANTING - SHRUBS - LOW | Shrub – Low Height
+LS_6_FURNISHING | Site Furniture and man made structures
+LS_7_LIGHTING | Site Lighting
+LS_8_WATER FEATURES | Pools, Fountains
+LS_9_RENDERING ASSESTS | Viz and Renderings Assets
+ZZ_X_ARC LINK | Architecture Links
+ZZ_X_CIV LINK | Civil Links
+ZZ_X_CAD LINK | DWG Links
+ZZ_X_RVT LINK | Revit Links
+Workset (EDS) | Description
+LS_01_BIM CONTROL | BIM Management objects
+ZZ_02_ARRIVAL HUB | Links containing Arrival Hubs
+ZZ_03_POOL AREA | Links containing Pool Area
+ZZ_04_RESTAURANT | Links containing Restaurant
+ZZ_05_FITNESS | Links containing Fitness
+ZZ_06_SPA | Links containing Spa
+ZZ_07_RECREATION | Links containing Recreation
+ZZ_08_MINDFULNESS AND BELLWEING CENTER | Links containing Mindfulness and Wellbeing Center
+ZZ_09_OUTDOOR SPORTS | Links containing Outdoor Sports
+ZZ_10_MEETING & BANQUET | Links containing Meeting & Banquet
+ZZ_11_POOLBAR & GRILL | Links containing Poolbar & Grill
+ZZ_X_ARC LINK | Architecture Links
+ZZ_X_CIV LINK | Civil Links
+ZZ_X_CAD LINK | DWG Links
+ZZ_X_RVT LINK | Any other Revit Links
+Workset (EDS) | Description
+LS_01_BIM CONTROL | BIM Management objects
+ZZ_02_VILLA 30 – 1 BEDROOM | Links containing Villa 30 – 1 Bedroom
+ZZ_03_VILLA 31 – 2 BEDROOMS | Links containing Villa 31 – 2 Bedrooms
+ZZ_04_VILLA 32 – 3 BEDROOMS | Links containing Villa 32 – 3 Bedrooms
+ZZ_05_VILLA 33 – 4 BEDROOMS | Links containing Villa 33 – 4 Bedrooms
+ZZ_X_ARC LINK | Architecture Links
+ZZ_X_CIV LINK | Civil Links
+ZZ_X_CAD LINK | DWG Links
+ZZ_X_RVT LINK | Any other Revit Links
+Workset (EDS) | Description
+LS_01_BIM CONTROL | BIM Management objects
+ZZ_02_HOTEL CLUSTER – VOLUME 45 | Links containing Volume 45
+ZZ_03_HOTEL CLUSTER – VOLUME 46 | Links containing Volume 46
+ZZ_04_HOTEL CLUSTER – VOLUME 47 | Links containing Volume 47
+ZZ_05_HOTEL CLUSTER – VOLUME 48 | Links containing Volume 48
+ZZ_06_HOTEL CLUSTER – VOLUME 49 | Links containing Volume 49
+ZZ_07_HOTEL CLUSTER – VOLUME 50 | Links containing Volume 50
+ZZ_08_HOTEL CLUSTER – VOLUME 51 | Links containing Volume 51
+ZZ_09_HOTEL CLUSTER – VOLUME 52 | Links containing Volume 52
+ZZ_X_ARC LINK | Architecture Links
+ZZ_X_CIV LINK | Civil Links
+ZZ_X_CAD LINK | DWG Links
+ZZ_X_RVT LINK | Any other Revit Links
+Workset (RDL) | Description
+Workset (Landscape) | Description
+Shared Levels and Grids   | Levels and Grids  
+SPA_Pools | Includes Pools, Water Features, & Plant Room Equipments Model
+SPA_Thermal Cabins | Includes Thermal Cabins & Plant Room Equipments Model
+ZZ_Revit Links | Linked Revit models  
+Role | Type | Subtype / Product | Descriptor 1
+A | _ | Door | _ | Sliding | _ | GlassOpaque
+Optional
+Field Descriptions | Field Descriptions
+Code | Description of Content
+Role | The role field code refers to the Design Discipline responsible for developing the content
+Type | First level of specialization to provide Information for the purpose of the family.
+Subtype / Product | Used to convey additional specialization information not captured in attribute data. 
+Descriptor 1 | Optional - Brief User Description
+Signature Architect | Signature Architect
+Annotation Method | Annotation Method
+Method 1 – All tags will be using parameters included within the elements to keep consistency with the model. Normal text will not be used for tagging as all information should be driven from the BIM Model. | Method 1 – All tags will be using parameters included within the elements to keep consistency with the model. Normal text will not be used for tagging as all information should be driven from the BIM Model.
+Parameter | Description
+Keynote | Keynote parameter will be used to tag element classification and following the Element Specification (which will follow the Masterformat). Keynote code will be added into the element in the live model and Keynote Tag will be placed in the sheet model.
+
+
+
+Rooms | Built-in room parameters will be used to tag the room Name and Number. Room Area and Volume parameter will be used to be shown in the drawings. Any other extra information which will be imported into the model from other consultants will not be used as tags or scheduling. Tags will be placed in the sheet model.
+Doors | Built-in door Mark parameters will be used to tag the Door Number Name. Any other extra information which will be imported into the model from other consultants will not be used as tags or scheduling. Tags will be placed in the sheet model.
+Executive Architect | Executive Architect
+Annotation Method | Annotation Method
+Description to be added | Description to be added
+Parameter | Description
+Parameter name | Description
+Parameter name | Description
+Parameter name | Description
+Parameter name | Description
+Multidisciplinary Engineering | Multidisciplinary Engineering
+Annotation Method | Annotation Method
+Description to be added | Description to be added
+Parameter | Description
+Parameter name | Description
+Parameter name | Description
+Parameter name | Description
+Parameter name | Description
+Landscape | Landscape
+Annotation Method | Annotation Method
+Description to be added | Description to be added
+Parameter | Description
+Parameter name | Description
+Parameter name | Description
+Parameter name | Description
+Parameter name | Description
+Kitchen and Laundry Consultant (HAA) | Kitchen and Laundry Consultant (HAA)
+Annotation Method | Annotation Method
+Method 1 – All tags will be using parameters included within the elements to keep consistency with the model. Normal text will not be used for tagging as all information should be driven from the BIM Model. | Method 1 – All tags will be using parameters included within the elements to keep consistency with the model. Normal text will not be used for tagging as all information should be driven from the BIM Model.
+Blocking Rooms | Built-in room parameters will be used to tag the Blocking room Name and Number. Blocking Room Area parameter will be used to be shown in the drawings. 
+Type Mark | Type Mark parameter will be used to tag element classification and following the Element Specification. Type Mark code will be added into the element in the live model and Type Mark Tag will be placed in the delivery sheets.
+Built-in specialty equipment tags will be used to tag the service elements
+
+Consultant | Consultant
+Annotation Method | Annotation Method
+Description to be added | Description to be added
+Parameter | Description
+Parameter name | Description
+Parameter name | Description
+Parameter name | Description
+Parameter name | Description
+Scale | Description of detail | Use | Comments
+1: 5000 | Location and Layout | Location | 1:5000 Scale Detail shows shape and layout
+1:1500 | Shape and Layout | Site Layout | 1.1500 Scale Detail shows shape and layout
+1:200
+1.100 | General Arrangements Plans | GA’s/Elevations/Building Sections | 1:200/1.100 Scale Detail shows shape, layout and construction elements
+KITCHEN & LAUNDRY | KITCHEN & LAUNDRY | KITCHEN & LAUNDRY | KITCHEN & LAUNDRY
+Scale | Description of detail | Use | Comments
+1:100 | Schematic Plans |  Kitchen & Laundry |  Scale on A0 paper size.
+1:50 | Detail Plans |  Kitchen & Laundry |  Scale on A0 paper size.
+1:50 | Detail Sections |  Kitchen & Laundry |  Scale on A0 paper size.
+1:20 | Detail Plans |  Kitchen & Laundry |  Scale on A0 paper size.
+1:20 | Detail Sections |  Kitchen & Laundry |  Scale on A0 paper size.
+Spa | Spa | Spa | Spa
+Scale | Description of detail | Use | Comments
+1:100 | Overall Plans | Pools & Spa Overall Layout | Scale on A0 paper Size
+1:25 | Part Plans | Spa & Pools General Arrangement Plans & Piping Layouts | Scale on A0 paper Size
+1:20 | Sections and Details | Spa Thermal Cabins & Pools Plan & Section Details, Pools Piping Sections | Scale on A0 paper Size
+
+1:10 | Sections and Details | Spa Thermal Cabins Plan & Section Details | Scale on A0 paper Size
+
+Data Type | Exchange File Format | Comments
+3D Design BIM Model  | Native Model Files + IFC(2x3)  | NWC format if applicable to be supplied in addition. Use of Navisworks official plugin in native software recommended for NWC export
+3D Coordination Federated Model  | Navisworks (NWC/NWD) | Federated model in Navisworks format issued on to CDE
+Cost Validation | DWFx / IFC | Native model files exported and supplied in DWFx
+2D Drawing | DWG/PDF | 2D CAD drawings; either exported from 3D BIM models or developed in 2D CAD software
+Report  | PDF or Required File type
+3D Model Validation | Solibri + BCF | BCF will be distributed highlighting issues from validation process
+Schedule | PDF and XLSX (Excel) | Export to XML format
+4D BIM Model | Synchro (sp) | DWF file format required
+Cloud based Asset Data capture solution | 3D Model files – IFC Schedules – XML format | Schedules to be supplied in XML format. Models need to be in IFC format to be used in software
+Discipline +
+Company Name | RVT | DWG | NWC
+NWD | IFC | PDF | DWFx
+Signature Architect 
+Foster + Partners | ● | ● | ● | ● | ● | ●
+Structures
+KEO | ● | ● | ● | ● | ● | ●
+Mech. Services
+KEO | ● | ● | ● | ● | ● | ●
+Interior Design
+Richmond International | ● | ● | ● | ● | ● | ●
+Executive Architect 
+Khatib & Alami | ● | ● | ● | ● | ● | ●
+Landscape Architect
+EDSA | ● | ● | ● | ● | ● | ●
+Kitchen & Laundry
+Humble Arnold | ● | ● | ● | ● | ● | ●
+SPA  | ● | ● | ● | ● | ● | ●
+Company | Trial Date | Comments | Repeat Trial
+Example | XX/XX/XX | Correct Level, incorrect angle | Yes/No
+Example | XX/XX/XX | Correct position | Yes/No
+Program & Project Code | Originator Code | Discipline/
+Role Code | Package Exchange Code | Volume Code | Sequence Number
+R08HE1 | - | FOS | - | AR | - | S0 | - | 00 | - | 0001
+Code | Description | Revision | Graphical data | Non-Graphical data | Documents
+Work in Progress | Work in Progress | Work in Progress | Work in Progress | Work in Progress | Work in Progress
+S0 | work in progress | √ | √ | √
+Shared (non-contractual) | Shared (non-contractual) | Shared (non-contractual) | Shared (non-contractual) | Shared (non-contractual) | Shared (non-contractual)
+S1 | suitable for coordination | √
+S2 | suitable for information | √ | √
+S3 | suitable for review | as required | √ | √
+S4 | suitable for approval | √
+S6 | suitable for PIM authorization | √
+S7 | suitable for AIM authorization | √
+Published (contractual) | Published (contractual) | Published (contractual) | Published (contractual) | Published (contractual) | Published (contractual)
+A1, An, etc. | authorized and accepted | √ | √ | √
+B1, Bn, etc. | partial sign-off (with comments) | √ | √ | √
+Published (contractual) | Published (contractual) | Published (contractual) | Published (contractual) | Published (contractual) | Published (contractual)
+CR | as constructed record document | √ | √ | √
+Design Phases | Requirement | Timescale
+Concept Design | Arch/MEP/Structural | As Needed / Weekly
+Schematic Design | Arch/MEP/Structural | Weekly
+Design Development | Arch/MEP/Structural | Weekly/ Fortnightly
+Construction Documents | Arch/MEP/Structural/Contractor/Subcontractors | Fortnightly
+BIM Models | Weekly | Fortnightly | Gate Submissions
+RVT | √ | √ | √
+NWC | √ | √ | √
+NWD | √ | √ | √
+DWFx | √ | √
+IFC | √
+BIM use | Agreed Proprietary Software | Version
+Design authoring (Architecture) | Autodesk Revit | 2019.2
+Design authoring (Structure) |  Autodesk Revit
+ | 2019.2
+
+Design authoring (MEP) |  Autodesk Revit | 2019.2
+
+Design authoring (LS) | Autodesk Revit  | 2019.2
+Space programming | TBC | TBC
+Engineering analysis | TBC | TBC
+Design visualization | TBC | TBC
+3D coordination | Navisworks | Navisworks Manage 2019
+Design review | TBC | TBC
+Design authoring 
+(Interior Design) | Autodesk Revit | 2019.2
+Executive Architect 
+ | Autodesk Revit/Naviswork | 2019.2
+Agreed Clash rendition viewer | Software/Version
+Clash Analysis to be performed in Navisworks Manage. Clash reports will be saved as Viewpoints in the Federated Model which will make every single clash visible in BIM 360. | TBC
+Navisworks | Navisworks Manage 2019
+Meeting Type | Activities | Stage/
+Frequency | Participants | Location | Organizer
+BIM Kick Off Meeting | Meeting to communicate the BEP and the associated requirements. This meeting is also used to agree and complete the project specific information that is required within the Project BEP. The BEP should be used as the agenda for this meeting and worked through systematically until populated. | One-off | All Project Participants | TBC | Project Information Manager; 
+Task Information Manger – Lead 
+BIM Weekly Meeting | The purpose of those meetings is to discuss BIM related items on a weekly basis. Topics related to these meetings can include but are not limited to: BEP Updates; Models Updates; Models Queries; BIM Strategy updates; Information Exchange…etc. 
+A relatively flexible agenda and meeting structure is prescribed to allow all project BIM representatives to present and resolve their queries.  | Weekly  | All Project BIM Representatives  | Microsoft Teams | Task Information Manager – Lead
+Clash
+Detections &
+Coordination
+Meeting
+ | The Aim of this meeting to identifying the clashes and highlight to all consultants. 
+Task Information Manager (EA) will lead the meeting and visually explain the PDF reports, live demonstration will be present with the help of native clash detection software, if required. All identifying clashes will be record in the PDF and html report, all the consultants will review and resolve clashes.
+Reports will be created as per the NWC file shared in BIM360.
+KAA will share following documents for all the assets.
+Clash report summary
+Tracker
+NWD clash report
+Detail clash report
+BIM Workshops | Coordination between all project teams to review clashes identified within the models. Project BIM Manager to lead the meeting, visually exploring the models, identifying clashes that require resolution and documenting each agreed solution alongside a visual of the issue in the minutes. All models must be uploaded to the agreed exchange platform in both native and agreed 3D discipline-based model file format. All models must be uploaded to the agreed exchange platform two days ahead of this meeting to allow sufficient time to review the content within the model. | If and When Required | All or relevant   Project BIM Representatives | Microsoft Teams | Task Information Manager – Lead
+BIM Strategy Meeting | At various stages of the project senior project stakeholders may be invited to BIM strategy meetings to assess if the project is on track for achieving its goals and objectives outlined in the BEP. The frequency of these meetings is entirely dependent on the project program. An outline of expected dates for BIM strategy meetings will be agreed upon and represented in the Post Contract BEP. | TBC | Senior Project Stakeholders | TBC | Project Information Manager
+
+Design Coordination Cycle | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+Upload Model Information (NWC/NWD)
+Federation and Review
+Clash Detection and Coordination Meeting for Project Team to Review Federated Model
+Merge All Comments
+Design Coordination Meeting
+Project Team Address Assigned Actions
+Responsible | Check | Notes
+All Disciplines | Visual | Ensure there are no unintended model components and the design intent has been followed.
+All Disciplines | Intersection and Clash Detection (Visual) | Detect problems in the model where two building components are clashing; including soft and hard clashes.
+All Disciplines | Standards Check | Ensure that the project BIM Standards have been followed. Standards check include but are not limited to:
+●Adherence to BIM standards
+●Delivery format – scale, orientation, view types on sheets
+●Detailing – information and section cuts, detail references
+●Annotations and Tags
+●Dimensioning
+●Title block and title text including naming and numbering
+●Line work
+All Disciplines | File Integrity | Metadata completed correctly including file naming convention and status of files.
+All Disciplines | Model Integrity | That the model is fit for coordination across the team. Checks include but are not limited to:
+●Content (objects and data) integrity and inclusions/exclusions
+●LOD
+●Areas inclusions/exclusions
+●Spaces and zones inclusions/exclusions
+●Schedules including schedule summations
+●Tags and tag agreement with schedule data
+●Sizes and types
+●General notes
+All Disciplines | Spatial Integrity | Model information spatial data is fit for purpose. Associated bounding of elements (floors, walls, ceilings, columns, windows, doors), space validation representing room/zone spaces.
+All Disciplines | Model Audit | Validation check sheet forms to be completed and issued with all models.
+Clash Reference Stage Code | Discipline A | Discipline B | Tolerance
+01-Architecture | 01-Architecture | 01-Architecture | 01-Architecture
+01.02-DISC-STAGE B-01-01 | Architecture | Architecture | 50mm
+01.02-DISC-STAGE B-01-02 | Architecture | Structure | 50mm
+01.02-DISC-STAGE B -01-03 | Architecture | Mechanical | 50mm
+01.02-DISC-STAGE B -01-03 | Architecture | Plumbing | 50mm
+01.02-DISC-STAGE B -01-04 | Architecture | Electrical | 50mm
+01.02-DISC-STAGE B -01-05 | Architecture | Interior | 50mm
+01.02-DISC-STAGE B -01-06 | Architecture | Landscape | 50mm
+01.02-DISC-STAGE B -01-07 | Architecture | Kitchen & Laundry | 50mm
+02-Structure | 02-Structure | 02-Structure | 02-Structure
+01.02-DISC-STAGE B-02-02 | Structure | Structure | 50mm
+01.02-DISC-STAGE B-02-03 | Structure | Mechanical | 50mm
+01.02-DISC-STAGE B -02-03 | Structure | Plumbing | 50mm
+01.02-DISC-STAGE B -02-04 | Structure | Electrical | 50mm
+01.02-DISC-STAGE B -02-05 | Structure | Interior | 50mm
+01.02-DISC-STAGE B -02-06 | Structure | Landscape | 50mm
+01.02-DISC-STAGE B -02-07 | Structure | Kitchen & Laundry | 50mm
+03-Mechanical | 03-Mechanical | 03-Mechanical | 03-Mechanical
+01.02-DISC-STAGE A-03-03 | Mechanical | Mechanical | 50mm
+01.02-DISC-STAGE B-03-03 | Mechanical | Plumbing | 50mm
+01.02-DISC-STAGE B-03-04 | Mechanical | Electrical | 50mm
+01.02-DISC-STAGE B-03-05 | Mechanical | Interior | 50mm
+01.02-DISC-STAGE B-03-06 | Mechanical | Landscape | 50mm
+01.02-DISC-STAGE B-03-07 | Mechanical | Kitchen & Laundry | 50mm
+03-Plumbing | 03-Plumbing | 03-Plumbing | 03-Plumbing
+01.02-DISC-STAGE B-03-03 | Plumbing | Plumbing | 50mm
+01.02-DISC-STAGE B-03-04 | Plumbing | Electrical | 50mm
+01.02-DISC-STAGE B-03-05 | Plumbing | Interior | 50mm
+01.02-DISC-STAGE B-03-06 | Plumbing | Landscape | 50mm
+01.02-DISC-STAGE B-03-07 | Plumbing | Kitchen & Laundry | 50mm
+04-Electrical | 04-Electrical | 04-Electrical | 04-Electrical
+01.02-DISC-STAGE B-04-04 | Electrical | Electrical | 50mm
+01.02-DISC-STAGE B-04-05 | Electrical | Interior | 50mm
+01.02-DISC-STAGE B-04-06 | Electrical | Landscape | 50mm
+01.02-DISC-STAGE B-04-07 | Electrical | Kitchen & Laundry | 50mm
+05-Interior | 05-Interior | 05-Interior | 05-Interior
+01.02-DISC-STAGE B-05-05 | Interior | Interior | 50mm
+01.02-DISC-STAGE B-05-06 | Interior | Landscape | 50mm
+01.02-DISC-STAGE B-05-07 | Interior | Kitchen & Laundry | 50mm
+06-Landscape | 06-Landscape | 06-Landscape | 06-Landscape
+01.02-DISC-STAGE B-06-06
+ | Landscape | Landscape | 50mm
+01.02-DISC-STAGE B-06-07                      | Landscape | Kitchen & Laundry | 50mm
+07-Kitchen & Laundry | 07-Kitchen & Laundry | 07-Kitchen & Laundry | 07-Kitchen & Laundry
+01.02-DISC-STAGE B-07-07 | Kitchen & Laundry | Kitchen & Laundry | 50mm
+08-Civil & Infrastructure | 08-Civil & Infrastructure | 08-Civil & Infrastructure | 08-Civil & Infrastructure
+01.02_DISC-STAGE B-02-01                      | Civil & Infrastructure | Civil & Infrastructure | 50mm
+01.02_DISC-STAGE B-02-02                      | Civil & Infrastructure | Structure | 50mm
+Title | Document Reference
+Employer’s Information Requirements | TRS-IM-PLC-0003
+BIM Execution Plan - Template | TRS-IM-PLC-0004
+Vendor BIM Capability Assessment Procedure | TRS-IM-PLC-0007
+ AIR - Asset Information Requirements | TRS-IM-PLC-0008
+High-Level Responsibility Matrix – Information Deliverables | TRS-PM-PLC-0009
+Model Production Delivery Table (MPDT) | TRS-IM-PLC-0010
+BIM – 3D Model LOI / Parameters List  | TRS-IM-PLC-0010_1
+Parameters Guidance | TRS-IM-PLC-0010_2
+Reference Number | Discipline | Company | Date Assessment Returned | Capability Level
+xx/xx/xx
+xx/xx/xx
+xx/xx/xx

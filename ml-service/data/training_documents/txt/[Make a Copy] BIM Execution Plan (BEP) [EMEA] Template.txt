@@ -1,0 +1,281 @@
+Template history
+Template governance
+This BIM Execution Plan (BEP) template will be reviewed and updated from time to time to support continual development and change within Google. Trigger events to initiate review and update shall be, but not limited to those contained within the table below. Google shall assess impact of changes to the BIM Execution Plan, with consideration of the downstream influence on current projects.
+GUIDANCE
+Google has provided the ‘BIM Execution Plan template’ to support the Lead Appointed Party, and their Delivery Team.
+The aim of providing a BIM Execution Plan template is to enable consistency on a project between all Lead Appointed Parties. The sections of this template must not be changed, rather crossed through if not being utilized, this is to enable the Appointing Party and their Appointing Party Information Manager to align to their information requirements.
+The Appointing Party is likely to have several appointments with Lead Appointed Parties (for example, for architecture, engineering, project management and construction), and a Lead Appointed Party is likely to have several appointments with Appointed Parties (especially where they are a general contractor), it is therefore expected for several BIM Execution Plans to be in place on a project. The diagram on the following page demonstrates two typical scenarios for this.
+Where notes appear like [THIS], the Appointing Party Information Manager should input the relevant information prior to issuing the BIM Execution Plan template to the new Lead Appointed Party.
+Where notes appear like [THIS], the author of the BIM Execution Plan should input the relevant information. The entire BIM Execution Plan template should be reviewed in detail before submission.
+For the BIM Execution Plan Google has provided additional templates to supplement, as below:
+
+[Make a Copy] High Level Responsibility Matrix [EMEA] Template
+[Make a Copy] Information Delivery Plan [EMEA] Template
+Table of Contents
+
+	0	Document history
+0.1	Governance
+This BIM Execution Plan document was created at the conception of [Project name] with specific consideration for the unique nature of this project. As the BIM Execution Plan is a formal appointment resource it will be subject to a change management process.
+0.2	Referenced material
+1	Introduction
+This document is the BIM Execution Plan (BEP) produced by [insert Lead Appointed Party name] to convey the Delivery Team’s approach to Information Management using Building Information Modeling (BIM) on [insert project name]. This document is intended as a succinct delivery resource, which the Delivery Team will use alongside other resources to produce, manage and exchange project information throughout their appointment.
+As shown in figure 1 this BIM Execution Plan is a formal appointment resource that responds directly to Google's need for information for this project, as communicated through the Exchange Information Requirements, Part A [Insert link once completed] and Project Information Requirements, Part A [Insert link once completed]. Similarly the BIM Execution Plan confirms any agreed amendments and additions to Google’s Information Standard and Information Production Methods and Procedures which the Delivery Team requires for their own purposes.
+Figure 1: Relationship between the project’s information requirements, Information Standard, Information Production Methods and Procedures and the Delivery Team’s agreed response to these documents
+1.1	Who uses the BIM Execution Plan?
+The agreed BIM Execution Plan shall be used by the Lead Appointed Party’s Delivery Team as a resource to produce, manage and exchange information in a manner that Google and the project team have agreed is suitable. 
+Each task team will use their Delivery Team’s BIM Execution Plan to help understand their information management functions, information responsibilities, and their agreed information delivery strategy. The BIM Execution Plan also signposts to other delivery resources and tools that task teams will find useful as listed below;
+Agreed Information Standard
+Agreed Information Production Methods and Procedures
+Master Information Delivery Plan (MIDP)
+Delivery Team’s information risk register
+Mobilization plan
+Additionally the BIM Execution Plan explains the Lead Appointed Party’s federation strategy to all other project stakeholders.
+[A BIM Execution Plan must be provided for each direct appointment to the Appointing Party.]
+2	About this project
+This section defines general information about the project.
+[The details within this section must be completed using the information contained within the [Project Information Requirements (PIR): Part B]]
+2.1	Project description and purpose
+[Description and purpose of project].
+2.2	Project plan of work/program
+This project shall be structured according to [Enter plan of work].
+
+The project program may be found here [Add link to program].
+3 	Information management functions
+[The Lead Appointed Party shall populate table 6 to confirm details of those carrying out information management functions on this project.
+At minimum the following functions should be detailed:
+Appointing Party Information Manager
+Party(s) responsible for CDE establishment and ongoing management (if different from the Appointing Party Information Manager
+Information Manager for each task team
+Descriptions and responsibilities shall be consistent with the Information Management Assignment Matrix [Insert link once completed]  for this project]
+Table 6 below confirms the individuals who will undertake information management functions within the Delivery Team. 
+Note 1: It is important not to confuse functions and responsibilities with job titles or with professional or other designations. 
+Note 2: This section should be read in conjunction with all appointment documentation.
+4 	Information Delivery Plan
+4.1	Detailed Responsibility Matrix
+[The Lead Appointed Party shall further refine the Delivery Team’s high-level responsibility matrix to establish the detailed responsibility matrix, which identifies:
+What information is to be produced
+When the information is to be exchanged and with whom; and
+Which task team is responsible for its production]
+The [Detailed Responsibility Matrix, insert link] outlines the allocated responsibility for each element of the information model and the key deliverables associated to each element.
+4.2	Master Information Delivery Plan
+[The Lead Appointed Party shall aggregate the task information delivery plans (TIDPs) from each task team to establish the Delivery Team’s master information delivery plan (MIDP). In doing this, the Lead Appointed Party shall consider:
+the assigned responsibilities within the detailed responsibility matrix
+the information predecessors or dependencies on information between task teams
+the time the Lead Appointed Party will need to review and authorize the information model
+the time the appointing party will need to review and accept the information model. 
+Once the Master Information Delivery Plan has been established, the Lead Appointed Party shall: 
+baseline the deliverables and dates within the Master Information Delivery Plan
+inform each task team and notify if any changes are required to the Task Information Delivery Plan
+inform the appointing party of any risks or issues which could impact on the project’s information delivery milestones]
+The [Master Information Delivery Plan, insert link] lists all information containers to be produced throughout the project, the associated responsibilities and information exchange milestones.
+5	Information Delivery Strategy
+5.1	Delivery Team’s organizational structure and composition
+5.1.1	Delivery Team structure
+[Provide a relationship overview diagram of the Delivery Team’s organizational structure and commercial relationships.]
+5.1.1	Delivery Team composition
+[Provide an understanding of the Delivery Team’s structure, including hierarchy and information workflows.]
+5.2	Approach to meeting the appointing party’s exchange information requirements
+5.2.1	Approach to facilitating the Appointing Party’s Information management priorities
+[The Lead Appointed Party shall use section XX of the Exchange Information Requirements to confirm the table 8 priority column. The Lead Appointed Party shall outline the Delivery Team’s confirmed approach to facilitating each priority, making reference if needed to sections within the Project’s agreed Information Standard or Information Production Methods and Procedures. Details of Task Teams responsible for providing information to facilitate the Priority shall be likewise provided.]
+To maximize Google’s benefit from information management using BIM, the Delivery Team will work openly to achieve the Appointing Party’s information management priorities outlined in  section XX of the Exchange Information Requirements, Part B [Insert link once completed].
+Table 8 below details the Delivery Team’s high level approach to facilitating Google’s information management priorities, and identifies the responsible task team(s)
+5.2.3   	Level of information need
+For this project the level of information need shall align with the requirement outlined in Exchange Information Requirements, Part B [Insert link once completed].
+5.2.3.1	Documentation
+[The Lead Appointed Party shall outline the Delivery Team’s approach to fulfilling the level of information need for documentation. If needed reference should be made to sections within the Project’s agreed Information Standard or Information Production Methods and Procedures.]
+5.2.3.2	Geometric Information 
+[The Lead Appointed Party shall outline the Delivery Team’s approach to fulfilling the geometric aspect of the Appointing Party’s level of information need. If needed reference should be made to sections within the Project’s agreed Information Standard or Information Production Methods and Procedures.]
+5.2.3.3	Alphanumeric Information
+[The Lead Appointed Party shall outline the Delivery Team’s approach to fulfilling the alphanumeric aspect of the Appointing Party’s level of information need. If needed reference should be made to sections within the Project’s agreed Information Standard or Information Production Methods and Procedures.]
+5.3	Delivery Team’s objectives/goals for the collaborative production of information
+[The Lead Appointed Party shall liaise with their Appointed Party(s) to define project specific objectives and goals for the production of information. For each, the Delivery Team’s approach to achieving their ambition should be outlined, together with the details of any associated task team.
+Reference should be made within the approach to any relevant sections within the Project’s agreed Information Standard or Information Production Methods and Procedures. Details of Task Team’s responsible for providing information to facilitate the Priority shall be likewise provided.]
+The Delivery Team has collectively identified objectives and goals for the collaborative production of information. Details of these are contained within table 9 below.
+5.4	Mobilization plan
+[The Lead Appointed Party shall update and confirm their mobilization plan. 
+This shall consider:
+testing and documenting the proposed information production methods and procedures
+testing the information exchanges between task teams
+testing the information delivery to the appointing party
+configuring and testing the project’s CDE
+configuring and testing the Delivery Team’s (distributed) CDE and its connectivity to the project CDE (if applicable)
+procuring, implementing, configuring and testing additional software, hardware and IT infrastructure
+developing additional shared resources to be used by the Delivery Team
+developing and delivering education (knowledge required) to Delivery Team members
+developing and delivering training (skills required) to the Delivery Team members
+recruiting additional members of the Delivery Team to achieve the required capacity; and
+supporting individuals and organizations that join the Delivery Team during the appointment.]
+During mobilization the Delivery Team’s [Mobilization Plan Insert link] will be initiated and implemented.
+5.5	Delivery Team’s information risk register
+[The Lead Appointed Party shall update the information risk register, containing risk associated with the timely delivery of information in accordance with the Exchange Information Requirements, and how the Delivery Team intends to manage these risks. It is suggested that the information risk register is integrated within the project’s main risk register.
+This shall consider:
+assumptions the Delivery Team has made in relation to the appointing party’s exchange information requirements
+meeting the appointing party’s project information delivery milestones
+the contents of the project’s information protocol
+achieving the proposed information delivery strategy
+adopting the project’s information standard and information production methods and procedures
+inclusion (or non‑inclusion) of proposed amendments to the project’s information standard
+the mobilization of the Delivery Team to achieve the required capability and capacity.]
+The Delivery Team’s [Information Risk Register Insert link] will be maintained throughout the project.
+[Insert details of how the information risk register will be maintained, and regularly reviewed.]
+6	Federation Strategy
+[The Lead Appointed Party shall outline the Delivery Team’s federation strategy. The federation strategy shall be aligned to the project’s information production methods and procedures, information breakdown structure  and support production of the detailed responsibility matrix and master information delivery plan. 
+At a minimum the federation strategy shall outline:
+An explanation for how the information model is intended to be subdivided into function aspects, e.g. system, work package, design elements. Note as a minimum each discipline or task team are required to have their own subdivision.
+Process by with the Lead Appointed Party creates a federated information model
+Frequency of federation events
+Identities of models to be included within the federated model
+Steps task teams shall carry out to prepare their models for federation
+Process by which the Lead Appointed Party checks the federated model
+Reference should be made within the approach to any relevant sections within the Project’s agreed Information Standard or Information Production Methods and Procedures.]
+7	Software, hardware and IT infrastructure
+7.1	Software
+[Confirm the schedule of each software that the Delivery Team will use]
+The agreed software, version and service pack that the Lead Appointed Party and Delivery Team will use are defined below. Only software identified below shall be used to author, coordinate and validate information models. Any update or change to those that agree must be approved by the appointing party and information managers. 
+Note:
+Project stakeholders authoring information models shall allow for full version updates on a repeating two-year cycle, e.g Revit 2022 to Revit 2024. This shall be at no additional cost to the appointing party and must be managed to minimize disruption to the project. Version updates may at the appointing party’s discretion occur less frequently, or by agreement of all stakeholders occur more regularly. Please note that the full year version is managed separately from service pack releases, these should be maintained at the most recent release. Task teams joining the project at a later date must remain in step with those already deployed, i.e. a task team joining the project in 2023 shall allow for a first full version update in 2024. Any update is to be explicitly agreed by the Appointing party, through consultation with each information manager.
+7.2	Hardware
+[Confirm the schedule of each hardware that the Delivery Team will use]
+7.3	IT infrastructure
+[Confirm the schedule of the IT infrastructure that the Delivery Team will use]
+8	Information Standard
+The Lead Appointed Party and all Appointed Parties are obliged to produce information that conforms with the project’s [Agreed Information Standard insert link].
+This document details specific standards for exchange of information, means of structuring and classifying information, method of assignment of level of information need and the use of information during the operation phase of the asset.
+[The Lead Appointed Party must aggregate any agreed additions or amendments to the project’s information standard within the main document. Any agreed additions or amendments will be communicated by the Appointing Party Information Manager.]
+9	Information Production Methods and Procedures
+The Lead Appointed Party and all Appointed Parties are obliged to produce and manage information in accordance with the project’s [Agreed Information Production Methods and Procedures insert link].
+This document details specific standards for the capture of existing asset information, generation, review and approval of new information, the security or distribution of information, delivery of information to the Appointing Party.
+[The Lead Appointed Party must aggregate any agreed additions or amendments to the project’s information production methods and procedures within the main document. Any agreed additions or amendments will be communicated by the Appointing Party Information Manager.]
+
+BIM Execution Plan (BEP), [EMEA]
+EA]
+Document communicating the Delivery Team's confirmed information management approach
+
+[INSERT PROJECT NAME]
+[INSERT LEAD APPOINTED PARTY NAME]
+Standard version - please make a copy | Standard version - please make a copy | Standard version - please make a copy | Standard version - please make a copy | Standard version - please make a copy | Standard version - please make a copy
+Date | Revision | Status | Revised by | Description of changes | Description of changes
+2022-02-18 | P01.01 | S0 - WIP | Niall Murphy | Initial issue for client review and comment (not issued for formal use). | Initial issue for client review and comment (not issued for formal use).
+Template revision table | Template revision table | Template revision table | Template revision table | Template revision table | Template revision table
+Name | Company | Role | Role | Role | Role
+Matt Peat | REWS | Owner | Owner | Owner | Owner
+Marie Hunter | REWS (Avixi) | Reviewer | Reviewer | Reviewer | Reviewer
+Niall Murphy | REWS (Turner & Townsend) | Author (originator) | Author (originator) | Author (originator) | Author (originator)
+Template contributors | Template contributors | Template contributors | Template contributors | Template contributors | Template contributors
+Trigger event | Trigger event | Accountable party | Accountable party | Accountable party | Accountable party
+Changes to the Project Information Requirements | Changes to the Project Information Requirements | Google | Google | Google | Google
+Changes to the Asset Information Requirements | Changes to the Asset Information Requirements | Google | Google | Google | Google
+Changes to the Pre-appointment BIM Execution Plan template | Changes to the Pre-appointment BIM Execution Plan template | Google | Google | Google | Google
+New or updated Information Management standards | New or updated Information Management standards | Google  | Google  | Google  | Google 
+Lessons learnt from project delivery or asset management | Lessons learnt from project delivery or asset management | Google  | Google  | Google  | Google 
+Governance trigger events
+
+
+
+
+
+ | Governance trigger events
+
+
+
+
+
+
+Date | Revision | Status | Revised by | Description of changes | Description of changes
+[Insert] | [Insert] | [Insert] | [Insert] | [Insert] | [Insert]
+Table 1: Revision Table | Table 1: Revision Table | Table 1: Revision Table | Table 1: Revision Table | Table 1: Revision Table | Table 1: Revision Table
+Name | Company | Role | Role | Role | Role
+[Insert] | [Insert] | [Insert] | [Insert] | [Insert] | [Insert]
+Table 2: Contributors
+ | Table 2: Contributors
+ | Table 2: Contributors
+ | Table 2: Contributors
+ | Table 2: Contributors
+ | Table 2: Contributors
+
+Trigger event | Trigger event | Accountable party | Accountable party | Accountable party | Accountable party
+Changes to the project's Exchange Information Requirements | Changes to the project's Exchange Information Requirements | Lead Appointed Party | Lead Appointed Party | Lead Appointed Party | Lead Appointed Party
+Changes to the project's Delivery Team | Changes to the project's Delivery Team | Lead Appointed Party | Lead Appointed Party | Lead Appointed Party | Lead Appointed Party
+Changes to the project’s programme, plan of work or project scope | Changes to the project’s programme, plan of work or project scope | Lead Appointed Party | Lead Appointed Party | Lead Appointed Party | Lead Appointed Party
+Approved changes to the Delivery Team's information management approach | Approved changes to the Delivery Team's information management approach | Lead Appointed Party | Lead Appointed Party | Lead Appointed Party | Lead Appointed Party
+Changes to the project's shared resources | Changes to the project's shared resources | Lead Appointed Party | Lead Appointed Party | Lead Appointed Party | Lead Appointed Party
+Lessons learnt from project delivery | Lessons learnt from project delivery | Lead Appointed Party | Lead Appointed Party | Lead Appointed Party | Lead Appointed Party
+Table 3: Governance trigger events | Table 3: Governance trigger events
+Document title | Revision | Issue date | Issue date | Issue date | Issue date
+Organizational Information Requirements (OIR), Part A [EMEA] | P01.01 | 2022-02-04 | 2022-02-04 | 2022-02-04 | 2022-02-04
+Organizational Information Requirements (OIR), Part B [EMEA] | P01.01 | 2022-02-04 | 2022-02-04 | 2022-02-04 | 2022-02-04
+Project Information Requirements (PIR): Part B [EMEA] [Insert link once completed] | [TBC] | [TBC] | [TBC] | [TBC] | [TBC]
+Asset Information Requirements: Part A [EMEA] | P01.01 | 2022-02-11 | 2022-02-11 | 2022-02-11 | 2022-02-11
+Exchange Information Requirements (EIR): Part A [EMEA] [Insert link once completed] | [TBC] | [TBC] | [TBC] | [TBC] | [TBC]
+Exchange Information Requirements (EIR): Part B [EMEA] [Insert link once completed] | [TBC] | [TBC] | [TBC] | [TBC] | [TBC]
+Project Information Standard [EMEA] [Insert link once completed] | [TBC] | [TBC] | [TBC] | [TBC] | [TBC]
+Agreed Project Information Standard [Insert link once completed] | [TBC] | [TBC] | [TBC] | [TBC] | [TBC]
+Agreed Information Production methods and Procedures [Insert link once completed] | [TBC] | [TBC] | [TBC] | [TBC] | [TBC]
+Asset information exchange standard [EMEA] [Insert link once completed] | [TBC] | [TBC] | [TBC] | [TBC] | [TBC]
+Information Delivery Plan [EMEA] [Insert link once completed] | [TBC] | [TBC] | [TBC] | [TBC] | [TBC]
+Detailed Responsibility Matrix [Insert link once completed] | [TBC] | [TBC] | [TBC] | [TBC] | [TBC]
+Information Management Assignment Matrix (EMEA)  [Insert link once completed] | [TBC] | [TBC] | [TBC] | [TBC] | [TBC]
+Delivery Team information risk register [Insert link once completed] | [TBC] | [TBC] | [TBC] | [TBC] | [TBC]
+Mobilization Plan [Insert link once completed] | [TBC] | [TBC] | [TBC] | [TBC] | [TBC]
+Table 4: Referenced material
+
+Appointing Party | [Appointing party name]
+Appointing Party Project Executive | [Appointing Party Project Executive details]
+Project name / reference | [Project name]
+Table 5: Project details
+Information management function | Task Team name | Individual | Description and responsibilities 
+Project information management functions | Project information management functions | Project information management functions | Project information management functions
+Appointing Party Information Manager | [Insert]   | [Insert name]  
+[Insert email]
+Insert telephone] | [Insert]  
+[Insert]   | [Insert]   | [Insert name]  
+[Insert email]
+Insert telephone] | [Insert]  
+Delivery Team information management functions | Delivery Team information management functions | Delivery Team information management functions | Delivery Team information management functions
+Lead Appointed Party’s Information Manager   | [Insert]   | [Insert name]  
+[Insert email]
+Insert telephone] | [Insert]  
+[Task Team’s Information Manager]     | [Insert]   | [Insert name]  
+[Insert email]
+Insert telephone] | [Insert]  
+Table 6: Information management function schedule  | Table 6: Information management function schedule  | Table 6: Information management function schedule  | Table 6: Information management function schedule 
+Organization & 
+Task Team Name | Main contact | Security clearance
+(if applicable) | Contact
+(CDE URL)
+[Organization]
+[Task Team Name] | [Name]
+[Email]
+[Telephone] | [Insert security clearance]   | [Insert contact method]
+[Organization]
+[Task Team Name] | [Name]
+[Email]
+[Telephone] | [Insert security clearance]   | [Insert contact method]
+Table 7: Delivery Team composition | Table 7: Delivery Team composition | Table 7: Delivery Team composition | Table 7: Delivery Team composition
+Priority | Delivery Team approach | Responsible Task Team(s)
+[Priority description] | [Insert Delivery Team Approach] | [Enter responsible task team]
+[Priority description] | [insert Delivery Team Approach] | [Enter responsible task team]
+Table 8: Approach to facilitating Google’s Information Management using BIM priorities | Table 8: Approach to facilitating Google’s Information Management using BIM priorities | Table 8: Approach to facilitating Google’s Information Management using BIM priorities
+Objective / Goal | Delivery Team approach | Responsible Task Team(s)
+[Objective / goal description] | [Insert Delivery Team Approach] | [Enter responsible task team]
+[Objective / goal description] | [Insert Delivery Team Approach] | [Enter responsible task team]
+Table 9: Delivery Team’s objectives and goals for collaborative production of information | Table 9: Delivery Team’s objectives and goals for collaborative production of information | Table 9: Delivery Team’s objectives and goals for collaborative production of information
+Discipline / Task Team | Software & Version | Service Pack
+Information container management | Information container management | Information container management
+[Insert] | [Enter application name and version year] | [Enter most recent service pack]
+Design authoring
+[Insert] | [Enter application name and version year] | [Enter most recent service pack]
+Coordination & clash detection
+All – internal checks | [Enter application name and version year] | [Enter most recent service pack]
+Multiple - Federation | [Enter application name and version year] | [Enter most recent service pack]
+Data verification
+[Insert] | [Enter application name and version year] | [Enter most recent service pack]
+Construction Programming
+[Insert] | [Enter application name and version year] | [Enter most recent service pack]
+Table 10: Software | Table 10: Software | Table 10: Software
+Discipline / Task Team | Hardware
+[Insert] | [Insert]
+Table 11: Hardware
+Discipline / Task Team | IT infrastructure
+[Insert] | [Insert]
+Table 12: IT Infrastructure

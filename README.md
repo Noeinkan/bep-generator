@@ -10,14 +10,17 @@ A React-based application for generating comprehensive BIM Execution Plans (BEPs
 - Export capabilities (PDF, DOCX)
 - User authentication and project management
 - Real-time collaboration features
-- **AI-Powered Text Generation** - ML-based content suggestions for BEP sections
+- **AI-Powered Text Generation** - Advanced RAG (Retrieval-Augmented Generation) system using your own BEP documents
+  - Primary: RAG with Claude API for high-quality, contextual generation
+  - Fallback: LSTM model for offline operation
 
 ## Documentation
 
 For detailed information about BIM concepts and standards:
 
 - [TIDP and MIDP Relationship](TIDP_MIDP_Relationship.md) - Understanding the relationship between Task Information Delivery Plans and Master Information Delivery Plans in ISO 19650 context.
-- [AI Integration Guide](AI_INTEGRATION_GUIDE.md) - Complete guide for setting up and using the AI text generation feature.
+- [RAG Setup Guide](RAG_SETUP_GUIDE.md) - **⭐ Recommended** - Complete guide for setting up the RAG system with your DOCX documents
+- [AI Integration Guide](AI_INTEGRATION_GUIDE.md) - Legacy LSTM-based text generation (still available as fallback)
 
 ## Getting Started
 
@@ -35,11 +38,23 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
    ```bash
    npm install
    ```
-3. **(Optional) Set up AI text generation:**
+3. **(Recommended) Set up RAG AI system:**
+   ```bash
+   cd ml-service
+   setup_rag.bat
+   ```
+   This will:
+   - Install Python dependencies
+   - Extract text from your DOCX BEP documents
+   - Create a vector database for semantic search
+   - Configure Claude API integration
+
+   See [RAG Setup Guide](RAG_SETUP_GUIDE.md) for detailed instructions.
+
+   **Alternative**: Use legacy LSTM model (no API key required)
    ```bash
    setup-ai.bat
    ```
-   This will install Python dependencies and train the AI model. See [AI Integration Guide](AI_INTEGRATION_GUIDE.md) for details.
 
 4. Start the development server:
    ```bash

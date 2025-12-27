@@ -1,0 +1,249 @@
+Information protocol to support BS EN ISO 19650-2 the delivery phase of assets
+Edition 4	 Published by
+This Information Protocol Template develops the requirements of the CIC BIM Protocol, Second Edition 2018 to reflect ISO 19650- 1 and ISO 19650-2 and acknowledges the contribution made by the CIC BIM Protocol to information management using building information modelling.
+This Information Protocol Template is provided for general information only. It is not intended to amount to advice on which you should rely. You must obtain professional or specialist advice before taking, or refraining from, any action on the basis of the Information Protocol Template. The authors, the UK BIM Framework and CIC make no representations, warranties or guarantees, whether express or implied, regarding the content of the Information Protocol including but not limited to that it is accurate, complete or up to date.  The authors and the UK BIM Framework are not responsible or liable for any amendments or alterations made to this Information Protocol Template, or any impact or consequences of such amendments or alterations.
+Published by the UK BIM Framework in association with the Construction Industry Council (CIC) Edition 3: February 2021
+©COPYRIGHT 2021 The UK BIM Framework, CIC and the Authors named herein.
+Table of contents
+Acknowledgments
+This Information Protocol Template represents the collaborative efforts of the following people and organizations
+Editors
+David Churcher	Hitherwood Consulting Ltd Sarah Davidson	The University of Nottingham Anne Kemp	Atkins
+Authors
+Andrew Croft	Beale & Company Solicitors LLP
+Simon Lewis	Womble Bond Dickinson
+May Winfield	Buro Happold
+Production
+Centre for Digital Built Britain
+Information Particulars
+List as N/A for Lead Appointed Party-Appointed Party appointment
+List as N/A for Appointing Party-Lead Appointed Party appointment
+3	May list as N/a for Lead Appointed Party-Appointed Party appointment
+Interpretation
+In this Protocol:
+the words and phrases in capitals shall have the meanings set out in clause 13; and
+the words and phrases in italics shall have the meanings set out in BS EN ISO 19650-1:2018 and BS EN ISO 19650-2:2018, as may be more particularly defined in this Protocol and the Information Particulars.
+The definitions in clause 13 apply to this Protocol only and do not supersede the definitions in BS EN ISO 19650 series.
+The Parties agree that for the purposes of this Protocol and the Appointment, any obligation of the Appointee i) to use, provide or deliver information management according to the UK BIM Framework and/or ii) to establish processes or any of the Information Particulars and any reference to the same under or in connection with this Protocol and the Appointment and/or iii) to use, provide or deliver information
+management according to the BS EN ISO 19650 series, shall mean to comply with the Appointee’s obligations under this Protocol.
+If the Parties do not include the Appointing Party any provisions of this Protocol imposing obligations on or to the Appointing Party and/or granting rights to or imposing restrictions on the Appointing Party shall be inapplicable and shall have no effect. If the Parties do not include the Lead Appointed Party or have responsibility for appointing the Lead Appointed Party, any provisions of this Protocol imposing obligations on or to the Lead Appointed Party and/or granting rights to or imposing restrictions on the Lead Appointed Party shall be inapplicable and shall have no effect.
+Notwithstanding clause 1.1, in this Protocol the effect and/or application of the following terms:
+Information Model;
+Federated Information Model;
+Material; and
+CDE Solution and Workflow,
+is subject to clause 4.8 of this Protocol in respect of any Sensitive Information forming part of the same.
+This Protocol forms part of the Appointment. In the event of any conflict or inconsistency between the Protocol, the Information Particulars and any other documents contained in and/or forming part of the Appointment, such conflict or inconsistency shall be resolved in accordance with the Appointment, provided that if the Appointment does not include provisions stating how such conflict or inconsistency should be resolved, the documents shall have the following order of precedence:
+this Protocol; and
+other documents forming part of the Appointment.
+The Appointor and the Appointee shall exercise the Required Standard in performing their obligations under this Protocol and notwithstanding any other provision of this Protocol the Appointor and the Appointee shall each have no greater obligation under or in connection with this Protocol than to exercise the Required Standard.
+Co-ordination and resolution of conflicts
+Appropriately qualified and experienced personnel from the Appointee shall attend such meetings in connection with the co-ordination of information relating to the Works as required in the Appointment and in the Information Particulars.
+The Parties shall comply with any applicable provisions in the Appointment in respect of the notification and resolution of any omission, ambiguity, conflict or inconsistency in or between any information prepared in relation to the Works (including without limitation any Information Model, any information extracted from any Information Model and the Information Particulars). If there are no such provisions and a Party becomes aware
+of any omission, ambiguity, conflict or inconsistency in or between any information that Party shall notify the other Party and the Parties shall seek to agree how such
+omission, ambiguity, conflict or inconsistency shall be corrected and/or resolved having regard to the Appointment and this Protocol. If no agreement is reached, the Parties shall, having regard to the Information Particulars, meet with each other, the Appointing Party and the Delivery Team as is necessary, in order to seek to correct and/or resolve the omission, ambiguity, conflict or inconsistency.
+Obligations of the appointing party
+The Appointing Party shall save to the extent that such obligations are within the scope of the Appointee’s obligations under the Appointment, arrange for:
+the Information Particulars to be reviewed and updated (if necessary) as and when required until the completion of the Works. The Appointee’s rights (if any) following any such update after the date of the Appointment shall be assessed in accordance with the Appointment and this Protocol;
+the appointment of individuals to undertake the Appointing Party tasks specified within BS EN ISO 19650-2:2018, changed or renewed as necessary such that there are at all times until the completion of the Works, individuals undertaking these tasks; and
+3.1.3 	the carrying out of a sensitivity assessment and the security triage process pursuant to clause 4 of BS EN ISO 19650-5: 2020 to establish whether there is a need for a security–minded approach. The Appointing Party shall record
+and retain the outcome of the sensitivity assessment process and shall establish a suitable mechanism for performing periodic and event-driven reviews of the sensitivity assessment.  If it is determined following application of the security triage process that no security-minded approach is required,
+if it is determined following application of the security triage process that no security-minded approach is required, the Appointing Party shall consider whether there are business benefits to be derived from applying  a security-minded approach.  
+if a security-minded approach is required,the Appointing Party shall follow the requirements of clauses 5 to 9 of BS EN ISO19650-5: 2020 and shall develop and implement an appropriate and proportionate security-minded approach, develop a security strategy, develop a Security Management Plan (including a security breach/incident management plan), establish information sharing agreements or equivalent (if required) and complete the Security Requirements entry in the Information Particulars accordingly.  The Appointing Party shall also arrange in accordance with clause 9.2 of BS  EN ISO 19650-5: 2020 for appropriate provisions to be included in all relevant delivery team appointment documentation
+In the event that BS EN ISO 19650-2 is being used to respond to a trigger event as defined in BS EN ISO 19650-3: 2020, the Appointing Party shall, save to the extent that such obligations are within the scope of the Appointee’s obligations under the Appointment:
+establish with and communicate to the Appointing Party under BS EN ISO 19650-3: 2020, the respective responsibilities of the Appointing Party and the Appointing Party under BS EN ISO 19650-3;
+ensure that the information requirements of the Appointing Party under BS EN ISO 19650-3: 2020, are specified to the Lead Appointed Party; and
+ensure consistency as between the asset information standard under BS EN ISO 19650-3: 2020 and the information standard and between the asset information production methods and procedures under BS EN ISO 19650-3: 2020 and the information production methods and procedures.
+Obligations of the appointee and appointor
+The Parties shall comply with the Information Particulars insofar as they are applicable to them.
+The Appointee shall be responsible for arranging reasonable tests of methods and procedures set out in the Information Particulars and shall provide the results of these tests to the Appointor.
+The Lead Appointed Party shall establish and maintain the Delivery Team’s Risk Register.
+The Appointee shall arrange for Task Teams and members of the Delivery Team under its authority and control to maintain the capability and capacity required for the Appointee to comply with this Protocol.
+Insofar as they have obligations under this Protocol to produce, share and/or publish the information in relation to the Works, the Parties shall use the CDE Solution and Workflow to do so.
+Subject to any events or circumstances which entitle the Parties to an extension of time and/or additional costs under the Appointment, the Parties shall comply with the applicable Information Particulars when producing, sharing and/or publishing
+information in relation the Works and shall share and/or publish information in relation to the Works which the Information Particulars require them to share and/or publish at the times stated in the Information Particulars.
+The Parties shall provide such information and assistance as the Information Particulars requires them to provide.
+Security
+The Parties shall comply with the Security Requirements, if any, and the Appointee shall not cause or contribute to any breach by the Appointor of the Security Requirements
+or any policies, processes and procedures identified in the Security Requirements to the extent that such policies, processes and procedures relate to the Appointee’s obligations under the Appointment and have been provided to the Appointee.
+Other Appointments
+Subject to clause 4.8, the Parties shall arrange for this Protocol (or such other provisions as may be appropriate) to be incorporated into all contracts, sub-contracts and appointments that they enter into in relation to the Works which include obligations to prepare and/or provide information in relation to the Works in substantially the same terms as this Protocol.
+Information Management Documents
+The Appointee shall:
+prepare (to the extent required by BS EN ISO 19650-2:2018 and/or the Appointment) and/or assist in the preparation of all information management documents, workflows and/or resources to be prepared in accordance with BS EN ISO 19650-2:2018 (including without limitation any documents, workflows and/or resources identified or to be identified in the Information Particulars) (“Prepared Documents”) to the extent not prepared prior to the date of the Appointment;
+review the Prepared Documents from time to time and prepare (to the extent required by BS EN ISO 19650-2:2018 and/or the Appointment) and/or assist in the preparation of any required updates to the Prepared Documents in accordance with the Information Standard.
+It is agreed and acknowledged that the Prepared Documents as at the date of the Appointment are listed within the Information Particulars.
+The Parties shall assist in updating the Information Particulars from time to time.
+Information Delivery Plans
+The Parties confirm that each Task Team under their authority and control have established or will establish, a Task Information Delivery Plan and shall maintain and update the Task Information Delivery Plan throughout the Appointment in accordance with the Information Standard.
+The Parties shall comply with any Task Information Delivery Plan applicable to them and/or ensure that any Task Teams under their authority and control comply with any Task Information Delivery Plan applicable to them. The Appointee’s rights (if any) following any update of the Task Information Delivery Plan after the date of the
+Appointment shall be assessed in accordance with the Appointment and this Protocol.
+The Parties shall arrange for any Task Teams under their authority and control to generate information and review information generated by them in accordance with the Information Standard and the Information Particulars.
+CDE solution and workflow
+Without prejudice to any of the Parties’ obligations or duties under or in connection with this Protocol and/or the Appointment and save as expressly stated otherwise within this Protocol and/or the Appointment, the Parties do not warrant, expressly or impliedly, that:
+any software used to prepare the Information Model and all other information to which this Protocol applies; or
+any software format in which the Information Model and all other information to which this Protocol applies is shared, published or otherwise issued in accordance with this Protocol and the Appointment
+is compatible with any software or software format used by or on behalf of any other party in connection with the Works.
+Neither Party shall have any liability to the other Party in connection with any corruption or unintended amendment, modification or alteration of the electronic data (including, without limitation, any software) in any Information Model and other information to which this Protocol applies which occurs after it has been shared, published or otherwise issued through the CDE Solution and Workflow by the issuing Party save where any such corruption or unintended amendment, modification or alteration of the electronic data is a result of the issuing Party’s failure to comply with this Protocol and/or the Appointment.
+Save to the extent it forms part of the Appointee’s obligations under the Appointment, the Appointing Party shall be responsible for (or shall appoint other appointed parties to be responsible for) establishing, implementing, configuring and supporting the CDE Solution and Workflow in accordance with BS EN ISO 19650-2:2018.
+The Appointing Party shall arrange for all information in the CDE Solution and Workflow to be securely stored for the period stated in the Information Particulars. The Appointing Party shall be responsible for the continuing security, integrity and preservation of the information containers archived within the CDE Solution and Workflow in accordance with and for such period as required by the Information Particulars.
+The Appointor shall arrange for the Appointee to have reasonable access to the information in the CDE Solution and Workflow as provided in the Information Particulars i) insofar as necessary to perform its obligations under this Protocol and the Appointment and ii) for such period as the Appointee is liable under this Protocol and/or the Appointment in order to access a record of the information in the CDE Solution and Workflow.
+Management of information
+Save to the extent it forms part of the Appointee’s obligations under the Appointment, the Appointing Party shall appoint from within its own organization individuals to undertake the information management function on its behalf and shall carry out and complete (or appoint third parties to carry out and complete on the Appointing Party’s behalf) the respective information management tasks in accordance with BS EN ISO 19650-2:2018.
+Save to the extent it forms part of the Appointee’s obligations under the Appointment, the Appointor shall carry out and complete (or appoint third parties to carry out and complete on the Appointor’s behalf) any information management tasks assigned to it in the Information Particulars in accordance with BS EN ISO 19650-2:2018, including without limitation the following information management tasks:
+Establishing the Exchange Information Requirements including without limitation the criteria for accepting Information Models;
+Assembling the reference information and shared resources to be provided to the Appointee;
+Compiling invitation to tender information; and
+Reviewing Information Models submitted to it in accordance with the Information Particulars and the acceptance criteria in the Exchange Information Requirements and
+where the Appointor is the Lead Appointed Party, their task shall also be to authorize the Information Models; or
+where the Appointor is the Appointing Party, their task shall also be to accept the Information Models.
+The Appointee shall carry out (or appoint third parties to carry out and complete on the Appointee’s behalf) any information management tasks assigned to it in the Information Particulars in accordance with BS EN ISO 19650-2:2018, including without limitation the following information management tasks:
+Appointing from within its own organization individuals to undertake the information management function on its behalf;
+If the Appointee is the Lead Appointed Party, aggregating each Task Team’s Task Information Delivery Plan to establish the Delivery Team’s Master Information Delivery Plan;
+Testing the Project’s Information Production Methods and Procedures insofar as they relate to the Appointment; and
+If the Appointee is the Lead Appointed Party, undertaking a review of information provided, authorizing the information and instructing each Task Team to submit their information for Appointing Party acceptance within the project’s CDE Solution and Workflow rejecting the information and instructing the Task Teams to amend the information and resubmit for Appointee authorization.
+To the extent the Appointee and/or the Appointor appoint a third party to undertake all or part of its information management functions as described in clauses 6.1- 6.3 above, they shall establish a scope of services sufficient to describe the role and responsibilities of the third party. The appointment of any such third party shall not in any way reduce or affect the Appointee’s or the Appointor’s obligations under the Appointment or this Protocol.
+The Appointee and the Appointor shall comply with the Project’s Information Standard and the Project‘s Information Production Methods and Procedures insofar as applicable to them.
+Level of information need
+The Parties agree and acknowledge that, to the extent not set out in the Information Particulars prepared and provided prior to the date of the Appointment, the Level of Information Need for any and all information which is a contractual deliverable of the Appointee shall be agreed and detailed in the Information Particulars.
+Use of information
+The Parties shall observe their GDPR obligations as set out in the Appointment. If the Appointment does not incorporate any such GDPR obligations, the Parties shall comply with all Data Protection Laws in connection with the exercise and performance of their respective rights and obligations under the Appointment.
+The Parties agree that:
+if there are any provisions in the Appointment in relation to copyright, moral rights, rights in design, database rights (or any other intellectual property rights) in Material prepared and/or provided by the Appointee, clauses 8.3 to 8.5 shall not apply, and such provisions of the Appointment are hereby varied so far as is necessary to:
+apply to the Material prepared and/or provided by the Appointee under or in connection with this Protocol and any proprietary work contained in or extracted from the Material; and
+enable the Appointor to grant licences or sub-licences to the Appointee and other members of the Delivery Team with whom the Appointor has a contract as required in respect of the Material prepared and/or provided by the Appointee under or in connection with this Protocol on terms substantially the same as clauses 8.6 and/or 8.9 of this Protocol;
+if there are no such provisions, clauses 8.3 to 8.5 shall apply.
+Subject to clause 8.2, any rights (including but not limited to any copyright) subsisting in the Material prepared and/or provided by the Appointee under or in connection with this Protocol and any proprietary work contained in or extracted from such Material shall, as the case may be, vest or remain vested in the Appointee.
+Subject to clauses 8.2 and 8.5, the Appointee grants to the Appointor a non-exclusive, royalty free and irrevocable licence, and, to the extent that the relevant Material and any rights subsisting therein are owned by third parties, grants a sub-licence to transmit, copy, reproduce and use the Material prepared and/or provided by the Appointee under or in connection with this Protocol and any proprietary work contained in or extracted from such Material for the Permitted Purpose. This licence or sub-licence shall include the right to grant sub-licences or sub-sub-licences on identical terms (including (without limitation) to other members of the Delivery Team with whom the Appointor has a contract, contractors and sub-contractors).
+Any licence and/or sub-licence granted in clause 8.4 shall not include the right to:
+amend or modify any Material to which the licence and/or sub-licence relates without the Appointee’s written consent (not to be unreasonably withheld), save where such amendment or modification is made for the Permitted Purpose following the termination of the Appointee’s employment under the Appointment; or
+reproduce any designs contained in the Material to which the licence and/or sub- licence relates for any extension of the Works.
+Subject to clause 8.8, the Appointor grants to the Appointee a non-exclusive sub- licence (including the right to grant sub-sub-licences on identical terms to the Appointee’s sub-contractors) to transmit, copy and use such Material as is owned by any third party (other than the Appointee’s subcontractors (of any tier)) and any
+proprietary work contained in or extracted from such Material for the Permitted Purpose.
+Insofar as the Appointor owns any rights subsisting in the Material, subject to clause the Appointor grants to the Appointee a non-exclusive licence (including the right to grant sub-licences on identical terms to the Appointee’s sub-contractors (of any tier)) to transmit copy and use such Material and any proprietary work contained in or extracted from such Material for the Permitted Purpose.
+The licence and sub-licence (if any) granted in clauses 8.6 and 8.7 shall not include the right to:
+amend or modify any Material to which the licence and/or sub-licence relates without the written consent (not to be unreasonably withheld) of the Appointor or the Appointee who owns such proprietary material, save where such amendment or modification is in respect of material produced or delivered by any Appointee and made for the Permitted Purpose following the termination of the Appointee’s employment under the Appointment; or
+reproduce any designs contained in the Material to which the licence and/or sub- licence relates for any extension of the Works.
+Insofar as clauses 8.3 to 8.5 apply the Appointee represents to the Appointor that it has, or that it will procure, the right to grant either a licence and/or a sub-licence in the form granted in clause 8.4 and that the use of Material and/or proprietary designs or products prepared by others in connection with the Works pursuant to and in accordance with that licence or sub-licence will not infringe the rights of any third party.
+The Appointor represents to the Appointee that it has, or that it will procure, the right
+to grant a sub-licence in the form granted in clause 8.6 and/or a licence in the form granted in clause 8.7 and that the use of Material and/or any proprietary designs or products prepared by others in connection with the Works pursuant to and in
+accordance with that licence or sub-licence will not infringe the rights of any third party.
+Transfer of information
+The Appointee shall be responsible for delivering the information required by the Information Particulars for which the Appointee is responsible.
+The Appointor shall be responsible for delivering such information as the Appointee shall require to enable the Appointee to deliver the information required by the Information Particulars for which the Appointee is responsible.
+In establishing the Works’ information requirements the Lead Appointed Party shall carry out a risk assessment to inform the preparation of the effective management of information throughout the Works and to reflect the long-term asset information management strategy.
+The Appointee, where they are the Lead Appointed Party, shall provide such information and assistance as may reasonably be required by the Appointor, where they are
+the Appointing Party, to capture lessons learned in respect of the Works during the performance of the Appointee’s obligations under the Appointment.
+Liability
+Each Party shall have no liability to the other Party arising out of any modification or amendment to, or any transmission, copying or use of the Information Model, Material, or any proprietary work contained therein, by the receiving Party or any other party, apart from the issuing Party’s subconsultants, subcontractors, suppliers or agents, for any purpose other than the Permitted Purpose.
+Remedies – security
+Without prejudice to the Appointor’s rights under the Appointment and clauses 11.2-
+11.3 of this Protocol:
+if the Appointor has reasonable grounds to consider that the Appointee is likely to breach clauses 4.8 of this Protocol, the Appointor may give notice to the Appointee requiring that steps are taken to prevent the breach within a reasonable period as specified in the notice; and
+if the Appointee breaches clauses 4.8 of this Protocol, the Appointor may at its discretion give notice to the Appointee requiring that steps are taken to remedy the breach and/or mitigate the consequences of the same within a reasonable period as specified in the notice.
+If the Appointment contains provisions entitling the Appointor to terminate the Appointment, those provisions shall be amended insofar as is necessary such that if the Appointee has:
+not taken the steps required in accordance with clause 11.1.1 and/or 11.1.2 of this Protocol; and/or
+committed any breach of clause 4.8 of this Protocol which relates to Sensitive Information, is not capable of remedy and/or cannot be mitigated,
+the Appointor shall be entitled to terminate the Appointment forthwith. The consequences of any such termination shall be the same as the consequences under the Appointment of any other termination by the Appointor of the Appointment as a result of the Appointee’s act, omission or breach of the Appointment.
+If the Appointment contains no such provisions as referred to in clause 11.2, the Appointor shall be entitled to terminate the Appointment forthwith in the circumstances referred to in clause 11.2.1 and 11.2.2 and following such termination the Appointee shall:
+immediately stop providing any works and/or services under the Appointment and require that its subconsultants, sub-contractors and suppliers (of any tier) do the same;
+not be entitled to any further payment (other than of any sums which are due and payable under the Appointment as a result of work and/or services provided prior to the date of termination), including but not limited to any costs or losses incurred after or as a result of termination; and
+comply with (and require that its subconsultants, subcontractors and suppliers (of any tier) to comply with) all instructions of the Appointor in relation to the termination of the Appointment, including but not limited to taking any steps necessary to comply with the Information Particulars and/or to mitigate the consequences of any breach of this Protocol.
+Termination
+Clauses 1, 2, 4.10, 4.11, 5, 8, 9.4, 10, 11.2 and 11.3 of this Protocol shall continue to apply following termination of the Appointment.
+Protocol definitions
+Appointee means the party (a Lead Appointed Party or appointed party) appointed by the Appointment or under the Appointment as may be identified in the Information Particulars.
+Appointing Party means the appointing party as may be identified in the Information Particulars.
+Appointment means the agreement into which this Protocol is incorporated as may be identified in the Information Particulars.
+Appointor means the party appointing the Appointee under the Appointment as may be identified in the Information Particulars.
+BIM Execution Plan means a plan that explains how the information management aspects of the Works for which it is responsible will be carried out by the Delivery Team as may be as identified in the Information Particulars and/or provided in accordance with the Information Standard as the same may be updated and amended from time to time.
+CDE Solution and Workflow means the common data environment, the processes to be used as part of the common data environment and the technology to support those processes.
+Data Protection Laws means, as applicable to either Party and/or to the rights, responsibilities and/or obligations of either Party in connection with this Appointment and:
+the GDPR;
+the Data Protection Act 2018;
+the Directive 2002/58/EC (ePrivacy Directive) and/or the Privacy and Electronic Communications (EC Directive) Regulations 2003;
+any other applicable law relating to the processing, privacy and/or use of Personal Data, as applicable to either Party and/or to the rights, responsibilities and/or obligations of either Party in connection with this Appointment;
+any laws which implement any such laws; and
+any laws that replace, extend, re-enact, consolidate or amend any of the foregoing;
+Delivery Team means the delivery team of which the Appointee is part.
+Exchange Information Requirements means the Appointor’s specification for what, when, how and for whom information in connection with the Appointment is to be produced as may be identified in the Information Particulars and/or provided in accordance with the Information Standard.
+Federated Information Model means an Information Model consisting of connected but distinct individual Information Models.
+GDPR means the General Data Protection Regulation, Regulation (EU) 2016/679;
+High Level Responsibility Matrix means a Responsibility Matrix containing the allocated responsibility for each element of the Information Model and the key deliverables associated to each element, as may be identified in the Information Particulars and/or provided in accordance with the Information Standard.
+Information Model means a set of structured and/or unstructured information containing any combination of geometrical information, alphanumerical information, and documentation.
+Information Particulars means the front page of this Protocol, the documents identified therein and (to the extent not identified in the Information Particulars) any Exchange Information Requirements, Appointing Party’s Exchange Information Particulars, BIM Execution Plan, Master Information Delivery Plan, Task Information Delivery Plan Risk Register, High Level Responsibility Matrix, Mobilization Plan and/or Security Requirements.
+Information Standard means the current BS EN ISO 19650 series as may be amended or superseded from time to time.
+Lead Appointed Party means the lead appointed party for the Delivery Team as may be identified in the Information Particulars.
+Level of Information Need means the framework which defines the extent and granularity of information as may be identified in the Information Particulars or provided in accordance with the Information Standard.
+Master Information Delivery Plan means a plan incorporating all the Delivery Team’s Task Information Delivery Plans as may be identified in the Information Particulars and/or provided in accordance with the Information Standard, to the extent applicable to the Appointee.
+Material means all drawings, calculations, specifications and/or other documents, including any geometrical model and any Information Model in any physical or electronic medium (and any designs and/or materials contained in the same) prepared and provided by the Appointing Party, the Appointor, the Appointee and any Lead Appointed Party and any appointed party in relation to the Works including any information and/or documentation obtained by any Party based upon which any Information Model was developed, whether in whole or in part.
+Mobilization Plan means a plan for the Mobilization of the Delivery Team’s resources in accordance with the Information Standard which is contained in the Appointment or, if no Mobilization Plan is contained in the Appointment, which was included in the Appointee’s tender response, as may be identified in the Information Particulars as may be identified in the Information Particulars.
+Parties means the Appointee and the Appointor.
+Permitted Purpose means any purpose related to the Works (and/or (without limitation) the construction, refurbishment, extension, operation, management and/or maintenance of the Works) which is consistent with:
+the applicable Level of Information Need of the relevant Material;
+the applicable status code of the Material and the information containers within the CDE Solution and Workflow in accordance with BS EN ISO19650-2:2018;
+the applicable information state of the Material in accordance with BS EN ISO19650-2:2018; and
+the purpose for which the relevant Material was prepared.
+Personal Data has the meaning given in applicable Data Protection Laws from time to time.
+Prepared Documents means as defined in clause 4.10.1 of this Protocol.
+Project’s Information Production Methods and Procedures means any specific information production methods and procedures required by the Appointing Party for the Works as may be identified or specified in the Information Particulars.
+Project’s Information Standard means any specific information standards required by the Appointing Party for the Works as may be identified or specified in the Information Particulars.
+Protocol means this information protocol including the Information Particulars.
+Required Standard means the level of skill and care applicable to the Party’s equivalent obligation under the Appointment.
+Responsibility Matrix means the document setting out information management functions and either project or asset information management tasks, or information deliverables as appropriate.
+Risk Register means a risk register containing the risks associated with the timely delivery of information as may be identified in the Information Particulars and/or provided in accordance with the Information Standard.
+Security Minded Provisions means clauses 1.4, 4.8 and 11 of this Protocol.
+Security Requirements means the document identified in the Information Particulars and prepared by the Appointing Party or Appointor (as appropriate) which supports all of the security policies   and processes contained within the Appointing Party’s Security Management Plan relevant to the Parties in accordance with clauses 9.2.1 and 9.2.2 of BS EN ISO 19650- 5:2020.
+Sensitive Information means information, the loss, misuse or modification of which, or unauthorized access to, could:
+adversely affect the privacy, welfare or safety of an individual or individuals;
+compromise intellectual property or trade secrets of an organization;
+cause commercial or economic harm to an organization or country; and/or
+jeopardize the security, internal and foreign affairs of a nation
+Task Team means those assembled to perform a specific task.
+Task Information Delivery Plan means a schedule of information containers and delivery dates, for a specific Task Team as may be applicable to the Appointee and/or any Task Team under the Appointee’s authority and control as may be identified in the Information Particulars and/or provided in accordance with the Information Standard.
+Works means the work and/or services carried out and/or to be carried out by the Delivery Team in respect of the project or asset to which the Appointment relates, as may be described in the Information Particulars.
+Glossary of Italicised Terms BS EN ISO 19650-1:2018 and BS EN 19650-2:2018
+appointed party	Provider of information concerning works, goods or services.
+appointing party
+Receiver of information concerning works, goods or services from a lead
+appointed party
+asset	Item, thing or entity that has potential or actual value to an organization.
+common data environment
+Agreed source of information for any given project or asset, for collecting, managing and disseminating each information container through a managed process.
+delivery team	Lead appointed party and their appointed parties.
+information	Reinterpretable representation of data in a formalized manner suitable for communication, interpretation or processing.
+information container
+Named persistent set of information retrievable from within a file, system or application storage hierarchy.
+Engage with the UK BIM Framework
+info@ukbimframework.org https://ukbimframework.org/
+@UKBIMFramework UKBIMFramework
+The Centre for Digital Built Britain is part of the Construction Innovation Hub programme, funded by UK Research and Innovation through the Industrial Strategy Challenge Fund.
+
+Editions
+Edition 1 | May 2020 | First publication
+Edition 2 | September 2020 | Minor updates to clauses 1.2, 7 and 13.20
+Edition 3 | February 2021 | Foreword, introduction and how to use text removed (now contained in ISO 19650 Guidance E)
+Reference to Detailed Responsibility Matrix (clause 13.9) deleted Security minded provisions updated to refer to the Security
+Requirements
+Edition 4 | November 2021 | Deletion of clause 1.4
+Amendment to clause 3.1.3
+Introduction of new clause 3.2
+Extension to the definition of BIM Execution Plan (clause 13.5)
+Term | Particulars
+Appointment
+Appointing Party
+Lead Appointed Party
+Appointor
+Appointee
+Works
+Level of Information Need
+Exchange Information Requirements
+BIM Execution Plan
+Project’s Information Production Methods and Procedures
+Project’s Information Standard
+Master Information Delivery Plan1
+Task Information Delivery Plan2
+Risk Register
+High Level Responsibility Matrix
+Mobilization Plan3
+Security Requirements

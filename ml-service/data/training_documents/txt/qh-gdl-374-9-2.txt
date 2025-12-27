@@ -1,0 +1,836 @@
+ - 
+Published by the State of Queensland (Queensland Health),  
+This document is licensed under a Creative Commons Attribution 3.0 Austrawlia licence.
+To view a copy of this licence, visit creativecommons.org/licenses/by/3.0/au
+© State of Queensland (Queensland Health) 2022
+You are free to copy, communicate and adapt the work, as long as you attribute the State of Queensland (Queensland Health).
+For more information contact:
+Health Capital Division, Department of Health, Queensland Health, GPO Box 48, Brisbane QLD 4001, email HCDCorro@health.qld.gov.au, phone (07) 3328 9310.
+An electronic version of this document is available at https://www.health.qld.gov.au/system-governance/policies-standards/doh-policy
+Queensland Health disclaimer
+To the best of Queensland Health’s knowledge, the content of this document was correct at the time of publishing. Readers are responsible for implementing the requirements of this document appropriately to the circumstances and for interpreting any requirements, including those referenced in documents external to this document. Queensland Health accepts no responsibility and disclaims all liability for all expenses, losses (including direct and indirect loss), damages and costs incurred as a result of decisions or actions taken as a result of any data, information, statement or advice, expressed or implied, contained within, including where incorporated by reference. The inclusion in this document of information and material provided by third parties does not necessarily constitute an endorsement by Queensland Health of any third party or its products and services.
+Project summary
+Document control
+Version history
+Terms
+Acronyms
+Purpose of this document
+Using the Queensland Health Project Information Requirements (PIR), this Design Building Information Modelling (BIM) Execution Plan (DBEP) template is to be populated in Microsoft Word by the tendering Delivery Team for the named project. 
+Track changes must be used to highlight any changes between the original document and all subsequent revisions. Once agreed by the Delivery Team and Queensland Health, accept changes and record a summary in the version history table on page 3.
+The DBEP must outline the Delivery Team’s proposed approach to using BIM/s and information management practices for the design stages the Delivery Team are engaged to perform. Before the start of a new major stage (Schematic Design, Detailed Design, Construction Documentation, etc.) the DBEP shall be reviewed, revised and agreed with the Queensland Health Project Management, confirming the approach for that stage.
+The design BIM/s will be used by other Appointed Parties such as the Quantity Surveyor (QS) for costing and Contractor to inform the tender and construction, ultimately the production of as-built BIM/s containing asset data for the project will be handed over to the Hospital and Health Service (HHS). 
+The Delivery Team is to use any of the following information sources to assist in the creation of this document:
+Queensland Health Capital Infrastructure Requirements (CIR)
+Queensland Health PIR for BIM
+Queensland Health Asset Equipment Lists 
+Queensland Health BIM Data Uploader Template 
+Any existing conditions HHS BIM/s
+Existing 2D drawings, reports and schedules
+Survey information including laser scans 
+HHS critical Asset Information Requirements (e.g. naming, coding, classifications) 
+Functional Design Brief and any space planning information
+AusHFG codes and guidelines 
+The DBEP must be developed by the proposed BIM Manager, taking into consideration the needs of the Delivery Team and Queensland Health PIR and CIR. The DBEP will be used as part of the assessment criteria for determining a preferred Delivery Team for design stages. 
+The DBEP will always be created prior to the development of the Construction BEP (CBEP). The DBEP and federated model will be used by tendering Contractors to inform the development of the CBEP and construction BIM/s.
+Document structure
+The document is divided up into Commercial, Managerial and Technical sections in alignment with ISO 19650. The Managerial section is further split into the logical project delivery stages. In this way, Appointed Parties can work through the project delivery stages, understanding the specific BIM requirements for each discipline for the given stage. 
+This document articulates how information shall be structured, managed and delivered by each Appointed Party contracted by Queensland Health, in alignment with the PIR.
+As changes during project delivery are inevitable, such as new Delivery Team members joining the project, the BEP shall be revised by the BIM Manager when any new Appointed Party joins the project and/or before each new project stage commences. 
+[All text in [square brackets] indicates a placeholder for Delivery Team or Appointed Party input. Any placeholder text or rows in tables shall be replaced or deleted prior to issue. Instructional text is provided to assist in the development of this document. Enable visibility in File > Options > Display > check Hidden Text (green text should be visible below). It should be turned off prior to publishing the document and this paragraph deleted.]
+Instructional text is shown in this way. DO NOT DELETE instructional text as it contains the section references to the Project Information Requirements which will aid you in completing this document.
+Hide instructional text prior to issue to Queensland Health. To hide it, go to File > Options > Display > Hidden Text and uncheck the box. The final BEP may be issued to the wider Delivery Team as a PDF
+All text in [square brackets] should be replaced with the Appointed Party or Delivery Team approaches.
+Introduction
+Table : BIM requirements related to project scale
+Overview
+BIM execution plan overview 
+PIR Section 2 (d and e) and 4.1. Appointed Parties to nominate the BIM Manager and collaboratively develop the BEP.
+Refer to the Queensland Health PIR for details of:
+Responsibilities of the Delivery Team and BIM Manager
+Purpose of the DBEP and CBEP
+Production, development and implementation of the DBEP and CBEP
+Updating the DBEP and CBEP prior to the commencement of a new project stage or when a material change affects the contents of this document as per Section 4.1 of the PIR
+Project summary/description
+PIR Section 4.1 (a). Design BIM Manager to insert a brief description of the project here.
+[Enter project description here]
+Reference documents & shared resources
+Design BIM Manager – the first table indicates the version of the TEMPLATE documents, and second table the current version of the documents used on this project, to allow for future comparison.
+The current revision of the Queensland Health capital delivery documents is recorded below.
+Table : Reference documents
+Table : Project documents
+Commercial
+Procurement strategy
+The BIM Manager is to document the procurement strategy.  If unknown, write ‘to be confirmed’. If the procurement strategy involves the designer as part of the contractor engagement, the DBEP and CBEP can be combined into one document, the Design and Construction BEP using the Queensland Health templates.
+[Enter procurement method here]
+Project schedule
+PIR Section 4.1 (b). The BIM Manager is to complete Table 4.
+The estimated dates for major project milestones, as they relate to Queensland Health project stages are shown in Table 4.
+Table : Project schedule
+Amendments to project information requirements
+PIR Section 2 (f). Appointed Parties to document any issues, technical or capability/capacity challenges, then seek Queensland Health Project Manager approval.
+The following amendments to the Queensland Health PIR are applicable to this project.
+Table : PIR concerns
+Non-required uses of BIM (delivery team uses)
+PIR Section 4.1 (e). Any non-Queensland Health required BIM uses or processes that the Delivery Team feel are necessary to complete the design and construction of the project (beyond those stated in the PIR) must be detailed below. This is to clearly differentiate these uses and deliverables independently to the requirements of Queensland Health. Appointed Parties must document any BIM use not available to Queensland Health i.e. Delivery Team uses only.
+The following table identifies Delivery Team uses of BIM unavailable to Queensland Health.
+Table : Delivery team uses of BIM (not required by Queensland Health)
+Delivery team
+PIR section 4.1 (g). The BIM Manager is to complete the table below and add other disciplines/trades as necessary. If this table is completed pre-tender, write “TBA” against the unknown consultants. Add extra Delivery Team members as necessary when known and include their BIM approaches in all updates to the DBEP, for Queensland Health approval The contact details for key stakeholders who will be involved in planning and managing BIM on this project are detailed in Table 7.
+The contact details for key stakeholders involved in planning and managing BIM on this project are detailed in Table 7.
+Table : Key Project team members
+Management
+The following sections detail the collaboration and communication procedures for local and remote users to access and use BIM for decision making. The Delivery Team BIM Manager is responsible for ensuring all deliverables listed in this section are successfully produced.
+Project location and setout
+In Table 8 below, the BIM Manager shall nominate a single file that has all the World and Local Setout coordinates and location settings, so each individual discipline/trade BIM/s can reference these for the project. This file, identified as the Master Co-ordinate file, will serve as the source of the project coordinates and for sharing such information. Any changes shall be documented and communicated to the Delivery Team when exchanging this file.
+In Table 8, the Master Coordinate file coordinates and survey data is detailed. All Delivery Team Model Element Authors are to use these real-world coordinates to establish their model positions.  
+Master co-ordinates file name = [enter]
+Table : Model Geographic Location
+BIM coordination meetings 
+PIR Section 4.3
+The following table specifies the BIM meetings, timings, and location.
+Table :  Meetings
+ User group and stakeholder communication processes 
+PIR Section 4.1 (h) and 2.7.
+The user group and stakeholder communication processes (including the use of the BIM) are documented below.
+[enter stakeholder strategy here]
+BIM Requirements by Project Stages
+Existing conditions modelling 
+PIR Section 3.2. Appointed Parties to document any previous HHS existing conditions information (2D drawings), new survey and the extents of existing conditions to be modelled.
+[Enter extent of existing conditions modelling here]
+Project planning – preliminary business case - functional design brief 
+PIR Section 3.3. During the Functional Design Brief stage, the creation of a BIM is optional, however, collaboration with HHS facility managers and other Delivery Team members to document the BEP approaches (including the critical Asset Information Requirements) shall be undertaken to finalise the BEP, prior to Master Planning. The use of space planning tools for the project shall be considered at this stage. If used, the space planning database shall be developed before any modelling in BIM occurs. The approaches shall be documented below.
+The BIM/s and space planning data are not required for submission to Queensland Health at Functional Design Brief - but may be used by the Delivery Team to document any initial concept designs.
+[Enter additional Delivery Team items here]
+Functional design brief - BIM deliverables 
+Critical HHS Asset Information Requirements to be documented in Section 6.5 of the DBEP
+Proposed BIM Manager allocated and Appendix A of the DBEP completed
+The DBEP shall be defined for at least Master Plan deliverables (i.e. the next project stage)
+Proposed project-specific BIM benefits realisation metrics for design documented in Queensland Health BIM metrics for projects.xlsx template
+Project planning - preliminary business case - master plan 
+PIR Section 3.4. During the Master Plan stage, the creation of a BIM  Master Plan massing model is optional, however, if created needs to be achieved through a BIM-enabled platform. enabling continuity from the Master Plan to Schematic Design. A site BIM and preliminary existing condition BIM shall be started in this phase and the approach documented below.
+Overview
+If any BIM/s were created prior to Master Plan, they must contain the requirements of the Functional Design Brief above as well as the below:
+A site BIM created, with the current survey included and site benchmark, the project set out point and nominal building grids and levels/stories identified
+A preliminary existing conditions BIM/s created (based on Section 5.4) and existing elements identifiable as existing via an attribute (extents of the existing conditions model to be defined and agreed with the HHS facility manager and documented in DBEP) 
+Existing subsurface services must meet the quality requirements of A.S.5488: Classification of Subsurface Utility Information for quality level classification
+Any Master Plan massing models are to be accurately geo-located from the site BIM (as managed by the BIM Manager) to ensure correct coordination between disciplines for all BIM/s
+Levels/storeys and grids to be managed by the BIM Manager and coordinated across disciplines
+If a space planning tool is to be used, this must be setup before any modelling takes place and then bi-directional synchronisation must be achievable in later project stages
+Population of the space planning tool (if used) with project briefed SoA must be achieved prior to the commencement of Schematic Design
+[Enter additional Delivery Team items here]
+Master plan – BIM deliverables
+Documented and agreed DBEP for the stages the Delivery Team are engaged for, including the proposed approach to the information containers (SoA, RDS, cost plan etc) and BIM/s (architectural, structural, civil, hydraulic, fire, electrical etc) in a diagram for inclusion in the BEP
+Proposed massing model/BIM (inclusive of design areas and analysis) for the preferred option, in native formats
+3D visualisations, general arrangement drawings, departmental functional diagrams
+Tier 1 and 2 Projects – defined approach to SiD and Workplace, Health and Safety risk management and how these will be displayed in BIM 
+Tier 1 and 2 Projects – Model Content Plan developed by the QS as per Appendix B
+Tier 1 Projects – high-level operational staging diagrams shall be produced from the Master Plan massing model
+Benefits realisation metrics documented in the Queensland Health BIM metrics for projects.xlsx template, agreed between Appointed Parties and Queensland Health 
+Project planning – detailed business case - schematic design 
+PIR Section 3.5. During the Schematic Design stage, the creation of all relevant discpline BIM/s is required to allow for collaboration and documentation of the Schematic Design.  The proposed Delivery Team approach to BIM must be documented below.
+Overview
+If any models were created prior to Schematic Design, they must contain the requirements of the Master Plan stage above, as well as the below:
+The Schematic Design model does not necessarily require integration with all structures, civil and services models unless documented and agreed within the DBEP.  However, any other BIM/s created during Schematic Design must be correctly geospatially referenced to the architectural model, which in turn is correctly georeferenced to the Site BIM and a Federated Model must be created
+All parameters in Queensland Health BIM Shared Parameters.txt shall be added to BIM/s from the provided Queensland Health Project Schedules (Revit)_2021.rvt if authoring tools permit, or use the tables provided in Section 4.13 of the PIR 
+The appointed BIM Manager is to federate all BIM/s, and undertake high-level geometric and information coordination activities (i.e. all models correctly georeferenced, correct attributes/parameters created). Coordination reports are not required until Detailed Design stage
+Once the preferred option is approved, the use of BIM by all Delivery Teams is mandatory and shall form part of the stakeholder engagement and communication process. Typically, at this stage, the model elements are geometrically represented within the model as a generic system, object, or assembly with approximate quantities, size, shape, location, and orientation. Non-geometric information shall also be attached to the model elements
+Asset information and the Queensland Health BIM Shared Parameters relevant to Schematic Design shall be populated in the BIM/s as per Section 4.13 of the PIR by each Model Element Author as required
+[Enter additional Delivery Team items here]
+Architectural BIM
+All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in the DBEP section below.
+Architectural BIM/s geospatially referenced to a site BIM/s, delivered in native format, with the following elements:
+Agreed extents of existing conditions modelled (Section 5.4) and all model elements to have an existing vs. new attribute applied
+Building extents (walls) generically modelled level to level
+Nominal floors extents and thickness based on input from the structural engineer
+Nominal roofs extents and thickness to enclose the building based on input from the structural engineer
+Indicative structural column locations based on input from the structural engineer
+Generically modelled interior walls
+Fenestration, windows, doors and openings modelled
+Overhangs, sun shading modelled
+Ceiling grid and fixture layout methodology discussed and agreed 
+Circulation areas (footpaths, walkways, ramps, stairs, vertical transportation etc) shall be generically modelled
+Building, level, zones, room, departmental and critical asset naming nomenclature agreed with HHS, compliant with asset requirements (PIR Section 4.13) and applied to BIM
+Gross floor area, travel distances and engineering, gross departmental area (functional area plus circulation) for each functional unit, functional area for each functional unit and room, ready for reporting design area vs. planned area 
+Integration and synchronisation of the BIM/s with the space planning database (if used)
+Tier 1 and 2 Projects – defined approach to SiD and Workplace, Health and Safety risks linked to BIM 
+Tier 1 and 2 Projects – SoA linked to BIM and cost plan through the use of a common classification schema
+Tier 1 Projects – High level - Operational staging diagrams
+[Enter additional Appointed Party items here]
+QS
+All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+A cost plan will be developed based on the following:
+The design intent BIM/s and space planning database created to date
+The QS will take into consideration the modelled elements nominated above for each discipline
+The QS will use the Model Content Plan to ensure each discipline has created their discipline-specific BIM based on the required modelled elements for this stage
+Any elements found by the QS, as per the below requirements, must be remedied immediately by the relevant Model Element Author: 
+not modelled as per above and Model Content Plan 
+incorrectly modelled (e.g. floors as stairs)
+incorrectly categorised (e.g. ceilings as floors/slabs) 
+[Enter additional Appointed Party items here]
+Schematic design asset deliverables
+Refer to Section 6.5 for details of the asset data due at Schematic Design.
+Schematic design - BIM deliverables
+Documented and Queensland Health agreed DBEP for the stages the Delivery Team are engaged for
+The Delivery Team must produce discipline-centric BIM/s in native format that define the design intent and accurately represent the Schematic Design solution. The BIM/s must incorporate all modelled elements nominated in this section
+Federated Model, if available at this stage
+Extract asset data from BIM into the Queensland Health BIM Data Uploader Template.xlsx template to check all BIM/s have been setup correctly
+Project stage-specific BIM benefits realisation metrics shall be documented in Queensland Health BIM metrics for projects.xlsx template
+Project implementation – detailed design 
+PIR Section 3.6. During the Detailed Design stage, the creation of all discpline BIM/s is required to allow for collaboration and documentation of the Detailed Design and to facilitate the Asset Information Requirements.  The proposed Delivery Team approach to BIM must be documented below.
+Overview
+For Detailed Design onwards the BIM/s must contain the requirements of the previous project stages above and incorporate the following:
+The design and documentation across all design disciplines, unless otherwise agreed and documented in this DBEP, must use a BIM authoring tool capable of producing the required output data (IFC 2x 3 or later) and documentation as specified for all project deliverables
+All Queensland Health parameters (refer to Queensland Health Project Schedules (Revit)_2021 or Queensland Health BIM Shared Parameters) must be added to BIM/s if not previously done
+An integrated modelling process and coordination of modelled elements between all disciplines is required and must be documented in this DBEP
+Virtual coordination and clash detection process for civil, architecture, structure and services are required. This process, including the process, documentation and reporting of detection and resolution outcomes, is to be clearly articulated in Section 6.9 of the DBEP and reported to the Queensland Health Project Management at nominated intervals
+Where existing buildings and/or structures are within the modelling boundary, traditional 2D documentation may be acceptable for some elements by agreement with Queensland Health and documented in Section 5.4
+Where a design will interface with an existing building or structure, a laser scan survey of the existing building or structure, to which new elements may interface, may be procured as directed by Queensland Health. If procured, the laser scan survey must be used for coordination and made available to all consultants in a format that integrates with the model authoring software being used on the project
+The BIM/s are to include spatial data defining designed net square metres, net volume and hold data to develop the room finish schedule/s, including room name, number and department 
+Model elements must be integrated and synchronised with the space planning database (if used) including the architectural, mechanical, electrical, hydraulic and fire protection services models. BIM/s are to include programme information to verify designed space against programmed/briefed space. Integration and synchronisation may also be required for other models as determined by this DBEP
+All general arrangement drawings, elevations and sections are to be generated from coordinated BIM/s to a scale of 1:50 and above. All smaller scales (i.e. 1:20, 1:10, 1:5, 1:2) are to be derived from the BIM/s and supplemented with 2D detail unless otherwise agreed by a Queensland Health representative and nominated in the DBEP 
+Supplementary 2D linework on the drawings may be required by the scale, in order to facilitate successful model coordination, quantity and cost extraction. For those details and enlarged sections agreed by the Queensland Health representative, not to be derived from the BIM/s, Model Element Authors are to ensure that geometry and data depicting the details and enlarged sections are coordinated with model elements. Details with significant drafted content such as 'standard' and 'typical' details are not to contradict the model elements and shall utilise the BIM as an underlay when possible for the purposes of verification and coordination
+Any 2D drawings not derived from the BIM/s must be documented in the DBEP in Section 6.6
+All Schedules and Room Data Sheets (RDS) are to be produced from the data in the space planning database or, where this is not practicable, data in the BIM/s. Proposed data sources for Schedules (Section 6.7) and RDS (Section 6.8), and any Schedules to be produced from non-BIM sources are to be documented in this DBEP
+All instances of model elements in a service run must be allocated to a defined system 
+Model elements shall contain AusHFG coding for rooms and all clinical FF&E, be aligned to the HHS Asset Information Requirements and have the corresponding Group 1, 2, or 3 attributes embedded
+QH_ Asset parameters relevant to Detailed Design shall be populated in the BIM/s as per Section 4.13 of the PIR by each Model Element Author as required
+QH_Asset Grouping must be populated for each model element that is identified as an asset in the Queensland Health Asset Equipment Lists. These model element will then exists as an instance in the relevant Asset Group BIM schedule. See PIR Section 4.14 
+An IFC format Federated Model, compiling all discipline-centric BIM/s at the Detailed Design stage is used for coordination and accessible to Queensland Health
+[Enter additional Delivery Team items here]
+Civil engineering BIM 
+All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+Existing topography 
+Proposed topography 
+Bulk excavation 
+Retaining walls 
+Carparks and roads 
+Major site services 
+Site drainage and overland flow paths
+[Enter additional Appointed Party items here] 
+Landscape architecture BIM 
+All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+Topography – 3D terrain of all site work as designed, including retaining walls. This model should include the site and surrounding areas that contribute to the site’s drainage system or otherwise impact the site. In most cases, this will require that adjacent roadways be modelled or linked from the civil model
+Landscaping elements: planting areas, such as raised planting beds and berms, parking islands, pools/ponds/other water features, terraces and other items not included elsewhere in the federated model
+Paving, grades, footpaths, curbs, gutters, site amenities and other elements typically included on enlarged scale site drawings in the vicinity of building/facility
+[Enter additional Appointed Party items here]
+Architectural BIM 
+All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+The architectural BIM/s requirements for Schematic Design must be incorporated, with the addition of the following:
+Architectural site requirements defined (Refer also to Civil Engineering and Landscape Architecture)
+Internal and external architectural 3D imagery is required for project user group consultation and stakeholder consultation. The description of how this will be achieved (static visualisations, augmented and/or virtual reality) is to be clearly articulated in Section 5.2 of this DBEP
+Room/spaces shall be defined including accurate net square metres and net volume, based on geometry in the BIM/s with the level numbers, room names and numbers stored as a value within the space object and synchronised with the space planning database (if used)
+All finishes shall be coded with the wall type regardless of the thickness of the finish
+Ceilings (with grids) and soffits shall be modelled at correct heights with annotations reporting the ceiling height above the finished floor level incorporated
+Stairs, railings and ramps shall be modelled, railing details may be documented in 2D
+All doors and windows and their respective openings shall be modelled to approximate size. The specific finish or material selection for these items must be included
+Mechanical, electrical and hydraulic items that have architectural space requirements are to be placed in approximate locations in the correct rooms as generalised systems. The Architect is to collaborate with the services engineers to determine the ownership of services and augment this BEP/Model Content Plan as necessary. There is no requirement for a specific finish or material selection for these items
+All Group 1, 2 and 3 and sub-group FF&E must be modelled with the appropriate value assigned to the element/object.  The FF&E shall be depicted with correct overall shapes, sizes and installation heights, AusHFG code and placed in the briefed space 
+Clearance/Maintenance zones for access, door swings, service space requirements, and other operational clearance must be modelled and associated with the architectural modelled elements and checked for conflicts with other elements. These clearance zones should be easily identified as clearance zones and be associated with the equipment 
+[Enter additional Appointed Party items here]
+Structural BIM 
+All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+All foundations modelled including piles with indicative depths, pads and footing elements with height, width, depth, TOF, concrete grade
+Floors modelled including supports, construction and expansion joints and with penetrations 300mm diameter or greater
+All necessary shafts, pits, sumps and openings modelled
+Concrete framing including beams and columns modelled with the correct size and shape
+Load-bearing walls including openings modelled
+Primary and secondary steel framing including truss, grits, beams, columns, joists and purlins modelled with correct sizes, shapes and lengths
+Discrete elements must be modelled as per their construction (e.g. precast walls modelled as individual panels)
+Modelling ownership of all concrete stairs and landings and necessary openings, and steel stair framing members for stair systems shall be agreed with the Architect and the relevant Model Element Author and documented in the BEP/Model Content Plan
+Modelling ownership of the roof system shall be agreed with the Architect and the relevant Model Element Author documented in the BEP/Model Content Plan
+[Enter additional Appointed Party items here]
+Mechanical BIM 
+All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+Bound spaces and zones created with space names must match architectural room names and numbers
+Equipment located and modelled as generalised systems including fans, VAVs, compressors, chillers, cooling towers, air handlers, pumps and any other uniquely identifiable equipment
+Duct main runs and branches for supply, return, ventilation and exhaust located with approximate sizes
+Main pipes run at and over 50mm diameter (including insulation) modelled as generalised systems and place holders with indicative routes shown
+Insulation around ductwork and pipework shall be shown, with insulation thickness included on the modelled ductwork and pipework. Insulation shall be separately indicated as a semi-transparent thickness around the duct and pipework
+Diffusers, grilles, louvres, perimeter units and wall units are located as generalized systems
+Clearance/Maintenance zones for access, door swings, service space requirements, gauge reading, and other operational clearance must be modelled and associated with the mechanical services equipment and checked for conflicts with other elements. These clearance zones should be easily identified as clearance zones associated with the equipment
+[Enter additional Appointed Party items here]
+Hydraulic BIM 
+All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+Stormwater, waste and vent as generalised systems
+Piping modelled to room extents as generalised systems and/or to the fixture as agreed in the BEP/Model Content Plan 
+Lagging/insulation around pipework shall be shown, with insulation thickness included on the modelled pipework. Insulation shall be separately indicated as a semi-transparent thickness around the pipework
+Roof and floor drains, sumps, grease interceptors, tanks, water treatments and other major items
+Supply water systems as generalised systems
+Pumps
+Modelling of fixtures to be agreed with the Architect and documented in the BEP/Model Content Plan (e.g. sinks, basins, toilet and bathroom fixtures, cisterns and water tanks) 
+Clearance zones for access, service space requirements, gauge reading, valve clearances and other operational clearance must be modelled and associated to the plumbing system and checked for conflicts with other elements. These clearance zones should be modelled as transparent solids within the object
+[Enter additional Appointed Party items here]
+Electrical BIM 
+All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+Power and telecommunications outlets, switches and junction boxes modelled
+Interior and exterior transformers, emergency generators, and other equipment
+Main and distribution panels and switchgear including access clearances
+Main Intermediate Distribution Frames
+Lighting fixtures, controls, switches and junction boxes modelled as generalised systems
+Main and distribution panels modelled as generalised systems
+Cable trays located
+Conduits over 90mm diameter modelled
+Clearance zones for access, door swings, service space requirements, control boards and other operational clearance must be modelled and associated with electrical equipment for collision checking. These clearance zones should be modelled as transparent solids or separate layers 
+[Enter additional Appointed Party items here]
+Fire protection services BIM
+All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+Fire alarms and detection items modelled 
+Sprinklers and main sprinkler lines and main branch lines modelled as generalised systems
+Insulation around pipework shall be shown, with insulation thickness included on the modelled pipework. Insulation shall be separately indicated as a semi-transparent thickness around the pipework
+Wall hydrants, fire department connections and risers modelled as generalised systems
+Clearance zones for access, service space requirements, gauge reading, valve clearances and other operational clearance must be modelled and associated with the fire protection system and checked for conflicts with other elements. These clearance zones should be modelled as transparent solids or separate layers 
+[Enter additional Appointed Party items here]
+QS
+All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+A cost plan will be developed based on the following:
+The design intent BIM/s and space planning database created to date
+The QS will take into consideration the model elements nominated above for each discipline
+The QS will also use the Model Content Plan to ensure each discipline has created their discipline-specific BIM based on the nominated objects
+Any elements found by the QS, as per the below, must be remedied immediately by the relevant Model Element Author 
+not modelled as per above and Model Content Plan
+incorrectly modelled (floors as stairs)
+incorrectly categorised (ceilings as slabs) 
+[Enter additional Appointed Party items here]
+Detailed design asset deliverables
+Refer to Section 6.5 for details of the asset data due at Detailed Design.
+Detailed design - BIM deliverables
+The Delivery Team must produce BIM/s to a level that articulates the design intent and accurately represents the design solution by the end of Detailed Design, incorporating all of the elements in 0, including:
+Updated DBEP in compliance with the PIR
+Discipline-centric BIM/s in both native and IFC formats, incorporating all elements nominated in this section
+Federated model in IFC format
+All IFC models to contain all QH asset parameters using QH Custom Property Sets
+Asset data extracted from BIM into the Queensland Health BIM Data Uploader Template.xlsx template and consolidated for all disciplines by the BIM Manager
+Project stage-specific BIM benefits realisation metrics shall be documented in Queensland Health BIM metrics for projects.xlsx template
+BIM audit
+An audit of all BIM files (including the space planning database if used) for the project will be undertaken by Queensland Health BIM advisor/s during Detailed Design. The advisor/s will assess the Federated Model in IFC format to ensure alignment with the DBEP and PIR. The Queensland Health BIM Data Uploader Template.xlsx shall be checked for compliant asset data and the Queensland Health BIM metrics for projects.xlsx validated. A report with actions will be produced and the Delivery Team will have a nominated time horizon to remedy any deficiencies.  
+BIM requirements – tender documentation 
+PIR Section 3.7. All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+Overview 
+The Delivery Team must produce discipline-centric BIM/s that define the design intent allowing Queensland Health to tender the project to a selection of Managing Contractors.
+This information shall be ready for construction modelling and be an accurate representation of the design. This level of detail includes sizes, finishes, and materials for model components and should contain as few spatial coordination issues as possible. 
+Once BIM is complete for Tender Evaluation and Award it is ready to progress to workshop detailing and defined costing by Tendering construction parties.
+For Tender Documentation onwards the BIM must contain the requirements of the previous project stages above and incorporate the following:
+Progressed BIM/s suitable for Tender for all disciplines and documentation as specified for all project deliverables
+Virtual coordination and clash detection as defined in Section 6.9 of the DBEP and reported to the Queensland Health Project Management at nominated intervals
+Asset parameters relevant to the Tender shall be populated in the BIM/s as per Section 4.13 of the PIR by each Model Element Author as required
+[Enter additional Delivery Team items here]
+QS
+A cost plan will be developed based on the following:
+The design intent models and space planning database created to date
+The QS will take into consideration the model elements for each discipline
+The QS will also use the Model Content Plan to ensure each discipline has created their discipline-specific BIM based on the nominated objects
+[Enter additional Appointed Party items here]
+Tender documentation asset deliverables
+Refer to Section 6.5 for details of the asset data due at Tender Documentation.
+Tender evaluation and award - BIM deliverables
+For Tender Evaluation and Award the BIM/s must contain the requirements of all previous project stages above and incorporate the following:
+Each discipline BIM in native format and IFC, a 3D Federated Model based on IFC, a synchronised space planning database (if used), the latest version of the DBEP, and original PIR and Queensland Health Asset Equipment Lists for issue with Tender Documentation for Contractor reference for main works packages
+Design intent architectural and structural BIM/s are developed to represent the Tender drawings. Services BIM/s will be modelled to depict systems and overall sizing of elements ready for trade BIM/s to be produced
+IFC BIM/s are to contain all QH asset parameters using QH Custom Property Sets
+All design intent BIM/s shall achieve the requirements of the Model Content Plan for Tender Evaluation and Award
+Asset data extracted from BIM into the Queensland Health BIM Data Uploader Template.xlsx template and consolidated for all disciplines by the BIM Manager
+BIM audit
+An audit of all BIM files (including the space planning database if used) for the project will be undertaken by Queensland Health BIM advisor/s before Tender documents are released to the market. The advisor/s will assess the Federated Model in IFC format to ensure alignment with the DBEP and PIR. The Queensland Health BIM Data Uploader Template.xlsx shall be checked for compliant asset data. A report with actions will be produced and the Delivery Team will have a nominated time horizon to remedy any deficiencies.  
+Project implementation – construction documentation 
+PIR Section 3.8. All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+Overview
+The Managing Contractors shall use the design BIM/s and this DBEP to develop the approach for creating a CBEP and submit the CBEP as part of their tender.
+The Delivery Team BIM/s will accurately represent the design solution by the end of Construction Documentation, incorporating all of the following elements:
+All discipline BIM/s are to be delivered to Queensland Health in the agreed open standard format (IFC 2x3 minimum) containing all Queensland Health BIM Shared Parameters in user-defined custom Property Sets. Model exports should be run through an IFC “model optimiser” tool prior to submission 
+All native BIM/s submitted are to be compatible and editable within the native BIM authoring tools. No models or objects shall be stripped of data and all drawings and schedules should remain in and linked to the models
+All Construction Documentation, including drawings and schedules, must be derived from the BIM environment and include information from the space planning database (if used)
+All BIM/s submitted to Queensland Health are to be “cleaned” with all extraneous 2D references and 3D elements removed from the BIM/s. No BIM/s issued after Construction Documentation approval shall contain undefined, incorrectly defined or duplicated elements
+All separately required deliverables related to the HHS Computerised Maintenance Management System inputs for Construction Documentation requirements are to be achieved
+Electronic drawing, BIM and space planning database files are to be provided to Queensland Health on a hard drive or via Aconex, as applicable unless otherwise agreed (e.g. by web file transfer or similar)
+Services are to be modelled to the “as designed” size nominated by the consultant, including external and internal insulation, to enable co-ordination and confirmation of space requirements above ceilings and in risers
+All duct and pipe services are modelled as closed systems to allow for system design parameters and system flow information to exist within the models
+All equipment and associated terminating devices shall be assigned to a logical system and/or circuit/panel
+Access and clearance zones shall be shown for each discipline, clearly labelled as such and included in the clash detection process.  All BIM/s should include (if required) a separate 3D representation of plant egress and replacement routes 
+Asset parameters relevant to Construction Documentation shall be populated in the BIM/s, as per Section 4.13 of the PIR, by each Model Element Author as required 
+The required schedules for each Asset Group is created/maintained in relevant BIM/s to enable asset information exchange
+[Enter additional Delivery Team items here]
+Civil BIM 
+All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+[For Construction Documentation onwards the BIM/s must contain the civil requirements of previous project stages above and any elements nominated below.]
+[Enter additional Appointed Party items here]
+Landscape architect BIM 
+All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+[For Construction Documentation onwards the BIM must contain the landscape architecture requirements of previous project stages above and any elements nominated below.]
+[Enter additional Appointed Party items here]
+Architectural BIM
+All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+For Construction Documentation onwards the BIM/s must contain the architecture requirements of previous project stages above and any elements nominated below:
+Existing conditions
+Demolished items
+Rooms/spaces shall be defined as required for Construction Documentation, with the addition of BIM intelligence to support the creation of the room finish schedule and synchronised with the space planning tool (if used). Floor and floor area usage will be measured and scheduled, requiring bound rooms to be created, named and numbered on their appropriate floor levels
+Exterior walls, parapets and curtain walls shall be depicted to the designed height, length, width and ratings (thermal, acoustic, fire) to properly reflect the wall types. All walls shall be modelled with the necessary intelligence to produce accurate wall schedules
+Architectural precast shall be modelled as individual discrete constructed elements, depicted to the designed height, length, width and ratings (thermal, acoustic, fire) to properly reflect precast element types. All precast elements shall be modelled with the necessary intelligence to produce accurate precast schedules
+Exterior screens, sunshades and other Architectural solar/rain control devices shall be depicted to the designed height, length, width and ratings (thermal, acoustic, fire) to properly reflect screen types. All screens shall be modelled with the necessary intelligence to produce accurate screening quanities
+Roofs shall accurately represent the roof scape, slopes, drainage system, major penetrations and roof form (build-ups and materials). Intelligence shall include this and specification/build-up of the system e.g. roof sheeting, insulation, battens, purlins, etc.
+Interior partitions shall be depicted to the designed height, length, width and ratings (thermal, acoustic, fire) to properly reflect wall types. Intelligence shall include this and specification/build-up of the system e.g. 70mm stud, 2x1mm plasterboard each face, etc. All finishes need to be included within the wall type regardless of the thickness of the finish
+Doors, windows and louvres are depicted to represent their designed size, type and location. All doors and windows shall be modelled with the necessary intelligence to produce accurate window and door schedules from the BIM or space planning database (i.e. intelligence contains: reference number, location, structural opening, wall thickness, door-set overall size, leaf sizes, vision panel/configuration. Detail items such as fire rating, acoustic rating, frame and door materials and finishes, swing type and hand, and ironmongery sets must be documented in the schedule
+All Group 1, 2 and 3 FF&E and other architectural FF&E shall be accurately depicted. Intelligence shall contain AusHFG code, manufacturer, range/series name, model reference number, size and engineering services information where known 
+Specialist joinery shall be accurately depicted. Where furniture or furniture systems are added to the architectural model for purely visualisation purposes these model components should be created in the model category of entourage and not furniture
+Ceilings and soffits shall be depicted at the correct heights, dimensions, and with the correct materials. Ceilings shall be set at the correct height and the depth of the ceiling shall reflect the construction build-up. Ceiling grids shall be located in the model
+Insulation above ceilings and insulation fixed to wall faces, and slab soffits (e.g. plant rooms) shall be shown, with insulation thickness indicated as a semi-transparent thickness/layer
+Stairs and ramps shall be accurately depicted with all components (i.e. architectural treads and risers, handrails, guardrails, nosings, etc). Concrete stairs and associated components floor slabs shall be developed in the structural BIM/s and then referenced by the architectural model for each floor of the building. Intelligence shall contain manufacturer, range/series name, model reference number, size as well as height, length, width, materials
+Model mechanical, electrical and hydraulic items that require architectural connectors (toilets/sinks/etc.), require colour/finish selection (louvres, diffusers, etc.) that affect 3D visualisation (lighting fixtures) unless provided by engineers 
+“No go” zones for structure and services over equipment must be modelled and checked for conflicts with other elements, e.g. secondary steel over operable walls and access for installing and removing ceiling-mounted pendant equipment 
+Schedules: Extract accurate door, window, hardware schedules and ceiling, wall and floor finish schedules indicating the type, materials and finishes used in the construction.  These schedules must be extracted from the BIM/s or space planning database (if used) - intelligence must be synchronised with the model/s
+[Enter additional Appointed Party items here]
+Structural BIM
+All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+For Construction Documentation onwards the BIM/s must contain the Structural engineering requirements of previous project stages above and any elements nominated below:
+All foundations including piles, pads, footing elements and rock anchors. Intelligence includes height, width, depth, top of footing, concrete grade
+Structural floor slabs shall be accurately depicted including all necessary recesses, curbs, pads, closure pours, expansion joints, pour joints and penetrations 150mm diameter or larger and concrete grade. Steel reinforcing in concrete and embedded in concrete may be modelled at the Delivery Team's discretion
+Concrete columns shall be accurately depicted including all necessary recesses and penetrations and concrete grade. Steel reinforcing in concrete and embedded in concrete may be modelled at the Delivery Team's discretion
+All steel columns, primary and secondary framing members, and bracing for the roof (including decks), shall be depicted to the designed shape, height, length, and width, including all necessary intelligence to produce accurate structural steel framing plans and related building/wall sections
+Load bearing and other structural wall types including openings shall be depicted to the designed height, length, width and ratings (e.g. fire, if not provided in the architects model) and all necessary intelligence to produce accurate structural wall framing plans and related building/wall sections
+Structural precast elements modelled as individual discrete constructed elements depicted to the designed height, length, width and ratings (fire) to properly reflect precast element types. All precast elements shall be modelled with the necessary intelligence to produce accurate precast schedules. Hollow core planks may be modelled as a slab unless coordination with mechanical systems needs to occur due to the hollow core being used for those systems
+All concrete stairs (not modelled by the Architect), landings, necessary openings and steel stair framing members for stair systems shall be depicted to the designed height, length, width and ratings (e.g. fire, if not provided by the Architect)
+All necessary shafts, pits, sumps and openings, including necessary intelligence to produce accurate plans and building/wall sections depicting these design elements
+The BIM/s shall include necessary intelligence to reflect accurate quantities by type and finishes
+[Enter additional Appointed Party items here]
+Mechanical BIM 
+All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+For Construction Documentation the BIM/s must contain the mechanical requirements of previous project stages above and any elements nominated below:
+Services are modelled to the designed size nominated by the consultant, including external insulation, to enable co-ordination and confirmation of space requirements above ceilings and in risers
+All duct and pipe services are modelled as closed systems (with insulation) to allow for system design parameters and system flow information to exist within the BIM/s
+All equipment and associated terminating devices shall be assigned to a logical system 
+All BIM/s include separate 3D representations of required access and clearances for all services equipment inspection, repair, maintenance and replacement, light fixture access, “shut-down” valve access, overhead cable tray access, etc. Access and clearance models should be in separate layer(s) for each discipline clearly labelled as such and included in the clash detection process
+[Enter additional Appointed Party items here]
+Hydraulic BIM 
+All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+For Construction Documentation the BIM/s must contain the hydraulic requirements of previous project stages above and any elements nominated below and:
+Stormwater, waste and vent, water supply, rainwater collection, trade waste, etc
+Piping modelled to room extents as defined systems and/or to the fixture as agreed in the BEP/Model Content Plan 
+Lagging/ insulation around pipework shall be shown, with insulation thickness included on the modelled pipework. Insulation shall be separately indicated as a semi-transparent thickness around the pipework
+Roof and floor drains, leaders, sumps, grease arrestors, tanks, water treatments and other major items
+Booster Pumps 
+Modelling of fixtures to be agreed with the Architect and documented in the BEP/Model Content Plan (e.g. sinks, basins, toilet and bathroom fixtures, cisterns and water tanks) 
+Clearance zones for access, service space requirements, gauge reading, valve clearances and other maintenance and operational clearance must be modelled and associated with the hydraulic system and checked for conflicts with other elements 
+The BIM/s shall include necessary intelligence to create specific systems providing all the schedules typically required for the discipline in an accurate and complete manner 
+[Enter additional Appointed Party items here]
+Electrical BIM
+All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+For Construction Documentation the BIM/s must contain the electrical requirements of previous project stages above and any elements nominated below:
+Permanently mounted lighting fixtures (moveable socket outlets need not be modelled as part of the electrical package unless needed for socket load calculations or for estimating purposes within a loose furnishings package)
+Light fixture components shall include lamp type and photometric information including light loss factor, initial intensity and initial colour temperature
+Fire alarms and security systems
+Input devices and notification devices 
+Associated equipment and access clearances
+Building controls
+All cable trays (including fire rating as appropriate)
+Clearance zones for access, service space requirements, gauge reading, and other operational clearance must be modelled and associated with the electrical equipment for collision checking
+The BIM/s shall include necessary intelligence to provide/extract all the schedules typically required for the discipline in an accurate and complete manner; and all other elements not mentioned above as required as specific systems
+[Enter additional Appointed Party items here]
+Fire protection services BIM 
+All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+For Construction Documentation the BIM/s must contain the fire protection services requirements of previous project stages above and any elements nominated below:
+Sprinkler lines at and over 25mm diameter
+Sprinkler heads
+Fire protection pumps
+Stand pipes, wall hydrants, fire department connections, risers, including valve clearances
+Insulation around pipework shall be shown, with insulation thickness included on the modelled pipework. Insulation shall be separately indicated as a semi-transparent thickness around the pipework
+Fire alarm/mass notification devices and detection systems
+Clearance zones for access, service space requirements, gauge reading, valve clearances and other operational clearance must be modelled and associated with the fire protections system and checked for conflicts with other elements
+The BIM/s shall include necessary intelligence to provide/extract all the schedules typically required for the discipline in an accurate and complete manner and all other elements not mentioned above, as required as specific systems
+[Enter additional Appointed Party items here]
+QS
+All other elements not mentioned below that the Delivery Team identifies as being required to complete deliverables for this stage must be agreed and a documented approach specified in this DBEP below.
+A cost plan will be developed based on the following:
+The design intent BIM/s and project database created to date
+The QS will take into consideration the elements nominated above for each discipline
+The QS will also use the Model Content Plan to ensure each discipline has created their discipline-specific BIM based on the nominated objects
+Any elements found by the QS, as per the below, must be remedied immediately by the relevant model author 
+not modelled as per above and Model Content Plan
+incorrectly modelled (floors as stairs)
+incorrectly categorised (ceilings as slabs) 
+[Enter additional Appointed Party items here]
+Construction documentation asset deliverables
+Refer to Section 6.5 for details of the asset data due at Construction Documentation.
+Construction documentation - BIM deliverables
+The Delivery Team must produce BIM/s to a level that articulates the design intent and accurately represents the design solution by the end of Construction Documentation, incorporating all of the following elements:
+Updated DBEP in compliance with the PIR
+Discipline-centric BIM/s in both native and IFC formats, incorporating all model elements nominated in this section
+Federated Model in both native and IFC formats
+IFC models to contain all Queensland Health BIM Shared Parameters using QH Custom Property Sets (as per Queensland Health IFC Export Mapping) 
+Asset data extracted from BIM into the Queensland Health BIM Data Uploader Template.xlsx template and consolidated for all disciplines into a single file by the BIM Manager
+BIM audit
+An audit of all BIM/s (including the space planning database if used) for the project will be undertaken by Queensland Health BIM advisor/s during Construction Documentation. The advisor/s will assess the Federated Model in IFC format to ensure alignment with the DBEP and PIR. The Queensland Health BIM Data Uploader Template.xlsx shall be checked for compliant asset data. A report with actions will be produced and the Delivery Team will have a nominated time horizon to remedy any deficiencies.   
+Project implementation – construction  
+See CBEP documentation.
+Technical 
+The following section reflects the expected uses for BIM on the project, aligned to the PIR. Changing uses of BIM during the project changes the scope of service previously agreed/documented and has contractual implications. To reduce the risk of disputes, manage changes in conformance with the terms and conditions in agreements and contracts and keep a cumulative record of agreed changes in a constant location, e.g. the BEP. Each version of the BEP should highlight changes agreed since the issue of the previous version.
+Software selection
+PIR Section 2.3, 4.6, 4.8 - 4.10. Add other Delivery Team members and software as necessary.
+The Delivery Team chosen (buildingSMART IFC certified) BIM authoring tools are recorded in Table 10. Once endorsed by the Delivery Team, use of different versions is not permitted without approval from the nominated Queensland Health representative.  
+Table : Software selection
+Project common data environment
+PIR 2, 4.11 nominates the project CDE for design and how access will be managed for Queensland Health representatives. 
+[enter CDE details here or refer to relevant documents]
+Information status, revision and classification
+Document the proposed approach to managing the information containers held within the CDE, such as status (Concept, SD, DD, CD) revision (1,2,3, and A, B, C etc) and information container classification. Check the Aconex guide if relevant
+[enter details here]
+Information containers
+PIR Section 4.4. Appointed Parties to document the information containers graphically showing the relationships e.g. cost plan, discipline BIM/s versus. Trade models and federated model, interaction with the CDE etc. Check the Aconex guide if relevant
+The below diagram identifies the high-level information delivery plan and the associated information containers. 
+[enter diagram here] 
+Collaboration resources 
+Detail how to request access, uses of each system/platform, etc. below.
+The details of the project’s collaboration resources are documented below.
+[enter details here]
+Exchange frequency
+Use this section to define a table showing Model Element Authors, model formats (native, IFC, etc), frequency of exchange, (e.g. weekly, milestone, etc.)
+[enter details here]
+Table : Model Exchange Frequency
+IFC
+At each project stage, beyond Schematic Design, discipline/trade BIM/s shall be provided to Queensland Health in both native and IFC formats. Native formats provide a method for future works and asset management and maintenance activities, however, IFC is the mandated openBIM format. All BIM/s shall be exported as buildingSMART IFC 2X3 format, however, there is a preference for IFC 4 if all BIM authoring tools on the project are both import and export compatible. 
+In addition to other project and BIM deliverables, a Federated IFC Model in IFC format is required at each project stage from DD onwards. All IFC models shall be exported from the BIM authoring tool with the custom Queensland Health parameters (refer to Section 6.5.4) mapped to the Queensland Health IFC User Defined Property Sets. This gathers all of the Queensland Health BIM Shared Parameters conveniently together.
+Table : Custom IFC user defined property sets
+The mapping should also remove the QH_ prefix to all parameter names. The Property Sets retain their QH_ prefix. In future, a more integrated approach may be taken to better align Queensland Health BIM Shared Parameters with native properties of the IFC schema.
+Export settings (revit to IFC)
+The below steps outline the process to deliver an IFC format BIM from Autodesk Revit. Other authoring tools should follow the same principles with regards to mapping Queensland Health BIM Shared Parameters to custom IFC Property Sets as defined in Section 6.5.2.
+Figure : Step 1 - Exporting IFC from Revit
+In the relevant 3D export view in Revit (refer to Figure 1: Step 1 - Exporting IFC from Revit):
+Select File 
+Select Export
+Select IFC
+Select Modify setup
+Figure : Step 2 - Exporting IFC from Revit
+In the Modify Setup dialogue box (refer to Figure 2):
+Select the Property Sets tab, ensure relevant tick boxes are checked
+Browse to and select the Queensland Health IFC Export Mapping file
+Click OK and export as usual
+Other settings may be adjusted as required but the result shall be all Queensland Health BIM Shared Parameters being successfully mapped to the relevant QH custom Property Set tab in IFC (refer to Figure 3)
+Figure : Example IFC showing QH_Asset Property Set tab
+Data standards
+PIR Section 2.4, 3.3, 4.1(c), 4.12 and 4.13. Appointed Parties to document the HHS asset data standards to be used e.g. floor/level naming, building, room name and numbering and asset coding.
+The following asset data standards and HHS specific naming /coding requirements shall be used.
+HHS building, floor/level and zoning naming
+PIR Section 4.1(m). Appointed Parties shall use HHS coding. Engage with the relevant QH representative to obtain the necessary details, such as Functional Location Code values, level naming, etc., at the beginning of the project.
+[enter here]
+AusHFG room coding
+Along with the nominated room naming and numbering schema, the AusHFG coding of rooms in BIM shall be used. This includes Room Code, Room Name, Room Description, Department, etc. Refer to Section 6.5.4 for required parameters and the Australasian Health Facilities Guidelines for further details. 
+BIM object coding
+PIR Section 2.8, 2.9.2.1, 4.1 and 4.10. Appointed Parties to use QS and AusHFG coding.
+Each Furniture, Fixture and Equipment (FF&E) model element must contain the AusHFG coding. The AusHFG model resource provides a free library of health facilities components for those organisations that are new to BIM. For more information see the Australasian Health Facilities Guidelines website.
+All FF&E shall also contain the Group value (Group 1, 2 or 3) relating to the supplier/installer.
+Uniclass classification
+Queensland Health has recently implemented the Uniclass 2015 classification system. This is part of a phased implementation, with assets appearing on the Queensland Health Asset Equipment Lists initially requiring codes from the Systems (Ss) and Products (Pr) tables.
+Where a Uniclass code has been supplied in the Queensland Health Asset Equipment Lists, it may be necessary to add another level of depth depending on the specific product or system being installed. 
+For example, an Air Handling Unit has a provided product code of Pr_60_65_03, however when specifying an AHU a more specific code may now be relevant, e.g. Pr_60_65_03_XX. This may also impact the provided System code. It is expected that all Uniclass codes are updated as necessary to match the most appropriate level as shown in Table 13.
+Table : Uniclass 2015 code format
+Further information about the implementation of Uniclass is presented in the Queensland Health Uniclass 2015 Guidelines. 
+Asset information requirements
+The minimum AIR required by Health Capital Division are documented below in Section 6.5.4, however, various Computerised Maintenance Management Systems (CMMS) may be used by each HHS, and their asset needs may vary. 
+The AIR is the minimum compulsory asset information deliverable. Consultation with the HHS Facilities Manager during early project design stages shall agree to the extent of additional AIR. Consideration of how critical information will be transposed between the PIM and the AIM shall be sought early in the project.
+Collaboration with the HHS Facilities Manager will provide much of the needed Queensland Health defined project specifics, such as level naming, approved manufacturers, mandatory service providers, etc.
+Functional location codes
+The spatial location of all assets is important for Queensland Health to be able to successfully manage them. Functional Location Codes (FLC) are unique identifiers used for this purpose across all of Queensland Health. Refer to the Queensland Health Functional Location Standard or consult the Queensland Health PM for instruction on how to generate FLCs. See Figure 4 below for an extract showing a breakdown of the FLCs. 
+Figure :  Functional Location Naming
+Asset grouping
+Queensland Health categorises assets into one of six asset groups. If any BIM object falls into one of these groups, it shall be treated as an asset and the relevant data shall be captured. For the relationships of these groups and their descriptions, refer to Figure 5 and the summaries below. This should be read in conjunction with Queensland Health Asset Equipment Lists.
+Building – asset data captured for the whole building/model (not against individual objects). Refer to Table 14: Parameters for Assets (Buildings and Spaces). All Building parameters should be mapped to the QH_Building user defined IFC PropertySet - applies to IfcBuilding elements.
+Spaces – asset data captured for each room/space. Refer to Table 14: Parameters for Assets (Buildings and Spaces). All Spaces (room) parameters should be mapped to the QH_Space user defined IFC PropertySet - applies to IfcSpace elements.
+Systems – asset data captured once for each system (not sub-components) on the provided Systems sheet of the Queensland Health Asset Equipment Lists only. Refer to Table 15: Parameters for Assets (System, Equipment, Miscellaneous). All System parameters should be mapped to the QH_System user defined IFC PropertySet - applies to IfcSystem.  
+Major Equipment – asset data captured for each piece of equipment/plant on the provided Major Equipment sheet of the Queensland Health Asset Equipment Lists. Refer to Table 15: Parameters for Assets (System, Equipment, Miscellaneous). All equipment asset parameters should be mapped to the QH_Asset user defined IFC PropertySet - applies to IfcElement.
+Minor Equipment – asset data captured for each piece of equipment on the provided Minor Equipment sheet of Queensland Health Asset Equipment Lists only. Refer to Table 15: Parameters for Assets (System, Equipment, Miscellaneous). All equipment asset parameters should be mapped to the QH_Asset user defined IFC PropertySet - applies to IfcElement.
+Miscellaneous – asset data captured for each item on the provided Miscellaneous sheet of the Queensland Health Asset Equipment Lists only. Refer to Table 15: Parameters for Assets (System, Equipment, Miscellaneous). All equipment asset parameters should be mapped to the QH_Asset user defined IFC PropertySet - applies to IfcElement.
+Figure : Queensland Health Asset Grouping
+Queensland health asset equipment lists
+Systems, Major Equipment, Minor Equipment and Miscellaneous assets are itemised in the Queensland Health Asset Equipment Lists, with assets listed under the relevant sheet for each group, as seen in Figure 6. 
+Figure : Example of the Equipment List
+This Equipment List defines whether an item is treated as an asset - any item on these lists shall be considered an asset and the data relevant to the grouping shall be captured against the asset in BIM. 
+Asset data should only be entered once against each asset. 
+System data should only be entered once at the system level – not at the component level. Any item not on these lists does not require asset data.
+However, this doesn’t mean other BIM requirements do not apply. For example, all model elements appearing in the AusHFG shall be populated with the relevant AusHFG code, Group number and FLC, etc, as specified elsewhere in this PIR. 
+Refer to the tables in the following sections for the specific asset parameters required for each asset group.
+Asset attributes (BIM parameters)
+The list of parameters used in BIM is detailed in this section. Queensland Health has prefixed all parameter names with QH_ as they relate directly to Queensland Health's needs. These parameters are available preconfigured for the project environment in Autodesk Revit 2021. It is understood that not all designers use this BIM authoring tool and it is hoped that future versions may provide preconfigured parameters for other applications if requested. 
+Schedules for each asset group have been provided in the Queensland Health Project Schedules (Revit)_2021.rvt file and should be copied into each model using the instructions contained in the file (refer to Figure 7).
+Figure : Adding parameters and exporting asset schedules
+Refer Queensland Health BIM Shared Parameters.txt available from September 2022
+Refer Queensland Health Project Schedules (Revit).rvt available from September 2022
+If these documents aren’t compatible with selected BIM authoring tools, use the lists provided below to configure the parameters.
+How to read the tables
+The arrows under the abbreviated project stages columns indicate the direction of information flow at each project stage.
+◄ Indicates information required from Queensland Health to enable the population of this field
+► Indicates information being exchanged by the Delivery Team to Queensland Health
+Where the Required? field is Mandatory, a value must be provided
+Where the Required? field is Conditional, a value must be provided if one exists. (E.g. if a room has an AusHFG code it must be populated. If no AusHFG code exists for that room type then no value is required.) 
+Refer to the Queensland Health BIM Data Uploader Template.xlsx for data types and field constraints.
+Refer to the PIR for additional information.
+Building and space (room) parameters
+Table : Parameters for Assets Buildings (BLD) and Spaces (SPC)
+System and equipment parameters
+Table : Parameters for Assets System (SYS), Major Equipment (MJR), Minor Equipment (MIN), Miscellaneous (MSC)
+BIM data uploader 
+All populated asset data is to be exported at each project stage from Detailed Design onwards, as indicated with the arrows in the tables of Section 6.5.4, and provided to Queensland Health in the Queensland Health BIM Data Uploader Template.xlsx. 
+The data uploader from each discipline is to be consolidated into a single document by the Delivery Team BIM Manager prior to delivery at each project stage. There should only be one row per asset.
+This data is used to ensure suitable testing and compliance checks can be undertaken throughout project delivery and that the final handover will be fully compatible with Queensland Health’s SAP and individual HHS needs. 
+The Queensland Health BIM Data Uploader Template.xlsx is structured to align with the asset grouping (refer to Section 6.5.2), with one sheet for each asset group. Only the relevant parameter columns are present on each sheet, meaning all cells should be populated for each row (except for non-applicable conditional values). This makes it easier for the Delivery Team to export schedules from their BIM authoring tool that are filtered and grouped by asset group type.
+2 Documentation
+PIR Section 2 (c). Appointed Parties to document any 2D documentation not derived from BIM e.g. typical details.
+The following 2D documentation is not derived from BIM. 
+Table : 2D documentation external to BIM
+Schedules
+PIR Section 2 and 2 (c). Appointed Parties are to generate all schedules as extractions from the discipline/trade BIM/s and/or space planning tool. Any schedule not produced by these means must be documented here. The approach for coordinating these detached schedules with other information containers (BIM, space planning database etc) must be documented and approved by the Queensland Health representative prior to undertaking this work.
+[list schedules not from BIM and detail the approach to coordinating these schedules with BIM here]
+Room data sheets 
+PIR Section 3.4 and 3.6. Appointed Parties must nominate the approach for producing RDS for the project, as one element of the overall Project Information Model.
+[enter approach to generating and coordinating RDS contents here]
+Federated model and coordination 
+PIR Section 4.5.  the Delivery Team is to document the approach to managing hard clashes; construction tolerances; safe working/maintenance zones; responsibilities and accountabilities; clash detection priorities; tolerance strategy; and outputs (e.g. coordination reports, dashboarding etc.)
+General
+The Delivery Team are to use automated conflict checking/clash detection software during Schematic Design onwards to determine geometric clashes in each discipline/trade BIM and then in the Federated Model. Once issues are identified, each discipline/trade shall resolve the model elements within the BIM/s they are responsible for. 
+The coordination issue identification and reporting should be held regularly (e.g. weekly or fortnightly) during the last half of Schematic Design and throughout Detailed Design and Construction Documentation. These reports should show any outstanding coordination issues between the Delivery Team members. 
+Queensland Health expects the coordination to be appropriate to the stage of the project (e.g. reducing coordination issues as the project progresses). Major space planning coordination issues between Architecture, Structure, Mechanical and other relevant services should be resolved by the end of Detailed Design. Construction coordination should be largely resolved by the end of Construction Documentation. 100% Design projects should be fully coordinated and constructable.
+Tolerances
+The Delivery Team must set minimum tolerances for clash detection for project stage deliverables. These tolerances may vary between stages for example moving from a 100mm tolerance at Schematic Design to a 25mm tolerance during Construction Documentation.  
+[enter tolerances here]
+ Clash tests
+[All information required to undertake clash tests must be documented in the DBEP]
+Consider which stage of the project various clash tests are most appropriate for, e.g. focussing on Architectural vs Structural earlier, before introducing  services. All information required to undertake clash tests must be documented below.
+[enter clash test strategy here]
+All other clashes
+While the above clashes have been assigned priorities, other clashes will exist within the BIM/s. These other clashes are not ignorable, nor should they be discarded.  The intention is to have a Federated Model that has minimal coordination issues prior to completion of each project stage. There must be documented proof that the Delivery Team has addressed the coordination issues, where identified.
+Co-ordination responsibilities
+The Delivery Team BIM Manager facilitates the overall co-ordination and management of clashes during the design phases 
+The Services Consultants are responsible for discovering, managing and resolving clashes between services disciplines prior to the issue of discipline BIM/s to the BIM Manager for clash detection
+Clash resolution meetings during design phases
+Consider what outcomes are expected from clash meetings – are designers attending to resolve issues or are BIM coordinators attending to prioritise identified issues in the issue tracking software, etc. What is the approach to hosting productive clash meetings?
+[enter the approach for clash resolution meetings here]
+Clash detection meetings during construction phase
+The Contractor is responsible for arranging similar clash detection meetings during the construction stages (see CBEP).
+Quality assurance and control
+PIR Section 4.7.  Quality assurance/control procedures; retaining data integrity/accuracy in BIM; and integration approach with cost planning, construction staging/sequencing, SoA, space planning and resulting 2D drawing and schedule outputs.
+The below outlines the model and data quality control approaches, including responsible parties and frequency/timeframes.
+[enter response/table here]
+Appendices
+Appendix A – BIM manager
+BIM manager experience 
+The BIM Manager appointed by the Delivery Team and named in Table 7: Key Project team members have the following experience.
+Experience
+PIR Section 4.2. State the experience of the named individual (or individuals) performing BIM management roles including: 
+number of years 
+projects delivered
+technical competencies
+communication abilities
+Resource allocation
+State the estimated time of the named individual (or individuals) performing BIM management roles for the project.
+Table : BIM Management
+Appendix B – QS requirements or model content plan
+Refer to AIQS guidance material
+
+HHS  | [refer to PIR Section 4.1]
+Facility Name | [refer to PIR Section 4.1]
+Project Address/location | [refer to PIR Section 4.1]
+Prepared by | [refer to PIR Section 4.1– BIM Manager]
+Title | [refer to PIR Section 4.1– BIM Manager]
+Company | [refer to PIR Section 4.1– BIM Manager]
+Contact Details | [refer to PIR Section 4.1– BIM Manager]
+Version no. | Date | Changed by | Nature of amendment
+0.1 | Initial draft
+0.2 | minor revision
+1.0 | major revision 
+Term | Definition
+Appointed Party | A provider of information for the project, including services and typically has a lead party such as an Architect or Managing Contractor
+Asset Information Model (AIM) | Information model relating to the operational stage. As per ISO19650
+Asset Information Requirements (AIR) | Information requirements in relation to the operation of the asset. As per ISO19650
+BIM Execution Plan (BEP) | A detailed plan, created from the Queensland Health BEP Template, that documents the use of BIM on a project. It outlines who is responsible for what in the BIM process, when in the process they are responsible for it, and how they will execute Queensland Health requirements as specified in the Project Information Requirements (PIR) and Capital Infrastructure Requirements (CIR)
+BEP Template | The standard Queensland Health Building Information Modelling (BIM) Execution Plan Template to be used by Delivery Teams. Refers to Design BEP (DBEP) and Construction BEP (CBEP)
+Building Information Modelling (BIM) | The use of a shared digital representation of a built asset to facilitate design, construction and operation processes to form a reliable basis for decisions
+Building Information Models (BIM/s) | Means all models that any contributing party (or its sub-contractors) is required to produce and deliver in accordance with the BEP, PIR and CIR
+BIM Manager | A Delivery Team provided resource to manage the BIM and asset information creation processes on the project
+Delivery Team | A collection of Appointed Parties contributing to capital works project – the composition of which may change according to the project requirements and schedule, but typically comprises design consultants, Contractor and sub-Contractors, as per ISO 19650. For the purposes of this document, the Delivery Team excludes Queensland Health and its internal Project Managers as its representatives
+Exchange Information Requirements (EIR) | Queensland Health requirements to enable the exchange of information from the (Project Information Model) PIM to the AIM. In this instance, the EIR is combined with the PIR to reduce the number of documents to be reviewed by the Delivery Team
+Federated Model | An assembly of discipline/trade BIM/s combined for uses such as coordination, collaboration, and exchange with the Appointing Party
+Key Decision | A business decision that Queensland Health values which can be made using information created by the Delivery Team   
+Level of Development (LOD) | The degree to which the element’s geometry and attached information have been progressed and the degree to which Delivery Team members may rely on the information when using the model. Queensland Health doesn’t specify the LOD requirements per stage, however, if the Delivery Team wishes to use LOD, the 2021 US BIM forum specification shall be used as a guiding principle
+Level of Information | The specific asset data associated with the individual objects within the BIM
+Level of Information Need | The level of information need provides methods for describing information to be exchanged according to the EIR and namely the PIR
+Laser Scanning | The process of capturing digital information about the shape of an object with equipment that uses a laser to measure the distance between itself and the object, the resulting output is a point cloud
+Massing Model | An early volumetric model useful for understanding bulk and scale, areas of floor plates and departmental layouts and adjacencies
+Model Content Plan (MCP) | A Quantity Surveyor (QS) developed document that defines the modelling requirements (units of measure, codification) for the Delivery Team to enable the QS to perform cost estimating from BIM
+Model Element | An individual component within a BIM (e.g. wall, floor, nurse call device, room, diffuser, column etc)
+Model Element Author | A person responsible for creating an element (object) in the BIM environment
+openBIM | A universal approach to the collaborative design, realisation and operation of buildings based on open standards and workflows
+Photogrammetry | The process of extracting 3D information from photos or video to convert into digital models or point clouds
+Project Brief | Queensland Health requirements for a specific project
+Project Information Model (PIM) | The information model relating to the delivery stage. The PIM consists of documentation, non-geometric information and geometric information of the project typically using BIM, CAD and GIS. As per ISO19650
+Project Information Requirements (PIR) | Queensland Health information requirements and exchange processes to enable the creation and management of the PIM to support the ongoing AIM
+Project Manager | A Queensland Health assigned resource to ensure the Delivery Team complies with the PIR and BEP enabling the creation of the PIM and AIM. The Project Manager's responsibility is to manage the scope, time, cost, quality, resources, communications, and risk aspects of the project
+Abbreviated Terms | Definition
+3D | Three-dimensional digital model
+AusHFG | Australasian Health Facility Guidelines
+AIM | Asset Information Model
+AIR | Asset Information Requirements
+BIM | Building Information Modelling
+BIM/s | Building Information Models
+BEP | BIM Execution Plan (refers to DBEP and CBEP)
+CAD | Computer Aided Design/Drafting
+CBEP | Construction BIM Execution Plan
+CIR | Capital Infrastructure Requirements
+CMMS | Computer Maintenance Management System
+DBEP | Design BIM Execution Plan
+FF&E | Furniture Fixture and Equipment
+HCD | Health Capital Division
+HHS | Hospital and Health Service
+IFC | Industry Foundation Classes (IFC)
+LOD | Level of Development
+LOI | Level of Information
+PIM | Project Information Model
+PIR | Project Information Requirements
+RDS | Room Data Sheets
+SiD | Safety in Design
+SoA | Schedule of Accommodation
+Queensland Health BIM Objectives | Queensland Health BIM Objectives | Queensland Health BIM Objectives | Queensland Health BIM Objectives
+No: | Queensland Health BIM objective | Required uses of BIM by Appointed Parties  | Tiers 
+1 | BIM is procured and incorporated into project delivery (PIR 2.1) | From the earliest outset, a BEP is to be created, based on the PIR and CIR. The BEP is to be administered and updated by a Delivery Team BIM Manager | ALL
+2 | Improving collaboration, coordination and capacity (PIR 2.2) | Discipline/trade BIM/s are to be combined into a Federated Model and used as a primary decision-making tool for coordination, collaboration  | ALL
+3 | Platform agnostic – use of openBIM formats (PIR 2.3) | Both native formats and IFC are contractual deliverables at handover. | ALL
+4 | Structured and gradual development of BIM to provide an As-built dataset (PIR 2.4) | Continual development of the planning and design BIM/s to support the construction/as-built BIM/s, and any associated Asset Information Requirements | ALL
+5 | Improved data structuring and Information coordination (PIR 2.5) | SoA, drawings, schedules, AusHFG & HHS asset coding to be coordinated and linked to BIM | ALL
+6 | Benefits realisation is measured and tracked (PIR 2.6) | BIM benefits realisation are discussed and reported at milestone deliverables by the Delivery Team using the Queensland Health BIM metrics for projects.xlxs | ALL
+7 | Clearer design & construction comprehension (PIR 2.7) | The Delivery Team shall leverage BIM visualisation tools (3D collaboration tools that may be supplemented with VR/AR) to help inform stakeholders of design/constructability solutions | ALL
+8 | Workplace Health and Safety in BIM (PIR 2.8) | Identified Safety in Design (SiD) risks must be navigable within the Federated Model to improve understanding and minimise or eliminate these risks | Tier 1 & 2 only
+9 | Quantity Surveying from BIM (PIR 2.9) | The QS is to use design BIM/s to inform the cost planning activities including whole-of-life costs | Tier 1 & 2 only
+10 | BIM to be used for operational planning and staging (PIR 2.10) | The Delivery Team is to leverage BIM for operational planning, decanting and staging, and construction planning | Tier 1 only
+Document | Version | Date
+CIR | [Enter Version] | [XX / XX / XXXX]
+Queensland Health PIR | [Enter Version] | [XX / XX / XXXX]
+DBEP template
+CBEP template
+Queensland Health Asset Equipment Lists
+Queensland Health BIM Data Uploader Template
+Document | Version | Date
+DBEP  | [Enter Version] | [XX / XX / XXXX]
+CBEP
+Model Content Plan
+Project phase or milestone | Estimated start date | Estimated completion date
+Functional Design Brief | [XX / XX / XXXX] | [XX / XX / XXXX]
+Master Plan | [XX / XX / XXXX] | [XX / XX / XXXX]
+Schematic Design | [XX / XX / XXXX] | [XX / XX / XXXX]
+Detailed Design | [XX / XX / XXXX] | [XX / XX / XXXX]
+Tender Documentation | [XX / XX / XXXX] | [XX / XX / XXXX]
+Construction Documentation | [XX / XX / XXXX] | [XX / XX / XXXX]
+Construction | [TBC or as per CBEP – Rev] | [TBC or as per CBEP – Rev]
+Commissioning/Handover | [TBC or as per CBEP – Rev]  | [TBC or as per CBEP – Rev]
+Project Evaluation | [TBC or as per CBEP – Rev] | [TBC or as per CBEP – Rev]
+PIR Clause No. | Clause Title | Amendment
+[enter clause] | [enter title] | [enter change]
+Stage | Use | By whom | Comments
+Master Planning
+Schematic Design | [E.g. Computational design algorithms] | [Architect] | [Computational design analysis models will be used to inform the architectural BIM but will not be provided to Queensland Health.]
+Detailed Design | [E.g. Structural Engineering Analysis] | [Structural Engineer] | [The structural analysis model will be used to inform the structural BIM but will not be provided to Queensland Health.]
+Construction Documentation
+Role | Discipline | Name | Company | Email/phone
+QS | Cost Planning
+BIM Manager
+(see Appendix A) | BIM
+Civil Engineer | Civil
+Architectural BIM Lead | Architecture
+Structural BIM Lead | Structure
+Mechanical BIM Lead | Mechanical
+Hydraulic BIM Lead | Hydraulic 
+Electrical BIM Lead | Electrical
+Vertical Transportation BIM Lead | Vertical Transportation
+Attribute | Details
+Geodetic Datum used | [enter which Mapping Grid of Australia]
+Height Reference | [enter Australian Height Datum (AHD)]
+Grid Datum | [enter Australian Geodetic Datum (AGD)]
+Grid Datum | [enter Local Grid reference]
+Project Location  | [enter the project location, identifiable by cardinal points]
+Model rotation | [enter the project North rotation]
+Meeting | Timings | Location
+BIM Execution Planning | 2 weeks after contract award | [populate]
+Safety in Design Workshop | [enter as per project delivery schedule] | [populate]
+3D Coordination / Clash Resolution | Fortnightly | [populate]
+3D Design Review Meetings | Fortnightly | [populate]
+Asset Information Requirements planning (with HHS) | Commencement of every project stage | [populate]
+Disciplines | Software (version/build) | Use
+Cost Planning  | [enter] | Costing
+Architecture | [enter] | Design authoring
+Structure | [enter] | Design authoring
+Hydraulic | [enter] | Design authoring
+Mechanical  | [enter] | Design authoring
+Electrical | [enter] | Design authoring
+Fire  | [enter] | Design authoring
+Civil | [enter] | Design authoring
+Delivery Team Collaboration | [enter] | Model collaboration
+Delivery Team Collaboration | [enter] | Document management system
+Delivery Team Coordination | [enter] | Clash Detection/avoidance
+Delivery Team Coordination | [enter] | Issue Tracking
+Disciplines | Weekly collaboration (native formats) | Project Stage Milestones (native and IFC formats)
+Cost Planning  | [enter – e.g. upload to cloud model collaboration tool, Issue tracking, etc] | [enter – e.g. upload to cloud model collaboration tool, Issue tracking, Aconex, etc]
+Architecture | [enter] | [enter]
+Structure | [enter] | [enter]
+Hydraulic | [enter] | [enter]
+Mechanical  | [enter] | [enter]
+Electrical | [enter] | [enter]
+Fire  | [enter] | [enter]
+Civil | [enter] | [enter]
+[enter] | [enter] | [enter]
+QH Property Set | IFC Element
+QH_Building | IfcBuilding
+QH_Space | IfcSpace
+QH_Asset | IfcElement
+QH_System | IfcSystem
+Uniclass 2015 Level | Code Format
+Table | Aa
+Group | Aa_00
+Sub-group | Aa_00_00
+Section | Aa_00_00_00
+Object | Aa_00_00_00_00
+Asset Attribute Details | Asset Attribute Details | Asset Group | Asset Group | Project Stages | Project Stages | Project Stages | Project Stages | Project Stages | Project Stages | Required? | Reference
+Parameter Name | Description | BLD | SPC | SD | DD | TN | CD | CON | AB | Required? | Reference
+QH_Facility Name | Name of site | ◄► | ► | ► | ► | ► | ► | Mandatory | Project design brief
+QH_Building Name | Name of building | ◄► | ► | ► | ► | ► | ► | Mandatory | Project design brief
+QH_Building FLC | Building Functional Location Code | ◄► | ► | ► | ► | ► | ► | Mandatory | FLC standard or PM
+QH_Discipline | BIM authoring design or trade discipline, as per Uniclass Ro_50_XX_XX  Design roles | ► | ► | ► | ► | ► | ► | Mandatory | -
+QH_No. of Levels | Number of building floor levels | ► | ► | ► | ► | ► | ► | Mandatory (Arch only) | -
+QH_Floor Area | Total floor area (rounded to whole metres) in m2 | ► | ► | ► | ► | ► | ► | Mandatory (Arch only) | -
+QH_Facade Type | External building materials used. Select all applicable from provided QH list | ◄► | ► | ► | ► | ► | ► | Mandatory (Arch only) | Queensland Health BIM Data Uploader Template.xlsx
+QH_Building Expected Useful Life | In years | ► | ► | ► | ► | ► | ► | Mandatory (Arch only) | -
+QH_AusHFG Room Code | AusHFG Room Number | ◄► | ► | ► | ► | ► | ► | Mandatory (Arch only) | Design brief /AusHFG
+QH_Room Name | Name of room aligned to AusHFG where applicable | ◄► | ► | ► | ► | ► | ► | Mandatory (Arch only) | Design brief /AusHFG
+QH_Room FLC | Room Functional Location Code | ◄► | ► | ► | ► | ► | ► | Mandatory (Arch only) | FLC standard or PM
+QH_Level Name | Name of building floor level | ◄► | ► | ► | ► | ► | ► | Mandatory (Arch only) | HHS level naming requirements
+QH_Room Description | Description of service / use of room | ◄ | ► | ► | ► | ► | ► | Mandatory (Arch only) | Design brief /AusHFG
+QH_Plant Section | Select from provided Plant Section values (description with hierarchy) | ◄ | ► | ► | ► | ► | ► | Mandatory (Arch only) | Queensland Health BIM Data Uploader Template.xlsx
+QH_Room Department | Department room belongs to | ◄► | ► | ► | ► | ► | ► | Mandatory (Arch only) | Design brief /AusHFG
+QH_Room floor area | Room floor area - enter whole number (no decimals) in m2 | ◄► | ► | ► | ► | ► | ► | Mandatory (Arch only) | Design brief /AusHFG
+QH_Ceiling Height | Minimum ceiling height in mm | ◄ | ► | ► | ► | ► | ► | Mandatory (Arch only) | Design brief /AusHFG
+QH_Floor Material | Floor material finish. Use Uniclass description E.g. Resilient sheet floor covering systems  | ◄ | ► | ► | ► | ► | ► | Mandatory (Arch only) | Section or Object level of Uniclass Ss_30_42.
+Asset Attribute Details | Asset Attribute Details | Asset Group | Asset Group | Asset Group | Asset Group | Project Stage | Project Stage | Project Stage | Project Stage | Project Stage | Project Stage | Required? | Reference
+Parameter Name | Description | SYS | MJR | MIN | MSC | SD | DD | TN | CD | CON | AB | Required? | Reference | SYS | MJR | MIN | MSC | SD | DD | TN | CD | CON | AB
+QH_Asset Grouping | Either: Systems, Major Equipment, Minor Equipment, Miscellaneous | ◄ | ► | ► | ► | ► | ► | Mandatory | Queensland Health Asset Equipment Lists
+QH_Item Description | Item / Sub-Code Description from provided Equipment lists | ◄ | ► | ► | ► | ► | ► | Mandatory | Queensland Health Asset Equipment Lists
+QH_Functional Location Code | Asset Functional Location Code | ◄ | ► | ► | ► | ► | ► | Mandatory | FLC standard or PM
+QH_Equipment SAID Number | Single Asset Identifier (SAID) | ◄ | ► | Mandatory | QH PM or SAID QH-GDL-354-1-1:2017
+QH_Asset Class | Asset Class from provided Equipment lists | ◄ | ► | ► | Mandatory | Queensland Health Asset Equipment Lists
+QH_Object Type | S/4 Object Type from provided Equipment lists | ◄ | ► | ► | Mandatory | Queensland Health Asset Equipment Lists
+QH_Asset Attributes | Characteristic Values/Attributes (if available) from provided Equipment lists | ◄ | ► | ► | Conditional | Queensland Health Asset Equipment Lists
+QH_AusHFG Code | Applies to all AusHFG standard components | ◄ | ► | ► | ► | ► | ► | Conditional | AusHFG
+QH_Uniclass2015SsCode | Uniclass 2015 Systems (Ss) table code from QH equipment lists | ◄ | ► | ► | Mandatory | Queensland Health Asset Equipment Lists
+QH_Uniclass2015SsTitle | Uniclass 2015 Systems (Ss) table title from QH equipment lists | ◄ | ► | ► | Mandatory | Queensland Health Asset Equipment Lists
+QH_Uniclass2015PrCode | Uniclass 2015 Products (Pr) table code from QH equipment lists | ◄ | ► | ► | Mandatory | Queensland Health Asset Equipment Lists
+QH_Uniclass2015PrTitle | Uniclass 2015 Products (Pr) table title from Queensland Health Asset Equipment Lists | ◄ | ► | ► | Mandatory | Queensland Health Asset Equipment Lists
+QH_Is Medical Equipment | Is this asset considered a medical device or equipment? Y/N | ► | ► | ► | ► | ► | Conditional (populate with Y only) | -
+QH_Equipment Manufacturer | Manufacturer of asset. Refer to approved manufacturer list if relevant | ◄ | ► | ► | Mandatory | Check HHS for approved manufacturer list
+QH_Equipment Model | Manufacturer model number of asset | ◄ | ► | ► | Mandatory | Check HHS for approved equipment list
+QH_Manufacturer Serial Number | Serial number of asset | ► | Mandatory | -
+QH_Install Date | Date of asset installation | ► | Mandatory | -
+QH_Start Up date | Date of commissioning or first start-up | ► | Mandatory | -
+QH_Design/Service Life | Expected life in months | ► | Mandatory | -
+QH_Mandatory Service Provider | For assets requiring servicing by manufacturer or QH authorised provider | ◄ | ► | Conditional | QH PM / HHS
+QH_Operating and Maintenance Manual | O&M document reference as agreed with QH. Includes spare parts list and OEM drawings | ► | Mandatory | -
+QH_Warranty Start Date | Start date of product warranty | ► | Mandatory | -
+QH_Warranty Finish Date | End date of product warranty | ► | Mandatory | -
+QH_Warranty Documents | Document references as agreed with QH | ► | Mandatory | QH PM / HHS
+Discipline | Documentation type | Comments
+Structure | Typical reo details | Typical reinforcement details are documented in CAD
+Architecture | Railing details  | 1:5 Railing details 
+- | Specifications | [enter]
+Stage | Named Resource | BIM and information management tasks | Time allocation per week
