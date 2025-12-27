@@ -33,8 +33,9 @@ from tqdm import tqdm
 class CharDataset(Dataset):
     """PyTorch Dataset for character sequences"""
 
-    def __init__(self, X, y, n_vocab):
-        self.X = torch.tensor(X, dtype=torch.float32).reshape(len(X), -1, 1) / float(n_vocab)
+    def __init__(self, X, y):
+        # Keep X as integer indices for embedding layer (not normalized floats)
+        self.X = torch.tensor(X, dtype=torch.long)
         self.y = torch.tensor(y, dtype=torch.long)
 
     def __len__(self):
@@ -44,53 +45,130 @@ class CharDataset(Dataset):
         return self.X[idx], self.y[idx]
 
 
-class CharLSTM(nn.Module):
-    """Character-level LSTM language model for text generation"""
+class CharRNN(nn.Module):
+    """Character-level RNN language model for text generation with embedding layer
 
-    def __init__(self, input_size, hidden_size, output_size, num_layers=2):
-        super(CharLSTM, self).__init__()
+    Supports both LSTM and GRU architectures.
+    """
+
+    def __init__(self, vocab_size, embed_dim, hidden_size, output_size,
+                 num_layers=2, rnn_type='lstm', dropout=0.3):
+        super(CharRNN, self).__init__()
         self.hidden_size = hidden_size
         self.num_layers = num_layers
+        self.rnn_type = rnn_type.lower()
+        self.embed_dim = embed_dim
 
-        self.lstm = nn.LSTM(input_size, hidden_size, num_layers,
-                           batch_first=True, dropout=0.3)
+        # Embedding layer: learns vector representations for each character
+        self.embedding = nn.Embedding(vocab_size, embed_dim)
+
+        # RNN layer (LSTM or GRU)
+        if self.rnn_type == 'gru':
+            self.rnn = nn.GRU(embed_dim, hidden_size, num_layers,
+                             batch_first=True, dropout=dropout if num_layers > 1 else 0)
+        else:  # Default to LSTM
+            self.rnn = nn.LSTM(embed_dim, hidden_size, num_layers,
+                              batch_first=True, dropout=dropout if num_layers > 1 else 0)
+
+        # Output layer
         self.fc = nn.Linear(hidden_size, output_size)
 
-    def forward(self, x, hidden=None):
-        if hidden is None:
-            hidden = self.init_hidden(x.size(0), x.device)
+        # Dropout for regularization
+        self.dropout = nn.Dropout(dropout)
 
-        out, hidden = self.lstm(x, hidden)
-        out = self.fc(out[:, -1, :])
+    def forward(self, x, hidden=None):
+        # x shape: (batch_size, seq_length) - integer indices
+        batch_size = x.size(0)
+
+        if hidden is None:
+            hidden = self.init_hidden(batch_size, x.device)
+
+        # Pass through embedding layer
+        # embedded shape: (batch_size, seq_length, embed_dim)
+        embedded = self.embedding(x)
+        embedded = self.dropout(embedded)
+
+        # Pass through RNN
+        out, hidden = self.rnn(embedded, hidden)
+
+        # Take output from last time step
+        out = out[:, -1, :]
+        out = self.dropout(out)
+
+        # Pass through output layer
+        out = self.fc(out)
+
         return out, hidden
 
     def init_hidden(self, batch_size, device):
         """Initialize hidden state"""
-        return (torch.zeros(self.num_layers, batch_size, self.hidden_size).to(device),
-                torch.zeros(self.num_layers, batch_size, self.hidden_size).to(device))
+        if self.rnn_type == 'gru':
+            return torch.zeros(self.num_layers, batch_size, self.hidden_size).to(device)
+        else:  # LSTM
+            return (torch.zeros(self.num_layers, batch_size, self.hidden_size).to(device),
+                    torch.zeros(self.num_layers, batch_size, self.hidden_size).to(device))
+
+
+# Keep backward compatibility
+CharLSTM = CharRNN
 
 
 def load_training_data(data_path):
-    """Load and return training text with preprocessing"""
-    with open(data_path, 'r', encoding='utf-8') as f:
-        text = f.read()
+    """Load and return training text with preprocessing and error handling"""
+    try:
+        # Check if file exists
+        if not os.path.exists(data_path):
+            raise FileNotFoundError(f"Training data file not found: {data_path}")
 
-    # Preprocessing steps
-    # 1. Convert to lowercase to reduce vocabulary size
-    text = text.lower()
+        # Check if file is readable
+        if not os.access(data_path, os.R_OK):
+            raise PermissionError(f"Cannot read training data file: {data_path}")
 
-    # 2. Remove multiple consecutive spaces/newlines
-    text = re.sub(r'\n{3,}', '\n\n', text)  # Max 2 consecutive newlines
-    text = re.sub(r' {2,}', ' ', text)  # Remove multiple spaces
+        with open(data_path, 'r', encoding='utf-8') as f:
+            text = f.read()
 
-    # 3. Remove special characters that don't add meaning (keep basic punctuation)
-    # Keep: letters, numbers, basic punctuation, newlines
-    text = re.sub(r'[^\w\s.,;:!?()\-\n\'\"]+', '', text)
+        # Validate text is not empty
+        if not text or len(text.strip()) == 0:
+            raise ValueError(f"Training data file is empty: {data_path}")
 
-    print(f"Text preprocessing completed")
-    print(f"Total characters after preprocessing: {len(text)}")
+        print(f"✅ Loaded {len(text):,} characters from {data_path}")
 
-    return text
+        # Preprocessing steps
+        # 1. Convert to lowercase to reduce vocabulary size
+        text = text.lower()
+
+        # 2. Remove multiple consecutive spaces/newlines
+        text = re.sub(r'\n{3,}', '\n\n', text)  # Max 2 consecutive newlines
+        text = re.sub(r' {2,}', ' ', text)  # Remove multiple spaces
+
+        # 3. Remove special characters that don't add meaning (keep basic punctuation)
+        # Keep: letters, numbers, basic punctuation, newlines
+        text = re.sub(r'[^\w\s.,;:!?()\-\n\'\"]+', '', text)
+
+        print(f"✅ Text preprocessing completed")
+        print(f"📝 Total characters after preprocessing: {len(text):,}")
+
+        # Final validation
+        if len(text) < 100:
+            raise ValueError(f"Training data too short (< 100 chars). Need more data for training.")
+
+        return text
+
+    except FileNotFoundError as e:
+        print(f"\n❌ Error: {e}")
+        print(f"💡 Please ensure the training data file exists at the specified path.")
+        raise
+    except PermissionError as e:
+        print(f"\n❌ Error: {e}")
+        print(f"💡 Please check file permissions.")
+        raise
+    except UnicodeDecodeError as e:
+        print(f"\n❌ Error: Could not decode file as UTF-8: {e}")
+        print(f"💡 Please ensure the file is encoded as UTF-8.")
+        raise
+    except Exception as e:
+        print(f"\n❌ Unexpected error loading training data: {e}")
+        raise
 
 
 def prepare_dataset(text, seq_length=100, validation_split=0.2):
@@ -137,8 +215,9 @@ def prepare_dataset(text, seq_length=100, validation_split=0.2):
 
 
 def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, learning_rate=0.001,
-                device='cpu', batch_size=128, char_to_int=None, int_to_char=None, models_dir=None):
-    """Train the LSTM model using mini-batches with TensorBoard logging and validation"""
+                device='cpu', batch_size=128, char_to_int=None, int_to_char=None, models_dir=None,
+                early_stopping_patience=15, lr_scheduler_patience=5):
+    """Train the RNN model with early stopping, LR scheduling, and comprehensive monitoring"""
 
     # Setup TensorBoard
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -188,6 +267,21 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
+    # Learning rate scheduler: reduce LR when validation loss plateaus
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer,
+        mode='min',
+        factor=0.5,
+        patience=lr_scheduler_patience,
+        verbose=True,
+        min_lr=1e-6
+    )
+
+    # Early stopping variables
+    best_val_loss = float('inf')
+    epochs_without_improvement = 0
+    best_model_path = None
+
     # Enable mixed precision training for GPU speedup
     use_amp = device.type == 'cuda'
     scaler = GradScaler() if use_amp else None
@@ -205,6 +299,8 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
     writer.add_text('Hyperparameters', f'''
     - Epochs: {epochs}
     - Learning Rate: {learning_rate}
+    - RNN Type: {model.rnn_type.upper()}
+    - Embedding Dimension: {model.embed_dim}
     - Hidden Size: {model.hidden_size}
     - Num Layers: {model.num_layers}
     - Batch Size: {batch_size}
@@ -215,14 +311,14 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
     - Total Parameters: {sum(p.numel() for p in model.parameters()):,}
     ''')
 
-    # Convert to numpy arrays
-    train_X = np.array(train_X, dtype=np.float32)
+    # Convert to numpy arrays (integers for embedding layer)
+    train_X = np.array(train_X, dtype=np.int64)
     train_y = np.array(train_y, dtype=np.int64)
-    val_X = np.array(val_X, dtype=np.float32)
+    val_X = np.array(val_X, dtype=np.int64)
     val_y = np.array(val_y, dtype=np.int64)
 
     # Create Dataset and DataLoader for training
-    train_dataset = CharDataset(train_X, train_y, n_vocab)
+    train_dataset = CharDataset(train_X, train_y)
     train_dataloader = DataLoader(
         train_dataset,
         batch_size=batch_size,
@@ -233,7 +329,7 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
     )
 
     # Create Dataset and DataLoader for validation
-    val_dataset = CharDataset(val_X, val_y, n_vocab)
+    val_dataset = CharDataset(val_X, val_y)
     val_dataloader = DataLoader(
         val_dataset,
         batch_size=batch_size,
@@ -244,10 +340,10 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
     )
 
     n_batches = len(train_dataloader)
-    best_val_loss = float('inf')
-    best_model_path = None
 
-    print(f"\n🏃 Starting training with {n_batches} batches per epoch...\n")
+    print(f"\n🏃 Starting training with {n_batches} batches per epoch...")
+    print(f"📉 Early stopping patience: {early_stopping_patience} epochs")
+    print(f"📊 LR scheduler patience: {lr_scheduler_patience} epochs\n")
 
     # Training loop with progress bar
     for epoch in tqdm(range(epochs), desc="Training Progress", unit="epoch"):
@@ -298,6 +394,10 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
         # Validation phase
         model.eval()
         total_val_loss = 0
+        correct_top1 = 0
+        correct_top5 = 0
+        total_samples = 0
+
         with torch.no_grad():
             for batch_X, batch_y in val_dataloader:
                 batch_X = batch_X.to(device, non_blocking=True)
@@ -313,11 +413,23 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
 
                 total_val_loss += loss.item()
 
-        avg_val_loss = total_val_loss / len(val_dataloader)
+                # Calculate top-1 and top-5 accuracy
+                _, pred_top1 = output.max(1)
+                _, pred_top5 = output.topk(5, 1, True, True)
 
-        # Track best validation loss and save best model
+                correct_top1 += pred_top1.eq(batch_y).sum().item()
+                correct_top5 += pred_top5.eq(batch_y.view(-1, 1).expand_as(pred_top5)).sum().item()
+                total_samples += batch_y.size(0)
+
+        avg_val_loss = total_val_loss / len(val_dataloader)
+        val_acc_top1 = 100.0 * correct_top1 / total_samples
+        val_acc_top5 = 100.0 * correct_top5 / total_samples
+
+        # Track best validation loss and save best model (Early Stopping)
         if avg_val_loss < best_val_loss:
             best_val_loss = avg_val_loss
+            epochs_without_improvement = 0
+
             # Save best model checkpoint
             if models_dir is not None:
                 best_model_path = models_dir / 'best_model_checkpoint.pth'
@@ -326,16 +438,29 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
                     'model_state_dict': model.state_dict(),
                     'hidden_size': model.hidden_size,
                     'num_layers': model.num_layers,
+                    'embed_dim': model.embed_dim,
+                    'rnn_type': model.rnn_type,
                     'optimizer_state_dict': optimizer.state_dict(),
+                    'scheduler_state_dict': scheduler.state_dict(),
                     'train_loss': avg_train_loss,
                     'val_loss': avg_val_loss,
+                    'val_acc_top1': val_acc_top1,
+                    'val_acc_top5': val_acc_top5,
                 }, best_model_path)
+        else:
+            epochs_without_improvement += 1
+
+        # Learning rate scheduler step (based on validation loss)
+        scheduler.step(avg_val_loss)
 
         # Log to TensorBoard
         writer.add_scalar('Loss/train', avg_train_loss, epoch)
         writer.add_scalar('Loss/validation', avg_val_loss, epoch)
         writer.add_scalar('Loss/best_val', best_val_loss, epoch)
         writer.add_scalar('Loss/batch_std', np.std(batch_losses), epoch)
+        writer.add_scalar('Accuracy/val_top1', val_acc_top1, epoch)
+        writer.add_scalar('Accuracy/val_top5', val_acc_top5, epoch)
+        writer.add_scalar('EarlyStopping/epochs_without_improvement', epochs_without_improvement, epoch)
 
         # Log learning rate
         writer.add_scalar('Learning_Rate', optimizer.param_groups[0]['lr'], epoch)
@@ -349,8 +474,8 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
         total_norm = total_norm ** 0.5
         writer.add_scalar('Gradients/norm', total_norm, epoch)
 
-        # Generate sample text every 10 epochs
-        if (epoch + 1) % 10 == 0 and char_to_int is not None and int_to_char is not None:
+        # Generate sample text every 5 epochs for qualitative assessment
+        if (epoch + 1) % 5 == 0 and char_to_int is not None and int_to_char is not None:
             sample_text = generate_sample_during_training(
                 model, char_to_int, int_to_char, n_vocab,
                 device=device, max_length=150
@@ -360,8 +485,19 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
             tqdm.write(f'\n{"="*60}')
             tqdm.write(f'Epoch [{epoch+1}/{epochs}]')
             tqdm.write(f'Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f} | Best Val: {best_val_loss:.4f}')
+            tqdm.write(f'Val Acc (Top-1): {val_acc_top1:.2f}% | Val Acc (Top-5): {val_acc_top5:.2f}%')
+            tqdm.write(f'LR: {optimizer.param_groups[0]["lr"]:.2e} | No Improvement: {epochs_without_improvement} epochs')
             tqdm.write(f'Sample: {sample_text[:100]}...')
             tqdm.write(f'{"="*60}\n')
+
+        # Early stopping check
+        if epochs_without_improvement >= early_stopping_patience:
+            tqdm.write(f'\n{"="*60}')
+            tqdm.write(f'⏹️  Early stopping triggered after {epoch+1} epochs')
+            tqdm.write(f'No improvement for {early_stopping_patience} consecutive epochs')
+            tqdm.write(f'Best validation loss: {best_val_loss:.4f}')
+            tqdm.write(f'{"="*60}\n')
+            break
 
     writer.close()
 
@@ -393,21 +529,34 @@ def train_model(model, train_X, train_y, val_X, val_y, n_vocab, epochs=100, lear
 
 
 def generate_sample_during_training(model, char_to_int, int_to_char, n_vocab,
-                                   device='cpu', max_length=150):
-    """Generate sample text during training for monitoring"""
+                                   device='cpu', max_length=150, temperature=0.8, use_greedy=False):
+    """Generate sample text during training for monitoring
+
+    Args:
+        model: The trained model
+        char_to_int: Character to integer mapping
+        int_to_char: Integer to character mapping
+        n_vocab: Vocabulary size
+        device: Device to run on
+        max_length: Maximum generation length
+        temperature: Sampling temperature (lower = more deterministic, higher = more creative)
+                    Only used when use_greedy=False
+        use_greedy: If True, use greedy decoding (argmax). If False, use temperature sampling
+    """
     model.eval()
     prompts = [
-        "The BEP establishes",
-        "Information Manager is responsible for",
-        "The primary objectives include"
+        "the bep establishes",
+        "information manager is responsible for",
+        "the primary objectives include"
     ]
 
     # Pick a random prompt
     start_text = np.random.choice(prompts)
 
     with torch.no_grad():
+        # Use integer indices for embedding layer
         inputs = [char_to_int.get(ch, 0) for ch in start_text]
-        inputs = torch.tensor(inputs, dtype=torch.float32).reshape(1, len(inputs), 1) / float(n_vocab)
+        inputs = torch.tensor(inputs, dtype=torch.long).unsqueeze(0)  # Shape: (1, seq_length)
         inputs = inputs.to(device)
 
         result = start_text
@@ -415,8 +564,16 @@ def generate_sample_during_training(model, char_to_int, int_to_char, n_vocab,
 
         for _ in range(max_length):
             output, hidden = model(inputs, hidden)
-            prob = torch.softmax(output, dim=1).cpu().detach().numpy()
-            char_idx = np.random.choice(range(n_vocab), p=prob[0])
+
+            if use_greedy:
+                # Greedy decoding: select most probable character
+                char_idx = output.argmax(dim=1).item()
+            else:
+                # Temperature sampling: scale logits by temperature before softmax
+                scaled_output = output / temperature
+                prob = torch.softmax(scaled_output, dim=1).cpu().detach().numpy()
+                char_idx = np.random.choice(range(n_vocab), p=prob[0])
+
             char = int_to_char[char_idx]
             result += char
 
@@ -424,8 +581,8 @@ def generate_sample_during_training(model, char_to_int, int_to_char, n_vocab,
             if char == '.' and len(result) > 50:
                 break
 
-            new_input = torch.tensor([[char_idx]], dtype=torch.float32).reshape(1, 1, 1) / float(n_vocab)
-            new_input = new_input.to(device)
+            # Update input with new character (integer index)
+            new_input = torch.tensor([[char_idx]], dtype=torch.long).to(device)  # Shape: (1, 1)
             inputs = new_input
 
     model.train()
@@ -433,37 +590,80 @@ def generate_sample_during_training(model, char_to_int, int_to_char, n_vocab,
 
 
 def save_model(model, char_to_int, int_to_char, save_dir):
-    """Save model and character mappings"""
-    os.makedirs(save_dir, exist_ok=True)
+    """Save model and character mappings with error handling"""
+    try:
+        # Create directory if it doesn't exist
+        os.makedirs(save_dir, exist_ok=True)
 
-    # Save model weights
-    model_path = os.path.join(save_dir, 'bep_model.pth')
-    torch.save({
-        'model_state_dict': model.state_dict(),
-        'hidden_size': model.hidden_size,
-        'num_layers': model.num_layers,
-    }, model_path)
+        # Save model weights
+        model_path = os.path.join(save_dir, 'bep_model.pth')
+        torch.save({
+            'model_state_dict': model.state_dict(),
+            'hidden_size': model.hidden_size,
+            'num_layers': model.num_layers,
+            'embed_dim': model.embed_dim,
+            'rnn_type': model.rnn_type,
+        }, model_path)
 
-    # Save character mappings
-    mappings_path = os.path.join(save_dir, 'char_mappings.json')
-    with open(mappings_path, 'w', encoding='utf-8') as f:
-        json.dump({
-            'char_to_int': char_to_int,
-            'int_to_char': {int(k): v for k, v in int_to_char.items()},
-            'n_vocab': len(char_to_int)
-        }, f, ensure_ascii=False, indent=2)
+        # Verify model was saved
+        if not os.path.exists(model_path):
+            raise IOError(f"Model file was not created: {model_path}")
 
-    print(f"\nModel saved to: {model_path}")
-    print(f"Mappings saved to: {mappings_path}")
+        # Save character mappings
+        mappings_path = os.path.join(save_dir, 'char_mappings.json')
+        with open(mappings_path, 'w', encoding='utf-8') as f:
+            json.dump({
+                'char_to_int': char_to_int,
+                'int_to_char': {int(k): v for k, v in int_to_char.items()},
+                'n_vocab': len(char_to_int)
+            }, f, ensure_ascii=False, indent=2)
+
+        # Verify mappings were saved
+        if not os.path.exists(mappings_path):
+            raise IOError(f"Mappings file was not created: {mappings_path}")
+
+        # Get file sizes
+        model_size = os.path.getsize(model_path) / (1024 * 1024)  # MB
+        mappings_size = os.path.getsize(mappings_path) / 1024  # KB
+
+        print(f"\n✅ Model saved to: {model_path} ({model_size:.2f} MB)")
+        print(f"✅ Mappings saved to: {mappings_path} ({mappings_size:.2f} KB)")
+
+    except PermissionError as e:
+        print(f"\n❌ Error: Cannot write to directory {save_dir}: {e}")
+        print(f"💡 Please check write permissions for the models directory.")
+        raise
+    except IOError as e:
+        print(f"\n❌ Error saving model: {e}")
+        raise
+    except Exception as e:
+        print(f"\n❌ Unexpected error during model save: {e}")
+        raise
 
 
 def generate_sample_text(model, char_to_int, int_to_char, n_vocab,
-                         start_text="BIM Execution Plan", length=200, device='cpu'):
-    """Generate sample text to verify model"""
+                         start_text="the bep establishes", length=200, device='cpu',
+                         temperature=1.0, use_greedy=False, top_k=0, top_p=0.0):
+    """Generate sample text with advanced sampling strategies
+
+    Args:
+        model: The trained model
+        char_to_int: Character to integer mapping
+        int_to_char: Integer to character mapping
+        n_vocab: Vocabulary size
+        start_text: Initial prompt text
+        length: Maximum generation length
+        device: Device to run on
+        temperature: Sampling temperature (0.1-2.0). Lower = more deterministic, higher = more creative
+        use_greedy: If True, always pick most probable character (ignores temperature)
+        top_k: If > 0, only sample from top k most probable characters (nucleus sampling)
+        top_p: If > 0.0, sample from smallest set of chars whose cumulative prob >= top_p
+    """
     model.eval()
     with torch.no_grad():
+        # Use integer indices for embedding layer
         inputs = [char_to_int.get(ch, 0) for ch in start_text]
-        inputs = torch.tensor(inputs, dtype=torch.float32).reshape(1, len(inputs), 1) / float(n_vocab)
+        inputs = torch.tensor(inputs, dtype=torch.long).unsqueeze(0)  # Shape: (1, seq_length)
         inputs = inputs.to(device)
 
         result = start_text
@@ -471,13 +671,46 @@ def generate_sample_text(model, char_to_int, int_to_char, n_vocab,
 
         for _ in range(length):
             output, hidden = model(inputs, hidden)
-            prob = torch.softmax(output, dim=1).cpu().detach().numpy()
-            char_idx = np.random.choice(range(n_vocab), p=prob[0])
+
+            if use_greedy:
+                # Greedy decoding: always select most probable character
+                char_idx = output.argmax(dim=1).item()
+            else:
+                # Temperature sampling with optional top-k or top-p filtering
+                logits = output / temperature
+
+                # Top-k filtering
+                if top_k > 0:
+                    top_k_values, top_k_indices = torch.topk(logits, min(top_k, n_vocab))
+                    # Set all non-top-k values to -inf
+                    logits_filtered = torch.full_like(logits, float('-inf'))
+                    logits_filtered.scatter_(1, top_k_indices, top_k_values)
+                    logits = logits_filtered
+
+                # Top-p (nucleus) filtering
+                if top_p > 0.0:
+                    sorted_logits, sorted_indices = torch.sort(logits, descending=True, dim=1)
+                    cumulative_probs = torch.cumsum(torch.softmax(sorted_logits, dim=1), dim=1)
+
+                    # Remove tokens with cumulative probability above threshold
+                    sorted_indices_to_remove = cumulative_probs > top_p
+                    # Shift right to keep first token above threshold
+                    sorted_indices_to_remove[:, 1:] = sorted_indices_to_remove[:, :-1].clone()
+                    sorted_indices_to_remove[:, 0] = False
+
+                    # Create mask and apply
+                    indices_to_remove = sorted_indices_to_remove.scatter(1, sorted_indices, sorted_indices_to_remove)
+                    logits[indices_to_remove] = float('-inf')
+
+                # Sample from filtered distribution
+                prob = torch.softmax(logits, dim=1).cpu().detach().numpy()
+                char_idx = np.random.choice(range(n_vocab), p=prob[0])
+
             char = int_to_char[char_idx]
             result += char
 
-            new_input = torch.tensor([[char_idx]], dtype=torch.float32).reshape(1, 1, 1) / float(n_vocab)
-            new_input = new_input.to(device)
+            # Update input with new character (integer index)
+            new_input = torch.tensor([[char_idx]], dtype=torch.long).to(device)  # Shape: (1, 1)
             inputs = new_input
 
         return result
@@ -486,10 +719,30 @@ def generate_sample_text(model, char_to_int, int_to_char, n_vocab,
 def main():
     parser = argparse.ArgumentParser(description='Train BEP text generation model')
     parser.add_argument('--epochs', type=int, default=100, help='Number of training epochs')
-    parser.add_argument('--hidden-size', type=int, default=512, help='LSTM hidden size')
+    parser.add_argument('--hidden-size', type=int, default=512, help='RNN hidden size')
+    parser.add_argument('--embed-dim', type=int, default=128, help='Character embedding dimension')
+    parser.add_argument('--num-layers', type=int, default=2, help='Number of RNN layers')
+    parser.add_argument('--rnn-type', type=str, default='lstm', choices=['lstm', 'gru'],
+                       help='Type of RNN to use (lstm or gru)')
     parser.add_argument('--seq-length', type=int, default=100, help='Sequence length')
     parser.add_argument('--learning-rate', type=float, default=0.001, help='Learning rate')
     parser.add_argument('--batch-size', type=int, default=None, help='Batch size (auto-detected based on device)')
+    parser.add_argument('--dropout', type=float, default=0.3, help='Dropout rate')
+    parser.add_argument('--early-stopping-patience', type=int, default=15,
+                       help='Number of epochs to wait for improvement before stopping')
+    parser.add_argument('--lr-scheduler-patience', type=int, default=5,
+                       help='Number of epochs to wait before reducing learning rate')
+
+    # Text generation parameters
+    parser.add_argument('--temperature', type=float, default=0.8,
+                       help='Sampling temperature for text generation (0.1-2.0)')
+    parser.add_argument('--use-greedy', action='store_true',
+                       help='Use greedy decoding (argmax) instead of sampling')
+    parser.add_argument('--top-k', type=int, default=0,
+                       help='Top-k sampling: only sample from k most probable chars (0=disabled)')
+    parser.add_argument('--top-p', type=float, default=0.0,
+                       help='Nucleus sampling: sample from smallest set with cumulative prob >= p (0=disabled)')
+
     args = parser.parse_args()
 
     # Setup paths
@@ -502,8 +755,20 @@ def main():
     print("BEP Text Generation Model Training")
     print("="*60)
 
-    # Check for GPU
+    # Check for GPU and enable optimizations
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    # Enable cuDNN benchmark for faster LSTM/GRU training on GPU
+    # This finds the best algorithm for your hardware, speeding up training
+    if device.type == 'cuda':
+        torch.backends.cudnn.benchmark = True
+        torch.backends.cudnn.enabled = True
+        print(f"✅ cuDNN benchmark enabled for faster GPU training")
+    else:
+        # CPU optimizations: set number of threads
+        num_threads = os.cpu_count() or 4
+        torch.set_num_threads(num_threads)
+        print(f"✅ CPU threads set to {num_threads} for faster training")
 
     # Auto-detect optimal batch size based on device
     if args.batch_size is None:
@@ -529,48 +794,134 @@ def main():
         print(f"💾 VRAM: {gpu_mem:.1f} GB")
     print(f"📦 Auto-selected batch size: {batch_size}")
 
-    # Load and prepare data
-    print("\n📖 Loading training data...")
-    text = load_training_data(data_path)
+    # Load and prepare data with error handling
+    try:
+        print("\n📖 Loading training data...")
+        text = load_training_data(data_path)
 
-    print("\n🔧 Preparing dataset...")
-    train_X, train_Y, val_X, val_Y, char_to_int, int_to_char, n_vocab = prepare_dataset(text, args.seq_length)
+        print("\n🔧 Preparing dataset...")
+        train_X, train_Y, val_X, val_Y, char_to_int, int_to_char, n_vocab = prepare_dataset(text, args.seq_length)
 
-    # Create model
-    print("\n🧠 Initializing model...")
-    model = CharLSTM(
-        input_size=1,
-        hidden_size=args.hidden_size,
-        output_size=n_vocab,
-        num_layers=2
-    ).to(device)
+        # Validate we have enough data
+        if len(train_X) < 100:
+            raise ValueError(f"Training set too small ({len(train_X)} sequences). Need at least 100 sequences.")
+        if len(val_X) < 10:
+            raise ValueError(f"Validation set too small ({len(val_X)} sequences). Need at least 10 sequences.")
 
-    # Train model
-    print("\n🏋️ Starting training...")
-    model = train_model(
-        model, train_X, train_Y, val_X, val_Y, n_vocab,
-        epochs=args.epochs,
-        learning_rate=args.learning_rate,
-        device=device,
-        batch_size=batch_size,
-        char_to_int=char_to_int,
-        int_to_char=int_to_char,
-        models_dir=models_dir
-    )
+    except (FileNotFoundError, PermissionError, ValueError, UnicodeDecodeError) as e:
+        print(f"\n❌ Fatal error during data loading: {e}")
+        print(f"\n💡 Training cannot continue without valid data. Exiting...")
+        return
+    except Exception as e:
+        print(f"\n❌ Unexpected error during data preparation: {e}")
+        import traceback
+        traceback.print_exc()
+        return
 
-    # Save model
-    print("\nSaving model...")
-    save_model(model, char_to_int, int_to_char, models_dir)
+    # Create model with error handling
+    try:
+        print("\n🧠 Initializing model...")
+        print(f"Model architecture: {args.rnn_type.upper()}")
+        print(f"Embedding dimension: {args.embed_dim}")
+        print(f"Hidden size: {args.hidden_size}")
+        print(f"Number of layers: {args.num_layers}")
+        print(f"Dropout: {args.dropout}")
 
-    # Generate sample text
+        model = CharRNN(
+            vocab_size=n_vocab,
+            embed_dim=args.embed_dim,
+            hidden_size=args.hidden_size,
+            output_size=n_vocab,
+            num_layers=args.num_layers,
+            rnn_type=args.rnn_type,
+            dropout=args.dropout
+        ).to(device)
+
+        print(f"✅ Model initialized with {sum(p.numel() for p in model.parameters()):,} parameters")
+
+    except RuntimeError as e:
+        if "out of memory" in str(e).lower():
+            print(f"\n❌ GPU out of memory error: {e}")
+            print(f"💡 Try reducing --batch-size, --hidden-size, or --embed-dim")
+            print(f"💡 Current settings: batch_size={batch_size}, hidden_size={args.hidden_size}, embed_dim={args.embed_dim}")
+        else:
+            print(f"\n❌ Runtime error creating model: {e}")
+        return
+    except Exception as e:
+        print(f"\n❌ Unexpected error creating model: {e}")
+        import traceback
+        traceback.print_exc()
+        return
+
+    # Train model with error handling
+    try:
+        print("\n🏋️ Starting training...")
+        model = train_model(
+            model, train_X, train_Y, val_X, val_Y, n_vocab,
+            epochs=args.epochs,
+            learning_rate=args.learning_rate,
+            device=device,
+            batch_size=batch_size,
+            char_to_int=char_to_int,
+            int_to_char=int_to_char,
+            models_dir=models_dir,
+            early_stopping_patience=args.early_stopping_patience,
+            lr_scheduler_patience=args.lr_scheduler_patience
+        )
+
+    except KeyboardInterrupt:
+        print(f"\n\n⚠️  Training interrupted by user (Ctrl+C)")
+        print(f"💡 Attempting to save current model state...")
+        # Model will be saved below if it exists
+    except RuntimeError as e:
+        if "out of memory" in str(e).lower():
+            print(f"\n❌ GPU out of memory during training: {e}")
+            print(f"💡 Try reducing --batch-size from {batch_size}")
+            print(f"💡 Or reduce model size (--hidden-size, --embed-dim, --num-layers)")
+        else:
+            print(f"\n❌ Runtime error during training: {e}")
+            import traceback
+            traceback.print_exc()
+        return
+    except Exception as e:
+        print(f"\n❌ Unexpected error during training: {e}")
+        import traceback
+        traceback.print_exc()
+        return
+
+    # Save model with error handling
+    try:
+        print("\n💾 Saving model...")
+        save_model(model, char_to_int, int_to_char, models_dir)
+    except Exception as e:
+        print(f"\n⚠️  Warning: Could not save model: {e}")
+        print(f"💡 Model training completed but save failed. Check disk space and permissions.")
+
+    # Generate sample text with different strategies
     print("\n" + "="*60)
-    print("Sample Generated Text:")
+    print("Sample Generated Text")
     print("="*60)
+
+    # Show generation strategy being used
+    if args.use_greedy:
+        print("Generation mode: Greedy decoding (argmax)")
+    else:
+        print(f"Generation mode: Temperature sampling (T={args.temperature})")
+        if args.top_k > 0:
+            print(f"  + Top-k filtering (k={args.top_k})")
+        if args.top_p > 0.0:
+            print(f"  + Nucleus sampling (p={args.top_p})")
+    print("-" * 60)
+
     sample = generate_sample_text(
         model, char_to_int, int_to_char, n_vocab,
-        start_text="The BEP establishes",
+        start_text="the bep establishes",
         length=300,
-        device=device
+        device=device,
+        temperature=args.temperature,
+        use_greedy=args.use_greedy,
+        top_k=args.top_k,
+        top_p=args.top_p
     )
     print(sample)
     print("="*60)
