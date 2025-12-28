@@ -27,7 +27,8 @@
       "Bash(cmd /c \"if exist ml-service\\venv\\Scripts\\python.exe (echo Virtual environment exists) else (echo Virtual environment not found)\")",
       "Bash(ml-service\\venv\\Scripts\\python.exe:*)",
       "Bash(nvidia-smi:*)",
-      "Bash(ml-service/venv/Scripts/pip.exe uninstall:*)"
+      "Bash(ml-service/venv/Scripts/pip.exe uninstall:*)",
+      "Bash(cmd /c \"cd ml-service && venv\\\\Scripts\\\\python.exe test_model_load.py 2>&1\")"
     ],
     "deny": [],
     "ask": []

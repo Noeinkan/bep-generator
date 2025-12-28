@@ -1,7 +1,8 @@
 """
-FastAPI service for BEP text generation
+FastAPI service for BEP text generation using Ollama
 
 Provides REST API endpoints for AI-assisted text generation in BEP documents.
+Uses Ollama's local LLM for high-quality, fast text generation.
 """
 
 from fastapi import FastAPI, HTTPException
@@ -9,24 +10,22 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import Optional
 import logging
-from pathlib import Path
+import os
 
-# Dynamic model loader based on config
-from config import MODEL_TYPE
-if MODEL_TYPE == "ollama":
-    from model_loader_ollama import get_generator
-else:
-    from model_loader import get_generator  # fallback to char-rnn
+from ollama_generator import get_ollama_generator
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Get model from environment or use default
+OLLAMA_MODEL = os.getenv('OLLAMA_MODEL', 'llama3.2:3b')
+
 # Create FastAPI app
 app = FastAPI(
-    title="BEP AI Text Generator",
-    description="AI-powered text generation for BIM Execution Plans (ISO 19650)",
-    version="1.0.0"
+    title="BEP AI Text Generator (Ollama)",
+    description="AI-powered text generation for BIM Execution Plans using Ollama local LLM",
+    version="2.0.0"
 )
 
 # Enable CORS for frontend integration
@@ -51,42 +50,38 @@ class GenerateResponse(BaseModel):
     """Response model for text generation"""
     text: str = Field(..., description="Generated text")
     prompt_used: str = Field(..., description="Actual prompt used for generation")
+    model: str = Field(..., description="Model used for generation")
 
 
 class HealthResponse(BaseModel):
     """Health check response"""
     status: str
-    model_loaded: bool
-    device: str
+    ollama_connected: bool
+    model: str
+    backend: str
 
 
 # Initialize generator on startup
 @app.on_event("startup")
 async def startup_event():
-    """Load model on startup"""
+    """Initialize Ollama connection on startup"""
     try:
-        logger.info(f"Loading BEP text generation model (backend: {MODEL_TYPE})...")
-        generator = get_generator()
-        logger.info(f"Model loaded successfully on device: {generator.device}")
-        if MODEL_TYPE == "ollama":
-            from config import OLLAMA_MODEL
-            logger.info(f"Using Ollama model: {OLLAMA_MODEL}")
-    except FileNotFoundError as e:
-        logger.error(f"Model not found: {e}")
-        if MODEL_TYPE != "ollama":
-            logger.error("Please train the model first using: python scripts/train_model.py")
-        else:
-            logger.error("Please ensure Ollama is running and model is downloaded")
+        logger.info(f"Initializing Ollama generator with model: {OLLAMA_MODEL}")
+        generator = get_ollama_generator(model=OLLAMA_MODEL)
+        logger.info("Ollama generator initialized successfully")
     except Exception as e:
-        logger.error(f"Error loading model: {e}")
+        logger.error(f"Error initializing Ollama: {e}")
+        logger.error("Make sure Ollama is running: ollama serve")
 
 
 @app.get("/", tags=["Root"])
 async def root():
     """Root endpoint"""
     return {
-        "message": "BEP AI Text Generator API",
-        "version": "1.0.0",
+        "message": "BEP AI Text Generator API (Ollama Backend)",
+        "version": "2.0.0",
+        "backend": "Ollama",
+        "model": OLLAMA_MODEL,
         "docs": "/docs"
     }
 
@@ -95,17 +90,23 @@ async def root():
 async def health_check():
     """Health check endpoint"""
     try:
-        generator = get_generator()
+        import requests
+        response = requests.get("http://localhost:11434/api/tags", timeout=5)
+        ollama_connected = response.status_code == 200
+
         return HealthResponse(
-            status="healthy",
-            model_loaded=generator.model is not None,
-            device=str(generator.device)
+            status="healthy" if ollama_connected else "degraded",
+            ollama_connected=ollama_connected,
+            model=OLLAMA_MODEL,
+            backend="Ollama"
         )
     except Exception as e:
+        logger.error(f"Health check failed: {e}")
         return HealthResponse(
             status="unhealthy",
-            model_loaded=False,
-            device="unknown"
+            ollama_connected=False,
+            model=OLLAMA_MODEL,
+            backend="Ollama"
         )
 
 
@@ -114,7 +115,7 @@ async def generate_text(request: GenerateRequest):
     """
     Generate text based on a prompt
 
-    This endpoint uses a trained LSTM model to generate contextually appropriate
+    This endpoint uses Ollama's local LLM to generate contextually appropriate
     text for BIM Execution Plan documents.
 
     - **prompt**: Starting text to continue from
@@ -123,13 +124,7 @@ async def generate_text(request: GenerateRequest):
     - **temperature**: Sampling temperature (0.1-2.0, higher = more creative)
     """
     try:
-        generator = get_generator()
-
-        if generator.model is None:
-            raise HTTPException(
-                status_code=503,
-                detail="Model not loaded. Please train the model first."
-            )
+        generator = get_ollama_generator(model=OLLAMA_MODEL)
 
         # Generate text
         if request.field_type:
@@ -142,26 +137,21 @@ async def generate_text(request: GenerateRequest):
             prompt_used = request.prompt
         else:
             # Use generic prompt-based generation
-            full_text = generator.generate_text(
+            generated = generator.generate_text(
                 prompt=request.prompt,
                 max_length=request.max_length,
                 temperature=request.temperature
             )
-            generated = full_text[len(request.prompt):]
             prompt_used = request.prompt
 
         logger.info(f"Generated {len(generated)} characters for field_type: {request.field_type}")
 
         return GenerateResponse(
             text=generated.strip(),
-            prompt_used=prompt_used
+            prompt_used=prompt_used,
+            model=OLLAMA_MODEL
         )
 
-    except FileNotFoundError:
-        raise HTTPException(
-            status_code=503,
-            detail="Model files not found. Please train the model first using: python scripts/train_model.py"
-        )
     except Exception as e:
         logger.error(f"Generation error: {e}")
         raise HTTPException(
@@ -190,13 +180,7 @@ async def suggest_for_field(request: SuggestRequest):
     - **max_length**: Maximum characters to generate
     """
     try:
-        generator = get_generator()
-
-        if generator.model is None:
-            raise HTTPException(
-                status_code=503,
-                detail="Model not loaded. Please train the model first."
-            )
+        generator = get_ollama_generator(model=OLLAMA_MODEL)
 
         # Generate field-specific suggestion
         suggestion = generator.suggest_for_field(
@@ -209,7 +193,8 @@ async def suggest_for_field(request: SuggestRequest):
 
         return GenerateResponse(
             text=suggestion,
-            prompt_used=request.partial_text or generator.field_prompts.get(request.field_type, '')
+            prompt_used=request.partial_text,
+            model=OLLAMA_MODEL
         )
 
     except Exception as e:
@@ -220,20 +205,50 @@ async def suggest_for_field(request: SuggestRequest):
         )
 
 
+@app.get("/models", tags=["Models"])
+async def list_models():
+    """List available Ollama models"""
+    try:
+        import requests
+        response = requests.get("http://localhost:11434/api/tags", timeout=5)
+
+        if response.status_code == 200:
+            data = response.json()
+            models = data.get('models', [])
+            return {
+                "current_model": OLLAMA_MODEL,
+                "available_models": [m.get('name') for m in models],
+                "models_detail": models
+            }
+        else:
+            raise HTTPException(status_code=503, detail="Cannot connect to Ollama")
+
+    except Exception as e:
+        logger.error(f"Error listing models: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 if __name__ == "__main__":
     import uvicorn
 
     # Run the API server
-    print("="*60)
-    print("Starting BEP AI Text Generator API")
-    print("="*60)
-    print("API will be available at: http://localhost:8000")
-    print("API documentation: http://localhost:8000/docs")
-    print("="*60)
+    print("="*70)
+    print("🚀 BEP AI Text Generator API (Ollama Backend)")
+    print("="*70)
+    print(f"Model: {OLLAMA_MODEL}")
+    print("API: http://localhost:5003")
+    print("Docs: http://localhost:5003/docs")
+    print("="*70)
+    print()
+    print("📝 Make sure Ollama is running:")
+    print(f"   1. Check: http://localhost:11434/api/tags")
+    print(f"   2. Model installed: ollama list")
+    print(f"   3. Pull if needed: ollama pull {OLLAMA_MODEL}")
+    print("="*70)
 
     uvicorn.run(
         app,
         host="0.0.0.0",
-        port=8000,
+        port=5003,
         log_level="info"
     )
