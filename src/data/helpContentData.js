@@ -374,6 +374,12 @@ All personnel are ISO 19650 trained with information security certification. Int
       'No evidence of past successful resource deployment'
     ],
 
+    aiPrompt: {
+      system: 'You are a BIM resource planning expert specializing in capability and capacity assessment per ISO 19650.',
+      instructions: 'Generate a detailed resource allocation table for a BEP tender response. Include role, proposed personnel with qualifications, key competencies, weekly hours allocation, and software/hardware requirements. Focus on demonstrating capability (skills, certifications) and capacity (time, resources). Include ISO 19650 certifications and specific BIM tools. Maximum 150 words.',
+      style: 'professional, ISO 19650-aligned, structured, concise'
+    },
+
     relatedFields: ['proposedMobilizationPlan', 'teamCapabilities', 'proposedTeamLeaders', 'proposedInfoManager']
   },
 
@@ -762,6 +768,13 @@ Focus is on coordination, quantities, sequencing, and asset data delivery.`
       'Not prioritizing uses based on value delivery'
     ],
 
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM planning expert. Select and describe appropriate BIM uses aligned to project goals and ISO 19650 information requirements.',
+      instructions: 'Generate content similar to the examples above. List 6–10 BIM uses using a clear tick format (✓). For each use, include a short description of how it will be applied and the value/outcome (and name typical tools where relevant). Ensure the selection aligns with the stated BIM goals and lifecycle needs (design, construction, operations). Maximum 170 words.',
+      style: 'tick-list format, use/value focused, realistic selection, ISO 19650 terminology'
+    },
+
     relatedFields: ['bimGoals', 'primaryObjectives', 'bimStrategy']
   },
 
@@ -942,6 +955,12 @@ Client Representative | Robert Brown | ABC Developments | r.brown@abc.com / +44 
       'Too many contacts - focus on key decision-makers only'
     ],
 
+    aiPrompt: {
+      system: 'You are a BIM project management expert specializing in ISO 19650 organizational structures.',
+      instructions: 'Generate a professional table of key project contacts for a BIM Execution Plan. Include role, name with qualifications, company, and contact details. Focus on essential decision-makers: Project Director, BIM/Information Manager, Lead Architect, Structural Lead, MEP Lead, and Client Representative. Include professional qualifications (CEng, RICS, ARB, etc.) where relevant. Maximum 150 words.',
+      style: 'table format, professional, ISO 19650 tone, concise'
+    },
+
     relatedFields: ['proposedInfoManager', 'informationManager', 'assignedTeamLeaders']
   },
 
@@ -1058,6 +1077,12 @@ The Lead Appointed Party has overall responsibility for managing information and
       'Inconsistency with contract documentation'
     ],
 
+    aiPrompt: {
+      system: 'You are a BIM tender expert specializing in organizational capability assessment.',
+      instructions: 'Generate a proposed Lead Appointed Party entry for a BEP tender response. Include full legal company name, relevant ISO certifications (ISO 19650-2, ISO 9001), and brief credentials demonstrating BIM capability. Reference years of experience and project portfolio value. Keep it professional and factual, avoiding marketing language. Maximum 100 words.',
+      style: 'professional, factual, compliance-led, concise'
+    },
+
     relatedFields: ['leadAppointedParty', 'informationManager', 'teamCapabilities']
   },
 
@@ -1094,6 +1119,12 @@ The Information Manager is responsible for establishing and maintaining informat
       'Nominating someone without sufficient seniority or authority',
       'Not confirming availability and commitment to the project'
     ],
+
+    aiPrompt: {
+      system: 'You are a BIM resource planning expert specializing in ISO 19650 competency assessment.',
+      instructions: 'Generate a proposed Information Manager entry for a BEP tender response. Include full name, job title, professional qualifications (RICS, CIOB, etc.), ISO 19650 Lead certification, and BIM credentials (Autodesk Certified, BIM Level 2). Add brief experience summary with years and project types. Emphasize information management expertise and ISO 19650 compliance. Maximum 100 words.',
+      style: 'professional, competency-focused, ISO 19650 tone, concise'
+    },
 
     relatedFields: ['informationManager', 'proposedLead', 'teamCapabilities']
   },
@@ -1135,6 +1166,12 @@ MEP Engineering | Emma Davis, Associate Director (CEng, MCIBSE, Revit MEP Specia
       'Vague experience descriptions without quantification',
       'Proposing junior staff without demonstrated leadership experience'
     ],
+
+    aiPrompt: {
+      system: 'You are a BIM team organization expert specializing in multi-disciplinary coordination.',
+      instructions: 'Generate a table of proposed Task Team Leaders for a BEP tender response. Include Architecture, Structural Engineering, and MEP Engineering (minimum). For each row: discipline, name + job title, professional qualifications (e.g., ARB, CEng, chartered status), company, and a brief experience summary (years, BIM competency, relevant projects). Use pipe-separated table format. Max 150 words.',
+      style: 'ISO 19650-aligned, concise, professional, tender-ready; avoid disclaimers and filler; ensure roles show authority and BIM coordination competence.'
+    },
 
     relatedFields: ['assignedTeamLeaders', 'teamCapabilities', 'taskTeamsBreakdown']
   },
@@ -1179,6 +1216,12 @@ Geotechnical Engineer | Ground Engineering Partners | ICE Accredited, Ground Inv
       'Including too many minor subcontractors - focus on key information producers'
     ],
 
+    aiPrompt: {
+      system: 'You are a BIM project coordination expert specializing in specialist consultant integration.',
+      instructions: 'Generate a table of proposed subcontractors and specialist consultants for a BEP tender response. Include 3-4 key specialists (e.g., Sustainability, Facade Engineering, Acoustics, Geotechnical). For each: role/service, company name, relevant certifications (BREEAM AP, LEED AP, BIM Level 2, etc.), and key contact with email. Use table format with pipe separators. Maximum 120 words.',
+      style: 'table format, professional, certifications included, concise'
+    },
+
     relatedFields: ['proposedTeamLeaders', 'assignedTeamLeaders', 'teamCapabilities']
   },
 
@@ -1216,6 +1259,12 @@ The Lead Appointed Party has overall responsibility for managing information and
       'Inconsistency with contract documents',
       'Insufficient credentials to demonstrate capability'
     ],
+
+    aiPrompt: {
+      system: 'You are a BIM contract management expert specializing in appointed party confirmation.',
+      instructions: 'Generate a confirmed Lead Appointed Party entry for BEP appointment. Include full legal company name, company registration number, ISO 19650-2 certification, ISO 9001 accreditation, and Cyber Essentials. Add brief credentials with years of experience and total project portfolio value. Use confident, appointment-confirmed language. Maximum 100 words.',
+      style: 'appointment-confirmed language, factual, compliance-led, concise'
+    },
 
     relatedFields: ['proposedLead', 'informationManager', 'resourceAllocation']
   },
@@ -1264,6 +1313,12 @@ The Information Manager establishes and maintains information management process
       'No mention of BIM-specific expertise'
     ],
 
+    aiPrompt: {
+      system: 'You are a BIM organizational expert specializing in Information Manager appointment and competency verification.',
+      instructions: 'Generate a confirmed Information Manager entry for BEP appointment. Include full name, job title, professional qualifications (RICS, CIOB, APM), ISO 19650-2 Lead certification, BIM credentials (Autodesk, BRE), and contact details. Add experience summary with years, project count, and total portfolio value. Include FTE allocation. Use appointment-confirmed language. Maximum 150 words.',
+      style: 'appointment-confirmed language, professional, competency-led, concise'
+    },
+
     relatedFields: ['proposedInfoManager', 'informationManagementResponsibilities', 'resourceAllocation']
   },
 
@@ -1307,6 +1362,12 @@ MEP Engineering | Emma Davis, Associate Director (CEng, MCIBSE, Revit MEP Specia
       'Vague experience descriptions',
       'Leaders without authority to make design decisions'
     ],
+
+    aiPrompt: {
+      system: 'You are a BIM project delivery expert specializing in task team organization and resource confirmation.',
+      instructions: 'Generate a table of confirmed Task Team Leaders for BEP appointment. Include entries for Architecture, Structural Engineering, and MEP Engineering (minimum). For each: discipline, name with job title, professional qualifications (ARB, CEng, chartered), company name, specific project responsibilities, BIM competency/software expertise, years of experience, and FTE allocation. Use appointment-confirmed language. Maximum 150 words.',
+      style: 'table format, appointment-confirmed language, professional, concise'
+    },
 
     relatedFields: ['proposedTeamLeaders', 'taskTeamsBreakdown', 'resourceAllocationTable', 'mobilizationPlan']
   },
@@ -1382,6 +1443,13 @@ This addresses capability evaluation (clause 5.3.4) by aggregating task team ass
       'No contingency plans for resource shortfalls',
       'Not aligning with TIDP/MIDP schedules'
     ],
+
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM delivery capability and capacity specialist. Generate ISO 19650-aligned resource allocation tables.',
+      instructions: 'Generate a concise resource allocation table based on the description and examples. Include multiple roles (e.g., Senior BIM Coordinator, Discipline BIM Modeler, Information Manager). For each entry include: role, assigned personnel, key competencies/certifications, weekly allocation (hours/FTE), software/hardware requirements, and notes on responsibilities/testing (interoperability, security training). Use appointment-confirmed language. Maximum 150 words.',
+      style: 'table-like entries, role-specific detail, quantified allocations, ISO 19650-2 terminology'
+    },
 
     relatedFields: ['mobilizationPlan', 'taskTeamsBreakdown', 'informationManagementResponsibilities', 'confirmedBimGoals']
   },
@@ -1552,6 +1620,12 @@ Scalability: Access to parent company's 200+ infrastructure specialists for peer
       'Misalignment with project programme'
     ],
 
+    aiPrompt: {
+      system: 'You are a BIM delivery manager. Produce ISO 19650-aligned resource allocation statements that evidence delivery capacity and scaling.',
+      instructions: 'Write a resource allocation summary aligned to ISO 19650-2 capacity requirements. Include: total team size by discipline, explicit BIM roles (BIM Manager/Coordinator), phase-based deployment (by project stage) with peak FTE timing, specialist resources and when engaged, and contingency/scalability (e.g., access to wider resource pool). Keep it specific and quantified. Ensure alignment with programme/MIDP milestones. Maximum 140 words.',
+      style: 'quantified (FTE), phase-based, role/discipline clarity, capacity evidence, concise'
+    },
+
     relatedFields: ['teamCapabilities', 'assignedTeamLeaders', 'mobilisationPlan']
   },
 
@@ -1652,6 +1726,13 @@ The organizational structure demonstrates clear lines of authority, accountabili
       'Inconsistency with other project documentation'
     ],
 
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM Information Management specialist. Generate clear, ISO 19650-aligned organizational structures and reporting lines.',
+      instructions: 'Describe the project organizational structure for information management. Include governance hierarchy, reporting lines to the appointing party, task teams by discipline, and the Information Manager role with authority/escalation. Mention communication channels and approval responsibilities for information deliverables. Keep it clear and practical (suitable for an org chart description). Maximum 130 words.',
+      style: 'clear hierarchy, roles and reporting lines, ISO 19650 language, concise and unambiguous'
+    },
+
     relatedFields: ['assignedTeamLeaders', 'informationManager', 'taskTeamsBreakdown']
   },
 
@@ -1695,6 +1776,13 @@ MEP Task Team | Emma Davis, Associate Director | 6 MEP engineers (M/E/P split), 
       'Missing coordination duties between teams',
       'Not referencing relevant TIDPs'
     ],
+
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM task team coordination expert. Generate ISO 19650-aligned task team breakdowns for a BEP.',
+      instructions: 'Generate a structured task team breakdown (table-style text). Include key disciplines as separate entries (minimum: Architecture, Structural Engineering, MEP). For each: task team name, team leader, team members/composition, specific responsibilities and information deliverables (aligned to LOIN and TIDP), coordination duties with other teams, and primary software/tools. Use clear, appointment-confirmed language. Maximum 160 words.',
+      style: 'table-style entries, discipline headings, deliverable-focused, ISO 19650/TIDP/LOIN terminology'
+    },
 
     relatedFields: ['assignedTeamLeaders', 'organizationalStructure', 'tidpRequirements']
   },
@@ -1752,6 +1840,13 @@ The BEP must reference and respond to the appointing party's Exchange Informatio
       'Not updating when referenced documents are revised'
     ],
 
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM documentation specialist. Generate concise reference lists of governing documents and standards for a BEP.',
+      instructions: 'Generate content similar to the example above. Provide a bullet list of referenced documents including EIR (with version/date), PIR, ISO 19650 series (as applicable), BS/PAS guidance where relevant, client BIM standards/protocols, RIBA/NBS references (if applicable), and H&S information requirements. Keep it focused on documents that govern information management for this project. Maximum 140 words.',
+      style: 'bullet list, version/date included, formal citations, ISO 19650-aligned'
+    },
+
     relatedFields: ['projectContext', 'informationManagementResponsibilities']
   },
 
@@ -1783,6 +1878,13 @@ BIM applications should deliver measurable value aligned with project objectives
       'Address digital twin and lifecycle value',
       'Be specific - name processes and outcomes'
     ],
+
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM value and benefits specialist. Generate clear descriptions of BIM applications that deliver measurable project value.',
+      instructions: 'Explain how BIM will be applied to maximize value across cost, time, quality, risk, and sustainability. Include practical uses (4D scheduling, 5D cost management, energy/sustainability modelling, lifecycle costing, construction optimisation/prefabrication, stakeholder visualisation, digital twin/operations). Link each application to expected outcomes and quantify where reasonable. Maximum 150 words.',
+      style: 'benefit-led, measurable outcomes, project-focused, ISO 19650-1 value language'
+    },
 
     relatedFields: ['valueProposition', 'bimGoals', 'strategicAlignment']
   },
@@ -1822,6 +1924,13 @@ Risk Reduction | 40% reduction in design-related RFIs | Track RFI count during c
 Sustainability | Achieve net-zero operational carbon | Energy modeling validation at each stage | Target: EPC A rating, <15 kWh/m²/year`
     },
 
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM performance and value measurement specialist. Generate SMART BIM value metrics and tracking methods.',
+      instructions: 'Generate 5–8 value metrics in a table-style format. For each include: value area, target metric (SMART), measurement method, and baseline/benchmark. Cover at least cost, time, quality, risk, and sustainability. Keep metrics realistic and aligned with BIM processes (clash detection, coordination cycles, RFIs/change, energy modelling). Maximum 160 words.',
+      style: 'table-style rows, SMART targets, measurable methods, concise and accountable'
+    },
+
     relatedFields: ['bimGoals', 'valueProposition', 'performanceMetrics']
   },
 
@@ -1852,6 +1961,13 @@ Information management should support the appointing party's strategic purposes 
       'Show understanding beyond the immediate project'
     ],
 
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM strategy advisor. Generate ISO 19650-aligned statements linking BIM delivery to client strategic objectives.',
+      instructions: 'Explain how the BIM strategy supports the client\'s strategic objectives (digital transformation, sustainability/ESG, operational efficiency, asset management, cost/value creation, regulatory requirements). Make the links explicit and outcome-focused, and reference how information management enables these outcomes across the asset lifecycle. Maximum 140 words.',
+      style: 'strategic, client-focused, measurable outcomes where possible, ISO 19650-1 lifecycle language'
+    },
+
     relatedFields: ['projectContext', 'bimStrategy', 'valueProposition']
   },
 
@@ -1880,6 +1996,13 @@ Collaborative production goals should establish how task teams will work togethe
       'Address communication and visualization',
       'Link to ISO 19650 information management principles'
     ],
+
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM information management lead. Define collaborative production goals aligned to ISO 19650 workflows and controls.',
+      instructions: 'Define concise collaborative production goals for the delivery team. Include unified standards/metadata, federation and coordination cadence, milestone delivery consistency, version control and change management, QA/validation, audit trails/accountability, and ISO 19650 compliance targets. Use bullet points or short paragraphs and keep it actionable. Maximum 140 words.',
+      style: 'actionable goals, standardisation and control focus, ISO 19650 terminology, concise'
+    },
 
     relatedFields: ['bimGoals', 'informationManagementResponsibilities', 'alignmentStrategy']
   },
@@ -2010,6 +2133,13 @@ Folders: WIP / Shared / Published / Archive
       '❌ **No integration with appointing party requirements:** Strategy doesn\'t demonstrate how it delivers against specific EIR requirements.'
     ],
 
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are an ISO 19650 information management strategist. Generate practical alignment strategies that remain consistent with the EIR throughout delivery.',
+      instructions: 'Generate content similar to the examples above. Cover the 7 aspects: meeting schedule, RACI reference, naming/folder standards (include one naming example), quality tools and check cadence, training/competency verification, KPIs with measurable targets, and ongoing alignment maintenance (review cycle and change management). Use short headings and concise paragraphs/bullets. Maximum 180 words.',
+      style: 'structured headings, measurable KPIs, specific tools/cadence, ISO 19650-2 aligned'
+    },
+
     relatedFields: ['coordinationMeetings', 'informationManagementResponsibilities', 'qaFramework', 'responsibilityMatrix', 'trainingPlan']
   },
 
@@ -2028,6 +2158,13 @@ Folders: WIP / Shared / Published / Archive
       'Cover all major disciplines and use cases',
       'Ensure consistency with EIR and PIR'
     ],
+
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are an ISO 19650 information requirements specialist. Define clear information purposes that drive the Level of Information Need (LOIN).',
+      instructions: 'List the key purposes for project information across the lifecycle (design development, coordination, construction planning, procurement, handover/operations). Use a short bullet list and align to the EIR/PIR and BIM uses. Keep it concise and project-focused. Maximum 120 words.',
+      style: 'bullet list, lifecycle coverage, purpose-led, ISO 19650 language'
+    },
 
     relatedFields: ['geometricalInfo', 'alphanumericalInfo', 'projectInformationRequirements']
   },
@@ -2056,6 +2193,13 @@ Geometrical information requirements specify the detail, dimensionality, locatio
       'Align with project complexity and information uses'
     ],
 
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM geometric information specialist. Specify geometrical requirements aligned to ISO 19650 Level of Information Need.',
+      instructions: 'Define geometrical information requirements by stage and discipline. Include LOD/LOIN progression, key tolerances/accuracy (with example values), coordination requirements (e.g., critical interfaces), and survey/as-built verification expectations. Keep it practical and measurable. Maximum 140 words.',
+      style: 'requirements-focused, stage-based, quantifiable tolerances, ISO 19650/LOIN terminology'
+    },
+
     relatedFields: ['alphanumericalInfo', 'informationPurposes', 'volumeStrategy']
   },
 
@@ -2083,6 +2227,13 @@ Alphanumerical requirements specify properties, attributes, and parameters that 
       'Reference performance specifications (thermal, structural, etc.)',
       'Ensure consistency with client asset management requirements'
     ],
+
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM data requirements specialist. Specify alphanumerical information needs for models and asset data delivery.',
+      instructions: 'Define required properties/attributes aligned to information purposes and PIR. Cover identification/classification, specifications/performance, manufacturer/product data, quantities/cost (where applicable), COBie/FM asset data, maintenance/warranty fields, and any required property sets/parameter naming conventions. Keep it structured and concise. Maximum 150 words.',
+      style: 'structured categories, asset-data oriented, consistent naming, ISO 19650/COBie-aware'
+    },
 
     relatedFields: ['geometricalInfo', 'documentationInfo', 'projectInformationRequirements']
   },
@@ -2113,6 +2264,13 @@ Documentation requirements specify non-model information deliverables necessary 
       'Link documentation to asset data where possible'
     ],
 
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM documentation deliverables specialist. Define required supporting documentation alongside models.',
+      instructions: 'List the required documentation deliverables (specifications, schedules, certificates, commissioning reports, O&M manuals, H&S file, warranties, training materials). Indicate expected formats (PDF/native) and note that documentation should be linked to model elements/asset data where applicable. Keep it concise. Maximum 120 words.',
+      style: 'deliverable list, format-aware, compliance-focused, concise'
+    },
+
     relatedFields: ['alphanumericalInfo', 'projectInformationRequirements']
   },
 
@@ -2141,6 +2299,13 @@ PIR specify deliverable information to support the operational phase and ongoing
       'Reference regulatory reporting requirements',
       'Ensure structured data format compatibility (COBie, etc.)'
     ],
+
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are an ISO 19650 PIR specialist. Define operational information requirements that support asset management and the whole-life value of the asset.',
+      instructions: 'Describe the PIR for operations: asset management system integration, space/occupancy data, energy monitoring, maintenance planning, digital twin/IoT connectivity, performance analytics, and compliance reporting. Specify expected structured data deliverables (e.g., COBie/asset properties) and how requirements extend beyond project delivery. Maximum 150 words.',
+      style: 'operational focus, structured categories, lifecycle language, concise and specific'
+    },
 
     relatedFields: ['alphanumericalInfo', 'documentationInfo', 'informationPurposes']
   },
@@ -2173,6 +2338,12 @@ The MIDP establishes the schedule of information delivery aligned with key decis
       'Address handover and close-out information delivery'
     ],
 
+    aiPrompt: {
+      system: 'You are a BIM delivery planning expert specializing in information delivery scheduling per ISO 19650.',
+      instructions: 'Generate a Master Information Delivery Plan (MIDP) description. Include alignment with RIBA Plan of Work stages (1-7), key delivery milestones with indicative dates, quality gates and approval processes, integration with project programme, and coordination between Task Information Delivery Plans (TIDPs). Reference handover and close-out processes. Use structured paragraphs. Maximum 150 words.',
+      style: 'structured paragraphs, ISO 19650 tone, milestone-led, concise'
+    },
+
     relatedFields: ['keyMilestones', 'deliverySchedule', 'tidpRequirements']
   },
 
@@ -2192,6 +2363,12 @@ Key milestones represent critical points where information is delivered, reviewe
       'Reference quality requirements for each milestone'
     ],
 
+    aiPrompt: {
+      system: 'You are a BIM project scheduling expert specializing in milestone planning and phased information delivery.',
+      instructions: 'Generate a table of key information delivery milestones for a BEP. Include 5-6 milestones aligned with RIBA stages (e.g., Stage 2, 3, 4, 5, 6, Handover). For each: stage/phase, description, key deliverables (models, specifications, schedules), and indicative due date. Show progressive LOD development (LOD 200→300→350→400). Use table format with pipe separators. Maximum 150 words.',
+      style: 'table format, phased milestones, professional, concise'
+    },
+
     relatedFields: ['midpDescription', 'deliverySchedule', 'milestoneInformation']
   },
 
@@ -2210,6 +2387,12 @@ The delivery schedule details when specific information containers will be produ
       'Show dependencies between disciplines',
       'Include contingency for reviews and revisions'
     ],
+
+    aiPrompt: {
+      system: 'You are a BIM delivery coordination expert specializing in detailed information delivery scheduling.',
+      instructions: 'Generate a detailed information delivery schedule for a BEP. Break down by RIBA stages showing phased approach. Include: stage/phase, timeline, key deliverables per discipline (Architecture, Structural, MEP), coordination frequency (weekly/bi-weekly), federation schedule, client review periods, and resource deployment. Show interdisciplinary dependencies and approval timeframes. Use structured paragraphs or table format. Maximum 180 words.',
+      style: 'phased schedule, structured, ISO 19650 tone, concise'
+    },
 
     relatedFields: ['midpDescription', 'keyMilestones', 'tidpRequirements']
   },
@@ -2238,6 +2421,12 @@ TIDPs define how each task team will deliver information to meet their commitmen
       'Ensure TIDPs align with overall MIDP'
     ],
 
+    aiPrompt: {
+      system: 'You are a BIM delivery planning specialist focusing on task team coordination and discipline-specific delivery plans per ISO 19650.',
+      instructions: 'Generate Task Information Delivery Plan (TIDP) requirements description. Cover TIDP requirements for each major discipline (Architecture, Structural Engineering, MEP). Include delivery frequency (weekly/bi-weekly/monthly) appropriate to each discipline, quality checking procedures before submission, approval workflows with responsible parties, coordination and clash detection requirements, and integration with federated model. Reference software and file formats. Ensure alignment with Master Information Delivery Plan (MIDP). Use structured paragraphs. Maximum 180 words.',
+      style: 'structured paragraphs, discipline-led, ISO 19650 tone, concise'
+    },
+
     relatedFields: ['midpDescription', 'taskTeamsBreakdown', 'deliverySchedule']
   },
 
@@ -2257,6 +2446,12 @@ Clear responsibility assignment ensures accountability for information productio
       'Include client and stakeholder roles where relevant'
     ],
 
+    aiPrompt: {
+      system: 'You are a project governance specialist focusing on role definition and responsibility assignment per ISO 19650 standards.',
+      instructions: 'Generate a RACI (Responsible, Accountable, Consulted, Informed) matrix for BIM project activities. Cover major information management activities including model production, model coordination, quality checking, clash detection, approval workflows, CDE management, security administration, and information delivery. Include roles such as Information Manager, Lead Appointed Party, Task Team Leaders (Architecture, Structure, MEP), BIM Coordinator, Quality Manager, and Client representatives. Ensure each activity has exactly one Accountable party. Use table format with pipe separators. Maximum 180 words.',
+      style: 'table format, governance-first, unambiguous roles, concise'
+    },
+
     relatedFields: ['assignedTeamLeaders', 'informationManagementResponsibilities']
   },
 
@@ -2275,6 +2470,12 @@ Each milestone must have clearly defined information requirements including cont
       'Address both model and non-model information',
       'Reference review and approval requirements'
     ],
+
+    aiPrompt: {
+      system: 'You are a BIM information requirements specialist focusing on milestone-based deliverable specification per ISO 19650.',
+      instructions: 'Generate a detailed table of specific information requirements at each project milestone. Include 5-6 milestones aligned with RIBA stages (Stage 2, 3, 4, 5, 6, Handover). For each milestone specify: required deliverables (models, drawings, specifications, schedules), file formats (IFC, native Revit/Tekla, PDF, COBie), quality level/LOD (LOD 200-400), acceptance criteria, and approval requirements. Address both geometric model information and non-geometric documentation. Show progressive information development. Use table format with pipe separators. Maximum 180 words.',
+      style: 'table format, milestone-led, acceptance criteria explicit, concise'
+    },
 
     relatedFields: ['keyMilestones', 'geometricalInfo', 'alphanumericalInfo']
   },
@@ -2305,6 +2506,12 @@ Mobilization establishes the information management capability, processes, and i
       'Define "go-live" criteria for project launch'
     ],
 
+    aiPrompt: {
+      system: 'You are a BIM project mobilization expert specializing in team setup, system deployment, and readiness planning per ISO 19650.',
+      instructions: 'Generate a project mobilization plan describing how the team, systems, and processes will be established at project start. Include week-by-week timeline covering: CDE setup and configuration (Weeks 1-2), template and standard development, team onboarding and BIM training schedule, software tool deployment and testing, pilot model creation and validation, competency verification process, and project launch readiness criteria ("go-live" gates). Reference ISO 19650 compliance requirements. Show phased approach with clear milestones. Use structured paragraphs with timeline references. Maximum 180 words.',
+      style: 'week-by-week plan, readiness gates, ISO 19650 tone, concise'
+    },
+
     relatedFields: ['cdeStrategy', 'trainingRequirements', 'teamCapabilitySummary']
   },
 
@@ -2325,6 +2532,12 @@ The team must demonstrate both capability (skills, knowledge, certifications) an
       'Mention quality assurance resources'
     ],
 
+    aiPrompt: {
+      system: 'You are a BIM team assessment specialist focusing on capability evaluation and resource capacity planning per ISO 19650.',
+      instructions: 'Generate a team capability summary demonstrating the delivery team\'s BIM capability and capacity to meet project information requirements. Quantify team size and composition (e.g., 5 architects, 3 structural engineers, 4 MEP engineers). Reference ISO 19650 certifications, BIM qualifications, and relevant training. Mention software competencies (Revit, Tekla, Civil 3D) and available licenses. Include collective years of BIM experience and reference similar successful project deliveries. Address resource capacity for peak workload periods. Mention quality assurance resources and procedures. Use structured paragraphs. Maximum 160 words.',
+      style: 'capability/capacity framing, ISO 19650 tone, structured, concise'
+    },
+
     relatedFields: ['teamCapabilities', 'resourceAllocation', 'bimCompetencyLevels']
   },
 
@@ -2344,6 +2557,12 @@ Information risks must be identified, assessed, and mitigated throughout the app
       'Include technology, process, and people risks',
       'Link mitigations to contingency plans'
     ],
+
+    aiPrompt: {
+      system: 'You are a BIM risk management specialist focusing on information delivery risks and mitigation strategies per ISO 19650.',
+      instructions: 'Generate an information risk register identifying, assessing, and mitigating risks specific to information management and BIM delivery. Include 5-7 key risks covering: data loss/corruption, software incompatibility issues, delivery schedule delays, resource/competency gaps, technology failures, coordination breakdown, and security breaches. For each risk specify: description, impact level (High/Medium/Low), probability (High/Medium/Low), mitigation strategy, risk owner role, and contingency plan. Include both technology risks and process/people risks. Use table format with pipe separators. Maximum 180 words.',
+      style: 'table format, risk register tone, actionable mitigations, concise'
+    },
 
     relatedFields: ['informationRisks', 'technologyRisks', 'riskMitigation']
   },
@@ -2373,6 +2592,12 @@ Task teams must establish clear protocols for information exchange, coordination
       'Include clash detection and resolution workflows'
     ],
 
+    aiPrompt: {
+      system: 'You are a BIM coordination specialist focusing on interdisciplinary information exchange and collaboration protocols per ISO 19650.',
+      instructions: 'Generate protocols for information exchange between task teams describing how disciplines will share, coordinate, and approve information. Include: model federation frequency and process (weekly/bi-weekly), coordination meeting schedule and agenda, issue resolution workflows using BCF format, sign-off procedures for milestone deliverables, real-time collaboration protocols, automated notification systems for model updates, reference model update procedures, and clash detection/resolution workflows. Define responsibilities for each discipline (Architecture, Structure, MEP). Use structured paragraphs organized by topic. Maximum 180 words.',
+      style: 'ISO 19650 tone, structured by topic, procedural, concise'
+    },
+
     relatedFields: ['coordinationMeetings', 'clashDetectionWorkflow', 'federationProcess']
   },
 
@@ -2400,6 +2625,12 @@ Model referencing procedures ensure all disciplines work in a common coordinate 
       'Test coordination in federated environment regularly'
     ],
 
+    aiPrompt: {
+      system: 'You are a BIM spatial coordination expert specializing in 3D model referencing and geometric consistency per ISO 19650.',
+      instructions: 'Generate procedures for referencing 3D models to ensure spatial coordination and geometric consistency. Include: establishment of shared coordinate system from survey data (origin point, grid system, level datums), reference model linking protocols between disciplines, version control procedures to prevent out-of-date references, automated reference updates through CDE, clash detection workflows leveraging referenced models, quality gates for reference verification, and notification processes for reference model updates. Address both Revit and other BIM authoring tools. Use structured paragraphs organized by procedure type. Maximum 170 words.',
+      style: 'procedural, ISO 19650 tone, structured, concise'
+    },
+
     relatedFields: ['federationStrategy', 'clashDetectionWorkflow', 'volumeStrategy']
   },
 
@@ -2423,6 +2654,12 @@ The CDE is the agreed source of information for the project, used to collect, ma
       'Address backup and business continuity'
     ],
 
+    aiPrompt: {
+      system: 'You are an ISO 19650 information management lead. Define a Common Data Environment (CDE) strategy with governance, workflow, and security controls.',
+      instructions: 'Describe the overall CDE strategy. State the selected platform(s) and what each is used for, define the workflow states (WIP, Shared, Published, Archived) and how they are implemented, and explain governance (administration, ownership, audits). Reference access control/security principles and backup/business continuity at a high level. Maximum 140 words.',
+      style: 'ISO 19650 tone, governance-first, clear workflow states, concise and actionable'
+    },
+
     relatedFields: ['cdePlatforms', 'workflowStates', 'accessControl']
   },
 
@@ -2442,6 +2679,12 @@ The CDE may consist of multiple integrated platforms serving different purposes 
       'Address cross-platform synchronization'
     ],
 
+    aiPrompt: {
+      system: 'You are a CDE administrator. Specify CDE platforms and how they integrate while maintaining ISO 19650 governance and workflow control.',
+      instructions: 'List each CDE platform in use and, for each, state: purpose, information types managed, how workflow states map (WIP/Shared/Published/Archived), key user groups/roles, and how the platform integrates with others (sync, links, single source of truth, naming/metadata). Include a brief note on access controls per platform. Maximum 160 words.',
+      style: 'structured per-platform bullets, integration clarity, no marketing language, concise'
+    },
+
     relatedFields: ['cdeStrategy', 'workflowStates', 'accessControl']
   },
 
@@ -2460,6 +2703,12 @@ Workflow states define the status and accessibility of information as it progres
       'Address quality checking before progression',
       'Implement automated workflows where possible'
     ],
+
+    aiPrompt: {
+      system: 'You are an ISO 19650 information manager. Define CDE workflow states and objective transition criteria with clear approvals and quality gates.',
+      instructions: 'Define WIP, Shared, Published, and Archived. For each state include: intent/purpose, who can access (read/write), and typical content. Then define transition criteria between states, including required checks (model/document QA), approvals/authorizations, and how status/suitability is recorded. Keep it practical and enforceable. Maximum 170 words.',
+      style: 'state-by-state structure, criteria-driven, audit-friendly, concise'
+    },
 
     relatedFields: ['cdeStrategy', 'approvalWorkflows', 'accessControl']
   },
@@ -2481,6 +2730,12 @@ Access control ensures only authorized personnel can access, modify, or approve 
       'Document access request and approval process'
     ],
 
+    aiPrompt: {
+      system: 'You are an information security lead for a BIM project. Define role-based access control for a CDE in line with ISO 19650 information management.',
+      instructions: 'Specify access control policies for the CDE. Include RBAC roles (e.g., Admin, Information Manager, Discipline Lead, Author, Client, Contractor), authentication (SSO/MFA), permissions by workflow state (WIP/Shared/Published/Archived), and an access request/approval and periodic review process. Include guest/external access time limits and audit logging expectations. Maximum 170 words.',
+      style: 'policy-style, least-privilege, role/state matrix mindset, concise'
+    },
+
     relatedFields: ['cdeStrategy', 'workflowStates', 'securityMeasures']
   },
 
@@ -2501,6 +2756,12 @@ Security measures must protect information from unauthorized access, modificatio
       'Security incident response procedures'
     ],
 
+    aiPrompt: {
+      system: 'You are a project information security specialist. Define proportionate security measures protecting confidentiality, integrity, and availability of BIM information.',
+      instructions: 'Describe security measures for the project information environment. Cover encryption in transit (TLS) and at rest (e.g., AES-256), malware scanning, vulnerability management (patching, audits/pen tests), logging/monitoring, secure configuration, and incident response (detection, containment, reporting, lessons learned). Note GDPR/data residency where relevant. Keep it practical and aligned to CDE operations. Maximum 160 words.',
+      style: 'risk-based, operational controls, clear bullets, concise'
+    },
+
     relatedFields: ['accessControl', 'backupProcedures', 'encryptionRequirements']
   },
 
@@ -2520,6 +2781,12 @@ Backup procedures must ensure information can be recovered in case of data loss,
       'Documented restoration procedures',
       'Monthly backup verification reports'
     ],
+
+    aiPrompt: {
+      system: 'You are an IT resilience lead supporting ISO 19650 information management. Define backup and disaster recovery procedures for a CDE and project data.',
+      instructions: 'Define backup and disaster recovery arrangements. Include backup frequency (daily incremental, weekly full), retention periods, offsite/geo-redundant storage, and RPO/RTO targets. Describe integrity testing, restoration steps and responsibilities, and how backup status is reported (e.g., monthly verification). Mention business continuity considerations for CDE outages. Maximum 170 words.',
+      style: 'operational, measurable (RPO/RTO/retention), responsibilities clear, concise'
+    },
 
     relatedFields: ['cdeStrategy', 'securityMeasures', 'contingencyPlans']
   },
@@ -2605,6 +2872,12 @@ Cloud Infrastructure:
       'Missing cloud computing resources for analysis and rendering'
     ],
 
+    aiPrompt: {
+      system: 'You are a BIM IT lead. Specify role-appropriate hardware and compute requirements to reliably deliver BIM workflows and meet ISO 19650 mobilization needs.',
+      instructions: 'Specify hardware requirements for BIM delivery. Provide minimum workstation specs (CPU/RAM/GPU/SSD) for authors and coordinators, server/storage needs (capacity, RAID, backups), mobile/site devices, and any specialist equipment. Include any cloud/virtual compute requirements for heavy tasks (point clouds, rendering, analysis). Keep it specific with measurable specs and note scalability for peak periods. Maximum 170 words.',
+      style: 'spec-driven, role-based, measurable thresholds, concise'
+    },
+
     relatedFields: ['bimSoftware', 'networkRequirements', 'cdeStrategy']
   },
 
@@ -2684,6 +2957,12 @@ Cloud Infrastructure:
       'Not accounting for multiple concurrent users',
       'No WiFi provision for mobile/tablet access'
     ],
+
+    aiPrompt: {
+      system: 'You are an IT infrastructure specialist for BIM collaboration. Define network requirements that enable secure, reliable CDE access and model exchange.',
+      instructions: 'Define network requirements: internet bandwidth targets, internal LAN speed, VPN/remote access capacity, latency expectations for cloud collaboration, redundancy/failover, and site connectivity. Include security controls (firewalls, secure WiFi, encryption) and QoS guidance prioritizing CDE traffic. Keep values measurable and sized for concurrent users. Maximum 170 words.',
+      style: 'performance + security balanced, measurable targets, structured bullets, concise'
+    },
 
     relatedFields: ['hardwareRequirements', 'cdeStrategy', 'securityMeasures']
   },
@@ -2766,6 +3045,12 @@ Survey Data:
       'Missing API integration opportunities for automation',
       'No fallback strategy when interoperability fails'
     ],
+
+    aiPrompt: {
+      system: 'You are a BIM interoperability specialist. Define exchange standards and validation so information can be reliably used across tools and stakeholders.',
+      instructions: 'Define interoperability requirements. Specify primary exchange formats (IFC version + intended MVD), issue format (BCF), FM handover dataset (COBie), and any GIS/alignment formats where relevant. Include version compatibility expectations, coordinate system rules, and validation steps before/after export (rule checks, viewer verification, error thresholds). Mention API/automation integration only where it supports controlled exchange. Maximum 180 words.',
+      style: 'standards-led, validation-focused, tool-agnostic, concise'
+    },
 
     relatedFields: ['bimSoftware', 'fileFormats', 'federationStrategy', 'projectInformationRequirements']
   },
@@ -2855,6 +3140,12 @@ Quality Checks:
       'Missing 4D sequencing integration for construction coordination',
       'No stakeholder access to federated coordination models'
     ],
+
+    aiPrompt: {
+      system: 'You are a BIM federation and coordination expert specializing in multi-discipline model integration per ISO 19650.',
+      instructions: 'Generate a federation strategy for integrating discipline models into a coordinated whole-project model. Include: federation frequency and triggers (weekly automated/ad-hoc), disciplines/models to be federated (Architecture, Structure, MEP, Civil, Landscape), federated model hosting platform (Navisworks, Solibri, BIM 360), clash detection workflows with tolerance thresholds (25mm hard clash), clash ownership matrix and resolution responsibilities, version control ensuring only approved models are federated, coordination meeting schedules, and stakeholder access arrangements. Address both design phase and construction documentation phase approaches. Use structured paragraphs. Maximum 180 words.',
+      style: 'ISO 19650 tone, coordination-focused, structured, concise'
+    },
 
     relatedFields: ['volumeStrategy', 'clashDetectionWorkflow', 'modelReferencing3d', 'coordinationMeetings']
   },
@@ -2947,6 +3238,12 @@ Rationale:
       'Missing phasing models for construction sequencing',
       'No site/external works models (only buildings modeled)'
     ],
+
+    aiPrompt: {
+      system: 'You are a BIM information architecture specialist focusing on model breakdown strategies and information organization per ISO 19650.',
+      instructions: 'Generate an information breakdown strategy defining how project information will be broken down into manageable models and deliverables. Include: model breakdown approach by discipline (Architecture, Structure, MEP), further subdivision by building/zone/level for large projects, rationale for breakdown strategy (performance, coordination, contract alignment), model linking and referencing approach, file size management (target <500MB per model), phasing requirements (existing, demolition, new construction), clear model boundaries and overlap zones, and alignment with delivery milestones. Address both buildings and external works. Use structured paragraphs. Maximum 180 words.',
+      style: 'information containers, performance-aware, ISO 19650 tone, concise'
+    },
 
     relatedFields: ['volumeStrategy', 'federationStrategy', 'fileStructure', 'namingConventions']
   },
@@ -3067,6 +3364,12 @@ Day 14-Next Cycle: Iterative Resolution
       'No version control or change tracking of federated models'
     ],
 
+    aiPrompt: {
+      system: 'You are a BIM coordination workflow specialist focusing on detailed federation procedures and quality validation per ISO 19650.',
+      instructions: 'Generate detailed federation process procedures for creating, validating, and distributing federated coordination models. Include step-by-step workflow: model preparation and pre-federation validation checklist (coordinate system, naming conventions, internal clashes resolved), federation software and tools (Navisworks/Solibri), automated federation triggered by CDE publication, automated clash detection execution (25mm tolerance), federation report generation with clash summary and model metrics, quality checking procedures, distribution through CDE with controlled access, coordination meeting schedule (weekly), roles and responsibilities (BIM Coordinator, Discipline Leads), and escalation process for critical issues. Use structured paragraphs with numbered steps. Maximum 180 words.',
+      style: 'numbered steps, procedural, ISO 19650 tone, concise'
+    },
+
     relatedFields: ['federationStrategy', 'clashDetectionWorkflow', 'coordinationMeetings', 'modelValidation']
   },
 
@@ -3159,6 +3462,12 @@ The delivery team must establish and maintain the necessary information technolo
       'Incomplete network specifications (bandwidth, redundancy)',
       'Not categorizing items logically (mixing software/hardware)'
     ],
+
+    aiPrompt: {
+      system: 'You are a BIM technology mobilization lead. Create a clear infrastructure matrix covering software, hardware, and IT services needed for ISO 19650 delivery.',
+      instructions: 'Provide a categorized matrix of required software, hardware, and IT infrastructure. Use categories such as Software Applications, Hardware, Network/Connectivity, Storage/Backup, and Security. For each row include item name, specification (version, license count, key hardware specs, capacity/bandwidth), and purpose/usage. Ensure it supports CDE access, federation/clash workflows, and site/field use where applicable. Maximum 170 words.',
+      style: 'table/matrix-oriented, categorized, measurable specs, concise'
+    },
 
     relatedFields: ['bimSoftware', 'hardwareRequirements', 'networkRequirements', 'cdeStrategy']
   },
@@ -3279,6 +3588,12 @@ Maintained in CDE with searchable fields:
       'Non-compliant with ISO 19650 naming standards'
     ],
 
+    aiPrompt: {
+      system: 'You are a document control and information management specialist focusing on ISO 19650-compliant procedures and standards.',
+      instructions: 'Generate document control procedures ensuring consistent identification, versioning, approval, and distribution of all project information. Include: ISO 19650-2 naming convention (Project-Originator-Volume-Level-Type-Role-Number with example), suitability codes (S0-S7) with definitions, revision control procedures (P01-P99 for drafts, C01-C99 for issued), approval and authorization workflows (Author-Checker-Approver matrix), status codes for workflow states (WIP, Shared, Published, Archived), central document register maintenance in CDE, distribution and access control procedures, automated document numbering where possible, metadata standards, and audit trail requirements. Use structured paragraphs organized by topic. Maximum 190 words.',
+      style: 'professional, ISO 19650 tone, structured by topic, concise'
+    },
+
     relatedFields: ['namingConventions', 'cdeStrategy', 'workflowStates', 'approvalWorkflows']
   },
 
@@ -3380,6 +3695,12 @@ Consistent modeling standards ensure that information is produced to a defined q
       'Missing quality validation rules and automated checking'
     ],
 
+    aiPrompt: {
+      system: 'You are an ISO 19650 modeling standards advisor.',
+      instructions: `You are assisting with defining modeling standards for a BIM Execution Plan. Help users establish comprehensive modeling guidelines covering model structure, element conventions, LOD requirements by project stage, template standards, view templates, workset strategies, classification systems, and quality validation rules. Provide stage-specific LOD requirements (LOD 200/300/350/400/500), template configuration guidance (levels, grids, parameters, view templates), element modeling conventions (walls to structural face, separate finishes), and quality checking procedures. Reference ISO 19650-2 standards and industry best practices (PAS 1192, BS 1192). Ensure consistency and interoperability across all project teams.`,
+      style: 'ISO 19650 tone, practical standards, structured guidance, concise'
+    },
+
     relatedFields: ['geometricalInfo', 'alphanumericalInfo', 'volumeStrategy', 'classificationSystems']
   },
 
@@ -3439,6 +3760,12 @@ Naming standards are enforced through CDE configuration, project templates, and 
       'Not addressing governance and compliance mechanisms',
       'Missing explanation of stakeholder training approach'
     ],
+
+    aiPrompt: {
+      system: 'You are an ISO 19650 naming conventions advisor.',
+      instructions: `You are helping define the strategic overview of file naming conventions for a BIM project. Guide users to articulate their naming philosophy aligned with ISO 19650-2, explaining how the naming approach supports consistency, traceability, information retrieval, automated sorting, version control, and integration with classification and asset management systems. Help them describe governance mechanisms (training, CDE validation, compliance audits) and how naming standards are communicated and enforced across all team members. Encourage project-specific context that addresses client EIR requirements and explains how naming facilitates project objectives including coordination, data exchange, and lifecycle information management.`,
+      style: 'strategy-first, governance-aware, ISO 19650 tone, concise'
+    },
 
     relatedFields: ['namingConventions_fields', 'namingConventions_pattern', 'namingConventions_attributes', 'fileStructure', 'cdeStrategy']
   },
@@ -3526,6 +3853,12 @@ Each field must have clear definitions, allowed values, and examples to ensure c
       'Failing to align fields with project organizational structure'
     ],
 
+    aiPrompt: {
+      system: 'You are an ISO 19650 file naming field specialist.',
+      instructions: `You are helping users define individual naming fields for ISO 19650-2 file naming conventions. Guide them to define 6-8 core fields: Project Code, Originator, Volume/System, Level/Location, Type, Role, Number, and Revision. For each field, help them specify format (character length, uppercase/lowercase, alphanumeric), provide clear descriptions, include multiple examples covering different scenarios, establish abbreviation glossaries, define "not applicable" conventions (XX, ZZ, 00), and align codes with project breakdown structure and organizational roles. Ensure field definitions support automated validation, enable unique file identification, and facilitate filtering and sorting in the CDE. Provide lookup tables and quick reference guides for team members.`,
+      style: 'field-by-field structure, examples included, ISO 19650 tone, concise'
+    },
+
     relatedFields: ['namingConventions_overview', 'namingConventions_pattern', 'volumeStrategy', 'organizationalStructure']
   },
 
@@ -3599,6 +3932,12 @@ Reports:
       'Not showing revision progression examples',
       'Failing to demonstrate "not applicable" field usage'
     ],
+
+    aiPrompt: {
+      system: 'You are an ISO 19650 naming pattern specialist.',
+      instructions: `You are helping users define complete file naming patterns following ISO 19650-2 structure. Guide them to create the master template showing field order and separators (typically hyphens): [Project]-[Originator]-[Volume]-[Level]-[Type]-[Role]-[Number]-[Revision].[extension]. Help them provide 5-10 comprehensive examples covering models (.rvt, .ifc), drawings (.pdf, .dwg), documents (.docx, .pdf), and schedules (.xlsx) across multiple disciplines (architecture, structural, MEP). Show revision progression (P01 → P02 → C01), demonstrate "not applicable" field usage (XX for whole building), and include file extension guidance. Ensure examples illustrate edge cases and real-world scenarios for architecture, structure, MEP, and project management deliverables.`,
+      style: 'template + examples, ISO 19650 tone, practical and clear'
+    },
 
     relatedFields: ['namingConventions_overview', 'namingConventions_fields', 'fileFormats', 'deliverableTemplates']
   },
@@ -3691,6 +4030,12 @@ Deliverable attributes support the project information standard and enable effec
       'No link between classification codes and naming conventions',
       'Missing guidance on attribute population and validation'
     ],
+
+    aiPrompt: {
+      system: 'You are an ISO 19650 deliverables metadata specialist.',
+      instructions: `You are helping define deliverable attributes and metadata for a BIM project. Guide users to specify mandatory vs. optional attributes for each deliverable type including file formats (.rvt, .ifc, .pdf), classification codes (Uniclass 2015), Level of Information Need (LOD 200-500), security classifications (Public/Internal/Confidential), suitability codes (ISO 19650 S0-S8: S0=WIP, S1=Coordination, S2=Information, S3=Review, S4=Approval), revision codes (P=Prelim, C=Construction, A=As-built), and authorship metadata (Author, Checker, Approver). Help establish controlled vocabularies, define where attributes are stored (filename vs. metadata vs. CDE properties), align with client asset management requirements, and document validation procedures. Ensure attributes support lifecycle information management and COBie handover.`,
+      style: 'metadata-first, controlled vocabularies, ISO 19650 tone, concise'
+    },
 
     relatedFields: ['namingConventions_overview', 'namingConventions_pattern', 'classificationSystems', 'informationFormats', 'dataClassification']
   },
@@ -3794,6 +4139,12 @@ Format: [Project]-[Survey Type]-[Zone]-[Date]
       'Missing sequential numbering structure',
       'Not documenting naming conventions in project standards'
     ],
+
+    aiPrompt: {
+      system: 'You are an ISO 19650 naming conventions and information standard specialist.',
+      instructions: `You are helping establish comprehensive naming conventions for all BIM project deliverables. Guide users to define ISO 19650-2 compliant naming for files/models, drawings/sheets, views/view templates, families/types, worksets/design options, shared parameters, and materials/assemblies. Help them create naming formats for each category, use consistent separators (hyphens/underscores), avoid special characters, keep names concise (50 characters max), include version/revision indicators, use leading zeros for sequential numbering (001, 002), and align family naming with classification systems (Uniclass). Provide examples across disciplines (architecture, structure, MEP, infrastructure) covering models (.rvt), drawings, view naming hierarchies (discipline-level-view type), and element naming conventions. Ensure consistency enables automated processes and information retrieval.`,
+      style: 'standards-led, consistent separators, examples included, concise'
+    },
 
     relatedFields: ['fileStructure', 'documentControlInfo', 'classificationSystems', 'volumeStrategy']
   },
@@ -3914,6 +4265,12 @@ Project-Standards/
       'Personal/individual folders instead of discipline-based organization'
     ],
 
+    aiPrompt: {
+      system: 'You are a CDE information management specialist focusing on ISO 19650 folder structures.',
+      instructions: `You are helping define CDE folder structure and organization hierarchy for a BIM project. Guide users to align top-level structure with ISO 19650-1 CDE workflow states (WIP/Shared/Published/Archive), organize by discipline or work package below top level, create separate folders for models, drawings, specifications, and reports, maintain consistent structure across disciplines, include Templates folder with standards and libraries, define folder naming conventions (no spaces, consistent abbreviations), and limit depth to 4-5 levels. Help them create structures for both building projects (Architecture/Structure/MEP/Coordination/Cost) and infrastructure (Highway/Structures/Drainage/Utilities/Geotechnical). Include Project-Resources folder for templates, standards, BEP, and family libraries. Ensure organization supports efficient retrieval and reduces duplication.`,
+      style: 'ISO 19650 workflow states, hierarchy clarity, practical and concise'
+    },
+
     relatedFields: ['fileStructureDiagram', 'cdeStrategy', 'namingConventions', 'workflowStates']
   },
 
@@ -4006,6 +4363,12 @@ Use diagram builder to show:
       'Missing Templates/Standards folder location'
     ],
 
+    aiPrompt: {
+      system: 'You are a BIM information manager helping communicate CDE structures.',
+      instructions: `You are helping create a visual CDE folder structure diagram for a BIM project. Guide users to start with CDE workflow states as top level (WIP/Shared/Published/Archive), show consistent folder structure replicated across each workflow state, indicate discipline-specific vs. shared folders, use color coding or icons to differentiate information types (models, drawings, documents), include folder naming examples and file type indicators (*.rvt, *.pdf, *.dwg), show relationships between linked folders, and indicate read/write permissions. Help them create clear, uncluttered diagrams using tree structure notation with visual hierarchy. Use color coding: Blue=WIP (editable), Green=Shared (coordination), Yellow=Published (approved), Red=Archive (read-only). Include Project-Resources folder for templates, standards, and libraries. Keep diagram clear by collapsing detail where needed.`,
+      style: 'diagram/tree notation, clear hierarchy, minimal clutter, concise'
+    },
+
     relatedFields: ['fileStructure', 'cdeStrategy', 'workflowStates', 'documentControlInfo']
   },
 
@@ -4033,6 +4396,12 @@ The volume strategy defines how project information is divided into containers t
       'Balance granularity - too many small models increases coordination complexity',
       'Document model linking strategy and shared coordinate systems'
     ],
+
+    aiPrompt: {
+      system: 'You are a BIM information container strategy specialist.',
+      instructions: `You are helping define the volume strategy (model breakdown structure) for a BIM project. Guide users to break down complex projects by building/zone first, then discipline, keeping individual model files under 500MB for performance. Help them align breakdown with construction phases and contract packages, create separate containers for existing/demolition/new construction, define clear model boundaries with minimal overlap, and balance granularity to avoid excessive coordination complexity. For buildings, suggest breakdown by tower/wing/zone then discipline; for infrastructure, by chainage/station/structure then discipline. Document model linking strategy, shared coordinate systems, and how breakdown supports phased delivery. Create visual mindmaps or diagrams showing primary breakdown (building/zone/phase) and secondary breakdown (discipline/system/level) with clear rationale.`,
+      style: 'performance-aware, phased breakdown, clear boundaries, concise'
+    },
 
     relatedFields: ['informationBreakdownStrategy', 'federationStrategy', 'fileStructure', 'modelReferencing3d']
   },
@@ -4136,6 +4505,12 @@ Feature codes aligned with OS MasterMap:
       'Different disciplines using incompatible classification approaches'
     ],
 
+    aiPrompt: {
+      system: 'You are a BIM classification and information standard specialist.',
+      instructions: `You are helping define classification systems for organizing BIM project information. Guide users to use Uniclass 2015 as primary UK classification system covering Elements (Ss - Systems), Spaces (SL - Spaces/Locations), and Products (Pr - Products). Help them apply classification codes to all model elements and spaces, align with client FM/asset management systems, define classification depth required (typically to 4th level: Ss_25_30_20), include COBie classification requirements for FM handover, and implement automated validation. For infrastructure, incorporate DMRB standards and client asset codes. Provide examples mapping common elements to codes (Ss_25_30_20 = Metal Curtain Walling, SL_35_10 = Open Plan Office, Pr_60_10_10 = WC Suites). Train team on classification usage and importance.`,
+      style: 'Uniclass-led, examples included, validation-focused, concise'
+    },
+
     relatedFields: ['classificationStandards', 'alphanumericalInfo', 'projectInformationRequirements', 'cobieRequirements']
   },
 
@@ -4204,6 +4579,12 @@ Map Uniclass to client asset register codes for FM handover`
       'Not aligned with client asset management codes',
       'Missing training on classification system usage'
     ],
+
+    aiPrompt: {
+      system: 'You are a BIM classification implementation specialist.',
+      instructions: `You are helping create detailed classification implementation standards for a BIM project. Guide users to create lookup tables mapping element categories to Uniclass 2015 codes with clear examples: External Walls (Ss_25_XX_XX), Floor Structures (Ss_15_XX_XX), HVAC Equipment (Pr_65_XX_XX), Office Spaces (SL_35_XX). Help them define required classification depth for different element types (typically 4th level), specify responsibility for applying classification (Architect/Engineer/Space Planner), include space/room classification, define system/assembly classification approach, and establish automated validation rules (Solibri: all elements must have Uniclass code parameter populated). Provide training materials, quick reference guides, and align with client asset management codes for FM handover. Ensure completeness for COBie deliverables.`,
+      style: 'lookup tables, responsibilities, automated validation, concise'
+    },
 
     relatedFields: ['classificationSystems', 'modelingStandards', 'alphanumericalInfo', 'cobieRequirements']
   },
@@ -4278,6 +4659,12 @@ Structured data exchange protocols ensure timely, accurate, and complete informa
       'No acceptance criteria for received information',
       'Different disciplines using incompatible exchange formats'
     ],
+
+    aiPrompt: {
+      system: 'You are an ISO 19650 information exchange specialist.',
+      instructions: `You are helping define data exchange protocols for a BIM project following ISO 19650-2. Guide users to define regular exchange cadence (weekly/biweekly/milestone-based), specify file formats for different exchange types (IFC 4 Coordination View 2.0 for coordination, BCF 2.1 for issues, COBie 2.4 for FM handover), define delivery methods (CDE upload, BIM 360, secure data room), implement automated validation before exchange (Solibri rules, COBie validator), establish notification procedures, maintain exchange logs, and define acceptance criteria. Help them create frameworks for Regular Coordination (weekly native + IFC), Clash Detection (weekly BCF), Client Review (monthly PDF + Navisworks), and FM Handover (COBie + IFC at completion). Include fallback procedures for failed exchanges and quality checks.`,
+      style: 'protocol-driven, structured, ISO 19650 tone, concise'
+    },
 
     relatedFields: ['interoperabilityNeeds', 'fileFormats', 'federationProcess', 'taskTeamExchange']
   },
@@ -4364,6 +4751,12 @@ Quality assurance processes ensure that information delivered meets the defined 
       'No QA metrics or targets defined',
       'Periodic audits not scheduled or performed'
     ],
+
+    aiPrompt: {
+      system: 'You are a BIM quality assurance lead. Define a QA framework that assures information quality, compliance with standards, and suitability for purpose under ISO 19650.',
+      instructions: 'Define the QA framework as a short table-like list of QA activities. For each activity specify responsibility (RACI-style), frequency, and tools/methods (e.g., Solibri/Navisworks checks, checklists, audits). Include author self-check, peer review, automated validation, coordination/clash review, and milestone deliverable sign-off. Include how non-conformances are recorded and closed, and 2-3 measurable quality targets. Maximum 180 words.',
+      style: 'structured, activity-based, measurable targets, audit-ready, concise'
+    },
 
     relatedFields: ['modelValidation', 'reviewProcesses', 'approvalWorkflows', 'complianceVerification']
   },
@@ -5106,6 +5499,12 @@ Handling: Maximum security protocols, secure facilities only`
       'Team not trained on classification system',
       'No audit or monitoring of classification compliance'
     ],
+
+    aiPrompt: {
+      system: 'You are an ISO 19650-5 information security specialist. Define data classification levels and handling controls suitable for project information management.',
+      instructions: 'Define 3-4 data classification levels and, for each, specify: typical examples, access controls (role/need-to-know), encryption requirements (in transit/at rest), sharing restrictions, and retention/disposal. Include requirements for labelling/metadata, training/awareness, and periodic audits. Keep controls proportionate and aligned to client security policies. Maximum 180 words.',
+      style: 'security-minded, policy-style, level-by-level structure, concise'
+    },
 
     relatedFields: ['accessPermissions', 'encryptionRequirements', 'dataTransferProtocols', 'privacyConsiderations']
   },

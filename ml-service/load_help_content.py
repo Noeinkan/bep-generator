@@ -35,23 +35,37 @@ def load_field_prompts_from_help_content():
 
     field_prompts = {}
 
-    # Regex pattern to match field blocks with aiPrompt
-    # Pattern: fieldName: { ... aiPrompt: { system: '...', instructions: '...', style: '...' }, ... }
+    # Match JS single-quoted strings, supporting escaped characters like \'
+    js_sq = r"'((?:\\.|[^'\\])*)'"
+
+    # Regex pattern to match aiPrompt blocks.
+    # Supports both:
+    # - aiPrompt: { system: '...', instructions: '...', style: '...' }
+    # - aiPrompt: { system: '...', context: '...' }  (legacy)
     field_pattern = re.compile(
-        r"(\w+):\s*\{.*?aiPrompt:\s*\{\s*"
-        r"system:\s*'([^']+)',\s*"
-        r"instructions:\s*'([^']+)',\s*"
-        r"style:\s*'([^']+)'\s*\}",
-        re.DOTALL
+        rf"(\w+):\s*\{{.*?aiPrompt:\s*\{{\s*"
+        rf"system:\s*{js_sq}\s*,\s*"
+        rf"(?:(?:instructions|context):\s*{js_sq})\s*(?:,\s*style:\s*{js_sq})?\s*\}}",
+        re.DOTALL,
     )
 
     matches = field_pattern.findall(content)
 
     for match in matches:
-        field_name, system, instructions, style = match
+        # match is either (field, system, text, style) or (field, system, text)
+        field_name = match[0]
+        system = match[1]
+        text = match[2]
+        style = match[3] if len(match) > 3 and match[3] else ''
+
+        # Unescape common JS escapes for readability in Python
+        system = system.replace("\\'", "'")
+        text = text.replace("\\'", "'")
+        style = style.replace("\\'", "'")
+
         field_prompts[field_name] = {
             'system': system,
-            'context': instructions,  # Map 'instructions' to 'context' for compatibility
+            'context': text,  # Map instructions/context to 'context' for compatibility
             'style': style
         }
 
