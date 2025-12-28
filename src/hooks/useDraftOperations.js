@@ -194,6 +194,65 @@ export const useDraftOperations = (user, currentFormData, bepType, onLoadDraft, 
     }
   }, []);
 
+  const importBepFromJson = useCallback((file) => {
+    return new Promise((resolve, reject) => {
+      if (!file) {
+        setError('No file selected');
+        reject(new Error('No file selected'));
+        return;
+      }
+
+      if (!file.name.endsWith('.json')) {
+        setError('Invalid file type. Please select a JSON file.');
+        reject(new Error('Invalid file type'));
+        return;
+      }
+
+      setIsLoading(true);
+      setError(null);
+
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        try {
+          const jsonData = JSON.parse(e.target.result);
+
+          // Validate that the imported data has the expected structure
+          if (!jsonData || typeof jsonData !== 'object') {
+            throw new Error('Invalid JSON structure');
+          }
+
+          // Load the imported data into the form
+          if (typeof onLoadDraft === 'function') {
+            // Try to detect BEP type from the data, default to 'pre-appointment'
+            const detectedBepType = jsonData.bepType || 'pre-appointment';
+            onLoadDraft(jsonData, detectedBepType);
+
+            if (typeof onClose === 'function') {
+              onClose();
+            }
+          }
+
+          setIsLoading(false);
+          resolve(jsonData);
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
+          setError('Failed to import BEP. Invalid JSON format.');
+          setIsLoading(false);
+          reject(error);
+        }
+      };
+
+      reader.onerror = () => {
+        setError('Failed to read file');
+        setIsLoading(false);
+        reject(new Error('Failed to read file'));
+      };
+
+      reader.readAsText(file);
+    });
+  }, [onLoadDraft, onClose]);
+
   return {
     isLoading,
     error,
@@ -202,6 +261,7 @@ export const useDraftOperations = (user, currentFormData, bepType, onLoadDraft, 
     deleteDraft,
     renameDraft,
     loadDraft,
-    exportDraft
+    exportDraft,
+    importBepFromJson
   };
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import { CheckCircle, Zap, Target, Eye } from 'lucide-react';
 import CONFIG from '../../../config/bepConfig';
 
-const EnhancedBepTypeSelector = ({ bepType, setBepType, onProceed }) => (
+const BepTypeSelector = ({ bepType, setBepType, onProceed }) => (
   <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center p-3 sm:p-4 lg:p-6">
     <div className="bg-white rounded-2xl shadow-2xl w-full max-w-6xl p-4 sm:p-5 lg:p-6 xl:p-5 2xl:p-4 border border-slate-200">
       {/* Header Section */}
@@ -176,4 +176,4 @@ const EnhancedBepTypeSelector = ({ bepType, setBepType, onProceed }) => (
   </div>
 );
 
-export default EnhancedBepTypeSelector;
+export default BepTypeSelector;

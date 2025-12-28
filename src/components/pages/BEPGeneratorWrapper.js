@@ -4,10 +4,13 @@ import { ChevronRight, ChevronLeft, Eye, Zap, FolderOpen, Save, ExternalLink } f
 // Import all the existing BEP components
 import ProgressSidebar from '../forms/controls/ProgressSidebar';
 import CONFIG from '../../config/bepConfig';
-import INITIAL_DATA from '../../data/initialData';
+import { getEmptyBepData, getTemplateById } from '../../data/templateRegistry';
 import FormStep from '../steps/FormStep';
 import PreviewExportPage from './PreviewExportPage';
-import EnhancedBepTypeSelector from './bep/EnhancedBepTypeSelector';
+import BepTypeSelector from './bep/BepTypeSelector';
+import BepStartMenu from './bep/BepStartMenu';
+import ImportBepDialog from './bep/ImportBepDialog';
+import TemplateGallery from './bep/TemplateGallery';
 import DraftManager from './drafts/DraftManager';
 import SaveDraftDialog from './drafts/SaveDraftDialog';
 import { generateBEPContent } from '../../services/bepFormatter';
@@ -26,7 +29,7 @@ const BEPGeneratorWrapper = () => {
   const { navigateTo } = usePage();
 
   // State variables
-  const [formData, setFormData] = useState(INITIAL_DATA);
+  const [formData, setFormData] = useState(getEmptyBepData());
   const [bepType, setBepType] = useState('');
   const [currentStep, setCurrentStep] = useState(0);
   const [validationErrors, setValidationErrors] = useState({});
@@ -40,6 +43,12 @@ const BEPGeneratorWrapper = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [exportFormat, setExportFormat] = useState('pdf');
 
+  // New state for Start Menu navigation
+  const [showStartMenu, setShowStartMenu] = useState(true);
+  const [showTypeSelector, setShowTypeSelector] = useState(false);
+  const [showTemplateGallery, setShowTemplateGallery] = useState(false);
+  const [showImportDialog, setShowImportDialog] = useState(false);
+
   // Check if we should show TIDP creation form
   // const shouldShowTidpForm = searchParams.get('createTidp') === 'true';
 
@@ -48,10 +57,14 @@ const BEPGeneratorWrapper = () => {
   const { midps, loading: _midpLoading } = useMidpData();
 
   // Draft operations
-  const { saveDraft, isLoading: savingDraft, error: _draftError } = useDraftOperations(user, formData, bepType, (loadedData, loadedType) => {
+  const { saveDraft, isLoading: savingDraft, error: _draftError, importBepFromJson } = useDraftOperations(user, formData, bepType, (loadedData, loadedType) => {
     setFormData(loadedData);
     setBepType(loadedType);
-  }, () => {});
+    setShowStartMenu(false);
+    setShowTypeSelector(false);
+  }, () => {
+    setShowImportDialog(false);
+  });
 
   // Close draft manager if user logs out
   React.useEffect(() => {
@@ -175,13 +188,64 @@ const BEPGeneratorWrapper = () => {
 
   const handleTypeSelect = useCallback((selectedType) => {
     // Set all state synchronously to avoid race conditions
+    // Use empty data for new BEPs (not pre-filled template data)
     setBepType(selectedType);
-    setFormData({...INITIAL_DATA}); // Create a new object to ensure re-render
+    setFormData(getEmptyBepData()); // Get fresh empty data
     setCurrentStep(0);
     setValidationErrors({});
     setShowPreview(false);
     setCompletedSections(new Set());
+    setShowTypeSelector(false);
+    setShowStartMenu(false);
   }, []);
+
+  // Start Menu Handlers
+  const handleNewBep = useCallback(() => {
+    setShowStartMenu(false);
+    setShowTypeSelector(true);
+  }, []);
+
+  const handleLoadTemplate = useCallback(() => {
+    setShowTemplateGallery(true);
+  }, []);
+
+  const handleContinueDraft = useCallback(() => {
+    setShowDraftManager(true);
+  }, []);
+
+  const handleImportBep = useCallback(() => {
+    setShowImportDialog(true);
+  }, []);
+
+  const handleSelectTemplate = useCallback((template) => {
+    console.log('Loading template:', template);
+
+    // Load template data from registry
+    const templateData = getTemplateById(template.id);
+
+    if (templateData) {
+      setFormData(templateData);
+      setBepType(template.bepType);
+      setShowTemplateGallery(false);
+      setShowStartMenu(false);
+      setCurrentStep(0);
+      setValidationErrors({});
+      setCompletedSections(new Set());
+    } else {
+      console.error('Template not found:', template.id);
+      alert('Failed to load template. Please try again.');
+    }
+  }, []);
+
+  const handleImportFile = useCallback(async (file) => {
+    try {
+      await importBepFromJson(file);
+      setShowImportDialog(false);
+      setShowStartMenu(false);
+    } catch (error) {
+      console.error('Import failed:', error);
+    }
+  }, [importBepFromJson]);
 
   const handlePreview = useCallback(() => {
     console.log('handlePreview called, currentStep:', currentStep, 'formData keys:', Object.keys(formData));
@@ -302,7 +366,7 @@ const BEPGeneratorWrapper = () => {
     }
   }, [exportFormat, formData, bepType, generateContent, tidps, midps]);
 
-  // If no BEP type selected, show type selector
+  // If no BEP type selected, show start menu or type selector
   if (!bepType) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50" data-page-uri="/bep-generator">
@@ -337,15 +401,40 @@ const BEPGeneratorWrapper = () => {
           </div>
         </div>
 
-        <div className="max-w-6xl mx-auto px-4 py-4 lg:py-6">
-          <div className="bg-transparent rounded-xl p-0">
-            <EnhancedBepTypeSelector
-              bepType={bepType}
-              setBepType={setBepType}
-              onProceed={(selectedType) => handleTypeSelect(selectedType)}
-            />
+        {/* Show Start Menu or Type Selector based on state */}
+        {showStartMenu ? (
+          <BepStartMenu
+            onNewBep={handleNewBep}
+            onLoadTemplate={handleLoadTemplate}
+            onContinueDraft={handleContinueDraft}
+            onImportBep={handleImportBep}
+            user={user}
+          />
+        ) : showTypeSelector ? (
+          <div className="max-w-6xl mx-auto px-4 py-4 lg:py-6">
+            <div className="bg-transparent rounded-xl p-0">
+              <BepTypeSelector
+                bepType={bepType}
+                setBepType={setBepType}
+                onProceed={(selectedType) => handleTypeSelect(selectedType)}
+              />
+            </div>
           </div>
-        </div>
+        ) : null}
+
+        {/* Dialogs */}
+        <TemplateGallery
+          show={showTemplateGallery}
+          onSelectTemplate={handleSelectTemplate}
+          onCancel={() => setShowTemplateGallery(false)}
+        />
+
+        <ImportBepDialog
+          show={showImportDialog}
+          onImport={handleImportFile}
+          onCancel={() => setShowImportDialog(false)}
+          isLoading={savingDraft}
+        />
       </div>
     );
   }

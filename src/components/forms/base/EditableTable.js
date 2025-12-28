@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Users, Plus, X, Edit2, Sparkles } from 'lucide-react';
 import TipTapEditor from '../editors/TipTapEditor';
 import FieldHeader from './FieldHeader';
-import INITIAL_DATA from '../../../data/initialData';
+import COMMERCIAL_OFFICE_TEMPLATE from '../../../data/templates/commercialOfficeTemplate';
 
 const EditableTable = React.memo(({ field, value, onChange, error }) => {
   const { name, label, number, required, columns: presetColumns = ['Role/Discipline', 'Name/Company', 'Experience/Notes'] } = field;
@@ -21,15 +21,15 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
   const [columnToDelete, setColumnToDelete] = useState(null);
 
   // Check if example data exists for this field
-  const hasExampleData = INITIAL_DATA[name] && 
-    typeof INITIAL_DATA[name] === 'object' && 
-    INITIAL_DATA[name].data && 
-    Array.isArray(INITIAL_DATA[name].data) && 
-    INITIAL_DATA[name].data.length > 0;
+  const hasExampleData = COMMERCIAL_OFFICE_TEMPLATE[name] &&
+    typeof COMMERCIAL_OFFICE_TEMPLATE[name] === 'object' &&
+    COMMERCIAL_OFFICE_TEMPLATE[name].data &&
+    Array.isArray(COMMERCIAL_OFFICE_TEMPLATE[name].data) &&
+    COMMERCIAL_OFFICE_TEMPLATE[name].data.length > 0;
 
   const loadExampleData = () => {
     if (hasExampleData) {
-      const exampleData = INITIAL_DATA[name];
+      const exampleData = COMMERCIAL_OFFICE_TEMPLATE[name];
       onChange(name, exampleData);
     }
   };

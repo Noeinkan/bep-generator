@@ -1,5 +1,6 @@
-// Dati iniziali di esempio per il BEP Generator
-const INITIAL_DATA = {
+// Commercial Office BEP Template
+// Contains pre-filled data for a typical commercial office project
+const COMMERCIAL_OFFICE_TEMPLATE = {
   // Common fields for both BEP types
   projectName: 'Greenfield Office Complex Phase 2',
   projectNumber: 'GF-2024-017',
@@ -661,4 +662,4 @@ All resources will be tested for collaborative production capability before full
   ]
 };
 
-export default INITIAL_DATA;
+export default COMMERCIAL_OFFICE_TEMPLATE;
