@@ -308,36 +308,36 @@ const BEPGeneratorWrapper = () => {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50" data-page-uri="/bep-generator">
         {/* Header with navigation */}
         <div className="bg-white shadow-lg border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Zap className="w-5 h-5 text-white" />
+          <div className="max-w-7xl mx-auto px-4 py-2.5 lg:py-3 flex items-center justify-between">
+            <div className="flex items-center space-x-2.5 lg:space-x-3">
+              <div className="w-9 h-9 lg:w-10 lg:h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                <Zap className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">BEP Generator</h1>
-                <p className="text-gray-600">Create professional BIM Execution Plans</p>
+                <h1 className="text-xl lg:text-2xl font-bold text-gray-900">BEP Generator</h1>
+                <p className="text-sm lg:text-base text-gray-600">Create professional BIM Execution Plans</p>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 lg:space-x-3">
               <button
                 onClick={goToTidpManager}
-                className="inline-flex items-center px-4 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+                className="inline-flex items-center px-2.5 lg:px-3 py-1.5 lg:py-2 text-sm lg:text-base text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
               >
-                <ExternalLink className="w-4 h-4 mr-2" />
+                <ExternalLink className="w-3.5 h-3.5 lg:w-4 lg:h-4 mr-1.5 lg:mr-2" />
                 TIDP/MIDP Manager
               </button>
               <button
                 onClick={goHome}
-                className="inline-flex items-center px-4 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+                className="inline-flex items-center px-2.5 lg:px-3 py-1.5 lg:py-2 text-sm lg:text-base text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
               >
-                <Zap className="w-4 h-4 mr-2" />
+                <Zap className="w-3.5 h-3.5 lg:w-4 lg:h-4 mr-1.5 lg:mr-2" />
                 Home
               </button>
             </div>
           </div>
         </div>
 
-        <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4 py-4 lg:py-6">
           <div className="bg-transparent rounded-xl p-0">
             <EnhancedBepTypeSelector
               bepType={bepType}
