@@ -107,15 +107,17 @@ const CONFIG = {
             columns: ['Role', 'Proposed Personnel', 'Key Competencies/Experience', 'Anticipated Weekly Allocation (Hours)', 'Software/Hardware Requirements', 'Notes']
           },
           { number: '3.1', name: 'teamCapabilities', label: 'Team Capabilities and Experience', type: 'textarea', rows: 4, placeholder: 'Our multidisciplinary team brings 15+ years of BIM implementation experience across £500M+ of commercial projects. Key capabilities include: ISO 19650 certified information management, advanced parametric design using Revit/Grasshopper, integrated MEP coordination, 4D/5D modeling expertise, and digital twin development. Recent projects include the award-winning Tech Hub (£25M) and Riverside Commercial Center (£18M).' },
-          { 
-            number: '3.1', 
-            name: 'proposedMobilizationPlan', 
-            label: 'Proposed Mobilization Plan', 
-            type: 'textarea', 
-            rows: 3, 
-            placeholder: 'Upon appointment, our mobilization plan includes: Week 1 - Team onboarding and ISO 19650 training; Week 2 - IT infrastructure setup and software licensing (Revit 2024, Navisworks); Week 3 - Capability verification through pilot models and CDE testing. Risk mitigation strategies include access to specialist consultants and contingency resource pools to address potential skill gaps or capacity constraints aligned with ISO 19650-2 clauses 5.3.3-5.3.5.' 
+          { number: '3.2', name: 'trackRecordProjects', label: 'Track Record - Similar Projects Experience', type: 'table', columns: ['Project Name', 'Value', 'Completion Date', 'Project Type', 'Our Role', 'Key BIM Achievements'] },
+          { number: '3.3', name: 'eirComplianceMatrix', label: 'EIR Compliance Matrix - Demonstration of Capability', type: 'table', columns: ['EIR Requirement', 'Our Proposed Response', 'Evidence/Experience', 'BEP Section Reference'] },
+          {
+            number: '3.4',
+            name: 'proposedMobilizationPlan',
+            label: 'Proposed Mobilization Plan',
+            type: 'textarea',
+            rows: 3,
+            placeholder: 'Upon appointment, our mobilization plan includes: Week 1 - Team onboarding and ISO 19650 training; Week 2 - IT infrastructure setup and software licensing (Revit 2024, Navisworks); Week 3 - Capability verification through pilot models and CDE testing. Risk mitigation strategies include access to specialist consultants and contingency resource pools to address potential skill gaps or capacity constraints aligned with ISO 19650-2 clauses 5.3.3-5.3.5.'
           },
-          { number: '3.1', name: 'subcontractors', label: 'Proposed Subcontractors/Partners', type: 'table', columns: ['Role/Service', 'Company Name', 'Certification', 'Contact'] }
+          { number: '3.5', name: 'subcontractors', label: 'Proposed Subcontractors/Partners', type: 'table', columns: ['Role/Service', 'Company Name', 'Certification', 'Contact'] }
         ]
       }
     },
@@ -160,15 +162,16 @@ const CONFIG = {
             type: 'table', 
             columns: ['Role', 'Assigned Personnel', 'Key Competencies/Experience', 'Weekly Allocation (Hours)', 'Software/Hardware Requirements', 'Notes']
           },
-          { 
-            number: '3.5', 
-            name: 'mobilizationPlan', 
-            label: 'Mobilization Plan and Risk Mitigation', 
-            type: 'textarea', 
-            rows: 6, 
-            placeholder: 'PHASED MOBILIZATION TIMELINE\n\nWeek 1 - Onboarding and Training:\n  - Team orientation and project kickoff meeting\n  - ISO 19650-2:2018 training (2-day workshop)\n  - Information security briefings and CDE access provisioning\n\nWeek 2 - IT Infrastructure Setup:\n  - Workstation configuration (Revit 2024, Navisworks, AutoCAD)\n  - Software licensing and cloud storage allocation\n  - CDE platform configuration with permissions\n\nWeek 3 - Capability Verification:\n  - Pilot model production and federation testing\n  - IFC export testing for interoperability\n  - CDE submission procedures and quality checks\n\nRISK MITIGATION STRATEGY\n\nResource capacity risks documented in project risk register per ISO 19650-2 clause 5.3.6. Contingency plans include specialist consultants, backup connectivity, and escalation protocols via MIDP notifications.' 
+          { number: '3.5', name: 'confirmedTrackRecord', label: 'Confirmed Track Record - Delivered Similar Projects', type: 'table', columns: ['Project Name', 'Value', 'Completion Date', 'Project Type', 'Our Role', 'Key BIM Achievements'] },
+          {
+            number: '3.6',
+            name: 'mobilizationPlan',
+            label: 'Mobilization Plan and Risk Mitigation',
+            type: 'textarea',
+            rows: 6,
+            placeholder: 'PHASED MOBILIZATION TIMELINE\n\nWeek 1 - Onboarding and Training:\n  - Team orientation and project kickoff meeting\n  - ISO 19650-2:2018 training (2-day workshop)\n  - Information security briefings and CDE access provisioning\n\nWeek 2 - IT Infrastructure Setup:\n  - Workstation configuration (Revit 2024, Navisworks, AutoCAD)\n  - Software licensing and cloud storage allocation\n  - CDE platform configuration with permissions\n\nWeek 3 - Capability Verification:\n  - Pilot model production and federation testing\n  - IFC export testing for interoperability\n  - CDE submission procedures and quality checks\n\nRISK MITIGATION STRATEGY\n\nResource capacity risks documented in project risk register per ISO 19650-2 clause 5.3.6. Contingency plans include specialist consultants, backup connectivity, and escalation protocols via MIDP notifications.'
           },
-          { number: '3.6', name: 'informationManagementResponsibilities', label: 'Information Management Responsibilities', type: 'textarea', rows: 3, placeholder: 'The Information Manager oversees all aspects of information production, validation, and exchange in accordance with ISO 19650-2:2018. Responsibilities include: establishing and maintaining the CDE, coordinating task information delivery plans (TIDPs), ensuring model federation quality, managing information security protocols, conducting regular audits of information deliverables, and facilitating cross-disciplinary information exchanges. The IM reports directly to the project director and client representative.' }
+          { number: '3.7', name: 'informationManagementResponsibilities', label: 'Information Management Responsibilities', type: 'textarea', rows: 3, placeholder: 'The Information Manager oversees all aspects of information production, validation, and exchange in accordance with ISO 19650-2:2018. Responsibilities include: establishing and maintaining the CDE, coordinating task information delivery plans (TIDPs), ensuring model federation quality, managing information security protocols, conducting regular audits of information deliverables, and facilitating cross-disciplinary information exchanges. The IM reports directly to the project director and client representative.' }
         ]
       }
     }
@@ -332,8 +335,9 @@ const CONFIG = {
         { number: '13.10', name: 'performanceMetrics', label: 'Performance Metrics and KPIs', type: 'textarea', rows: 3 },
         { number: '13.11', name: 'monitoringProcedures', label: 'Monitoring Procedures', type: 'textarea', rows: 3 },
         { number: '13.12', name: 'auditTrails', label: 'Audit Trails', type: 'textarea', rows: 3 },
-        { number: '13.13', name: 'updateProcesses', label: 'Update Processes', type: 'textarea', rows: 3 },
-        { number: '13.14', name: 'projectKpis', label: 'Project Key Performance Indicators (KPIs)', type: 'table', columns: ['KPI Name', 'Target Value', 'Measurement Method', 'Responsibility'] }
+        { number: '13.13', name: 'changeManagementProcess', label: 'Change Management Process', type: 'textarea', rows: 4, placeholder: 'CHANGE REQUEST PROCEDURE\n\nAll changes to project information requirements, delivery schedules, or BIM strategy must follow formal change management:\n\n1. Change Initiation: Stakeholder submits formal change request via CDE workflow with impact assessment\n2. Evaluation: Information Manager reviews impact on deliverables, timeline, resources, and coordination\n3. Approval: Change Control Board (Project Director, IM, Client Rep) approves/rejects within 5 working days\n4. Implementation: Approved changes trigger TIDP/MIDP updates, team notifications, and revised delivery schedules\n5. Documentation: All changes recorded in change log with audit trail per ISO 19650-2 clause 5.7\n\nMinor changes (cosmetic, non-impact) processed via expedited procedure. Major changes (scope, deliverables, standards) require formal client approval and contract variation assessment.' },
+        { number: '13.14', name: 'updateProcesses', label: 'Update Processes', type: 'textarea', rows: 3 },
+        { number: '13.15', name: 'projectKpis', label: 'Project Key Performance Indicators (KPIs)', type: 'table', columns: ['KPI Name', 'Target Value', 'Measurement Method', 'Responsibility'] }
       ]
     },
     13: {

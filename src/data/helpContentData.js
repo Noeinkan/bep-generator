@@ -313,7 +313,152 @@ Recent projects: St. James's Hospital Extension (£55M, 2022 - full digital twin
       style: 'quantified experience, certifications prominent, software expertise, proven outcomes, project examples with metrics'
     },
 
-    relatedFields: ['proposedInfoManager', 'informationManager', 'proposedResourceAllocation', 'proposedMobilizationPlan']
+    relatedFields: ['proposedInfoManager', 'informationManager', 'proposedResourceAllocation', 'proposedMobilizationPlan', 'trackRecordProjects']
+  },
+
+  trackRecordProjects: {
+    description: `Document your team's track record by listing similar projects successfully delivered using BIM. This provides tangible evidence of your capability and capacity to deliver the current project, demonstrating proven experience with comparable scope, scale, and complexity.
+
+Include for each project:
+• **Project Name**: Clear project identifier
+• **Value**: Project budget/contract value
+• **Completion Date**: When the project was completed
+• **Project Type**: Building type or infrastructure category
+• **Our Role**: Your organization's role (Lead Designer, BIM Coordinator, etc.)
+• **Key BIM Achievements**: Specific measurable outcomes (clash reduction %, time savings, cost optimization, etc.)
+
+This demonstrates your proven track record and de-risks your appointment.`,
+
+    iso19650: `ISO 19650-2:2018 Section 5.1.3 - Capability and Capacity
+
+The standard requires demonstration of capability through evidence of past performance on similar projects. Track record with quantifiable outcomes provides compelling proof of your team's ability to deliver information management requirements successfully.
+
+**Pre-Appointment Context**: In tender responses, track record demonstrates to the appointing party that your proposed team has successfully delivered comparable projects.
+
+**Post-Appointment Context**: Confirmed track record provides the client with confidence and establishes benchmarks for expected performance on the current project.`,
+
+    bestPractices: [
+      'Select 3-5 most relevant projects that match current project type/scale',
+      'Prioritize recent projects (last 3-5 years) to show current capability',
+      'Include project values to demonstrate experience at appropriate scale',
+      'Quantify BIM achievements with specific metrics (% clash reduction, time saved)',
+      'Highlight similar technical challenges overcome (tall buildings, complex MEP, etc.)',
+      'Include projects with same BIM standards/protocols when possible',
+      'Mention awards, certifications, or client testimonials where applicable',
+      'Show progression and evolution of BIM capabilities over time',
+      'Reference projects with similar procurement routes if relevant'
+    ],
+
+    examples: {
+      'Commercial Building': `**Riverside Commercial Centre** | £18M | Oct 2023 | Commercial Office | Lead Appointed Party | 95% clash-free coordination, BREEAM Excellent achieved through BIM energy analysis, 3-month programme acceleration through 4D sequencing, full COBie handover 2 weeks early
+
+**Tech Hub Innovation Campus** | £25M | Mar 2022 | Mixed-Use Commercial | BIM Coordinator | 40% RFI reduction vs. baseline, £1.2M cost savings through early clash detection, integrated digital twin for FM with IoT sensors, Winner: BIM Excellence Award 2022
+
+**City Quarter Office Tower** | £42M | Jul 2021 | High-Rise Office | Lead Designer | LOD 400 coordination across 8 disciplines, complex curtain wall parametric modeling, 60% reduction in site coordination issues, successful handover to client FM system`,
+
+      'Infrastructure': `**A45 Junction Improvement Scheme** | £85M | Jun 2022 | Highway Infrastructure | Lead Designer | 8-month early completion through 4D optimization, zero on-site clashes, GIS-integrated asset data handover, Network Rail coordination without incidents
+
+**Westside Rail Bridge Replacement** | £32M | Nov 2023 | Railway Bridge | BIM Coordination Lead | Complex Tekla/Civil3D integration, possession window optimization saving 3 weekends, as-built accuracy ±5mm verified, IFC handover to Network Rail standards
+
+**River Valley Bypass** | £124M | Apr 2021 | Major Highway | Task Team Leader - Structures | 12km linear BIM coordination, 3 major bridges delivered clash-free, environmental constraints modeled and mitigated, EA approval accelerated by 6 weeks`,
+
+      'Healthcare': `**St. James's Hospital Extension** | £55M | Sep 2022 | Healthcare - Acute | Lead Appointed Party | Full digital twin delivered for CAFM integration, HBN 04-01 infection control compliance verified, medical equipment clash detection, zero clinical area rework, operational hospital maintained throughout
+
+**Regional Diagnostic Centre** | £28M | Dec 2023 | Healthcare - Diagnostics | BIM Manager | Complex medical gases and imaging equipment coordination, zero clashes in clinical zones, COBie handover 2 weeks early, radiation shielding verification through BIM, HTM compliance validation
+
+**Community Health Hub** | £12M | May 2021 | Healthcare - Primary Care | Design Coordination | PassivHaus standard achieved through integrated energy modeling, natural ventilation CFD analysis, accessibility compliance verification, BREEAM Healthcare Excellent`
+    },
+
+    commonMistakes: [
+      'Listing projects without quantifiable BIM achievements or outcomes',
+      'Including projects too old (>5 years) that don\'t reflect current capabilities',
+      'No connection between listed projects and current project requirements',
+      'Missing key project details (value, completion date, specific role)',
+      'Generic descriptions like "successful project delivery" without metrics',
+      'Inflating your role or claiming credit for others\' achievements',
+      'Listing too many projects (aim for 3-5 most relevant)',
+      'Not highlighting similar technical challenges or complexity factors'
+    ],
+
+    aiPrompt: {
+      system: 'You are a BIM project experience consultant. Generate compelling track record entries with specific, quantifiable BIM achievements that demonstrate proven capability.',
+      instructions: 'Generate 3-5 project track record entries. Each should include: Project Name, Value (£M), Completion Date (recent 2-5 years), Project Type, Role (Lead Designer/BIM Coordinator/etc.), and Key BIM Achievements with specific metrics (% clash reduction, time/cost savings, quality improvements, awards). Make achievements realistic and specific to the project type. Maximum 200 words total.',
+      style: 'quantified achievements, specific metrics, recent projects, professional, compelling evidence'
+    },
+
+    relatedFields: ['teamCapabilities', 'proposedResourceAllocation', 'bimStrategy']
+  },
+
+  eirComplianceMatrix: {
+    description: `Demonstrate how your proposed approach addresses each requirement in the client's Exchange Information Requirements (EIR). This matrix provides a systematic mapping between EIR clauses and your BEP response, showing compliance and where to find supporting evidence.
+
+For each EIR requirement, specify:
+• **EIR Requirement**: Direct quote or summary of the specific EIR clause/requirement
+• **Our Proposed Response**: How you will meet this requirement (approach, methodology, deliverables)
+• **Evidence/Experience**: Proof of capability (past projects, certifications, team expertise)
+• **BEP Section Reference**: Where in this BEP the detailed response can be found (e.g., "Section 8.2 - Software Requirements")
+
+This demonstrates your thorough understanding of client requirements and de-risks your tender by showing full compliance.`,
+
+    iso19650: `ISO 19650-2:2018 Section 5.1.2 - Exchange Information Requirements (EIR)
+
+The appointing party's EIR defines what information is required, when, and to what level of detail. The pre-appointment BEP must demonstrate the prospective delivery team's understanding and ability to meet these requirements.
+
+**Section 5.1.4 - Mobilization**: The BEP should explain how the proposed team will mobilize resources and establish processes to fulfill the EIR.
+
+The EIR Compliance Matrix provides structured evidence that each requirement has been considered and addressed, reducing procurement risk and demonstrating tender quality.`,
+
+    bestPractices: [
+      'Extract every requirement from the EIR document systematically',
+      'Group requirements by category (technical, process, deliverables, standards)',
+      'Provide specific, actionable responses - avoid generic statements',
+      'Reference concrete evidence (certifications, past projects, procedures)',
+      'Cross-reference to specific BEP sections for detailed explanations',
+      'Highlight where you exceed requirements or offer added value',
+      'Be honest if you need to acquire capability - explain mitigation plan',
+      'Use consistent terminology from the EIR document',
+      'Include page/section numbers from EIR for traceability',
+      'Have matrix reviewed by senior BIM manager and commercial lead'
+    ],
+
+    examples: {
+      'Compliance Matrix Example': `**EIR Requirement**: "All models shall achieve Level 2 BIM maturity with BS 1192:2007 compliance and federated coordination models delivered biweekly"
+
+**Our Proposed Response**: We will deliver Level 2 BIM with full BS 1192 compliance using disciplined naming conventions and CDE workflows. Federated models will be published every Friday with automated clash detection reports generated through Navisworks Manage.
+
+**Evidence/Experience**: Our team has delivered 25+ Level 2 BIM projects totaling £400M+ over 5 years. All team members are certified to BS 1192. Recent Riverside Centre project (£18M) achieved 95% clash-free coordination through biweekly federation.
+
+**BEP Section Reference**: Section 7 (CDE Strategy), Section 8.1 (BIM Software - Navisworks), Section 9.2 (Naming Conventions per BS 1192), Section 13.2 (Clash Detection Workflow)
+
+---
+
+**EIR Requirement**: "COBie data drops required at Stage 4 (Technical Design) and Stage 6 (Handover) per UK BIM Framework"
+
+**Our Proposed Response**: COBie 2.4 UK datasets will be delivered at each milestone using Autodesk COBie Extension for Revit. Stage 4 drop will include all permanent equipment with specifications; Stage 6 will include as-built verification, commissioning data, and O&M manuals.
+
+**Evidence/Experience**: Delivered COBie handovers on 12 projects including St. James's Hospital (£55M, 2022) where COBie data was delivered 2 weeks early and validated against client CAFM system with zero rework.
+
+**BEP Section Reference**: Section 5.3 (Alphanumerical Information Requirements), Section 6.1 (Key Milestones), Appendix B (COBie Data Requirements)`
+    },
+
+    commonMistakes: [
+      'Generic responses like "We will comply" without explaining how',
+      'Missing EIR requirements - not comprehensive enough',
+      'No evidence or proof of capability to deliver the response',
+      'Failing to cross-reference to detailed BEP sections',
+      'Copying EIR text without demonstrating understanding',
+      'Not addressing difficult requirements or capability gaps honestly',
+      'Missing section numbers from EIR for traceability',
+      'No differentiation - could apply to any project/any team'
+    ],
+
+    aiPrompt: {
+      system: 'You are an ISO 19650 compliance expert specializing in EIR response development for BIM tenders.',
+      instructions: 'Generate 3-4 EIR compliance matrix entries. Each entry should include: EIR Requirement (specific technical/process requirement), Our Proposed Response (detailed approach), Evidence/Experience (past projects, certifications), and BEP Section Reference (cross-references). Make requirements realistic (software, standards, deliverables, data formats) and responses specific with concrete evidence. Maximum 200 words total.',
+      style: 'systematic, evidence-based, cross-referenced, ISO 19650-compliant, professional'
+    },
+
+    relatedFields: ['bimStrategy', 'trackRecordProjects', 'teamCapabilities', 'proposedMobilizationPlan']
   },
 
   proposedResourceAllocation: {
@@ -5942,6 +6087,200 @@ All subcontractors and suppliers sign Data Processor Agreement:
     ],
 
     relatedFields: ['dataClassification', 'accessPermissions', 'securityMeasures', 'auditTrails']
+  },
+
+  changeManagementProcess: {
+    description: `Define the formal change management process for handling modifications to project information requirements, BIM strategy, delivery schedules, or technical standards during project execution. This ensures all changes are controlled, documented, and communicated systematically.
+
+Cover:
+• **Change Initiation**: How changes are requested (forms, CDE workflows, stakeholder triggers)
+• **Impact Assessment**: Evaluation criteria (cost, time, quality, coordination, resources)
+• **Approval Authority**: Who approves changes (Change Control Board, client, IM)
+• **Implementation Process**: How approved changes are executed (TIDP/MIDP updates, notifications)
+• **Documentation**: Change log, audit trails, version control per ISO 19650-2 clause 5.7
+• **Communication**: Team notification procedures and stakeholder updates
+
+This prevents uncontrolled scope creep and maintains information integrity throughout the project lifecycle.`,
+
+    iso19650: `ISO 19650-2:2018 Section 5.7 - Information Management During Project Delivery
+
+The standard requires systematic management of changes to information requirements and delivery plans. Changes must be:
+• Properly authorized by the appointing party
+• Documented with clear audit trails
+• Communicated to all affected task teams
+• Reflected in updated TIDPs and MIDP
+
+**Post-Appointment Context**: Change management is critical during execution to handle evolving client requirements, design development, and unforeseen challenges whilst maintaining information delivery commitments.
+
+Robust change control prevents coordination failures, missed deliverables, and disputes over scope.`,
+
+    bestPractices: [
+      'Establish clear thresholds for minor vs. major changes requiring different approval levels',
+      'Define Change Control Board composition (IM, Project Director, Client Rep minimum)',
+      'Set response timeframes (e.g., 5 working days for standard changes)',
+      'Use CDE-integrated change request forms with mandatory impact assessments',
+      'Require changes to trigger automatic TIDP/MIDP review and updates',
+      'Maintain comprehensive change log with audit trail per ISO 19650',
+      'Implement automated team notifications when changes are approved',
+      'Link changes to contract variations when affecting scope/cost',
+      'Conduct regular Change Control Board meetings (weekly or fortnightly)',
+      'Document rejected changes with rationale for future reference',
+      'Include change statistics in project performance reporting'
+    ],
+
+    examples: {
+      'Commercial Building': `CHANGE MANAGEMENT PROCEDURE
+
+**Change Request Initiation:**
+Any stakeholder may submit change request via CDE workflow using standardized form CR-001. Request must include: description, justification, affected deliverables, proposed solution.
+
+**Impact Assessment (Information Manager):**
+Within 3 working days, IM evaluates:
+• Schedule impact on TIDP/MIDP milestones
+• Resource allocation changes required
+• Coordination effects across task teams
+• Software/technology implications
+• Budget impact (if scope change)
+• Risk to downstream deliverables
+
+**Approval Process:**
+Minor Changes (no milestone impact, <5 days effort): IM approval, 2-day turnaround
+Standard Changes (milestone shift, significant effort): Change Control Board (weekly meetings), 5-day decision
+Major Changes (scope change, contract variation): CCB + Client Director approval, 10-day process with commercial review
+
+**Implementation:**
+Approved changes trigger:
+1. TIDP/MIDP schedule updates published to CDE
+2. Automated email notifications to all affected task teams
+3. Updated Information Delivery Plan issued within 5 days
+4. Coordination meeting scheduled if multi-discipline impact
+5. Change log updated with approval reference and audit trail
+
+**Documentation:**
+All changes recorded in Change Register (CR-LOG-001) per ISO 19650-2 clause 5.7 including: CR number, date, requestor, description, impact assessment, approval decision, implementation date, affected TIDPs.
+
+Monthly change reports presented to client showing: number of changes, categories, schedule impact, lessons learned.`,
+
+      'Infrastructure': `CHANGE CONTROL FRAMEWORK
+
+**Trigger Events:**
+• Design development requiring additional information
+• Client requirement changes from stakeholder consultation
+• Statutory authority feedback (Network Rail, EA, Highways England)
+• Ground conditions discoveries requiring design changes
+• Third-party coordination issues (utilities, property)
+
+**Change Categories:**
+
+**Category A - Expedited** (non-critical, <2 days):
+• Cosmetic model adjustments
+• Nomenclature corrections
+• Reporting format changes
+Approval: Information Manager, 1-day turnaround
+
+**Category B - Standard** (affects deliverables, 2-10 days):
+• Design iteration affecting coordination
+• Additional analysis requirements
+• Software/format changes
+Approval: CCB (IM, Lead Designer, Client PM), 5-day decision at weekly meeting
+
+**Category C - Major** (milestone impact, contract variation):
+• Scope changes from public inquiry
+• Statutory requirements changes
+• Major design revisions
+Approval: CCB + Client Director + Commercial Manager, 15-day formal review with NEC contract assessment
+
+**Implementation Protocol:**
+1. IM updates MIDP with revised milestones
+2. Affected TIDPs reissued with change tracking
+3. Email notification via CDE to all task teams
+4. Coordination workshop if multi-discipline (within 5 days)
+5. Change incorporated in next model federation
+6. Updated delivery schedules published to client portal
+
+**Audit Trail:**
+Change register maintained in CDE with full versioning. Monthly governance reports include change velocity metrics, approval times, and impact on critical path.`,
+
+      'Healthcare': `HEALTHCARE PROJECT CHANGE MANAGEMENT
+
+**Change Initiation:**
+Change requests submitted via Aconex workflow using form HBN-CR-001 with mandatory fields:
+• Clinical/non-clinical classification
+• HBN/HTM compliance impact
+• Infection control implications
+• Medical equipment coordination effects
+• Operational hospital constraints
+
+**Fast-Track for Clinical Safety:**
+Changes affecting patient safety, infection control, or HTM compliance processed within 24 hours with Clinical Lead and IM joint approval.
+
+**Standard Process (3-5 days):**
+Change Control Board composition:
+• Information Manager (chair)
+• Clinical Lead (medical planning)
+• MEP Coordinator (critical systems)
+• Client Estates Director
+• Trust Infection Control Advisor (for relevant changes)
+
+Impact assessment includes:
+• HBN 04-01 infection control compliance
+• Medical gases/critical ventilation impact
+• Medical equipment clashes
+• Phasing impact on operational hospital
+• Clinical workflow effects
+
+**Approval Matrix:**
+Minor (cosmetic, no clinical impact): IM approval, 1 day
+Standard (design change, technical): CCB, 5 days
+Major (clinical space change, HTM): CCB + Trust Medical Director + NHS capital approval if >£50k, 10 days
+Emergency (patient safety): Clinical Lead + IM, 24 hours
+
+**Implementation:**
+• HBN/HTM compliance re-verified
+• Clinical equipment coordination updated
+• Infection control advisor sign-off for relevant changes
+• Updated room data sheets issued
+• Trust Estates team notified
+• TIDP/MIDP revised with clinical milestone protection
+
+**Documentation:**
+Change log includes clinical impact classification. Monthly reports to Trust include patient safety implications of changes and compliance status.`
+    },
+
+    commonMistakes: [
+      'No clear change initiation process - informal requests causing confusion',
+      'Missing impact assessment requirements - changes approved without understanding effects',
+      'Undefined approval authority leading to delays and disputes',
+      'No distinction between minor and major changes - everything requires same approval',
+      'Failing to update TIDP/MIDP when changes affect schedules',
+      'Poor communication - teams unaware of approved changes',
+      'No change log or audit trail per ISO 19650 requirements',
+      'Not linking BIM changes to contract variations when scope affected',
+      'No timeframes for decisions - changes languish indefinitely',
+      'Missing Change Control Board meetings leading to bottlenecks'
+    ],
+
+    aiPrompt: {
+      system: 'You are a BIM project controls expert specializing in change management procedures aligned with ISO 19650-2.',
+      instructions: 'Generate a comprehensive change management process description. Include: change initiation procedures, impact assessment criteria, approval authority/matrix (minor/standard/major changes), implementation steps (TIDP/MIDP updates, notifications), documentation requirements (change log per ISO 19650-2 clause 5.7), and communication protocols. Make it specific with timeframes and responsible parties. Structure with clear headings. Maximum 200 words.',
+      style: 'systematic, process-oriented, ISO 19650-compliant, clear authority levels, structured'
+    },
+
+    relatedFields: ['updateProcesses', 'auditTrails', 'informationManagementResponsibilities', 'mobilizationPlan']
+  },
+
+  confirmedTrackRecord: {
+    description: `This field uses the same guidance as 'trackRecordProjects'. In the post-appointment context, this confirms the actual track record of the appointed team, providing the client with confidence in your proven delivery capability.`,
+    iso19650: `See 'trackRecordProjects' for ISO 19650-2 guidance on demonstrating capability through past performance.`,
+    bestPractices: ['See trackRecordProjects field for comprehensive guidance'],
+    examples: { 'Reference': 'See trackRecordProjects for detailed examples' },
+    commonMistakes: ['See trackRecordProjects for guidance'],
+    aiPrompt: {
+      system: 'See trackRecordProjects configuration',
+      instructions: 'See trackRecordProjects configuration',
+      style: 'See trackRecordProjects configuration'
+    },
+    relatedFields: ['trackRecordProjects', 'teamCapabilities', 'mobilizationPlan']
   }
 };
 
