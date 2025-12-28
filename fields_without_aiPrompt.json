@@ -1,0 +1,309 @@
+{
+  "summary": {
+    "totalFields": 81,
+    "fieldsWithAiPrompt": 21,
+    "fieldsWithoutAiPrompt": 60
+  },
+  "fieldsList": [
+    {
+      "fieldName": "keyCommitments",
+      "lineNumber": 146,
+      "description": "List your firm commitments and key deliverables for this project. These are the specific, measurable outcomes you will deliver using BIM processes. This section demonstrates accountability and sets clear expectations.\r"
+    },
+    {
+      "fieldName": "proposedResourceAllocation",
+      "lineNumber": 312,
+      "description": "Define your proposed resource allocation with detailed capability and capacity assessments for each role. This demonstrates your team's ability to meet the client's Exchange Information Requirements (EIRs) if appointed, per ISO 19650-2 clauses 5.3.3–5.3.5.\r"
+    },
+    {
+      "fieldName": "bimUses",
+      "lineNumber": 678,
+      "description": "Select the specific BIM uses that will be applied on this project. BIM uses are the specific ways that BIM processes and models will be utilized to deliver value.\r"
+    },
+    {
+      "fieldName": "keyContacts",
+      "lineNumber": 893,
+      "description": "List the key project contacts and their roles in a structured table format. This provides a quick reference for stakeholder communication and ensures all parties know who to contact for different aspects of the project.\r"
+    },
+    {
+      "fieldName": "proposedLead",
+      "lineNumber": 1021,
+      "description": "Identify the proposed Lead Appointed Party - the organization that will take primary responsibility for managing information delivery and coordinating the delivery team during the appointment.\r"
+    },
+    {
+      "fieldName": "proposedInfoManager",
+      "lineNumber": 1057,
+      "description": "Identify the proposed Information Manager - the individual responsible for managing information processes, CDE implementation, and ensuring compliance with ISO 19650 throughout the project.\r"
+    },
+    {
+      "fieldName": "proposedTeamLeaders",
+      "lineNumber": 1094,
+      "description": "List the proposed Task Team Leaders for each discipline in a structured table. These are the key technical leads responsible for information production within their respective disciplines.\r"
+    },
+    {
+      "fieldName": "subcontractors",
+      "lineNumber": 1135,
+      "description": "List proposed subcontractors, specialist consultants, and key partners who will support project delivery in a structured table format.\r"
+    },
+    {
+      "fieldName": "leadAppointedParty",
+      "lineNumber": 1178,
+      "description": "Confirm the appointed Lead Appointed Party - the organization taking primary responsibility for managing information delivery and coordinating the delivery team.\r"
+    },
+    {
+      "fieldName": "informationManager",
+      "lineNumber": 1216,
+      "description": "Confirm the appointed Information Manager - the named individual responsible for managing information processes, CDE implementation, and ensuring ISO 19650 compliance throughout the project.\r"
+    },
+    {
+      "fieldName": "assignedTeamLeaders",
+      "lineNumber": 1263,
+      "description": "Confirm the assigned Task Team Leaders for each discipline. These are the appointed technical leads responsible for information production, quality assurance, and coordination within their disciplines.\r"
+    },
+    {
+      "fieldName": "resourceAllocationTable",
+      "lineNumber": 1307,
+      "description": "Define the confirmed resource allocation with detailed capability and capacity assessments for each role. This structured table demonstrates the delivery team's ability to meet Exchange Information Requirements (EIRs) per ISO 19650-2 clauses 5.3.3–5.3.5.\r"
+    },
+    {
+      "fieldName": "resourceAllocation",
+      "lineNumber": 1482,
+      "description": "(Legacy field - use resourceAllocationTable and mobilizationPlan instead)\r"
+    },
+    {
+      "fieldName": "organizationalStructure",
+      "lineNumber": 1616,
+      "description": "This is an interactive organizational chart showing the delivery team's structure and composition. Use the chart builder to define:\r"
+    },
+    {
+      "fieldName": "taskTeamsBreakdown",
+      "lineNumber": 1651,
+      "description": "Provide a detailed breakdown of all task teams in a structured table format. Define each team's composition, leadership, members, and specific responsibilities for information production.\r"
+    },
+    {
+      "fieldName": "referencedMaterial",
+      "lineNumber": 1699,
+      "description": "List all referenced documents, standards, and materials that inform or govern this BEP. This establishes the regulatory and contractual framework within which information will be managed.\r"
+    },
+    {
+      "fieldName": "bimValueApplications",
+      "lineNumber": 1751,
+      "description": "Explain how BIM will be applied to maximize project value across cost, time, quality, risk, and sustainability dimensions. This demonstrates the tangible benefits of BIM implementation.\r"
+    },
+    {
+      "fieldName": "valueMetrics",
+      "lineNumber": 1783,
+      "description": "Define measurable success metrics and how BIM value will be tracked throughout the project. This table establishes accountability and enables value demonstration.\r"
+    },
+    {
+      "fieldName": "strategicAlignment",
+      "lineNumber": 1821,
+      "description": "Explain how the BIM strategy aligns with and supports the client's strategic business objectives. This demonstrates understanding of the client's broader goals and how BIM enables them.\r"
+    },
+    {
+      "fieldName": "collaborativeProductionGoals",
+      "lineNumber": 1851,
+      "description": "Define goals for collaborative information production across the delivery team. This establishes expectations for how teams will work together to produce, validate, and exchange information.\r"
+    },
+    {
+      "fieldName": "alignmentStrategy",
+      "lineNumber": 1880,
+      "description": "Define your comprehensive approach to facilitating information management goals and maintaining alignment throughout the project. This structured strategy covers 7 key aspects required by ISO 19650-2.\r"
+    },
+    {
+      "fieldName": "informationPurposes",
+      "lineNumber": 2013,
+      "description": "Select the purposes for which information will be used throughout the project lifecycle. This defines what the information needs to support.`,\r"
+    },
+    {
+      "fieldName": "geometricalInfo",
+      "lineNumber": 2028,
+      "description": "Define the geometrical information requirements - the level of detail, accuracy, and dimensional information needed in 3D models.\r"
+    },
+    {
+      "fieldName": "alphanumericalInfo",
+      "lineNumber": 2055,
+      "description": "Define the alphanumerical (non-graphical) information requirements - the properties, parameters, and data needed for model elements.\r"
+    },
+    {
+      "fieldName": "documentationInfo",
+      "lineNumber": 2083,
+      "description": "Define documentation requirements - the supporting documents, specifications, certificates, and manuals required alongside models.\r"
+    },
+    {
+      "fieldName": "projectInformationRequirements",
+      "lineNumber": 2112,
+      "description": "Define the Project Information Requirements (PIR) - the information needed to support asset management and operational objectives beyond project delivery.\r"
+    },
+    {
+      "fieldName": "midpDescription",
+      "lineNumber": 2145,
+      "description": "Describe the Master Information Delivery Plan (MIDP) - the high-level schedule that establishes when information will be delivered throughout the project.\r"
+    },
+    {
+      "fieldName": "keyMilestones",
+      "lineNumber": 2172,
+      "description": "Define key information delivery milestones in a structured table showing stage/phase, description, deliverables, and due dates.`,\r"
+    },
+    {
+      "fieldName": "deliverySchedule",
+      "lineNumber": 2191,
+      "description": "Provide a detailed information delivery schedule showing phased approach across the project timeline.`,\r"
+    },
+    {
+      "fieldName": "tidpRequirements",
+      "lineNumber": 2210,
+      "description": "Define Task Information Delivery Plan (TIDP) requirements - discipline-specific delivery plans that feed into the MIDP.\r"
+    },
+    {
+      "fieldName": "responsibilityMatrix",
+      "lineNumber": 2237,
+      "description": "Create a RACI (Responsible, Accountable, Consulted, Informed) matrix defining task/activity responsibilities across the team.`,\r"
+    },
+    {
+      "fieldName": "milestoneInformation",
+      "lineNumber": 2256,
+      "description": "Define specific information requirements at each milestone in a detailed table format.`,\r"
+    },
+    {
+      "fieldName": "mobilisationPlan",
+      "lineNumber": 2275,
+      "description": "Describe the project mobilisation plan - how the team, systems, and processes will be established at project start.\r"
+    },
+    {
+      "fieldName": "teamCapabilitySummary",
+      "lineNumber": 2304,
+      "description": "Summarize the delivery team's BIM capability and capacity to meet project information requirements.`,\r"
+    },
+    {
+      "fieldName": "informationRiskRegister",
+      "lineNumber": 2324,
+      "description": "Maintain a risk register specific to information delivery - identifying, assessing, and mitigating risks to information management.`,\r"
+    },
+    {
+      "fieldName": "taskTeamExchange",
+      "lineNumber": 2344,
+      "description": "Define protocols for information exchange between task teams - how disciplines will share, coordinate, and approve information.\r"
+    },
+    {
+      "fieldName": "cdeStrategy",
+      "lineNumber": 2403,
+      "description": "Describe the overall CDE strategy including platform selection, workflow implementation, and governance approach.`,\r"
+    },
+    {
+      "fieldName": "cdePlatforms",
+      "lineNumber": 2422,
+      "description": "List and describe CDE platforms in use, their purposes, information types managed, and workflow integration.`,\r"
+    },
+    {
+      "fieldName": "workflowStates",
+      "lineNumber": 2441,
+      "description": "Define the CDE workflow states (WIP, Shared, Published, Archived) and transition criteria between states.`,\r"
+    },
+    {
+      "fieldName": "accessControl",
+      "lineNumber": 2460,
+      "description": "Define access control policies including role-based permissions, authentication, and security protocols.`,\r"
+    },
+    {
+      "fieldName": "securityMeasures",
+      "lineNumber": 2480,
+      "description": "Define comprehensive security measures protecting information confidentiality, integrity, and availability.`,\r"
+    },
+    {
+      "fieldName": "backupProcedures",
+      "lineNumber": 2500,
+      "description": "Define backup and disaster recovery procedures ensuring information protection and business continuity.`,\r"
+    },
+    {
+      "fieldName": "hardwareRequirements",
+      "lineNumber": 2524,
+      "description": "Specify the hardware requirements necessary to support BIM activities throughout the project. This includes workstations, servers, mobile devices, and any specialized equipment.\r"
+    },
+    {
+      "fieldName": "networkRequirements",
+      "lineNumber": 2604,
+      "description": "Define network infrastructure and connectivity requirements to support collaborative BIM workflows, model sharing, and CDE access.\r"
+    },
+    {
+      "fieldName": "interoperabilityNeeds",
+      "lineNumber": 2684,
+      "description": "Define interoperability requirements ensuring seamless data exchange between different software platforms, disciplines, and project stakeholders.\r"
+    },
+    {
+      "fieldName": "federationStrategy",
+      "lineNumber": 2766,
+      "description": "Describe your strategy for federating discipline models into a coordinated whole-project model for clash detection, design coordination, and stakeholder visualization.\r"
+    },
+    {
+      "fieldName": "informationBreakdownStrategy",
+      "lineNumber": 2855,
+      "description": "Define how project information will be broken down and organized into manageable components, models, and deliverables. This includes model breakdown by discipline, zone, level, or building, ensuring efficient coordination and file management.\r"
+    },
+    {
+      "fieldName": "federationProcess",
+      "lineNumber": 2947,
+      "description": "Define the detailed procedures and workflows for creating, validating, and distributing federated coordination models.\r"
+    },
+    {
+      "fieldName": "softwareHardwareInfrastructure",
+      "lineNumber": 3066,
+      "description": "Provide a comprehensive matrix of all software, hardware, and IT infrastructure components required for BIM delivery.\r"
+    },
+    {
+      "fieldName": "documentControlInfo",
+      "lineNumber": 3159,
+      "description": "Define document control procedures ensuring consistent identification, versioning, approval, and distribution of all project information and documentation.\r"
+    },
+    {
+      "fieldName": "modelingStandards",
+      "lineNumber": 3282,
+      "description": "Define the modeling standards and guidelines that all project team members must follow to ensure consistency, quality, and interoperability of BIM models.\r"
+    },
+    {
+      "fieldName": "namingConventions",
+      "lineNumber": 3691,
+      "description": "Establish comprehensive naming conventions for all project files, models, drawings, views, families, and elements to ensure consistency and facilitate information retrieval.\r"
+    },
+    {
+      "fieldName": "fileStructure",
+      "lineNumber": 3794,
+      "description": "Define the folder hierarchy and organization structure for the project CDE and local working environments.\r"
+    },
+    {
+      "fieldName": "fileStructureDiagram",
+      "lineNumber": 3913,
+      "description": "Create a visual diagram representing the project folder structure within the Common Data Environment (CDE). This diagram should clearly show the hierarchy of folders, workflow states, and organization of different information types.\r"
+    },
+    {
+      "fieldName": "volumeStrategy",
+      "lineNumber": 4005,
+      "description": "Define the volume strategy (model breakdown structure) showing how the project is divided into manageable information containers. This mindmap/diagram should illustrate the logical breakdown of the project by building, zone, discipline, level, or other organizing principle.\r"
+    },
+    {
+      "fieldName": "classificationSystems",
+      "lineNumber": 4033,
+      "description": "Define the classification systems and coding frameworks that will be used to organize and categorize project information, elements, spaces, and assets.\r"
+    },
+    {
+      "fieldName": "classificationStandards",
+      "lineNumber": 4135,
+      "description": "Provide detailed implementation guidelines for applying classification standards to specific element categories, spaces, and assets within the project.\r"
+    },
+    {
+      "fieldName": "dataExchangeProtocols",
+      "lineNumber": 4204,
+      "description": "Define protocols and procedures for exchanging information between project team members, disciplines, and external stakeholders.\r"
+    },
+    {
+      "fieldName": "qaFramework",
+      "lineNumber": 4282,
+      "description": "Define the quality assurance framework including all QA activities, responsible parties, frequency, and tools/methods used to ensure information quality throughout the project.\r"
+    },
+    {
+      "fieldName": "dataClassification",
+      "lineNumber": 5039,
+      "description": "Define data classification levels and corresponding security controls to protect sensitive project information.\r"
+    }
+  ]
+}

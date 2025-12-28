@@ -233,14 +233,14 @@ if __name__ == "__main__":
 
     # Run the API server
     print("="*70)
-    print("🚀 BEP AI Text Generator API (Ollama Backend)")
+    print(">> BEP AI Text Generator API (Ollama Backend)")
     print("="*70)
     print(f"Model: {OLLAMA_MODEL}")
-    print("API: http://localhost:5003")
-    print("Docs: http://localhost:5003/docs")
+    print("API: http://localhost:8000")
+    print("Docs: http://localhost:8000/docs")
     print("="*70)
     print()
-    print("📝 Make sure Ollama is running:")
+    print("Make sure Ollama is running:")
     print(f"   1. Check: http://localhost:11434/api/tags")
     print(f"   2. Model installed: ollama list")
     print(f"   3. Pull if needed: ollama pull {OLLAMA_MODEL}")
@@ -249,6 +249,6 @@ if __name__ == "__main__":
     uvicorn.run(
         app,
         host="0.0.0.0",
-        port=5003,
+        port=8000,
         log_level="info"
     )

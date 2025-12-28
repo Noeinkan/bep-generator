@@ -10,6 +10,7 @@ import json
 import logging
 from typing import Optional, Dict
 from pathlib import Path
+from load_help_content import load_field_prompts_from_help_content
 
 logger = logging.getLogger(__name__)
 
@@ -29,112 +30,15 @@ class OllamaGenerator:
         self.model = model
         self.timeout = 60  # seconds
 
-        # Field-specific system prompts for better context
-        self.field_prompts = {
-            'projectName': {
-                'system': 'You are a BIM project naming expert. Generate concise, professional project names.',
-                'context': 'Generate a professional project name for a BIM construction project.'
-            },
-            'projectDescription': {
-                'system': 'You are a BIM project documentation expert. Write clear, comprehensive project descriptions following ISO 19650 standards.',
-                'context': 'Write a detailed project description for a Building Information Modeling (BIM) project, covering scope, objectives, and key deliverables.'
-            },
-            'executiveSummary': {
-                'system': 'You are a BIM Execution Plan (BEP) expert. Write executive summaries following ISO 19650 standards.',
-                'context': 'Write an executive summary for a BIM Execution Plan (BEP) that establishes the framework for information management throughout the project lifecycle.'
-            },
-            'projectObjectives': {
-                'system': 'You are a BIM project objectives specialist. Define clear, measurable objectives aligned with ISO 19650.',
-                'context': 'Define the primary objectives for this BIM project, focusing on quality, efficiency, collaboration, and compliance with industry standards.'
-            },
-            'bimObjectives': {
-                'system': 'You are a BIM strategy expert. Define BIM-specific objectives following ISO 19650.',
-                'context': 'Define the BIM objectives for this project, including implementation of ISO 19650 standards, digital collaboration, and information management goals.'
-            },
-            'projectScope': {
-                'system': 'You are a BIM scope definition expert. Define comprehensive project scopes.',
-                'context': 'Define the project scope including design, construction, and operational phases, as well as all BIM deliverables and milestones.'
-            },
-            'stakeholders': {
-                'system': 'You are a stakeholder management expert in BIM projects.',
-                'context': 'List and describe key stakeholders in this BIM project, including the client, design team, contractors, and facility managers.'
-            },
-            'rolesResponsibilities': {
-                'system': 'You are a BIM roles and responsibilities specialist following ISO 19650.',
-                'context': 'Define roles and responsibilities for the BIM project team, including information manager, lead appointed party, and task teams.'
-            },
-            'deliveryTeam': {
-                'system': 'You are a BIM team structure expert.',
-                'context': 'Describe the project delivery team composition, including key professionals and their expertise areas.'
-            },
-            'collaborationProcedures': {
-                'system': 'You are a BIM collaboration expert following ISO 19650 CDE workflows.',
-                'context': 'Define collaboration procedures for information exchange, ensuring effective coordination and communication throughout the project.'
-            },
-            'informationExchange': {
-                'system': 'You are an information management expert following ISO 19650.',
-                'context': 'Define information exchange requirements, including structured data handover protocols and delivery milestones.'
-            },
-            'cdeWorkflow': {
-                'system': 'You are a Common Data Environment (CDE) workflow expert following ISO 19650.',
-                'context': 'Describe the CDE workflow including information containers, status codes (WIP, Shared, Published, Archived), and approval processes.'
-            },
-            'modelRequirements': {
-                'system': 'You are a BIM model requirements specialist following ISO 19650.',
-                'context': 'Specify model requirements including level of information need, geometric accuracy, and data standards.'
-            },
-            'dataStandards': {
-                'system': 'You are a BIM data standards expert.',
-                'context': 'Define data standards requiring compliance with ISO 19650, IFC standards, and industry-specific classification systems.'
-            },
-            'namingConventions': {
-                'system': 'You are a BIM naming conventions specialist following ISO 19650.',
-                'context': 'Define file naming conventions following standardized formats including project code, originator, zone, level, type, role, and number.'
-            },
-            'qualityAssurance': {
-                'system': 'You are a BIM quality assurance expert.',
-                'context': 'Define quality assurance procedures including validation checks, model audits, and compliance verification processes.'
-            },
-            'validationChecks': {
-                'system': 'You are a BIM validation specialist.',
-                'context': 'Describe validation checks including clash detection, data verification, and standards compliance audits.'
-            },
-            'technologyStandards': {
-                'system': 'You are a BIM technology standards expert.',
-                'context': 'Specify technology standards including software requirements, file formats, and interoperability protocols.'
-            },
-            'softwarePlatforms': {
-                'system': 'You are a BIM software specialist.',
-                'context': 'List required BIM software platforms and tools, including authoring, coordination, and analysis applications.'
-            },
-            'coordinationProcess': {
-                'system': 'You are a BIM coordination expert.',
-                'context': 'Define the coordination process including regular meetings, model federation, and issue resolution workflows.'
-            },
-            'clashDetection': {
-                'system': 'You are a clash detection specialist.',
-                'context': 'Define clash detection procedures including model federation, automated checks, and resolution tracking.'
-            },
-            'healthSafety': {
-                'system': 'You are a construction health and safety information management expert.',
-                'context': 'Define health and safety information requirements to be documented in BIM models and shared with the project team.'
-            },
-            'handoverRequirements': {
-                'system': 'You are a project handover specialist following ISO 19650.',
-                'context': 'Specify handover deliverables including as-built models, documentation, and asset information for facility management.'
-            },
-            'asbuiltRequirements': {
-                'system': 'You are an as-built documentation expert.',
-                'context': 'Define as-built model requirements representing actual construction conditions with verified dimensions and installed systems.'
-            },
-            'cobieRequirements': {
-                'system': 'You are a COBie (Construction Operations Building Information Exchange) expert.',
-                'context': 'Define COBie data requirements for structured asset information handover, including spaces, equipment, and maintenance schedules.'
-            },
-            'default': {
-                'system': 'You are a BIM Execution Plan (BEP) expert following ISO 19650 standards.',
-                'context': 'Provide professional BIM documentation content following industry best practices.'
-            }
+        # Load field-specific system prompts from helpContentData.js
+        # This provides a single source of truth for AI prompts across the application
+        logger.info("Loading field prompts from helpContentData.js...")
+        self.field_prompts = load_field_prompts_from_help_content()
+
+        # Default fallback for fields without aiPrompt in helpContentData.js
+        self.default_prompt = {
+            'system': 'You are a BIM Execution Plan (BEP) expert following ISO 19650 standards.',
+            'context': 'Provide professional BIM documentation content following industry best practices and ISO 19650 information management principles.'
         }
 
         # Verify Ollama connection on initialization
@@ -224,10 +128,10 @@ class OllamaGenerator:
         Returns:
             Generated suggestion
         """
-        # Get field-specific prompt
-        field_config = self.field_prompts.get(field_type, self.field_prompts['default'])
-        system_prompt = field_config['system']
-        context = field_config['context']
+        # Get field-specific prompt from helpContentData.js, or use default
+        field_config = self.field_prompts.get(field_type, self.default_prompt)
+        system_prompt = field_config.get('system', 'You are a BIM expert.')
+        context = field_config.get('context', 'Provide professional BIM content.')
 
         # Build the prompt
         if partial_text and len(partial_text.strip()) > 10:

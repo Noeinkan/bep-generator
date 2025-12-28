@@ -66,6 +66,13 @@ Facilities include 60 teaching spaces, assembly hall for 400, double sports hall
       'Not mentioning site constraints that impact delivery approach'
     ],
 
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM project planning expert. Generate comprehensive project descriptions that establish clear context for BIM execution.',
+      instructions: 'Generate content similar to the examples above. Include project type, quantified metrics (area in m², budget, timeline), sustainability targets (BREEAM/LEED), key technical challenges, and site constraints. Use structured paragraphs covering scope, scale, complexity, and stakeholder requirements. Maximum 150 words.',
+      style: 'comprehensive, quantified metrics, sustainability-focused, structured paragraphs, specific technical challenges'
+    },
+
     relatedFields: ['projectType', 'estimatedBudget', 'confirmedBudget', 'proposedTimeline', 'confirmedTimeline']
   },
 
@@ -123,6 +130,13 @@ Specific processes include: room-by-room coordination to LOD 350 for clinical sp
       'Missing coordination and clash detection protocols',
       'Not addressing how BIM reduces specific project risks'
     ],
+
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM strategy architect. Generate comprehensive BIM strategies that connect specific processes to project goals and measurable benefits.',
+      instructions: 'Generate content similar to the examples above. Include primary BIM uses (clash detection, 4D/5D, energy analysis), specific software platforms (BIM 360, Navisworks, Solibri), coordination methods (federated models, weekly clash detection), quantified targets (40% RFI reduction, LOD 350), and digital twin strategy. Use structured paragraphs with measurable outcomes. Maximum 150 words.',
+      style: 'comprehensive, specific tools mentioned, quantified benefits, multi-dimensional (3D/4D/5D), digital twin focus'
+    },
 
     relatedFields: ['bimGoals', 'primaryObjectives', 'bimUses']
   },
@@ -202,6 +216,13 @@ The delivery team must commit to specific information deliverables aligned with 
       'Failing to reference ISO 19650 or other applicable standards',
       'No quantified targets or success criteria'
     ],
+
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM strategy architect. Generate comprehensive BIM strategies that connect specific processes to project goals and measurable benefits.',
+      instructions: 'Generate content similar to the examples above. Include primary BIM uses (clash detection, 4D/5D, energy analysis), specific software platforms (BIM 360, Navisworks, Solibri), coordination methods (federated models, weekly clash detection), quantified targets (40% RFI reduction, LOD 350), and digital twin strategy. Use structured paragraphs with measurable outcomes. Maximum 150 words.',
+      style: 'comprehensive, specific tools mentioned, quantified benefits, multi-dimensional (3D/4D/5D), digital twin focus'
+    },
 
     relatedFields: ['bimStrategy', 'informationManagementResponsibilities']
   },
@@ -284,6 +305,13 @@ Recent projects: St. James's Hospital Extension (£55M, 2022 - full digital twin
       'Omitting continuous development and training programs',
       'No differentiation - sounds like every other BIM team'
     ],
+
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM team capability consultant. Generate compelling team credentials with quantified experience, certifications, and proven track records.',
+      instructions: 'Generate content similar to the examples above. Include years of experience, total project value (£M+), team size (coordinators, modellers), certifications (ISO 19650, RICS), software competencies (Revit, Navisworks, Solibri), and 2-3 recent projects with measurable outcomes (% clash reduction, time/cost savings). Use bullet points for capabilities and project examples. Maximum 150 words.',
+      style: 'quantified experience, certifications prominent, software expertise, proven outcomes, project examples with metrics'
+    },
 
     relatedFields: ['proposedInfoManager', 'informationManager', 'proposedResourceAllocation', 'proposedMobilizationPlan']
   },
@@ -406,6 +434,13 @@ This shows the client you have a clear, detailed plan to be production-ready qui
       'Not referencing past successful mobilizations'
     ],
 
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM mobilization planning expert. Generate detailed, phased mobilization plans demonstrating readiness and capability verification.',
+      instructions: 'Generate content similar to the examples above. Use 3-week phased structure: Week 1 (onboarding, ISO 19650 training), Week 2 (IT setup, software licensing, BIM 360/CDE configuration), Week 3 (pilot models, capability verification, IFC testing). Include risk mitigation with specific contingencies. Use structured format with clear phases and actionable items. Maximum 150 words.',
+      style: 'phased timeline (3 weeks), structured approach, capability verification, risk mitigation, actionable steps'
+    },
+
     relatedFields: ['proposedResourceAllocation', 'teamCapabilities', 'proposedBimGoals']
   },
 
@@ -477,6 +512,13 @@ BIM goals should be established based on the appointing party's information requ
       'Goals that aren\'t actually achievable through BIM processes',
       'No connection to sustainability or environmental targets'
     ],
+
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM goals strategist. Generate SMART BIM goals aligned with client business objectives and measurable project outcomes.',
+      instructions: 'Generate content similar to the examples above. Create 3-5 numbered goals covering: design coordination (40% RFI reduction, clash elimination), construction optimization (4D sequencing, 20% schedule compression), cost control (5D integration, ±2% budget variance), sustainability (net-zero carbon, BREEAM/LEED targets), and digital asset delivery (25% operational cost reduction). Each goal should be specific, measurable, and outcome-focused. Maximum 150 words.',
+      style: 'numbered goals (3-5), SMART objectives, quantified targets, lifecycle perspective, sustainability integrated'
+    },
 
     relatedFields: ['bimStrategy', 'primaryObjectives', 'bimUses']
   },
@@ -550,6 +592,13 @@ Primary objectives should demonstrate how the delivery team will collaboratively
       'Missing objectives for stakeholder communication and approvals'
     ],
 
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM implementation specialist. Generate specific, actionable primary objectives linked to BIM processes and measurable outcomes.',
+      instructions: 'Generate content similar to the examples above. Create 4-5 numbered objectives covering: clash detection protocols (95% clash-free, <24hr resolution), performance modeling (energy analysis, net-zero validation), construction optimization (4D sequencing, quantity extraction), sustainability analysis (embedded carbon, lifecycle assessment), and digital twin delivery (COBie 2.4, asset data). Each objective must be specific, measurable, and tool/process-linked. Maximum 150 words.',
+      style: 'numbered objectives (4-5), specific processes, measurable criteria, tool-specific, lifecycle coverage'
+    },
+
     relatedFields: ['bimGoals', 'bimStrategy', 'bimUses']
   },
 
@@ -620,6 +669,13 @@ Asset Management: Complete as-built data in the client's asset management system
       'Ignoring sustainability and environmental benefits',
       'Not comparing to alternative (non-BIM) approach to show differential value'
     ],
+
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM value consultant. Generate compelling value propositions with quantified benefits across cost, time, quality, risk, and operations.',
+      instructions: 'Generate content similar to the examples above. Include quantified cost savings (% reduction, £ amounts), time benefits (weeks saved), risk reduction metrics, operational savings (annual £, % reduction), and sustainability benefits. Structure with clear categories (Cost Savings, Time Benefits, Quality & Risk, Operational Value, Sustainability). Use specific numbers and percentages. Maximum 150 words.',
+      style: 'quantified metrics, multi-category structure, percentage savings, monetary values, client benefit focus'
+    },
 
     relatedFields: ['bimStrategy', 'bimGoals', 'keyCommitments']
   },
@@ -771,6 +827,13 @@ Risk management focuses on early identification through 3D coordination, environ
       'Missing quality assurance and compliance commitments'
     ],
 
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM delivery strategy consultant. Generate compelling tender proposals that differentiate the team\'s approach and demonstrate value.',
+      instructions: 'Generate content similar to the examples above. Include delivery philosophy, phased strategy (RIBA stages), BIM-enabled value engineering, early stakeholder engagement, risk management through clash detection, and quality assurance. Use structured paragraphs with specific methodologies. Maximum 150 words.',
+      style: 'strategic, value-focused, differentiated approach, structured methodology, client-benefit emphasis'
+    },
+
     relatedFields: ['bimStrategy', 'deliveryApproach', 'keyCommitments']
   },
 
@@ -821,6 +884,13 @@ The project serves as a flagship example of sustainable commercial development, 
       'Overly technical language instead of business-focused narrative',
       'Failing to differentiate between proposed and confirmed language'
     ],
+
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM business strategy consultant. Generate compelling project context that connects BIM implementation to strategic business objectives.',
+      instructions: 'Generate content similar to the examples above. Explain the business case, strategic importance, and how BIM supports client objectives. Include sustainability goals, digital transformation alignment, and portfolio context. Use business-focused language connecting BIM to outcomes, not just processes. Maximum 150 words.',
+      style: 'business-focused, strategic alignment, outcome-oriented, client objectives emphasis'
+    },
 
     relatedFields: ['projectDescription', 'bimStrategy', 'strategicAlignment']
   },
@@ -940,6 +1010,13 @@ All information deliverables will be structured for integration with the Trust's
       'Not explaining phased delivery aligned with programme',
       'Missing risk management and continuous improvement processes'
     ],
+
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM execution planning expert. Generate confident, execution-focused delivery plans with confirmed processes and timelines.',
+      instructions: 'Generate content similar to the examples above. Use confident language ("We will..."). Include phased delivery (RIBA stages), specific coordination schedules (weekly/bi-weekly), CDE implementation timeline, quality gates, clash resolution SLAs, and ISO 19650 compliance. Use structured paragraphs with actionable commitments. Maximum 150 words.',
+      style: 'confident tone, execution-focused, specific schedules, quality gates, actionable commitments'
+    },
 
     relatedFields: ['bimStrategy', 'tenderApproach', 'keyCommitments', 'informationManagementResponsibilities']
   },
@@ -1399,6 +1476,13 @@ All resources will be tested for collaborative production capability before full
       'Not addressing CDE configuration and templates'
     ],
 
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM mobilization coordinator. Generate comprehensive mobilization plans with phased activities, capability testing, and risk management.',
+      instructions: 'Generate content similar to the examples above. Use 3-week phased structure with detailed activities: Week 1 (onboarding, ISO 19650 training, EIR review, CDE access), Week 2 (IT setup, Revit/Navisworks licensing, cloud config, CDE templates), Week 3 (pilot models, federation testing, IFC validation, quality checks). Include risk mitigation section documenting capacity risks per ISO 19650-2 clause 5.3.6. Use structured format with bold headings and bullet points. Maximum 150 words.',
+      style: 'phased structure (3 weeks), detailed activities, ISO 19650-2 compliant, risk register integration, capability verification emphasis'
+    },
+
     relatedFields: ['resourceAllocationTable', 'informationManagementResponsibilities', 'cdeStructure', 'confirmedBimGoals']
   },
 
@@ -1525,6 +1609,13 @@ The Information Manager reports directly to the Project Director with authority 
       'No escalation procedures defined',
       'Missing compliance monitoring duties'
     ],
+
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are an Information Manager specialist. Generate comprehensive responsibility frameworks covering CDE management, TIDP coordination, QA, security, and governance.',
+      instructions: 'Generate content similar to the examples above. Structure with clear categories: CDE Management (setup, access control, audit trails), TIDP Coordination (monitoring deliverables, LOIN compliance, MIDP tracking), Quality Assurance (automated validation, Solibri/Navisworks checks), Information Security (access permissions, encryption, GDPR), Governance & Reporting (monthly reports, KPIs, escalation). Include specific timelines and authority levels. Maximum 150 words.',
+      style: 'structured categories, specific responsibilities, ISO 19650-2 aligned, governance emphasis, clear authority and escalation'
+    },
 
     relatedFields: ['informationManager', 'cdeStrategy', 'qaFramework']
   },
@@ -4379,6 +4470,13 @@ Interoperability:
       'Validation results not documented or tracked',
       'No corrective action process for failed validations'
     ],
+
+    // AI Prompt Configuration for generating field content
+    aiPrompt: {
+      system: 'You are a BIM model validation expert. Generate concise, practical validation procedures using checklist format.',
+      instructions: 'Generate content similar to the examples above. Use checklist format (☑) with specific validation tools (e.g., Solibri Model Checker), quantifiable metrics (e.g., <50 clashes, ±5mm tolerance), and actionable items. Keep it practical and structured. Maximum 150 words.',
+      style: 'checklist-based, specific tools mentioned, quantifiable metrics, structured categories'
+    },
 
     relatedFields: ['qaFramework', 'reviewProcesses', 'complianceVerification', 'modelReviewAuthorisation']
   },
