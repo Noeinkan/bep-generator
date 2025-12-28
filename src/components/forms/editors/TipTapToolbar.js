@@ -32,6 +32,7 @@ import {
 import TemplateSelector from '../controls/TemplateSelector';
 import TableInsertDialog from '../dialogs/TableInsertDialog';
 import AISuggestionButton from '../ai/AISuggestionButton';
+import { markdownToTipTapHtml } from '../../../utils/markdownToHtml';
 
 const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldName }) => {
   const [showLinkInput, setShowLinkInput] = useState(false);
@@ -550,8 +551,20 @@ const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldN
         currentValue={editor?.getText() || ''}
         onSuggestion={(suggestion) => {
           if (editor && suggestion) {
-            // Insert AI suggestion at cursor position
-            editor.chain().focus().insertContent(suggestion).run();
+            // Convert markdown to HTML for professional formatting
+            const htmlContent = markdownToTipTapHtml(suggestion);
+
+            // Insert formatted HTML at cursor position (append)
+            editor.chain().focus().insertContent(htmlContent).run();
+          }
+        }}
+        onReplace={(suggestion) => {
+          if (editor && suggestion) {
+            // Convert markdown to HTML for professional formatting
+            const htmlContent = markdownToTipTapHtml(suggestion);
+
+            // Replace all content
+            editor.chain().focus().clearContent().insertContent(htmlContent).run();
           }
         }}
         className="ml-2"

@@ -166,10 +166,21 @@ class OllamaGenerator:
         text = re.sub(r'^(Sure|Here|Okay|Certainly)[,!.]?\s*', '', text, flags=re.IGNORECASE)
         text = re.sub(r'^(I\'ll|I will|Let me)\s+\w+\s+', '', text, flags=re.IGNORECASE)
 
-        # Fix spacing
-        text = re.sub(r'\s+', ' ', text)  # Multiple spaces to single
-        text = re.sub(r'\s+([.,;:!?])', r'\1', text)  # Remove space before punctuation
-        text = re.sub(r'([.,;:!?])([a-zA-Z])', r'\1 \2', text)  # Add space after punctuation
+        # Fix spacing - PRESERVE newlines for proper formatting
+        # Only collapse multiple spaces on the same line
+        lines = text.split('\n')
+        cleaned_lines = []
+        for line in lines:
+            # Collapse multiple spaces within a line
+            cleaned_line = re.sub(r' +', ' ', line)
+            # Remove space before punctuation
+            cleaned_line = re.sub(r'\s+([.,;:!?])', r'\1', cleaned_line)
+            # Add space after punctuation if missing
+            cleaned_line = re.sub(r'([.,;:!?])([a-zA-Z])', r'\1 \2', cleaned_line)
+            cleaned_lines.append(cleaned_line.strip())
+
+        # Rejoin with newlines, removing empty lines
+        text = '\n'.join(line for line in cleaned_lines if line)
 
         # Capitalize first letter
         if text:
