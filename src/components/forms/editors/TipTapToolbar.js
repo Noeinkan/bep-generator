@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Bold,
   Italic,
@@ -25,25 +25,19 @@ import {
   Search,
   ZoomIn,
   ZoomOut,
-  FileText,
   ChevronDown,
-  Sparkles,
 } from 'lucide-react';
-import TemplateSelector from '../controls/TemplateSelector';
 import TableInsertDialog from '../dialogs/TableInsertDialog';
-import AISuggestionButton from '../ai/AISuggestionButton';
-import { markdownToTipTapHtml } from '../../../utils/markdownToHtml';
+import SmartHelpButton from '../ai/SmartHelpButton';
 
-const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldName }) => {
+const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldName, helpContent }) => {
   const [showLinkInput, setShowLinkInput] = useState(false);
   const [linkUrl, setLinkUrl] = useState('');
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [currentColor, setCurrentColor] = useState('#000000');
   const [showHighlightPicker, setShowHighlightPicker] = useState(false);
   const [currentHighlight, setCurrentHighlight] = useState('#ffff00');
-  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [showTableDialog, setShowTableDialog] = useState(false);
-  const templateButtonRef = useRef(null);
 
   const addLink = useCallback(() => {
     if (linkUrl && editor) {
@@ -532,53 +526,14 @@ const TipTapToolbar = ({ editor, zoom = 100, onZoomChange, onFindReplace, fieldN
 
       <ToolbarDivider />
 
-      {/* Templates - Emphasized Button */}
-      <button
-        ref={templateButtonRef}
-        onClick={() => setShowTemplateSelector(true)}
-        className="ml-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2 font-medium"
-        title="Load example text for this field"
-        type="button"
-      >
-        <FileText size={18} />
-        <span className="text-sm">Example Text</span>
-      </button>
-
-      {/* AI Suggestion Button */}
-      <AISuggestionButton
+      {/* Smart Help Button - Unified help interface */}
+      <SmartHelpButton
+        editor={editor}
         fieldName={fieldName}
         fieldType={fieldName}
-        currentValue={editor?.getText() || ''}
-        onSuggestion={(suggestion) => {
-          if (editor && suggestion) {
-            // Convert markdown to HTML for professional formatting
-            const htmlContent = markdownToTipTapHtml(suggestion);
-
-            // Insert formatted HTML at cursor position (append)
-            editor.chain().focus().insertContent(htmlContent).run();
-          }
-        }}
-        onReplace={(suggestion) => {
-          if (editor && suggestion) {
-            // Convert markdown to HTML for professional formatting
-            const htmlContent = markdownToTipTapHtml(suggestion);
-
-            // Replace all content
-            editor.chain().focus().clearContent().insertContent(htmlContent).run();
-          }
-        }}
+        helpContent={helpContent}
         className="ml-2"
       />
-
-      {/* Template Selector Dialog */}
-      {showTemplateSelector && (
-        <TemplateSelector
-          editor={editor}
-          fieldName={fieldName}
-          triggerRef={templateButtonRef}
-          onClose={() => setShowTemplateSelector(false)}
-        />
-      )}
 
       {/* Table Insert Dialog */}
       {showTableDialog && (

@@ -18,6 +18,7 @@ import ResizableImage from './extensions/ResizableImage';
 import TipTapToolbar from './TipTapToolbar';
 import FindReplaceDialog from '../dialogs/FindReplaceDialog';
 import TableBubbleMenu from '../tables/TableBubbleMenu';
+import { getHelpContent } from '../../../data/helpContent';
 
 const TipTapEditor = ({
   value = '',
@@ -228,6 +229,7 @@ const TipTapEditor = ({
   }, [editor]);
 
   const stats = getStats();
+  const helpContent = fieldName ? getHelpContent(fieldName) : null;
 
   if (!editor) {
     return null;
@@ -243,6 +245,7 @@ const TipTapEditor = ({
           onZoomChange={setZoom}
           onFindReplace={() => setShowFindReplace(true)}
           fieldName={fieldName}
+          helpContent={helpContent}
         />
       )}
 
