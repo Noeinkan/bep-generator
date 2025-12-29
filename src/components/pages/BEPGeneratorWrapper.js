@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, Eye, Zap, FolderOpen, Save, ExternalLink } from 'lucide-react';
 
 // Import all the existing BEP components
@@ -20,18 +21,26 @@ import { useTidpData } from '../../hooks/useTidpData';
 import { useMidpData } from '../../hooks/useMidpData';
 import { useDraftOperations } from '../../hooks/useDraftOperations';
 import { useAuth } from '../../contexts/AuthContext';
-import { usePage } from '../../contexts/PageContext';
 import { validateDraftName } from '../../utils/validationUtils';
 
 const BEPGeneratorWrapper = () => {
-  // const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
-  const { navigateTo } = usePage();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Determine current view from URL path
+  const currentPath = location.pathname;
+  const isSelectTypePage = currentPath.includes('/select-type');
+  const isFormPage = currentPath.includes('/form');
+  const isStartMenu = !isSelectTypePage && !isFormPage;
+
+  // Derive currentStep from URL (single source of truth)
+  const currentStep = parseInt(searchParams.get('step') || '0', 10);
 
   // State variables
   const [formData, setFormData] = useState(getEmptyBepData());
   const [bepType, setBepType] = useState('');
-  const [currentStep, setCurrentStep] = useState(0);
   const [validationErrors, setValidationErrors] = useState({});
   const [completedSections, setCompletedSections] = useState(new Set());
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -43,9 +52,7 @@ const BEPGeneratorWrapper = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [exportFormat, setExportFormat] = useState('pdf');
 
-  // New state for Start Menu navigation
-  const [showStartMenu, setShowStartMenu] = useState(true);
-  const [showTypeSelector, setShowTypeSelector] = useState(false);
+  // State for dialogs/overlays (not tied to routes)
   const [showTemplateGallery, setShowTemplateGallery] = useState(false);
   const [showImportDialog, setShowImportDialog] = useState(false);
 
@@ -60,11 +67,13 @@ const BEPGeneratorWrapper = () => {
   const { saveDraft, isLoading: savingDraft, error: _draftError, importBepFromJson } = useDraftOperations(user, formData, bepType, (loadedData, loadedType) => {
     setFormData(loadedData);
     setBepType(loadedType);
-    setShowStartMenu(false);
-    setShowTypeSelector(false);
+    // Navigate to form after loading draft
+    navigate('/bep-generator/form?step=0');
   }, () => {
     setShowImportDialog(false);
   });
+
+  // No sync needed - currentStep is derived directly from URL
 
   // Close draft manager if user logs out
   React.useEffect(() => {
@@ -96,11 +105,11 @@ const BEPGeneratorWrapper = () => {
 
   // Navigation functions
   const goToTidpManager = () => {
-    navigateTo('tidp-midp');
+    navigate('/tidp-midp');
   };
 
   const goHome = () => {
-    navigateTo('home');
+    navigate('/home');
   };
 
   // All existing BEP Generator methods (copied from App.js)
@@ -135,12 +144,17 @@ const BEPGeneratorWrapper = () => {
     return errors;
   }, [bepType]);
 
-  const handleNext = useCallback(() => {
-    const errors = validateStep(currentStep, formData);
+  const handleNext = () => {
+    const totalSteps = CONFIG.steps?.length || 0;
+    const isLastStep = currentStep === totalSteps - 1;
 
-    if (Object.keys(errors).length > 0) {
-      setValidationErrors(errors);
-      return;
+    // For the last step (Appendices), allow preview even with validation errors
+    if (!isLastStep) {
+      const errors = validateStep(currentStep, formData);
+      if (Object.keys(errors).length > 0) {
+        setValidationErrors(errors);
+        return;
+      }
     }
 
     setValidationErrors({});
@@ -148,29 +162,36 @@ const BEPGeneratorWrapper = () => {
     // Mark current step as completed
     setCompletedSections(prev => new Set(prev).add(currentStep));
 
-    const totalSteps = CONFIG.steps?.length || 0;
-    if (currentStep < totalSteps - 1) {
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setCurrentStep(prev => prev + 1);
-        setIsTransitioning(false);
-      }, 150);
-    } else if (currentStep === totalSteps - 1) {
+    if (isLastStep) {
       // Last step reached, go to preview
       setShowPreview(true);
-    }
-  }, [currentStep, formData, validateStep]);
-
-  const handlePrevious = useCallback(() => {
-    if (currentStep > 0) {
+    } else {
+      // Move to next step
+      const nextStep = currentStep + 1;
       setIsTransitioning(true);
-      setTimeout(() => {
-        setCurrentStep(prev => prev - 1);
-        setValidationErrors({});
-        setIsTransitioning(false);
-      }, 150);
+
+      // Use requestAnimationFrame to ensure smooth transition
+      requestAnimationFrame(() => {
+        setSearchParams({ step: nextStep.toString() });
+        setTimeout(() => setIsTransitioning(false), 150);
+      });
     }
-  }, [currentStep]);
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 0) {
+      const prevStep = currentStep - 1;
+      setIsTransitioning(true);
+      setValidationErrors({});
+
+      // Use requestAnimationFrame to ensure smooth transition
+      requestAnimationFrame(() => {
+        setSearchParams({ step: prevStep.toString() });
+        setTimeout(() => setIsTransitioning(false), 150);
+      });
+    }
+    // At step 0, button will be disabled - use "Change Type" button to go back
+  };
 
   const updateFormData = useCallback((field, value) => {
     setFormData(prev => {
@@ -191,19 +212,17 @@ const BEPGeneratorWrapper = () => {
     // Use empty data for new BEPs (not pre-filled template data)
     setBepType(selectedType);
     setFormData(getEmptyBepData()); // Get fresh empty data
-    setCurrentStep(0);
     setValidationErrors({});
     setShowPreview(false);
     setCompletedSections(new Set());
-    setShowTypeSelector(false);
-    setShowStartMenu(false);
-  }, []);
+    // Navigate to form page with step 0 (URL is the source of truth for currentStep)
+    navigate('/bep-generator/form?step=0');
+  }, [navigate]);
 
   // Start Menu Handlers
   const handleNewBep = useCallback(() => {
-    setShowStartMenu(false);
-    setShowTypeSelector(true);
-  }, []);
+    navigate('/bep-generator/select-type');
+  }, [navigate]);
 
   const handleLoadTemplate = useCallback(() => {
     setShowTemplateGallery(true);
@@ -227,42 +246,41 @@ const BEPGeneratorWrapper = () => {
       setFormData(templateData);
       setBepType(template.bepType);
       setShowTemplateGallery(false);
-      setShowStartMenu(false);
-      setCurrentStep(0);
       setValidationErrors({});
       setCompletedSections(new Set());
+      // Navigate to form with template loaded (URL is the source of truth for currentStep)
+      navigate('/bep-generator/form?step=0');
     } else {
       console.error('Template not found:', template.id);
       alert('Failed to load template. Please try again.');
     }
-  }, []);
+  }, [navigate]);
 
   const handleImportFile = useCallback(async (file) => {
     try {
       await importBepFromJson(file);
       setShowImportDialog(false);
-      setShowStartMenu(false);
+      // Navigate to form after import
+      navigate('/bep-generator/form?step=0');
     } catch (error) {
       console.error('Import failed:', error);
     }
-  }, [importBepFromJson]);
+  }, [importBepFromJson, navigate]);
 
   const handlePreview = useCallback(() => {
-    console.log('handlePreview called, currentStep:', currentStep, 'formData keys:', Object.keys(formData));
-    // Allow preview even with validation errors for appendices step
-    if (currentStep === CONFIG.steps?.length - 1) {
-      console.log('On appendices step, allowing preview');
-      setShowPreview(true);
-      return;
+    const totalSteps = CONFIG.steps?.length || 0;
+    const isLastStep = currentStep === totalSteps - 1;
+
+    // Allow preview even with validation errors for the last step (Appendices)
+    if (!isLastStep) {
+      const errors = validateStep(currentStep, formData);
+      if (Object.keys(errors).length > 0) {
+        setValidationErrors(errors);
+        alert('Please fix validation errors before previewing');
+        return;
+      }
     }
 
-    const errors = validateStep(currentStep, formData);
-    console.log('Validation errors:', errors);
-    if (Object.keys(errors).length > 0) {
-      setValidationErrors(errors);
-      alert('Please fix validation errors before previewing');
-      return;
-    }
     setShowPreview(true);
   }, [currentStep, formData, validateStep]);
 
@@ -401,8 +419,8 @@ const BEPGeneratorWrapper = () => {
           </div>
         </div>
 
-        {/* Show Start Menu or Type Selector based on state */}
-        {showStartMenu ? (
+        {/* Show Start Menu, Type Selector, or Form based on current route */}
+        {isStartMenu ? (
           <BepStartMenu
             onNewBep={handleNewBep}
             onLoadTemplate={handleLoadTemplate}
@@ -410,7 +428,7 @@ const BEPGeneratorWrapper = () => {
             onImportBep={handleImportBep}
             user={user}
           />
-        ) : showTypeSelector ? (
+        ) : isSelectTypePage ? (
           <div className="max-w-6xl mx-auto px-4 py-4 lg:py-6">
             <div className="bg-transparent rounded-xl p-0">
               <BepTypeSelector
@@ -461,16 +479,25 @@ const BEPGeneratorWrapper = () => {
 
   // Show draft manager if requested and user is logged in
   if (showDraftManager && user) {
+    console.log('Rendering DraftManager, user:', user, 'bepType:', bepType);
     return (
       <DraftManager
         user={user}
         currentFormData={formData}
         onLoadDraft={(loadedData, loadedType) => {
+          console.log('DraftManager onLoadDraft called', loadedData, loadedType);
           setFormData(loadedData);
           setBepType(loadedType);
           setShowDraftManager(false);
+          setValidationErrors({});
+          setCompletedSections(new Set());
+          // Navigate to form with loaded draft
+          navigate('/bep-generator/form?step=0');
         }}
-        onClose={() => setShowDraftManager(false)}
+        onClose={() => {
+          console.log('DraftManager onClose called');
+          setShowDraftManager(false);
+        }}
         bepType={bepType}
       />
     );
@@ -510,7 +537,10 @@ const BEPGeneratorWrapper = () => {
 
           <div className="flex space-x-2">
             <button
-              onClick={() => setShowDraftManager(true)}
+              onClick={() => {
+                console.log('Drafts button clicked, user:', user, 'showDraftManager:', showDraftManager);
+                setShowDraftManager(true);
+              }}
               disabled={!user}
               className="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 hover:border-blue-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
@@ -534,7 +564,7 @@ const BEPGeneratorWrapper = () => {
             onStepClick={(stepIndex) => {
               setIsTransitioning(true);
               setTimeout(() => {
-                setCurrentStep(stepIndex);
+                setSearchParams({ step: stepIndex.toString() });
                 setValidationErrors({});
                 setIsTransitioning(false);
               }, 150);
@@ -587,8 +617,7 @@ const BEPGeneratorWrapper = () => {
 
               <button
                 onClick={handleNext}
-                disabled={currentStep >= (CONFIG.steps?.length || 0)}
-                className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 hover:border-blue-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 hover:border-blue-300 transition-all duration-200"
               >
                 {currentStep >= (CONFIG.steps?.length || 0) - 1 ? 'Preview' : 'Next'}
                 <ChevronRight className="w-4 h-4 ml-1" />
@@ -671,8 +700,7 @@ const BEPGeneratorWrapper = () => {
 
               <button
                 onClick={handleNext}
-                disabled={currentStep >= (CONFIG.steps?.length || 0)}
-                className="inline-flex items-center px-6 py-3 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105"
+                className="inline-flex items-center px-6 py-3 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 hover:shadow-md transition-all duration-200 transform hover:scale-105"
               >
                 {currentStep >= (CONFIG.steps?.length || 0) - 1 ? 'Preview' : 'Next'}
                 <ChevronRight className="w-4 h-4 ml-2" />

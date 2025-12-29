@@ -152,20 +152,22 @@ export const useDraftOperations = (user, currentFormData, bepType, onLoadDraft, 
   const loadDraft = useCallback((draft) => {
     if (!draft || typeof draft !== 'object' || !draft.data) {
       setError('Invalid draft data - cannot load');
-      return;
+      return false;
     }
 
     if (typeof onLoadDraft !== 'function' || typeof onClose !== 'function') {
       setError('Invalid callback functions - cannot load draft');
-      return;
+      return false;
     }
 
     try {
       onLoadDraft(draft.data, draft.bepType);
       onClose();
+      return true;
     } catch (error) {
       console.error('Error loading draft:', error);
       setError('Failed to load draft. Please try again.');
+      return false;
     }
   }, [onLoadDraft, onClose]);
 

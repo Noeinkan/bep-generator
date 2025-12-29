@@ -1,28 +1,23 @@
 import React from 'react';
+import { NavLink, Outlet } from 'react-router-dom';
 import { FileText, BarChart3, Home, Settings } from 'lucide-react';
-import { usePage } from '../../contexts/PageContext';
 
-const MainLayout = ({ children }) => {
-  const { currentPage, navigateTo } = usePage();
-
+const MainLayout = () => {
   const navigation = [
     {
       name: 'Home',
-      href: 'home',
-      icon: Home,
-      current: currentPage === 'home'
+      href: '/home',
+      icon: Home
     },
     {
       name: 'BEP Generator',
-      href: 'bep-generator',
-      icon: FileText,
-      current: currentPage === 'bep-generator'
+      href: '/bep-generator',
+      icon: FileText
     },
     {
       name: 'TIDP/MIDP Manager',
-      href: 'tidp-midp',
-      icon: BarChart3,
-      current: currentPage === 'tidp-midp'
+      href: '/tidp-midp',
+      icon: BarChart3
     }
   ];
 
@@ -48,18 +43,20 @@ const MainLayout = ({ children }) => {
                 {navigation.map((item) => {
                   const IconComponent = item.icon;
                   return (
-                    <button
+                    <NavLink
                       key={item.name}
-                      onClick={() => navigateTo(item.href)}
-                      className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
-                        item.current
-                          ? 'border-blue-500 text-blue-600'
-                          : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-                      }`}
+                      to={item.href}
+                      className={({ isActive }) =>
+                        `inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
+                          isActive
+                            ? 'border-blue-500 text-blue-600'
+                            : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                        }`
+                      }
                     >
                       <IconComponent className="w-4 h-4 mr-2" />
                       {item.name}
-                    </button>
+                    </NavLink>
                   );
                 })}
               </div>
@@ -108,29 +105,31 @@ const MainLayout = ({ children }) => {
             {navigation.map((item) => {
               const IconComponent = item.icon;
               return (
-                <button
+                <NavLink
                   key={item.name}
-                  onClick={() => navigateTo(item.href)}
-                  className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${
-                    item.current
-                      ? 'bg-blue-50 border-blue-500 text-blue-700'
-                      : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'
-                  }`}
+                  to={item.href}
+                  className={({ isActive }) =>
+                    `block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${
+                      isActive
+                        ? 'bg-blue-50 border-blue-500 text-blue-700'
+                        : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'
+                    }`
+                  }
                 >
                   <div className="flex items-center">
                     <IconComponent className="w-4 h-4 mr-3" />
                     {item.name}
                   </div>
-                </button>
+                </NavLink>
               );
             })}
           </div>
         </div>
       </nav>
 
-      {/* Main Content */}
+      {/* Main Content - Outlet renders child routes */}
       <main className="flex-1">
-        {children}
+        <Outlet />
       </main>
     </div>
   );

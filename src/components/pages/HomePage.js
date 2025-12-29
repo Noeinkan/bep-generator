@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { usePage } from '../../contexts/PageContext';
+import { useNavigate } from 'react-router-dom';
 import {
   FileText,
   BarChart3,
@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 
 const HomePage = () => {
-  const { navigateTo } = usePage();
+  const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -72,7 +72,7 @@ const HomePage = () => {
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-8">
               <button
-                onClick={() => navigateTo('bep-generator')}
+                onClick={() => navigate('/bep-generator')}
                 className="group inline-flex items-center px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 <Play className="w-4 h-4 mr-2" />
@@ -81,7 +81,7 @@ const HomePage = () => {
               </button>
 
               <button
-                onClick={() => navigateTo('tidp-midp')}
+                onClick={() => navigate('/tidp-midp')}
                 className="group inline-flex items-center px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-600 transform hover:scale-105 transition-all duration-200"
               >
                 TIDP/MIDP Manager
@@ -171,7 +171,7 @@ const HomePage = () => {
               </div>
 
               <button
-                onClick={() => navigateTo('bep-generator')}
+                onClick={() => navigate('/bep-generator')}
                 className="group inline-flex items-center justify-center w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 <span className="text-base lg:text-lg">Start Creating BEP</span>
@@ -221,7 +221,7 @@ const HomePage = () => {
               </div>
 
               <button
-                onClick={() => navigateTo('tidp-midp')}
+                onClick={() => navigate('/tidp-midp')}
                 className="group inline-flex items-center justify-center w-full px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold rounded-xl hover:from-green-700 hover:to-green-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 <span className="text-base lg:text-lg">Manage Information Delivery</span>
@@ -357,14 +357,14 @@ const HomePage = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
-              onClick={() => navigateTo('bep-generator')}
+              onClick={() => navigate('/bep-generator')}
               className="inline-flex items-center px-6 py-3 bg-white text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transform hover:scale-105 transition-all duration-200 shadow-lg"
             >
               <FileText className="w-4 h-4 mr-2" />
               Create BEP
             </button>
             <button
-              onClick={() => navigateTo('tidp-midp')}
+              onClick={() => navigate('/tidp-midp')}
               className="inline-flex items-center px-6 py-3 border-2 border-white text-white font-semibold rounded-xl hover:bg-white hover:text-blue-600 transform hover:scale-105 transition-all duration-200"
             >
               <BarChart3 className="w-4 h-4 mr-2" />

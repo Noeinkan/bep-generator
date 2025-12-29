@@ -40,13 +40,13 @@ const EditableTable = React.memo(({ field, value, onChange, error }) => {
     Array.isArray(COMMERCIAL_OFFICE_TEMPLATE[name].data) &&
     COMMERCIAL_OFFICE_TEMPLATE[name].data.length > 0;
 
-  // Ensure at least one empty row exists for new tables (only if no example data available)
+  // Ensure at least one empty row exists for new tables
   useEffect(() => {
-    if (tableData.length === 0 && !hasExampleData) {
+    if (tableData.length === 0) {
       const emptyRow = columns.reduce((acc, col) => ({ ...acc, [col]: '' }), {});
       onChange(name, { columns, data: [emptyRow] });
     }
-  }, []);
+  }, [tableData.length, columns, name, onChange]);
 
   // Focus the edit input when editing column starts (only when it changes)
   useEffect(() => {
