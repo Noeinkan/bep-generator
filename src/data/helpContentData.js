@@ -2489,7 +2489,7 @@ The MIDP establishes the schedule of information delivery aligned with key decis
       style: 'structured paragraphs, ISO 19650 tone, milestone-led, concise'
     },
 
-    relatedFields: ['keyMilestones', 'deliverySchedule', 'tidpRequirements']
+    relatedFields: ['keyMilestones', 'tidpRequirements']
   },
 
   keyMilestones: {
@@ -2514,32 +2514,7 @@ Key milestones represent critical points where information is delivered, reviewe
       style: 'table format, phased milestones, professional, concise'
     },
 
-    relatedFields: ['midpDescription', 'deliverySchedule', 'milestoneInformation']
-  },
-
-  deliverySchedule: {
-    description: `Provide a detailed information delivery schedule showing phased approach across the project timeline.`,
-
-    iso19650: `ISO 19650-2:2018 Section 5.4 - Delivery Schedule
-
-The delivery schedule details when specific information containers will be produced, coordinated, and delivered throughout the appointment.`,
-
-    bestPractices: [
-      'Break down by project phases or RIBA stages',
-      'Show resource deployment aligned with deliverables',
-      'Include coordination and federation frequency',
-      'Address client approval timeframes',
-      'Show dependencies between disciplines',
-      'Include contingency for reviews and revisions'
-    ],
-
-    aiPrompt: {
-      system: 'You are a BIM delivery coordination expert specializing in detailed information delivery scheduling.',
-      instructions: 'Generate a detailed information delivery schedule for a BEP. Break down by RIBA stages showing phased approach. Include: stage/phase, timeline, key deliverables per discipline (Architecture, Structural, MEP), coordination frequency (weekly/bi-weekly), federation schedule, client review periods, and resource deployment. Show interdisciplinary dependencies and approval timeframes. Use structured paragraphs or table format. Maximum 180 words.',
-      style: 'phased schedule, structured, ISO 19650 tone, concise'
-    },
-
-    relatedFields: ['midpDescription', 'keyMilestones', 'tidpRequirements']
+    relatedFields: ['midpDescription', 'milestoneInformation']
   },
 
   tidpRequirements: {
@@ -2572,7 +2547,7 @@ TIDPs define how each task team will deliver information to meet their commitmen
       style: 'structured paragraphs, discipline-led, ISO 19650 tone, concise'
     },
 
-    relatedFields: ['midpDescription', 'taskTeamsBreakdown', 'deliverySchedule']
+    relatedFields: ['midpDescription', 'taskTeamsBreakdown']
   },
 
   responsibilityMatrix: {

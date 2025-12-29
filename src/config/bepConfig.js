@@ -210,38 +210,35 @@ const CONFIG = {
         // 6.1 - Key Milestones (Milestone chiave con deliverable e date)
         { number: '6.1', name: 'keyMilestones', label: 'Key Information Delivery Milestones', required: true, type: 'milestones-table', columns: ['Stage/Phase', 'Milestone Description', 'Deliverables', 'Due Date'] },
 
-        // 6.2 - Delivery Schedule (Schedule dettagliato)
-        { number: '6.2', name: 'deliverySchedule', label: 'Delivery Schedule', type: 'textarea', rows: 3, placeholder: 'Information delivery follows a phased approach: Months 1-3 (project mobilisation and concept design models)...' },
+        // 6.2 - TIDP Requirements (Requisiti TIDP con lista esistenti)
+        { number: '6.2', name: 'tidpRequirements', label: 'Task Information Delivery Plans (TIDPs)', type: 'tidp-reference', placeholder: 'TIDPs define discipline-specific delivery requirements: Architecture TIDP delivers spatial models and specification schedules biweekly, Structural TIDP provides analysis models and connection details monthly, MEP TIDP delivers coordinated services models and equipment schedules fortnightly, Quantity Surveying TIDP extracts cost data and material quantities monthly, and Sustainability TIDP delivers performance analysis and compliance reports at stage gates. Each TIDP includes quality checking procedures, approval workflows, and integration requirements with the federated model.' },
 
-        // 6.3 - TIDP Requirements (Requisiti TIDP con lista esistenti)
-        { number: '6.3', name: 'tidpRequirements', label: 'Task Information Delivery Plans (TIDPs)', type: 'tidp-reference', placeholder: 'TIDPs define discipline-specific delivery requirements: Architecture TIDP delivers spatial models and specification schedules biweekly, Structural TIDP provides analysis models and connection details monthly, MEP TIDP delivers coordinated services models and equipment schedules fortnightly, Quantity Surveying TIDP extracts cost data and material quantities monthly, and Sustainability TIDP delivers performance analysis and compliance reports at stage gates. Each TIDP includes quality checking procedures, approval workflows, and integration requirements with the federated model.' },
+        // 6.3 - TIDP Description (Campo testo aggiuntivo)
+        { number: '6.3', name: 'tidpDescription', label: 'TIDP Description and Notes', type: 'textarea', rows: 3, placeholder: 'Additional notes about TIDPs, coordination requirements...' },
 
-        // 6.4 - TIDP Description (Campo testo aggiuntivo)
-        { number: '6.4', name: 'tidpDescription', label: 'TIDP Description and Notes', type: 'textarea', rows: 3, placeholder: 'Additional notes about TIDPs, coordination requirements...' },
+        // 6.4 - MIDP (Master Information Delivery Plan - è il delivery schedule complessivo)
+        { number: '6.4', name: 'midpDescription', label: 'Master Information Delivery Plan (MIDP)', required: true, type: 'textarea', rows: 4, placeholder: 'The MIDP establishes a structured schedule for information delivery aligned with RIBA Plan of Work 2020 stages...' },
 
-        // 6.5 - MIDP Description (Spostato qui da 6.1)
-        { number: '6.5', name: 'midpDescription', label: 'Master Information Delivery Plan (MIDP) Description', required: true, type: 'textarea', rows: 4, placeholder: 'The MIDP establishes a structured schedule for information delivery aligned with RIBA Plan of Work 2020 stages...' },
+        // 6.5 - Information Deliverables Matrix
+        { number: '6.5', name: 'informationDeliverablesMatrix', label: 'Information Deliverables Responsibility Matrix', type: 'deliverables-matrix', matrixType: 'deliverables', placeholder: 'Deliverables schedule with responsibilities, due dates, and formats. Auto-syncs from TIDPs.' },
 
-        // 6.6 - Information Deliverables Matrix (era 6.5.1)
-        { number: '6.6', name: 'informationDeliverablesMatrix', label: 'Information Deliverables Responsibility Matrix', type: 'deliverables-matrix', matrixType: 'deliverables', placeholder: 'Deliverables schedule with responsibilities, due dates, and formats. Auto-syncs from TIDPs.' },
+        // 6.6 - Information Management Activities Matrix
+        { number: '6.6', name: 'informationManagementMatrix', label: 'Information Management Activities Responsibility Matrix (ISO 19650-2 Annex A)', type: 'im-activities-matrix', matrixType: 'im-activities', placeholder: 'RACI matrix for information management activities per ISO 19650-2. Click to open the Responsibility Matrix Manager.' },
 
-        // 6.7 - Information Management Activities Matrix (era 6.5)
-        { number: '6.7', name: 'informationManagementMatrix', label: 'Information Management Activities Responsibility Matrix (ISO 19650-2 Annex A)', type: 'im-activities-matrix', matrixType: 'im-activities', placeholder: 'RACI matrix for information management activities per ISO 19650-2. Click to open the Responsibility Matrix Manager.' },
+        // 6.7 - Mobilisation Plan (Piano mobilizzazione)
+        { number: '6.7', name: 'mobilisationPlan', label: 'Mobilisation Plan', type: 'textarea', rows: 3, placeholder: 'Project mobilisation occurs over 4 weeks: Week 1 includes CDE setup, template development...' },
 
-        // 6.8 - Mobilisation Plan (Piano mobilizzazione)
-        { number: '6.8', name: 'mobilisationPlan', label: 'Mobilisation Plan', type: 'textarea', rows: 3, placeholder: 'Project mobilisation occurs over 4 weeks: Week 1 includes CDE setup, template development...' },
+        // 6.8 - Team Capability Summary (Capacità team)
+        { number: '6.8', name: 'teamCapabilitySummary', label: 'Delivery Team Capability & Capacity Summary', type: 'textarea', rows: 3, placeholder: 'The delivery team provides comprehensive BIM capabilities across all disciplines...' },
 
-        // 6.9 - Team Capability Summary (Capacità team)
-        { number: '6.9', name: 'teamCapabilitySummary', label: 'Delivery Team Capability & Capacity Summary', type: 'textarea', rows: 3, placeholder: 'The delivery team provides comprehensive BIM capabilities across all disciplines...' },
+        // 6.9 - Information Risk Register (Registro rischi)
+        { number: '6.9', name: 'informationRiskRegister', label: 'Delivery Team\'s Information Risk Register', type: 'table', columns: ['Risk Description', 'Impact', 'Probability', 'Mitigation'] },
 
-        // 6.10 - Information Risk Register (Registro rischi)
-        { number: '6.10', name: 'informationRiskRegister', label: 'Delivery Team\'s Information Risk Register', type: 'table', columns: ['Risk Description', 'Impact', 'Probability', 'Mitigation'] },
+        // 6.10 - Task Team Exchange (Scambio informazioni)
+        { number: '6.10', name: 'taskTeamExchange', label: 'Exchange of Information Between Task Teams', type: 'textarea', rows: 3, placeholder: 'Information exchange protocols establish: weekly model federation with automated clash detection reports...' },
 
-        // 6.11 - Task Team Exchange (Scambio informazioni)
-        { number: '6.11', name: 'taskTeamExchange', label: 'Exchange of Information Between Task Teams', type: 'textarea', rows: 3, placeholder: 'Information exchange protocols establish: weekly model federation with automated clash detection reports...' },
-
-        // 6.12 - Model Referencing 3D (Referenziazione modelli)
-        { number: '6.12', name: 'modelReferencing3d', label: 'Referencing of 3D Information Models', type: 'textarea', rows: 3, placeholder: 'Model referencing procedures ensure consistent spatial coordination: shared coordinate system established from Ordnance Survey grid references...' }
+        // 6.11 - Model Referencing 3D (Referenziazione modelli)
+        { number: '6.11', name: 'modelReferencing3d', label: 'Referencing of 3D Information Models', type: 'textarea', rows: 3, placeholder: 'Model referencing procedures ensure consistent spatial coordination: shared coordinate system established from Ordnance Survey grid references...' }
       ]
     },
     6: {

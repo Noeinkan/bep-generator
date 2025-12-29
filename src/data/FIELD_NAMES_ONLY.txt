@@ -1,6 +1,6 @@
 FIELDS WITHOUT aiPrompt - NAME REFERENCE ONLY
 
-Total: 60 fields
+Total: 59 fields
 
 1. keyCommitments
 2. proposedResourceAllocation
@@ -30,35 +30,34 @@ Total: 60 fields
 26. projectInformationRequirements
 27. midpDescription
 28. keyMilestones
-29. deliverySchedule
-30. tidpRequirements
-31. responsibilityMatrix
-32. milestoneInformation
-33. mobilisationPlan
-34. teamCapabilitySummary
-35. informationRiskRegister
-36. taskTeamExchange
-37. cdeStrategy
-38. cdePlatforms
-39. workflowStates
-40. accessControl
-41. securityMeasures
-42. backupProcedures
-43. hardwareRequirements
-44. networkRequirements
-45. interoperabilityNeeds
-46. federationStrategy
-47. informationBreakdownStrategy
-48. federationProcess
-49. softwareHardwareInfrastructure
-50. documentControlInfo
-51. modelingStandards
-52. namingConventions
-53. fileStructure
-54. fileStructureDiagram
-55. volumeStrategy
-56. classificationSystems
-57. classificationStandards
-58. dataExchangeProtocols
-59. qaFramework
-60. dataClassification
+29. tidpRequirements
+30. responsibilityMatrix
+31. milestoneInformation
+32. mobilisationPlan
+33. teamCapabilitySummary
+34. informationRiskRegister
+35. taskTeamExchange
+36. cdeStrategy
+37. cdePlatforms
+38. workflowStates
+39. accessControl
+40. securityMeasures
+41. backupProcedures
+42. hardwareRequirements
+43. networkRequirements
+44. interoperabilityNeeds
+45. federationStrategy
+46. informationBreakdownStrategy
+47. federationProcess
+48. softwareHardwareInfrastructure
+49. documentControlInfo
+50. modelingStandards
+51. namingConventions
+52. fileStructure
+53. fileStructureDiagram
+54. volumeStrategy
+55. classificationSystems
+56. classificationStandards
+57. dataExchangeProtocols
+58. qaFramework
+59. dataClassification

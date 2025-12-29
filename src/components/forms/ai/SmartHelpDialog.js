@@ -36,7 +36,6 @@ const FIELD_EXAMPLES = {
   'implementationObjectives': COMMERCIAL_OFFICE_TEMPLATE.implementationObjectives,
   'projectInformationRequirements': COMMERCIAL_OFFICE_TEMPLATE.projectInformationRequirements,
   'midpDescription': COMMERCIAL_OFFICE_TEMPLATE.midpDescription,
-  'deliverySchedule': COMMERCIAL_OFFICE_TEMPLATE.deliverySchedule,
   'tidpRequirements': COMMERCIAL_OFFICE_TEMPLATE.tidpRequirements,
   'mobilisationPlan': COMMERCIAL_OFFICE_TEMPLATE.mobilisationPlan,
   'mobilizationPlan': COMMERCIAL_OFFICE_TEMPLATE.mobilizationPlan,

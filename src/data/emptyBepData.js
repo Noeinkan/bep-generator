@@ -73,7 +73,6 @@ const EMPTY_BEP_DATA = {
   projectInformationRequirements: '',
   midpDescription: '',
   keyMilestones: [],
-  deliverySchedule: '',
   tidpRequirements: '',
   mobilisationPlan: '',
   teamCapabilitySummary: '',
