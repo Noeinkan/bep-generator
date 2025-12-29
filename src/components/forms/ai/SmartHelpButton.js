@@ -94,9 +94,9 @@ const SmartHelpButton = ({
             </span>
           )}
 
-          {/* Pulse animation for empty fields */}
+          {/* Pulse animation for empty fields - only on hover */}
           {fieldState === 'empty' && (
-            <span className="absolute inset-0 rounded-lg bg-purple-400 animate-ping opacity-20"></span>
+            <span className="absolute inset-0 rounded-lg bg-purple-400 animate-ping opacity-0 group-hover:opacity-20"></span>
           )}
         </button>
       </div>

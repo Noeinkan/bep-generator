@@ -7,12 +7,22 @@ import COMMERCIAL_OFFICE_TEMPLATE from './templates/commercialOfficeTemplate';
  */
 export const TEMPLATE_REGISTRY = [
   {
-    id: 'commercial-office',
+    id: 'commercial-office-pre',
     name: 'Commercial Office Complex',
     category: 'Commercial',
     description: 'Modern office building with sustainable design, flexible workspaces, and smart building technologies',
-    bepTypes: ['pre', 'post'], // Which BEP types this template supports
-    thumbnail: null, // Path to thumbnail image (future)
+    bepType: 'pre-appointment',
+    thumbnail: null,
+    tags: ['commercial', 'office', 'sustainable', 'smart building'],
+    data: COMMERCIAL_OFFICE_TEMPLATE
+  },
+  {
+    id: 'commercial-office-post',
+    name: 'Commercial Office Complex',
+    category: 'Commercial',
+    description: 'Modern office building with sustainable design, flexible workspaces, and smart building technologies',
+    bepType: 'post-appointment',
+    thumbnail: null,
     tags: ['commercial', 'office', 'sustainable', 'smart building'],
     data: COMMERCIAL_OFFICE_TEMPLATE
   },
@@ -68,7 +78,7 @@ export const getTemplateById = (templateId) => {
  * Get all templates, optionally filtered by category or BEP type
  * @param {Object} filters - Optional filters
  * @param {string} filters.category - Filter by category
- * @param {string} filters.bepType - Filter by BEP type ('pre' or 'post')
+ * @param {string} filters.bepType - Filter by BEP type ('pre-appointment' or 'post-appointment')
  * @returns {Array} Array of template metadata (without full data)
  */
 export const getAvailableTemplates = (filters = {}) => {
@@ -79,16 +89,16 @@ export const getAvailableTemplates = (filters = {}) => {
   }
 
   if (filters.bepType) {
-    templates = templates.filter(t => t.bepTypes.includes(filters.bepType));
+    templates = templates.filter(t => t.bepType === filters.bepType);
   }
 
   // Return metadata only (without full data payload)
-  return templates.map(({ id, name, category, description, bepTypes, thumbnail, tags }) => ({
+  return templates.map(({ id, name, category, description, bepType, thumbnail, tags }) => ({
     id,
     name,
     category,
     description,
-    bepTypes,
+    bepType,
     thumbnail,
     tags
   }));

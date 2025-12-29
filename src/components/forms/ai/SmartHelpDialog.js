@@ -432,6 +432,24 @@ const AIGenerateTab = ({ onGenerate, isLoading, error, success }) => {
         </div>
       </div>
 
+      {/* Loading Progress Bar */}
+      {isLoading && (
+        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-center gap-3 mb-3">
+            <Loader2 size={20} className="animate-spin text-blue-600" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-blue-900">Generating content...</p>
+              <p className="text-xs text-blue-700 mt-0.5">AI is analyzing and creating content for you</p>
+            </div>
+          </div>
+          {/* Animated progress bar */}
+          <div className="w-full bg-blue-200 rounded-full h-2 overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500 rounded-full animate-pulse"
+                 style={{ width: '100%' }}></div>
+          </div>
+        </div>
+      )}
+
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
           <AlertCircleIcon className="text-red-600 flex-shrink-0" size={20} />
@@ -657,6 +675,24 @@ const AIImproveTab = ({ fieldState, improveOptions, setImproveOptions, onImprove
               </label>
             );
           })}
+        </div>
+      )}
+
+      {/* Loading Progress Bar */}
+      {isLoading && (
+        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-center gap-3 mb-3">
+            <Loader2 size={20} className="animate-spin text-blue-600" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-blue-900">Improving content...</p>
+              <p className="text-xs text-blue-700 mt-0.5">AI is enhancing your text with professional improvements</p>
+            </div>
+          </div>
+          {/* Animated progress bar */}
+          <div className="w-full bg-blue-200 rounded-full h-2 overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-green-500 via-blue-500 to-indigo-500 rounded-full animate-pulse"
+                 style={{ width: '100%' }}></div>
+          </div>
         </div>
       )}
 
