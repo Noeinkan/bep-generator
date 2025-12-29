@@ -25,7 +25,7 @@ import { validateDraftName } from '../../utils/validationUtils';
 
 const BEPGeneratorWrapper = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -384,6 +384,27 @@ const BEPGeneratorWrapper = () => {
     }
   }, [exportFormat, formData, bepType, generateContent, tidps, midps]);
 
+  // Show draft manager if requested and user is logged in (check this BEFORE bepType check)
+  if (showDraftManager && user) {
+    return (
+      <DraftManager
+        user={user}
+        currentFormData={formData}
+        onLoadDraft={(loadedData, loadedType) => {
+          setFormData(loadedData);
+          setBepType(loadedType);
+          setShowDraftManager(false);
+          setValidationErrors({});
+          setCompletedSections(new Set());
+          // Navigate to form with loaded draft
+          navigate('/bep-generator/form?step=0');
+        }}
+        onClose={() => setShowDraftManager(false)}
+        bepType={bepType}
+      />
+    );
+  }
+
   // If no BEP type selected, show start menu or type selector
   if (!bepType) {
     return (
@@ -421,13 +442,22 @@ const BEPGeneratorWrapper = () => {
 
         {/* Show Start Menu, Type Selector, or Form based on current route */}
         {isStartMenu ? (
-          <BepStartMenu
-            onNewBep={handleNewBep}
-            onLoadTemplate={handleLoadTemplate}
-            onContinueDraft={handleContinueDraft}
-            onImportBep={handleImportBep}
-            user={user}
-          />
+          authLoading ? (
+            <div className="flex items-center justify-center min-h-screen">
+              <div className="text-center">
+                <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-gray-600">Loading...</p>
+              </div>
+            </div>
+          ) : (
+            <BepStartMenu
+              onNewBep={handleNewBep}
+              onLoadTemplate={handleLoadTemplate}
+              onContinueDraft={handleContinueDraft}
+              onImportBep={handleImportBep}
+              user={user}
+            />
+          )
         ) : isSelectTypePage ? (
           <div className="max-w-6xl mx-auto px-4 py-4 lg:py-6">
             <div className="bg-transparent rounded-xl p-0">
@@ -477,32 +507,6 @@ const BEPGeneratorWrapper = () => {
     );
   }
 
-  // Show draft manager if requested and user is logged in
-  if (showDraftManager && user) {
-    console.log('Rendering DraftManager, user:', user, 'bepType:', bepType);
-    return (
-      <DraftManager
-        user={user}
-        currentFormData={formData}
-        onLoadDraft={(loadedData, loadedType) => {
-          console.log('DraftManager onLoadDraft called', loadedData, loadedType);
-          setFormData(loadedData);
-          setBepType(loadedType);
-          setShowDraftManager(false);
-          setValidationErrors({});
-          setCompletedSections(new Set());
-          // Navigate to form with loaded draft
-          navigate('/bep-generator/form?step=0');
-        }}
-        onClose={() => {
-          console.log('DraftManager onClose called');
-          setShowDraftManager(false);
-        }}
-        bepType={bepType}
-      />
-    );
-  }
-
   // Main BEP Generator interface
   return (
     <div className="h-screen bg-gray-50 flex relative" data-page-uri="/bep-generator">
@@ -537,10 +541,7 @@ const BEPGeneratorWrapper = () => {
 
           <div className="flex space-x-2">
             <button
-              onClick={() => {
-                console.log('Drafts button clicked, user:', user, 'showDraftManager:', showDraftManager);
-                setShowDraftManager(true);
-              }}
+              onClick={() => setShowDraftManager(true)}
               disabled={!user}
               className="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 hover:border-blue-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
