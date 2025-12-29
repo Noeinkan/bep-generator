@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 
 // Import layout and page components
 import { AuthProvider } from './contexts/AuthContext';
@@ -8,11 +9,37 @@ import HomePage from './components/pages/HomePage';
 import BEPGeneratorWrapper from './components/pages/BEPGeneratorWrapper';
 import TIDPMIDPDashboard from './components/pages/tidp-midp/TIDPMIDPDashboard';
 import TidpEditorPage from './components/pages/TidpEditorPage';
+import ProfilePage from './components/pages/ProfilePage';
+import SettingsPage from './components/pages/SettingsPage';
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+            },
+            success: {
+              duration: 3000,
+              iconTheme: {
+                primary: '#10b981',
+                secondary: '#fff',
+              },
+            },
+            error: {
+              duration: 4000,
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#fff',
+              },
+            },
+          }}
+        />
         <Routes>
           {/* Root redirect to /home */}
           <Route path="/" element={<Navigate to="/home" replace />} />
@@ -39,6 +66,10 @@ function App() {
             {/* TIDP Editor routes */}
             <Route path="/tidp-editor" element={<TidpEditorPage />} />
             <Route path="/tidp-editor/:id" element={<TidpEditorPage />} />
+
+            {/* User Profile & Settings */}
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/settings" element={<SettingsPage />} />
           </Route>
 
           {/* Catch-all redirect for 404 */}

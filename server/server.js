@@ -10,6 +10,7 @@ const midpRoutes = require('./routes/midp');
 const exportRoutes = require('./routes/export');
 const validationRoutes = require('./routes/validation');
 const aiRoutes = require('./routes/ai');
+const draftsRoutes = require('./routes/drafts');
 
 const app = require('./app');
 const PORT = process.env.PORT || 3001;
@@ -58,6 +59,7 @@ app.use('/api/export', exportRoutes);
 app.use('/api/validation', validationRoutes);
 app.use('/api/migrate', migrateRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/drafts', draftsRoutes);
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
