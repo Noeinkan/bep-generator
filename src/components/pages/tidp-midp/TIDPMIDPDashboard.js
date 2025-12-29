@@ -254,7 +254,15 @@ const TIDPMIDPDashboard = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-6">
               <button
-                onClick={() => navigate(-1)}
+                onClick={() => {
+                  const returnUrl = sessionStorage.getItem('bep-return-url');
+                  if (returnUrl) {
+                    sessionStorage.removeItem('bep-return-url');
+                    window.location.href = returnUrl;
+                  } else {
+                    navigate(-1);
+                  }
+                }}
                 className="inline-flex items-center text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-md p-2 transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />

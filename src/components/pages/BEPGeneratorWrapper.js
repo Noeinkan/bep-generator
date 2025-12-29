@@ -82,6 +82,42 @@ const BEPGeneratorWrapper = () => {
     }
   }, [user, showDraftManager]);
 
+  // Save BEP state to sessionStorage whenever it changes
+  React.useEffect(() => {
+    if (formData && bepType) {
+      try {
+        sessionStorage.setItem('bep-temp-state', JSON.stringify({
+          formData,
+          bepType,
+          completedSections: Array.from(completedSections),
+          timestamp: Date.now()
+        }));
+      } catch (error) {
+        console.error('Failed to save BEP state:', error);
+      }
+    }
+  }, [formData, bepType, completedSections]);
+
+  // Restore BEP state from sessionStorage on mount
+  React.useEffect(() => {
+    try {
+      const savedState = sessionStorage.getItem('bep-temp-state');
+      if (savedState) {
+        const { formData: savedFormData, bepType: savedBepType, completedSections: savedCompleted, timestamp } = JSON.parse(savedState);
+
+        // Only restore if saved within last hour and we don't already have data
+        const oneHour = 60 * 60 * 1000;
+        if (timestamp && (Date.now() - timestamp < oneHour) && !bepType && savedBepType) {
+          setFormData(savedFormData);
+          setBepType(savedBepType);
+          setCompletedSections(new Set(savedCompleted || []));
+        }
+      }
+    } catch (error) {
+      console.error('Failed to restore BEP state:', error);
+    }
+  }, []);
+
   // Initialize default milestones for step 5 (Information Delivery Planning)
   React.useEffect(() => {
     if (currentStep === 5 && (!formData.keyMilestones || formData.keyMilestones.length === 0)) {

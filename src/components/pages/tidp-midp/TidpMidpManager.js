@@ -382,7 +382,11 @@ const TidpMidpManager = ({ onClose, initialShowTidpForm = false, initialShowMidp
                 <div className="flex items-center space-x-4">
                   <button
                     onClick={() => {
-                      if (window.history.length > 1) {
+                      const returnUrl = sessionStorage.getItem('bep-return-url');
+                      if (returnUrl) {
+                        sessionStorage.removeItem('bep-return-url');
+                        window.location.href = returnUrl;
+                      } else if (window.history.length > 1) {
                         window.history.back();
                         setTimeout(() => {
                           try { navigate('/tidp-midp'); } catch (e) { /* noop */ }
