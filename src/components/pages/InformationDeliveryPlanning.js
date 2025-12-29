@@ -74,55 +74,43 @@ const InformationDeliveryPlanning = ({ formData, updateFormData, errors, bepType
         {/* Responsibility Matrix Fields */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            6.5 Information Management Activities Responsibility Matrix (ISO 19650-2 Annex A)
+            6.5 Information Deliverables Responsibility Matrix (IDRM)
           </label>
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-lg p-6">
+          <div className="bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6">
             <div className="flex items-start space-x-4">
               <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
+                <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
                   <Table2 className="w-6 h-6 text-white" />
                 </div>
               </div>
               <div className="flex-1">
-                <h4 className="font-semibold text-gray-900 mb-1">RACI Matrix for ISO 19650-2 Annex A Activities</h4>
+                <h4 className="font-semibold text-gray-900 mb-1">Comprehensive Responsibility Matrix Management</h4>
                 <p className="text-sm text-gray-600 mb-4">
-                  Define responsibility assignments (Responsible, Accountable, Consulted, Informed) for 25 pre-defined information management activities across project phases
+                  Manage both IM Activities (ISO 19650-2 Annex A RACI assignments) and Information Deliverables matrices.
+                  Create reusable templates, track responsibilities, and auto-sync with TIDP containers.
                 </p>
-                <button
-                  onClick={() => setShowMatrixManager(true)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors flex items-center space-x-2 font-medium"
-                >
-                  <Table2 className="w-5 h-5" />
-                  <span>Open Responsibility Matrix Manager</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            6.5.1 Information Deliverables Responsibility Matrix
-          </label>
-          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg p-6">
-            <div className="flex items-start space-x-4">
-              <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center">
-                  <FileText className="w-6 h-6 text-white" />
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={() => setShowMatrixManager(true)}
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-colors flex items-center space-x-2 font-medium"
+                  >
+                    <Table2 className="w-5 h-5" />
+                    <span>Inline Matrix Manager</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      sessionStorage.setItem('bep-return-url', window.location.pathname + window.location.search);
+                      window.location.href = '/idrm-manager';
+                    }}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg transition-colors flex items-center space-x-2 font-medium"
+                  >
+                    <FileText className="w-5 h-5" />
+                    <span>Open IDRM Manager</span>
+                  </button>
                 </div>
-              </div>
-              <div className="flex-1">
-                <h4 className="font-semibold text-gray-900 mb-1">Deliverables Schedule with TIDP Sync</h4>
-                <p className="text-sm text-gray-600 mb-4">
-                  Track information deliverables with responsibilities, due dates, formats, and LOD/LOIN requirements. Auto-syncs from TIDP containers.
+                <p className="text-xs text-gray-500 mt-3">
+                  <strong>Tip:</strong> Use the IDRM Manager for centralized matrix management across all projects, or use the inline manager for quick edits specific to this BEP.
                 </p>
-                <button
-                  onClick={() => setShowMatrixManager(true)}
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors flex items-center space-x-2 font-medium"
-                >
-                  <FileText className="w-5 h-5" />
-                  <span>Open Responsibility Matrix Manager</span>
-                </button>
               </div>
             </div>
           </div>

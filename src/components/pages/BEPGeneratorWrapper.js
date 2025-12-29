@@ -33,7 +33,10 @@ const BEPGeneratorWrapper = () => {
   const currentPath = location.pathname;
   const isSelectTypePage = currentPath.includes('/select-type');
   const isFormPage = currentPath.includes('/form');
-  const isStartMenu = !isSelectTypePage && !isFormPage;
+  const isTemplatesPage = currentPath.includes('/templates');
+  const isDraftsPage = currentPath.includes('/drafts');
+  const isImportPage = currentPath.includes('/import');
+  const isStartMenu = !isSelectTypePage && !isFormPage && !isTemplatesPage && !isDraftsPage && !isImportPage;
 
   // Derive currentStep from URL (single source of truth)
   const currentStep = parseInt(searchParams.get('step') || '0', 10);
@@ -45,16 +48,11 @@ const BEPGeneratorWrapper = () => {
   const [completedSections, setCompletedSections] = useState(new Set());
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-  const [showDraftManager, setShowDraftManager] = useState(false);
   const [newDraftName, setNewDraftName] = useState('');
   const [showSaveDraftDialog, setShowSaveDraftDialog] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [exportFormat, setExportFormat] = useState('pdf');
-
-  // State for dialogs/overlays (not tied to routes)
-  const [showTemplateGallery, setShowTemplateGallery] = useState(false);
-  const [showImportDialog, setShowImportDialog] = useState(false);
 
   // Check if we should show TIDP creation form
   // const shouldShowTidpForm = searchParams.get('createTidp') === 'true';
@@ -70,17 +68,8 @@ const BEPGeneratorWrapper = () => {
     // Navigate to form after loading draft
     navigate('/bep-generator/form?step=0');
   }, () => {
-    setShowImportDialog(false);
+    // Import dialog close callback (not used with route-based navigation)
   });
-
-  // No sync needed - currentStep is derived directly from URL
-
-  // Close draft manager if user logs out
-  React.useEffect(() => {
-    if (!user && showDraftManager) {
-      setShowDraftManager(false);
-    }
-  }, [user, showDraftManager]);
 
   // Save BEP state to sessionStorage whenever it changes
   React.useEffect(() => {
@@ -261,16 +250,16 @@ const BEPGeneratorWrapper = () => {
   }, [navigate]);
 
   const handleLoadTemplate = useCallback(() => {
-    setShowTemplateGallery(true);
-  }, []);
+    navigate('/bep-generator/templates');
+  }, [navigate]);
 
   const handleContinueDraft = useCallback(() => {
-    setShowDraftManager(true);
-  }, []);
+    navigate('/bep-generator/drafts');
+  }, [navigate]);
 
   const handleImportBep = useCallback(() => {
-    setShowImportDialog(true);
-  }, []);
+    navigate('/bep-generator/import');
+  }, [navigate]);
 
   const handleSelectTemplate = useCallback((template) => {
     console.log('Loading template:', template);
@@ -281,7 +270,6 @@ const BEPGeneratorWrapper = () => {
     if (templateData) {
       setFormData(templateData);
       setBepType(template.bepType);
-      setShowTemplateGallery(false);
       setValidationErrors({});
       setCompletedSections(new Set());
       // Navigate to form with template loaded (URL is the source of truth for currentStep)
@@ -292,10 +280,21 @@ const BEPGeneratorWrapper = () => {
     }
   }, [navigate]);
 
+  const handleCloseTemplateGallery = useCallback(() => {
+    navigate('/bep-generator');
+  }, [navigate]);
+
+  const handleCloseDraftManager = useCallback(() => {
+    navigate('/bep-generator');
+  }, [navigate]);
+
+  const handleCloseImportDialog = useCallback(() => {
+    navigate('/bep-generator');
+  }, [navigate]);
+
   const handleImportFile = useCallback(async (file) => {
     try {
       await importBepFromJson(file);
-      setShowImportDialog(false);
       // Navigate to form after import
       navigate('/bep-generator/form?step=0');
     } catch (error) {
@@ -420,8 +419,8 @@ const BEPGeneratorWrapper = () => {
     }
   }, [exportFormat, formData, bepType, generateContent, tidps, midps]);
 
-  // Show draft manager if requested and user is logged in (check this BEFORE bepType check)
-  if (showDraftManager && user) {
+  // Show draft manager if on drafts route and user is logged in
+  if (isDraftsPage && user) {
     return (
       <DraftManager
         user={user}
@@ -429,16 +428,21 @@ const BEPGeneratorWrapper = () => {
         onLoadDraft={(loadedData, loadedType) => {
           setFormData(loadedData);
           setBepType(loadedType);
-          setShowDraftManager(false);
           setValidationErrors({});
           setCompletedSections(new Set());
           // Navigate to form with loaded draft
           navigate('/bep-generator/form?step=0');
         }}
-        onClose={() => setShowDraftManager(false)}
+        onClose={handleCloseDraftManager}
         bepType={bepType}
       />
     );
+  }
+
+  // Redirect to start menu if trying to access drafts without being logged in
+  if (isDraftsPage && !user && !authLoading) {
+    navigate('/bep-generator');
+    return null;
   }
 
   // If no BEP type selected, show start menu or type selector
@@ -504,21 +508,24 @@ const BEPGeneratorWrapper = () => {
               />
             </div>
           </div>
+        ) : isTemplatesPage ? (
+          <div className="max-w-6xl mx-auto px-4 py-4 lg:py-6">
+            <TemplateGallery
+              show={true}
+              onSelectTemplate={handleSelectTemplate}
+              onCancel={handleCloseTemplateGallery}
+            />
+          </div>
+        ) : isImportPage ? (
+          <div className="max-w-6xl mx-auto px-4 py-4 lg:py-6">
+            <ImportBepDialog
+              show={true}
+              onImport={handleImportFile}
+              onCancel={handleCloseImportDialog}
+              isLoading={savingDraft}
+            />
+          </div>
         ) : null}
-
-        {/* Dialogs */}
-        <TemplateGallery
-          show={showTemplateGallery}
-          onSelectTemplate={handleSelectTemplate}
-          onCancel={() => setShowTemplateGallery(false)}
-        />
-
-        <ImportBepDialog
-          show={showImportDialog}
-          onImport={handleImportFile}
-          onCancel={() => setShowImportDialog(false)}
-          isLoading={savingDraft}
-        />
       </div>
     );
   }
@@ -577,7 +584,7 @@ const BEPGeneratorWrapper = () => {
 
           <div className="flex space-x-2">
             <button
-              onClick={() => setShowDraftManager(true)}
+              onClick={() => navigate('/bep-generator/drafts')}
               disabled={!user}
               className="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 hover:border-blue-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >

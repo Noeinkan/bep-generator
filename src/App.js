@@ -8,6 +8,7 @@ import MainLayout from './components/layout/MainLayout';
 import HomePage from './components/pages/HomePage';
 import BEPGeneratorWrapper from './components/pages/BEPGeneratorWrapper';
 import TIDPMIDPDashboard from './components/pages/tidp-midp/TIDPMIDPDashboard';
+import IDRMDashboard from './components/pages/idrm-manager/IDRMDashboard';
 import TidpEditorPage from './components/pages/TidpEditorPage';
 import ProfilePage from './components/pages/ProfilePage';
 import SettingsPage from './components/pages/SettingsPage';
@@ -53,6 +54,9 @@ function App() {
               <Route index element={null} /> {/* Start menu is default */}
               <Route path="select-type" element={null} />
               <Route path="form" element={null} />
+              <Route path="templates" element={null} />
+              <Route path="drafts" element={null} />
+              <Route path="import" element={null} />
             </Route>
 
             {/* TIDP/MIDP Dashboard with sub-routes */}
@@ -61,6 +65,14 @@ function App() {
               <Route path="tidps" element={<TIDPMIDPDashboard />} />
               <Route path="midps" element={<TIDPMIDPDashboard />} />
               <Route path="import" element={<TIDPMIDPDashboard />} />
+            </Route>
+
+            {/* IDRM Manager with sub-routes */}
+            <Route path="/idrm-manager">
+              <Route index element={<IDRMDashboard />} />
+              <Route path="im-activities" element={<IDRMDashboard />} />
+              <Route path="deliverables" element={<IDRMDashboard />} />
+              <Route path="templates" element={<IDRMDashboard />} />
             </Route>
 
             {/* TIDP Editor routes */}
