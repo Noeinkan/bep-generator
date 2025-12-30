@@ -53,9 +53,13 @@ function buildOrgChartData(data) {
 
 const OrgStructureChart = ({ data, onChange, editable = false }) => {
   // Build initial tree structure
-  const initialTree = data && data.appointingParty && data.leadAppointedParty
-    ? buildOrgChartData(data)
-    : data;
+  // If data has the tree structure (id, name, role, leadGroups), use it directly
+  // Otherwise, build from legacy format (appointingParty, leadAppointedParty)
+  const initialTree = data && data.id && data.leadGroups
+    ? data
+    : (data && data.appointingParty && data.leadAppointedParty
+        ? buildOrgChartData(data)
+        : data);
 
   const [orgData, setOrgData] = useState(initialTree);
   // Track editing state: { type: 'appointing' | 'lead' | 'appointed', index: number, appointedIndex?: number }
@@ -63,11 +67,21 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
   // Track temporary input values during editing
   const [editValues, setEditValues] = useState({ name: '', role: '', contact: '' });
 
-  // Update when data changes, but preserve local changes
+  // Update when data changes externally (but don't reset while user is editing)
   useEffect(() => {
     if (!data) return;
-    const newTree = buildOrgChartData(data);
 
+    // If data already has the tree structure, use it
+    if (data.id && data.leadGroups) {
+      // Only update if it's actually different (to avoid resetting user changes)
+      if (JSON.stringify(data) !== JSON.stringify(orgData)) {
+        setOrgData(data);
+      }
+      return;
+    }
+
+    // Otherwise build from legacy format
+    const newTree = buildOrgChartData(data);
     const currentLeadNames = orgData?.leadGroups ? orgData.leadGroups.map(g => g.name) : [];
     const newLeadNames = newTree?.leadGroups ? newTree.leadGroups.map(g => g.name) : [];
 
@@ -75,7 +89,7 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
     if (newTree && (newTree.name !== orgData?.name || JSON.stringify(newLeadNames) !== JSON.stringify(currentLeadNames))) {
       setOrgData(newTree);
     }
-  }, [data, orgData?.name, orgData?.leadGroups]);
+  }, [data]);
 
   // Helper to notify parent of changes
   const notifyChange = (newData) => {

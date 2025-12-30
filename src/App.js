@@ -50,13 +50,8 @@ function App() {
           <Route element={<MainLayout />}>
             <Route path="/home" element={<HomePage />} />
 
-            {/* BEP Generator with sub-routes */}
-            <Route path="/bep-generator" element={<BEPGeneratorWrapper />} />
-            <Route path="/bep-generator/select-type" element={<BEPGeneratorWrapper />} />
-            <Route path="/bep-generator/:documentId/step/:stepNumber" element={<BEPGeneratorWrapper />} />
-            <Route path="/bep-generator/templates" element={<BEPGeneratorWrapper />} />
-            <Route path="/bep-generator/drafts" element={<BEPGeneratorWrapper />} />
-            <Route path="/bep-generator/import" element={<BEPGeneratorWrapper />} />
+            {/* BEP Generator with nested routes */}
+            <Route path="/bep-generator/*" element={<BEPGeneratorWrapper />} />
 
             {/* TIDP/MIDP Dashboard with sub-routes */}
             <Route path="/tidp-midp">

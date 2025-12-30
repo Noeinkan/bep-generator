@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Download, FileText, Eye, FileType, Printer, CheckCircle, AlertCircle, Loader2, Settings, RotateCcw } from 'lucide-react';
+import { Download, FileText, Eye, FileType, Printer, CheckCircle, AlertCircle, Loader2, Settings, RotateCcw, ArrowLeft } from 'lucide-react';
 import { generateBEPContent } from '../../services/bepFormatter';
 import { generatePDF } from '../../services/pdfGenerator';
 
@@ -12,7 +12,8 @@ const PreviewExportPage = ({
   downloadBEP,
   isExporting,
   tidpData = [],
-  midpData = []
+  midpData = [],
+  onBack
 }) => {
   const [isPreviewLoading, setIsPreviewLoading] = useState(true);
   const [previewError, setPreviewError] = useState(null);
@@ -80,9 +81,20 @@ const PreviewExportPage = ({
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header Section */}
       <div className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-          Preview & Export
-        </h1>
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+            Preview & Export
+          </h1>
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 hover:border-blue-300 transition-all duration-200"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Editor
+            </button>
+          )}
+        </div>
         <p className="text-lg text-gray-600 max-w-2xl">
           Review your BIM Execution Plan and export it in your preferred format.
           Choose from professional PDF, editable Word, or web-friendly HTML formats.

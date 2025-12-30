@@ -55,7 +55,12 @@ const EMPTY_BEP_DATA = {
   mobilizationPlan: '',
   resourceAllocation: '',
   informationManagementResponsibilities: '',
-  organizationalStructure: '',
+  organizationalStructure: {
+    id: 'appointing_default',
+    name: 'Appointing Party',
+    role: 'Appointing Party',
+    leadGroups: []
+  },
   taskTeamsBreakdown: [],
   confirmedBimGoals: '',
   implementationObjectives: '',

@@ -58,20 +58,19 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
           field={field}
           value={value}
           onChange={(v) => {
-            // If the org chart component emits an object with leadAppointedParty and finalizedParties,
-            // persist those into separate form fields expected elsewhere in the app.
+            // The org chart component emits the complete tree structure
+            // Store it directly in the organizationalStructure field
             if (v && typeof v === 'object') {
+              // If v.tree exists, use it; otherwise use v directly
+              const treeData = v.tree || v;
+              onChange(name, treeData);
+
+              // Also sync leadAppointedParty and finalizedParties for backward compatibility
               if (v.leadAppointedParty !== undefined) {
                 onChange('leadAppointedParty', v.leadAppointedParty);
               }
               if (v.finalizedParties !== undefined) {
                 onChange('finalizedParties', v.finalizedParties);
-              }
-              // Also keep the organizationalStructure field (the org tree) for compatibility
-              if (v.tree !== undefined) {
-                onChange(name, v.tree);
-              } else {
-                onChange(name, v);
               }
             } else {
               onChange(name, v);

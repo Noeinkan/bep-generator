@@ -31,7 +31,8 @@
       "Bash(cmd /c \"cd ml-service && venv\\\\Scripts\\\\python.exe test_model_load.py 2>&1\")",
       "Bash(move EnhancedBepTypeSelector.js BepTypeSelector.js)",
       "Bash(cmd /c \"move EnhancedBepTypeSelector.js BepTypeSelector.js\")",
-      "Bash(cmd /c:*)"
+      "Bash(cmd /c:*)",
+      "Bash(del BEPGeneratorWrapper.js)"
     ],
     "deny": [],
     "ask": []
