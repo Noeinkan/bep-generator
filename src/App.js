@@ -51,14 +51,12 @@ function App() {
             <Route path="/home" element={<HomePage />} />
 
             {/* BEP Generator with sub-routes */}
-            <Route path="/bep-generator" element={<BEPGeneratorWrapper />}>
-              <Route index element={null} /> {/* Start menu is default */}
-              <Route path="select-type" element={null} />
-              <Route path=":documentId/step/:stepNumber" element={null} />
-              <Route path="templates" element={null} />
-              <Route path="drafts" element={null} />
-              <Route path="import" element={null} />
-            </Route>
+            <Route path="/bep-generator" element={<BEPGeneratorWrapper />} />
+            <Route path="/bep-generator/select-type" element={<BEPGeneratorWrapper />} />
+            <Route path="/bep-generator/:documentId/step/:stepNumber" element={<BEPGeneratorWrapper />} />
+            <Route path="/bep-generator/templates" element={<BEPGeneratorWrapper />} />
+            <Route path="/bep-generator/drafts" element={<BEPGeneratorWrapper />} />
+            <Route path="/bep-generator/import" element={<BEPGeneratorWrapper />} />
 
             {/* TIDP/MIDP Dashboard with sub-routes */}
             <Route path="/tidp-midp">

@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, Eye, Zap, FolderOpen, Save, ExternalLink } from 'lucide-react';
 
 // Import all the existing BEP components
@@ -24,22 +24,26 @@ import { useAuth } from '../../contexts/AuthContext';
 import { validateDraftName } from '../../utils/validationUtils';
 
 const BEPGeneratorWrapper = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Extract URL parameters
+  const pathParts = location.pathname.split('/').filter(Boolean);
+  const documentId = pathParts[1] && !['select-type', 'templates', 'drafts', 'import'].includes(pathParts[1]) ? decodeURIComponent(pathParts[1]) : null;
+  const stepFromUrl = pathParts[3] ? parseInt(pathParts[3], 10) : null;
+
   // Determine current view from URL path
   const currentPath = location.pathname;
   const isSelectTypePage = currentPath.includes('/select-type');
-  const isFormPage = currentPath.includes('/form');
+  const isFormPage = documentId && stepFromUrl !== null;
   const isTemplatesPage = currentPath.includes('/templates');
   const isDraftsPage = currentPath.includes('/drafts');
   const isImportPage = currentPath.includes('/import');
   const isStartMenu = !isSelectTypePage && !isFormPage && !isTemplatesPage && !isDraftsPage && !isImportPage;
 
   // Derive currentStep from URL (single source of truth)
-  const currentStep = parseInt(searchParams.get('step') || '0', 10);
+  const currentStep = isFormPage ? stepFromUrl : 0;
 
   // State variables
   const [formData, setFormData] = useState(getEmptyBepData());
@@ -61,22 +65,57 @@ const BEPGeneratorWrapper = () => {
   // const shouldShowTidpForm = searchParams.get('createTidp') === 'true';
 
   // TIDP and MIDP data
-  const { tidps, loading: _tidpLoading } = useTidpData();
-  const { midps, loading: _midpLoading } = useMidpData();
+  const { tidps } = useTidpData();
+  const { midps } = useMidpData();
+
+  // Helper function to create URL-safe document names
+  const createDocumentSlug = useCallback((name) => {
+    return encodeURIComponent(
+      name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .substring(0, 50) || 'untitled'
+    );
+  }, []);
+
+  // Helper function to get current document slug
+  const getDocumentSlug = useCallback(() => {
+    if (currentDraft && currentDraft.name) {
+      return createDocumentSlug(currentDraft.name);
+    }
+    return 'new-document';
+  }, [currentDraft, createDocumentSlug]);
 
   // Draft operations
-  const { saveDraft, findDraftByName, isLoading: savingDraft, error: _draftError, importBepFromJson } = useDraftOperations(user, formData, bepType, (loadedData, loadedType, draftInfo) => {
+  const { saveDraft, isLoading: savingDraft, importBepFromJson } = useDraftOperations(user, formData, bepType, (loadedData, loadedType, draftInfo) => {
     setFormData(loadedData);
     setBepType(loadedType);
     // Set current draft when loading from draft manager
     if (draftInfo) {
       setCurrentDraft({ id: draftInfo.id, name: draftInfo.name });
+      const slug = createDocumentSlug(draftInfo.name);
+      navigate(`/bep-generator/${slug}/step/0`);
+    } else {
+      navigate('/bep-generator/new-document/step/0');
     }
-    // Navigate to form after loading draft
-    navigate('/bep-generator/form?step=0');
   }, () => {
     // Import dialog close callback (not used with route-based navigation)
   });
+
+  // Sync documentId from URL on mount or when URL changes
+  React.useEffect(() => {
+    if (documentId && documentId !== 'new-document') {
+      // Try to find matching draft by slug
+      const decodedName = decodeURIComponent(documentId).replace(/-/g, ' ');
+      console.log('Document ID from URL:', documentId, 'decoded:', decodedName);
+      // If we have a matching draft in state, ensure it's set
+      if (currentDraft && createDocumentSlug(currentDraft.name) !== documentId) {
+        // URL doesn't match current draft, might need to reload
+        console.log('URL document ID mismatch with current draft');
+      }
+    }
+  }, [documentId, currentDraft, createDocumentSlug, bepType]);
 
   // Save BEP state to sessionStorage whenever it changes
   React.useEffect(() => {
@@ -86,33 +125,74 @@ const BEPGeneratorWrapper = () => {
           formData,
           bepType,
           completedSections: Array.from(completedSections),
+          currentDraft,
           timestamp: Date.now()
         }));
       } catch (error) {
         console.error('Failed to save BEP state:', error);
       }
     }
-  }, [formData, bepType, completedSections]);
+  }, [formData, bepType, completedSections, currentDraft]);
 
   // Restore BEP state from sessionStorage on mount
   React.useEffect(() => {
     try {
       const savedState = sessionStorage.getItem('bep-temp-state');
       if (savedState) {
-        const { formData: savedFormData, bepType: savedBepType, completedSections: savedCompleted, timestamp } = JSON.parse(savedState);
+        const {
+          formData: savedFormData,
+          bepType: savedBepType,
+          completedSections: savedCompleted,
+          currentDraft: savedDraft,
+          timestamp
+        } = JSON.parse(savedState);
 
         // Only restore if saved within last hour and we don't already have data
         const oneHour = 60 * 60 * 1000;
         if (timestamp && (Date.now() - timestamp < oneHour) && !bepType && savedBepType) {
-          setFormData(savedFormData);
-          setBepType(savedBepType);
-          setCompletedSections(new Set(savedCompleted || []));
+          // Check if we're on a specific document/step URL
+          const isOnSpecificStep = location.pathname.match(/\/bep-generator\/[^/]+\/step\/\d+/);
+
+          // Only auto-restore and navigate if we're on a specific step URL
+          // If we're on the base route, let the user see the start menu
+          if (isOnSpecificStep) {
+            setFormData(savedFormData);
+            setBepType(savedBepType);
+            setCompletedSections(new Set(savedCompleted || []));
+            if (savedDraft) {
+              setCurrentDraft(savedDraft);
+            }
+          }
+          // If on base /bep-generator route, don't auto-restore - let user choose
         }
       }
     } catch (error) {
       console.error('Failed to restore BEP state:', error);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Sync URL whenever bepType is present but URL doesn't match expected format
+  React.useEffect(() => {
+    // IMPORTANT: Only sync if we're showing the form interface
+    // Don't sync if user is intentionally on start menu or other pages
+    if (bepType && !isSelectTypePage && !isTemplatesPage && !isDraftsPage && !isImportPage) {
+      // If we're on the start menu with a bepType, user intentionally clicked to go back
+      // Don't auto-redirect them
+      if (isStartMenu) {
+        return;
+      }
+
+      const slug = getDocumentSlug();
+      const expectedUrl = `/bep-generator/${slug}/step/${currentStep}`;
+
+      // Only navigate if the current URL doesn't match the expected format
+      if (location.pathname !== expectedUrl) {
+        console.log('URL sync: current =', location.pathname, 'expected =', expectedUrl);
+        navigate(expectedUrl, { replace: true });
+      }
+    }
+  }, [bepType, currentStep, location.pathname, isSelectTypePage, isTemplatesPage, isDraftsPage, isImportPage, isStartMenu, getDocumentSlug, navigate]);
 
   // Initialize default milestones for step 5 (Information Delivery Planning)
   React.useEffect(() => {
@@ -200,11 +280,12 @@ const BEPGeneratorWrapper = () => {
     } else {
       // Move to next step
       const nextStep = currentStep + 1;
+      const slug = getDocumentSlug();
       setIsTransitioning(true);
 
       // Use requestAnimationFrame to ensure smooth transition
       requestAnimationFrame(() => {
-        setSearchParams({ step: nextStep.toString() });
+        navigate(`/bep-generator/${slug}/step/${nextStep}`);
         setTimeout(() => setIsTransitioning(false), 150);
       });
     }
@@ -213,12 +294,13 @@ const BEPGeneratorWrapper = () => {
   const handlePrevious = () => {
     if (currentStep > 0) {
       const prevStep = currentStep - 1;
+      const slug = getDocumentSlug();
       setIsTransitioning(true);
       setValidationErrors({});
 
       // Use requestAnimationFrame to ensure smooth transition
       requestAnimationFrame(() => {
-        setSearchParams({ step: prevStep.toString() });
+        navigate(`/bep-generator/${slug}/step/${prevStep}`);
         setTimeout(() => setIsTransitioning(false), 150);
       });
     }
@@ -249,7 +331,7 @@ const BEPGeneratorWrapper = () => {
     setCompletedSections(new Set());
     setCurrentDraft(null); // Reset draft tracking for new BEP
     // Navigate to form page with step 0 (URL is the source of truth for currentStep)
-    navigate('/bep-generator/form?step=0');
+    navigate('/bep-generator/new-document/step/0');
   }, [navigate]);
 
   // Start Menu Handlers
@@ -281,13 +363,15 @@ const BEPGeneratorWrapper = () => {
       setValidationErrors({});
       setCompletedSections(new Set());
       setCurrentDraft(null); // Reset draft tracking for template
+      // Create slug from template name
+      const slug = createDocumentSlug(template.name || 'template');
       // Navigate to form with template loaded (URL is the source of truth for currentStep)
-      navigate('/bep-generator/form?step=0');
+      navigate(`/bep-generator/${slug}/step/0`);
     } else {
       console.error('Template not found:', template.id);
       alert('Failed to load template. Please try again.');
     }
-  }, [navigate]);
+  }, [navigate, createDocumentSlug]);
 
   const handleCloseTemplateGallery = useCallback(() => {
     navigate('/bep-generator');
@@ -304,12 +388,11 @@ const BEPGeneratorWrapper = () => {
   const handleImportFile = useCallback(async (file) => {
     try {
       await importBepFromJson(file);
-      // Navigate to form after import
-      navigate('/bep-generator/form?step=0');
+      // Navigate to form after import (importBepFromJson callback will handle the navigation)
     } catch (error) {
       console.error('Import failed:', error);
     }
-  }, [importBepFromJson, navigate]);
+  }, [importBepFromJson]);
 
   const handlePreview = useCallback(() => {
     const totalSteps = CONFIG.steps?.length || 0;
@@ -375,12 +458,17 @@ const BEPGeneratorWrapper = () => {
 
       if (result.success) {
         // Set as current draft after first save
-        setCurrentDraft({ id: result.draftId, name: newDraftNameValidation.sanitized });
+        const draftInfo = { id: result.draftId, name: newDraftNameValidation.sanitized };
+        setCurrentDraft(draftInfo);
         setShowSaveDraftDialog(false);
         setNewDraftName('');
         setExistingDraftToOverwrite(null);
         setShowSuccessToast(true);
         setTimeout(() => setShowSuccessToast(false), 3000);
+
+        // Update URL to reflect the saved draft name
+        const slug = createDocumentSlug(newDraftNameValidation.sanitized);
+        navigate(`/bep-generator/${slug}/step/${currentStep}`, { replace: true });
       } else if (result.existingDraft) {
         // Draft already exists, show overwrite confirmation
         setExistingDraftToOverwrite(result.existingDraft);
@@ -388,7 +476,7 @@ const BEPGeneratorWrapper = () => {
     } catch (error) {
       alert('Failed to save draft: ' + error.message);
     }
-  }, [newDraftNameValidation, formData, saveDraft]);
+  }, [newDraftNameValidation, formData, saveDraft, createDocumentSlug, navigate, currentStep]);
 
   const handleOverwriteDraft = useCallback(async () => {
     if (!newDraftNameValidation.isValid) return;
@@ -398,19 +486,24 @@ const BEPGeneratorWrapper = () => {
 
       if (result.success) {
         // Set as current draft after overwrite
-        setCurrentDraft({ id: result.draftId, name: newDraftNameValidation.sanitized });
+        const draftInfo = { id: result.draftId, name: newDraftNameValidation.sanitized };
+        setCurrentDraft(draftInfo);
         setShowSaveDraftDialog(false);
         setNewDraftName('');
         setExistingDraftToOverwrite(null);
         setShowSuccessToast(true);
         setTimeout(() => setShowSuccessToast(false), 3000);
+
+        // Update URL to reflect the saved draft name
+        const slug = createDocumentSlug(newDraftNameValidation.sanitized);
+        navigate(`/bep-generator/${slug}/step/${currentStep}`, { replace: true });
       } else {
         alert('Failed to overwrite draft');
       }
     } catch (error) {
       alert('Failed to overwrite draft: ' + error.message);
     }
-  }, [newDraftNameValidation, formData, saveDraft]);
+  }, [newDraftNameValidation, formData, saveDraft, createDocumentSlug, navigate, currentStep]);
 
   const handleSaveAsNewDraft = useCallback(() => {
     // Reset to allow user to enter a new name
@@ -497,9 +590,11 @@ const BEPGeneratorWrapper = () => {
           // Set current draft info when loading from draft manager
           if (draftInfo) {
             setCurrentDraft({ id: draftInfo.id, name: draftInfo.name });
+            const slug = createDocumentSlug(draftInfo.name);
+            navigate(`/bep-generator/${slug}/step/0`);
+          } else {
+            navigate('/bep-generator/new-document/step/0');
           }
-          // Navigate to form with loaded draft
-          navigate('/bep-generator/form?step=0');
         }}
         onClose={handleCloseDraftManager}
         bepType={bepType}
@@ -516,7 +611,7 @@ const BEPGeneratorWrapper = () => {
   // If no BEP type selected, show start menu or type selector
   if (!bepType) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50" data-page-uri="/bep-generator">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50" data-page-uri={location.pathname}>
         {/* Header with navigation */}
         <div className="bg-white shadow-lg border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 py-2.5 lg:py-3 flex items-center justify-between">
@@ -620,7 +715,7 @@ const BEPGeneratorWrapper = () => {
 
   // Main BEP Generator interface
   return (
-    <div className="h-screen bg-gray-50 flex relative" data-page-uri="/bep-generator">
+    <div className="h-screen bg-gray-50 flex relative" data-page-uri={location.pathname}>
       {/* Sidebar */}
       <div className="w-80 bg-white shadow-xl border-r border-gray-200 flex flex-col">
         <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
@@ -683,9 +778,10 @@ const BEPGeneratorWrapper = () => {
             currentStep={currentStep}
             completedSections={completedSections}
             onStepClick={(stepIndex) => {
+              const slug = getDocumentSlug();
               setIsTransitioning(true);
               setTimeout(() => {
-                setSearchParams({ step: stepIndex.toString() });
+                navigate(`/bep-generator/${slug}/step/${stepIndex}`);
                 setValidationErrors({});
                 setIsTransitioning(false);
               }, 150);

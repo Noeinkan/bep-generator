@@ -184,22 +184,23 @@ export const useDraftOperations = (user, currentFormData, bepType, onLoadDraft, 
       return false;
     }
 
-    if (typeof onLoadDraft !== 'function' || typeof onClose !== 'function') {
+    if (typeof onLoadDraft !== 'function') {
       setError('Invalid callback functions - cannot load draft');
       return false;
     }
 
     try {
       // Pass draft info (id, name) to the callback
+      // The callback will handle navigation, so we don't call onClose() here
+      // to avoid interfering with the navigation
       onLoadDraft(draft.data, draft.bepType, { id: draft.id, name: draft.name });
-      onClose();
       return true;
     } catch (error) {
       console.error('Error loading draft:', error);
       setError('Failed to load draft. Please try again.');
       return false;
     }
-  }, [onLoadDraft, onClose]);
+  }, [onLoadDraft]);
 
   const exportDraft = useCallback((draft) => {
     if (!draft || typeof draft !== 'object' || !draft.data) {
