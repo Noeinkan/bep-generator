@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   FileText,
@@ -15,13 +15,48 @@ import {
   Play,
   Table2
 } from 'lucide-react';
+import ProductCard from './ProductCard';
+import SectionLoader from './SectionLoader';
+import SocialProofSection from './SocialProofSection';
+
+// Lazy load heavy sections for better performance
+const IntegrationSection = lazy(() => import('./IntegrationSection'));
+const ISOComplianceSection = lazy(() => import('./ISOComplianceSection'));
 
 const HomePage = () => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
+  const [visibleSections, setVisibleSections] = useState({
+    hero: false,
+    products: false,
+    bepCard: false,
+    supportCards: false,
+    social: false
+  });
 
   useEffect(() => {
     setIsVisible(true);
+
+    // Intersection Observer for scroll-triggered animations
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const sectionId = entry.target.getAttribute('data-section');
+            if (sectionId) {
+              setVisibleSections(prev => ({ ...prev, [sectionId]: true }));
+            }
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '50px' }
+    );
+
+    // Observe all sections
+    const sections = document.querySelectorAll('[data-section]');
+    sections.forEach(section => observer.observe(section));
+
+    return () => observer.disconnect();
   }, []);
 
   const features = {
@@ -48,7 +83,10 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100" data-page-uri="/">
       {/* Hero Section */}
-      <div className="relative overflow-hidden">
+      <div
+        className="relative overflow-hidden"
+        data-section="hero"
+      >
         {/* Background with animated gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800">
           <div className="absolute inset-0 bg-black opacity-10"></div>
@@ -63,44 +101,29 @@ const HomePage = () => {
         <div className="absolute bottom-20 left-1/4 w-12 h-12 bg-white opacity-10 rounded-full animate-pulse delay-2000"></div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-          <div className={`text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-white bg-opacity-10 backdrop-blur-sm border border-white border-opacity-20 mb-4">
-              <Sparkles className="w-3.5 h-3.5 text-yellow-300 mr-1.5" />
+          <div className={`text-center transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-white bg-opacity-10 backdrop-blur-sm border border-white border-opacity-20 mb-4" role="status" aria-label="Platform compliance badge">
+              <Sparkles className="w-3.5 h-3.5 text-yellow-300 mr-1.5" aria-hidden="true" />
               <span className="text-xs lg:text-sm font-medium text-white">ISO 19650-Compliant Information Management Platform</span>
             </div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight">
-              BEP Suite
+              Create ISO 19650-Compliant BEPs in Hours, Not Weeks
             </h1>
             <p className="text-base md:text-lg lg:text-xl text-blue-100 mb-6 max-w-4xl mx-auto leading-relaxed">
-              Comprehensive platform for BIM Execution Plans and Information Delivery Planning.
-              Designed for BIM Managers and Information Managers to streamline ISO 19650 compliance across projects.
+              Reduce manual errors, automate TIDP/MIDP coordination, and ensure full compliance—with AI-powered assistance that understands your project requirements.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-8">
               <button
                 onClick={() => navigate('/bep-generator')}
-                className="group inline-flex items-center px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="group relative inline-flex items-center px-8 py-4 bg-white text-blue-600 font-bold rounded-xl hover:bg-blue-50 transform hover:scale-105 transition-all duration-300 ease-out shadow-xl hover:shadow-2xl will-change-transform text-lg animate-pulse-subtle"
+                aria-label="Launch BEP Generator to create BIM Execution Plans"
               >
-                <Play className="w-4 h-4 mr-2" />
-                Launch BEP Generator
-                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
-
-              <button
-                onClick={() => navigate('/tidp-midp')}
-                className="group inline-flex items-center px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-600 transform hover:scale-105 transition-all duration-200"
-              >
-                TIDP/MIDP Manager
-                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
-
-              <button
-                onClick={() => navigate('/idrm-manager')}
-                className="group inline-flex items-center px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-600 transform hover:scale-105 transition-all duration-200"
-              >
-                IDRM Manager
-                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
+                <Play className="w-5 h-5 mr-2 relative z-10 group-hover:scale-110 transition-transform duration-200" aria-hidden="true" />
+                <span className="relative z-10">Launch BEP Generator</span>
+                <ArrowRight className="ml-2 w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform duration-200" aria-hidden="true" />
               </button>
             </div>
 
@@ -127,58 +150,68 @@ const HomePage = () => {
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce" aria-hidden="true">
           <ChevronDown className="w-6 h-6 text-white opacity-70" />
         </div>
       </div>
 
       {/* Products Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        <div className="text-center mb-8 lg:mb-12">
+      <div
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16"
+        data-section="products"
+      >
+        <div className={`text-center mb-8 lg:mb-12 transition-all duration-1000 ease-out ${visibleSections.products ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Complete ISO 19650 Information Management Solution
+            Integrated Workflow from Planning to Delivery
           </h2>
           <p className="text-base lg:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            From pre-appointment BEPs to comprehensive TIDP/MIDP coordination and responsibility matrices - everything you need
-            to manage information requirements and deliverables across the project lifecycle.
+            Three powerful tools working seamlessly together. Generate compliant BEPs, coordinate information delivery with TIDP/MIDP,
+            and manage responsibility matrices—all synchronized in real-time.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-          {/* BEP Generator */}
-          <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-5 lg:p-6 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-white opacity-10 rounded-full -translate-y-12 translate-x-12"></div>
+        {/* BEP Generator - Main Card (Prominent) */}
+        <div
+          className="max-w-5xl mx-auto mb-8 lg:mb-12"
+          data-section="bepCard"
+        >
+          <div className={`group bg-white rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 ease-out transform hover:-translate-y-2 border border-gray-100 overflow-hidden will-change-transform ${visibleSections.bepCard ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+            <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-8 lg:p-10 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -translate-y-16 translate-x-16"></div>
               <div className="relative z-10 flex items-center text-white">
-                <div className="w-12 h-12 lg:w-14 lg:h-14 bg-white bg-opacity-20 rounded-xl flex items-center justify-center mr-3">
-                  <FileText className="w-6 h-6 lg:w-7 lg:h-7" />
+                <div className="w-16 h-16 lg:w-20 lg:h-20 bg-white bg-opacity-20 rounded-xl flex items-center justify-center mr-4">
+                  <FileText className="w-8 h-8 lg:w-10 lg:h-10" aria-hidden="true" />
                 </div>
                 <div>
-                  <h3 className="text-2xl lg:text-3xl font-bold mb-0.5">BEP Generator</h3>
-                  <p className="text-blue-100 text-sm lg:text-base">Professional BIM Execution Plans</p>
+                  <h3 className="text-3xl lg:text-4xl font-bold mb-1">BEP Generator</h3>
+                  <p className="text-blue-100 text-base lg:text-lg">Professional BIM Execution Plans</p>
                 </div>
               </div>
             </div>
 
-            <div className="p-5 lg:p-6">
-              <p className="text-gray-600 mb-5 lg:mb-6 text-sm lg:text-base leading-relaxed">
-                Generate ISO 19650-compliant BEPs with intelligent wizards for both pre-appointment and post-appointment phases.
+            <div className="p-8 lg:p-10">
+              <p className="text-gray-600 mb-6 lg:mb-8 text-base lg:text-lg leading-relaxed">
+                Generate ISO 19650-compliant BEPs with intelligent wizards for both pre-appointment and post-appointment phases,
+                with native TIDP/MIDP and responsibility matrix integration. Includes all required appendices.
                 AI-assisted content generation helps you articulate information requirements, CDE workflows, and delivery strategies efficiently.
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-5 mb-5 lg:mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 lg:gap-6 mb-6 lg:mb-8">
                 {features.bep.map((feature, index) => {
                   const IconComponent = feature.icon;
                   return (
-                    <div key={index} className="flex items-start p-3 lg:p-3.5 rounded-lg bg-gray-50 hover:bg-blue-50 transition-colors duration-200">
+                    <div
+                      key={index}
+                      className="flex items-start p-4 lg:p-4.5 rounded-lg bg-gray-50 hover:bg-blue-50 transition-colors duration-200"
+                    >
                       <div className="flex-shrink-0 mr-3">
-                        <div className={`w-8 h-8 lg:w-9 lg:h-9 rounded-lg bg-white flex items-center justify-center shadow-sm`}>
-                          <IconComponent className={`w-4 h-4 lg:w-5 lg:h-5 ${feature.color}`} />
+                        <div className="w-10 h-10 lg:w-11 lg:h-11 rounded-lg bg-white flex items-center justify-center shadow-sm">
+                          <IconComponent className={`w-5 h-5 lg:w-6 lg:h-6 ${feature.color}`} aria-hidden="true" />
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-gray-900 mb-0.5 text-sm lg:text-base">{feature.title}</h4>
-                        <p className="text-gray-600 text-xs lg:text-sm leading-relaxed">{feature.desc}</p>
+                        <h4 className="font-semibold text-gray-900 mb-1 text-base lg:text-lg">{feature.title}</h4>
+                        <p className="text-gray-600 text-sm lg:text-base leading-relaxed">{feature.desc}</p>
                       </div>
                     </div>
                   );
@@ -187,230 +220,79 @@ const HomePage = () => {
 
               <button
                 onClick={() => navigate('/bep-generator')}
-                className="group inline-flex items-center justify-center w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="group inline-flex items-center justify-center w-full px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl will-change-transform"
+                aria-label="Navigate to BEP Generator"
               >
-                <span className="text-base lg:text-lg">Start Creating BEP</span>
-                <ArrowRight className="ml-2 lg:ml-3 w-4 h-4 lg:w-5 lg:h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
-          </div>
-
-          {/* TIDP/MIDP Manager */}
-          <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden">
-            <div className="bg-gradient-to-r from-green-500 to-green-600 p-5 lg:p-6 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-white opacity-10 rounded-full -translate-y-12 translate-x-12"></div>
-              <div className="relative z-10 flex items-center text-white">
-                <div className="w-12 h-12 lg:w-14 lg:h-14 bg-white bg-opacity-20 rounded-xl flex items-center justify-center mr-3">
-                  <BarChart3 className="w-6 h-6 lg:w-7 lg:h-7" />
-                </div>
-                <div>
-                  <h3 className="text-2xl lg:text-3xl font-bold mb-0.5">TIDP/MIDP Manager</h3>
-                  <p className="text-green-100 text-sm lg:text-base">Information Delivery Planning</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-5 lg:p-6">
-              <p className="text-gray-600 mb-5 lg:mb-6 text-sm lg:text-base leading-relaxed">
-                Coordinate information delivery across task teams with comprehensive TIDP management.
-                Automatically consolidate into MIDPs, track dependencies, manage LOINs, and maintain responsibility matrices aligned with ISO 19650 requirements.
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-5 mb-5 lg:mb-6">
-                {features.tidp.map((feature, index) => {
-                  const IconComponent = feature.icon;
-                  return (
-                    <div key={index} className="flex items-start p-3 lg:p-3.5 rounded-lg bg-gray-50 hover:bg-green-50 transition-colors duration-200">
-                      <div className="flex-shrink-0 mr-3">
-                        <div className={`w-8 h-8 lg:w-9 lg:h-9 rounded-lg bg-white flex items-center justify-center shadow-sm`}>
-                          <IconComponent className={`w-4 h-4 lg:w-5 lg:h-5 ${feature.color}`} />
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-gray-900 mb-0.5 text-sm lg:text-base">{feature.title}</h4>
-                        <p className="text-gray-600 text-xs lg:text-sm leading-relaxed">{feature.desc}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <button
-                onClick={() => navigate('/tidp-midp')}
-                className="group inline-flex items-center justify-center w-full px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold rounded-xl hover:from-green-700 hover:to-green-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
-              >
-                <span className="text-base lg:text-lg">Manage Information Delivery</span>
-                <ArrowRight className="ml-2 lg:ml-3 w-4 h-4 lg:w-5 lg:h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
-          </div>
-
-          {/* IDRM Manager */}
-          <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden">
-            <div className="bg-gradient-to-r from-purple-500 to-purple-600 p-5 lg:p-6 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-white opacity-10 rounded-full -translate-y-12 translate-x-12"></div>
-              <div className="relative z-10 flex items-center text-white">
-                <div className="w-12 h-12 lg:w-14 lg:h-14 bg-white bg-opacity-20 rounded-xl flex items-center justify-center mr-3">
-                  <Table2 className="w-6 h-6 lg:w-7 lg:h-7" />
-                </div>
-                <div>
-                  <h3 className="text-2xl lg:text-3xl font-bold mb-0.5">IDRM Manager</h3>
-                  <p className="text-purple-100 text-sm lg:text-base">Responsibility Matrix Management</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-5 lg:p-6">
-              <p className="text-gray-600 mb-5 lg:mb-6 text-sm lg:text-base leading-relaxed">
-                Manage Information Deliverables Responsibility Matrices with RACI assignments for ISO 19650-2 Annex A activities.
-                Create reusable templates, track deliverables with LOIN requirements, and auto-sync with TIDP containers.
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-5 mb-5 lg:mb-6">
-                {features.idrm.map((feature, index) => {
-                  const IconComponent = feature.icon;
-                  return (
-                    <div key={index} className="flex items-start p-3 lg:p-3.5 rounded-lg bg-gray-50 hover:bg-purple-50 transition-colors duration-200">
-                      <div className="flex-shrink-0 mr-3">
-                        <div className={`w-8 h-8 lg:w-9 lg:h-9 rounded-lg bg-white flex items-center justify-center shadow-sm`}>
-                          <IconComponent className={`w-4 h-4 lg:w-5 lg:h-5 ${feature.color}`} />
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-gray-900 mb-0.5 text-sm lg:text-base">{feature.title}</h4>
-                        <p className="text-gray-600 text-xs lg:text-sm leading-relaxed">{feature.desc}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <button
-                onClick={() => navigate('/idrm-manager')}
-                className="group inline-flex items-center justify-center w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-purple-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
-              >
-                <span className="text-base lg:text-lg">Manage Responsibility Matrices</span>
-                <ArrowRight className="ml-2 lg:ml-3 w-4 h-4 lg:w-5 lg:h-5 group-hover:translate-x-1 transition-transform" />
+                <span className="text-lg lg:text-xl">Start Creating BEP</span>
+                <ArrowRight className="ml-3 lg:ml-4 w-5 h-5 lg:w-6 lg:h-6 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </button>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Integration Section */}
-      <div className="bg-gradient-to-r from-gray-900 to-gray-800 py-12 lg:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 lg:mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Seamless Integration
-            </h2>
-            <p className="text-base lg:text-lg text-gray-300 mb-8 lg:mb-10 max-w-3xl mx-auto leading-relaxed">
-              All three products work together seamlessly. Reference your TIDP/MIDP plans and IDRM matrices directly in your BEP documents,
-              with auto-sync capabilities and unified navigation for maximum productivity.
-            </p>
+        {/* TIDP/MIDP and Responsibility Matrix - Two Column Grid */}
+        <div
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 max-w-6xl mx-auto"
+          data-section="supportCards"
+        >
+          <div className={`transition-all duration-700 ease-out delay-100 ${visibleSections.supportCards ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+            {/* TIDP/MIDP Manager */}
+            <ProductCard
+              title="TIDP/MIDP Manager"
+              subtitle="Information Delivery Planning"
+              description="Coordinate information delivery across task teams with comprehensive TIDP management. Automatically consolidate into MIDPs, track dependencies, manage LOINs, and maintain responsibility matrices aligned with ISO 19650 requirements. Automatically integrates delivery timelines and responsibilities into your BEP."
+              icon={BarChart3}
+              colorScheme={{
+                gradient: 'from-green-500 to-green-600',
+                subtitleColor: 'text-green-100',
+                hoverBg: 'bg-green-50',
+                buttonGradient: 'from-green-600 to-green-700',
+                buttonHover: 'from-green-700 to-green-800'
+              }}
+              features={features.tidp}
+              route="/tidp-midp"
+              buttonText="Manage Information Delivery"
+            />
+          </div>
 
-            <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
-              <div className="flex items-center space-x-3 bg-white bg-opacity-10 backdrop-blur-sm px-4 py-3 rounded-xl border border-white border-opacity-20">
-                <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                  <FileText className="w-5 h-5 text-white" />
-                </div>
-                <div className="text-left">
-                  <div className="font-semibold text-white text-sm lg:text-base">BEP Generator</div>
-                  <div className="text-blue-200 text-xs">Professional BEPs</div>
-                </div>
-              </div>
-
-              <ArrowRight className="w-6 h-6 text-white opacity-50 hidden md:block" />
-
-              <div className="flex items-center space-x-3 bg-white bg-opacity-10 backdrop-blur-sm px-4 py-3 rounded-xl border border-white border-opacity-20">
-                <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
-                  <BarChart3 className="w-5 h-5 text-white" />
-                </div>
-                <div className="text-left">
-                  <div className="font-semibold text-white text-sm lg:text-base">TIDP/MIDP Manager</div>
-                  <div className="text-green-200 text-xs">Information Delivery</div>
-                </div>
-              </div>
-
-              <ArrowRight className="w-6 h-6 text-white opacity-50 hidden md:block" />
-
-              <div className="flex items-center space-x-3 bg-white bg-opacity-10 backdrop-blur-sm px-4 py-3 rounded-xl border border-white border-opacity-20">
-                <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
-                  <Table2 className="w-5 h-5 text-white" />
-                </div>
-                <div className="text-left">
-                  <div className="font-semibold text-white text-sm lg:text-base">IDRM Manager</div>
-                  <div className="text-purple-200 text-xs">Responsibility Matrices</div>
-                </div>
-              </div>
-            </div>
+          <div className={`transition-all duration-700 ease-out delay-300 ${visibleSections.supportCards ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+            {/* Responsibility Matrix Manager */}
+            <ProductCard
+              title="Responsibility Matrix Manager"
+              subtitle="High-level & Detailed Responsibility Matrices"
+              description="Manage ISO 19650-compliant responsibility matrices (high-level for pre-appointment BEP, detailed for post-appointment). Automatic synchronization with TIDP and deliverables. Create reusable templates, track deliverables with LOIN requirements, and auto-sync with TIDP containers."
+              icon={Table2}
+              colorScheme={{
+                gradient: 'from-purple-500 to-purple-600',
+                subtitleColor: 'text-purple-100',
+                hoverBg: 'bg-purple-50',
+                buttonGradient: 'from-purple-600 to-purple-700',
+                buttonHover: 'from-purple-700 to-purple-800'
+              }}
+              features={features.idrm}
+              route="/idrm-manager"
+              buttonText="Manage Responsibility Matrices"
+            />
           </div>
         </div>
       </div>
 
-      {/* ISO 19650 Compliance Section */}
-      <div className="bg-white py-12 lg:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 lg:mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-              ISO 19650 Compliance Built-In
-            </h2>
-            <p className="text-base lg:text-lg text-gray-600 max-w-2xl mx-auto">
-              Comprehensive implementation of ISO 19650-2:2018 requirements for information management
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border-2 border-blue-200">
-              <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
-                <CheckCircle className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Clause 5.1 & 5.3</h3>
-              <p className="text-sm text-gray-700">Information management process and information requirements framework</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border-2 border-green-200">
-              <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-4">
-                <Calendar className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Clause 5.4</h3>
-              <p className="text-sm text-gray-700">Information delivery planning with TIDP/MIDP framework</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border-2 border-purple-200">
-              <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mb-4">
-                <FileText className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Clause 5.6 & 5.7</h3>
-              <p className="text-sm text-gray-700">Information production methods and Common Data Environment workflows</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-6 border-2 border-orange-200">
-              <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mb-4">
-                <Users className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Annex A</h3>
-              <p className="text-sm text-gray-700">Responsibility matrices for information management activities and deliverables</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl p-6 border-2 border-indigo-200">
-              <div className="w-12 h-12 bg-indigo-500 rounded-lg flex items-center justify-center mb-4">
-                <TrendingUp className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">LOIN Management</h3>
-              <p className="text-sm text-gray-700">Level of Information Need specification and tracking for all deliverables</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-xl p-6 border-2 border-teal-200">
-              <div className="w-12 h-12 bg-teal-500 rounded-lg flex items-center justify-center mb-4">
-                <BarChart3 className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Validation & QA</h3>
-              <p className="text-sm text-gray-700">Quality gates, acceptance criteria, and comprehensive validation checks</p>
-            </div>
-          </div>
+      {/* Social Proof Section */}
+      <div data-section="social">
+        <div className={`transition-all duration-1000 ease-out ${visibleSections.social ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+          <SocialProofSection />
         </div>
       </div>
+
+      {/* Integration Section - Lazy Loaded */}
+      <Suspense fallback={<SectionLoader isDark={true} />}>
+        <IntegrationSection />
+      </Suspense>
+
+      {/* ISO 19650 Compliance Section - Lazy Loaded */}
+      <Suspense fallback={<SectionLoader isDark={false} />}>
+        <ISOComplianceSection />
+      </Suspense>
 
       {/* CTA Section */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 py-12 lg:py-16">
@@ -424,24 +306,27 @@ const HomePage = () => {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
               onClick={() => navigate('/bep-generator')}
-              className="inline-flex items-center px-6 py-3 bg-white text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transform hover:scale-105 transition-all duration-200 shadow-lg"
+              className="inline-flex items-center px-6 py-3 bg-white text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transform hover:scale-105 transition-all duration-200 shadow-lg will-change-transform"
+              aria-label="Create new BIM Execution Plan"
             >
-              <FileText className="w-4 h-4 mr-2" />
+              <FileText className="w-4 h-4 mr-2" aria-hidden="true" />
               Create BEP
             </button>
             <button
               onClick={() => navigate('/tidp-midp')}
-              className="inline-flex items-center px-6 py-3 border-2 border-white text-white font-semibold rounded-xl hover:bg-white hover:text-blue-600 transform hover:scale-105 transition-all duration-200"
+              className="inline-flex items-center px-6 py-3 border-2 border-white text-white font-semibold rounded-xl hover:bg-white hover:text-blue-600 transform hover:scale-105 transition-all duration-200 will-change-transform"
+              aria-label="Manage TIDP and MIDP information delivery plans"
             >
-              <BarChart3 className="w-4 h-4 mr-2" />
+              <BarChart3 className="w-4 h-4 mr-2" aria-hidden="true" />
               Manage TIDP/MIDP
             </button>
             <button
               onClick={() => navigate('/idrm-manager')}
-              className="inline-flex items-center px-6 py-3 border-2 border-white text-white font-semibold rounded-xl hover:bg-white hover:text-blue-600 transform hover:scale-105 transition-all duration-200"
+              className="inline-flex items-center px-6 py-3 border-2 border-white text-white font-semibold rounded-xl hover:bg-white hover:text-blue-600 transform hover:scale-105 transition-all duration-200 will-change-transform"
+              aria-label="Manage responsibility matrices"
             >
-              <Table2 className="w-4 h-4 mr-2" />
-              Manage IDRM
+              <Table2 className="w-4 h-4 mr-2" aria-hidden="true" />
+              Manage Matrices
             </button>
           </div>
         </div>
