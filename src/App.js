@@ -12,6 +12,7 @@ import IDRMDashboard from './components/pages/idrm-manager/IDRMDashboard';
 import TidpEditorPage from './components/pages/TidpEditorPage';
 import ProfilePage from './components/pages/ProfilePage';
 import SettingsPage from './components/pages/SettingsPage';
+import ResponsibilityMatrixManager from './components/responsibility-matrix/ResponsibilityMatrixManager';
 
 function App() {
   return (
@@ -53,7 +54,7 @@ function App() {
             <Route path="/bep-generator" element={<BEPGeneratorWrapper />}>
               <Route index element={null} /> {/* Start menu is default */}
               <Route path="select-type" element={null} />
-              <Route path="form" element={null} />
+              <Route path=":documentId/step/:stepNumber" element={null} />
               <Route path="templates" element={null} />
               <Route path="drafts" element={null} />
               <Route path="import" element={null} />
@@ -78,6 +79,9 @@ function App() {
             {/* TIDP Editor routes */}
             <Route path="/tidp-editor" element={<TidpEditorPage />} />
             <Route path="/tidp-editor/:id" element={<TidpEditorPage />} />
+
+            {/* Responsibility Matrix Manager */}
+            <Route path="/responsibility-matrix" element={<ResponsibilityMatrixManager />} />
 
             {/* User Profile & Settings */}
             <Route path="/profile" element={<ProfilePage />} />

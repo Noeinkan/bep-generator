@@ -13,7 +13,8 @@ import {
   Sparkles,
   ChevronDown,
   Play,
-  Table2
+  Table2,
+  RefreshCw
 } from 'lucide-react';
 import ProductCard from './ProductCard';
 import SectionLoader from './SectionLoader';
@@ -178,6 +179,15 @@ const HomePage = () => {
           <div className={`group bg-white rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 ease-out transform hover:-translate-y-2 border border-gray-100 overflow-hidden will-change-transform ${visibleSections.bepCard ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
             <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-8 lg:p-10 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -translate-y-16 translate-x-16"></div>
+              {/* Start Here Badge */}
+              <div
+                className="absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-yellow-400 to-orange-400 text-white shadow-lg font-semibold text-sm z-20"
+                role="status"
+                aria-label="Recommended starting point for ISO 19650 workflow"
+              >
+                <Sparkles className="w-4 h-4" aria-hidden="true" />
+                <span>Start Here</span>
+              </div>
               <div className="relative z-10 flex items-center text-white">
                 <div className="w-16 h-16 lg:w-20 lg:h-20 bg-white bg-opacity-20 rounded-xl flex items-center justify-center mr-4">
                   <FileText className="w-8 h-8 lg:w-10 lg:h-10" aria-hidden="true" />
@@ -191,10 +201,26 @@ const HomePage = () => {
 
             <div className="p-8 lg:p-10">
               <p className="text-gray-600 mb-6 lg:mb-8 text-base lg:text-lg leading-relaxed">
-                Generate ISO 19650-compliant BEPs with intelligent wizards for both pre-appointment and post-appointment phases,
-                with native TIDP/MIDP and responsibility matrix integration. Includes all required appendices.
-                AI-assisted content generation helps you articulate information requirements, CDE workflows, and delivery strategies efficiently.
+                The master plan for your entire ISO 19650 workflow. Start here to create comprehensive BEPs that automatically integrate with TIDP/MIDP delivery plans and responsibility matrices. AI-powered content generation, professional export formats, and intelligent wizards guide you through pre- and post-appointment phases.
               </p>
+
+              {/* Integration Callouts */}
+              <div className="grid grid-cols-2 gap-4 mb-6 lg:mb-8" role="region" aria-label="BEP integration capabilities">
+                <div className="flex items-start p-3 bg-blue-50 border-l-4 border-green-500 rounded">
+                  <RefreshCw className="w-5 h-5 text-green-600 mr-3 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                  <div>
+                    <h5 className="font-semibold text-gray-900 text-sm">Auto-Sync with TIDP/MIDP</h5>
+                    <p className="text-xs text-gray-600">Delivery plans flow into BEP appendices</p>
+                  </div>
+                </div>
+                <div className="flex items-start p-3 bg-blue-50 border-l-4 border-purple-500 rounded">
+                  <Table2 className="w-5 h-5 text-purple-600 mr-3 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                  <div>
+                    <h5 className="font-semibold text-gray-900 text-sm">Live RACI Integration</h5>
+                    <p className="text-xs text-gray-600">Responsibility matrices embed directly in BEP</p>
+                  </div>
+                </div>
+              </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 lg:gap-6 mb-6 lg:mb-8">
                 {features.bep.map((feature, index) => {
@@ -274,6 +300,102 @@ const HomePage = () => {
               buttonText="Manage Responsibility Matrices"
             />
           </div>
+        </div>
+      </div>
+
+      {/* Comparison Table Section */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+        <div className="text-center mb-8 lg:mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-3">Compare Tools</h2>
+          <p className="text-gray-600 text-base lg:text-lg max-w-3xl mx-auto">
+            Understanding the hierarchy ensures efficient workflow
+          </p>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full border border-gray-200 rounded-lg overflow-hidden bg-white shadow-lg" role="table" aria-label="Product feature comparison between BEP Generator, TIDP/MIDP Manager, and IDRM Manager">
+            <caption className="sr-only">Comparison of features across BEP Generator (core tool), TIDP/MIDP Manager, and IDRM Manager to help you understand their roles in the ISO 19650 workflow</caption>
+            <thead>
+              <tr className="bg-gray-50 border-b border-gray-200">
+                <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Feature</th>
+                <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-gray-900 bg-blue-50 border-l border-r border-blue-200">
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-blue-600" aria-hidden="true" />
+                    <span>BEP Generator</span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-600 text-white" role="status" aria-label="Core product">CORE</span>
+                  </div>
+                </th>
+                <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="w-5 h-5 text-green-600" aria-hidden="true" />
+                    <span>TIDP/MIDP Manager</span>
+                  </div>
+                </th>
+                <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                  <div className="flex items-center gap-2">
+                    <Table2 className="w-5 h-5 text-purple-600" aria-hidden="true" />
+                    <span>IDRM Manager</span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              <tr className="hover:bg-gray-50 transition-colors">
+                <td className="px-6 py-4 text-sm font-medium text-gray-900">Role in Workflow</td>
+                <td className="px-6 py-4 text-sm text-gray-700 bg-blue-50 border-l border-r border-blue-100">Master plan & central hub</td>
+                <td className="px-6 py-4 text-sm text-gray-700">Delivery coordination</td>
+                <td className="px-6 py-4 text-sm text-gray-700">Responsibility tracking</td>
+              </tr>
+              <tr className="hover:bg-gray-50 transition-colors">
+                <td className="px-6 py-4 text-sm font-medium text-gray-900">Start Here</td>
+                <td className="px-6 py-4 text-sm bg-blue-50 border-l border-r border-blue-100">
+                  <div className="flex items-center gap-2 text-green-600 font-semibold">
+                    <CheckCircle className="w-5 h-5" aria-hidden="true" />
+                    <span>Always start here</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-500">After BEP created</td>
+                <td className="px-6 py-4 text-sm text-gray-500">After BEP created</td>
+              </tr>
+              <tr className="hover:bg-gray-50 transition-colors">
+                <td className="px-6 py-4 text-sm font-medium text-gray-900">Auto-Sync</td>
+                <td className="px-6 py-4 text-sm text-gray-700 bg-blue-50 border-l border-r border-blue-100">
+                  <span className="font-semibold text-blue-600">Source of truth</span>
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-700">Syncs to BEP</td>
+                <td className="px-6 py-4 text-sm text-gray-700">Syncs to BEP</td>
+              </tr>
+              <tr className="hover:bg-gray-50 transition-colors">
+                <td className="px-6 py-4 text-sm font-medium text-gray-900">AI Generation</td>
+                <td className="px-6 py-4 text-sm bg-blue-50 border-l border-r border-blue-100">
+                  <div className="flex items-center gap-2 text-green-600">
+                    <CheckCircle className="w-5 h-5" aria-hidden="true" />
+                    <span>Full support (24+ fields)</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-700">Limited support</td>
+                <td className="px-6 py-4 text-sm text-gray-500">Not applicable</td>
+              </tr>
+              <tr className="hover:bg-gray-50 transition-colors">
+                <td className="px-6 py-4 text-sm font-medium text-gray-900">Primary Use Case</td>
+                <td className="px-6 py-4 text-sm text-gray-700 bg-blue-50 border-l border-r border-blue-100">Project foundation & strategy</td>
+                <td className="px-6 py-4 text-sm text-gray-700">Manage deliveries & timelines</td>
+                <td className="px-6 py-4 text-sm text-gray-700">Track responsibilities</td>
+              </tr>
+              <tr className="hover:bg-gray-50 transition-colors">
+                <td className="px-6 py-4 text-sm font-medium text-gray-900">ISO 19650 Focus</td>
+                <td className="px-6 py-4 text-sm text-gray-700 bg-blue-50 border-l border-r border-blue-100">Clauses 5.1-5.7 (comprehensive)</td>
+                <td className="px-6 py-4 text-sm text-gray-700">Clause 5.4 (delivery)</td>
+                <td className="px-6 py-4 text-sm text-gray-700">Annex A (responsibilities)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600 italic">
+            All three tools work seamlessly together - the BEP serves as the master plan that coordinates information requirements and workflows
+          </p>
         </div>
       </div>
 

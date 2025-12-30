@@ -53,6 +53,9 @@ const BEPGeneratorWrapper = () => {
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [exportFormat, setExportFormat] = useState('pdf');
+  const [existingDraftToOverwrite, setExistingDraftToOverwrite] = useState(null);
+  // Track current draft being edited (like Word tracks the current document)
+  const [currentDraft, setCurrentDraft] = useState(null); // { id, name }
 
   // Check if we should show TIDP creation form
   // const shouldShowTidpForm = searchParams.get('createTidp') === 'true';
@@ -62,9 +65,13 @@ const BEPGeneratorWrapper = () => {
   const { midps, loading: _midpLoading } = useMidpData();
 
   // Draft operations
-  const { saveDraft, isLoading: savingDraft, error: _draftError, importBepFromJson } = useDraftOperations(user, formData, bepType, (loadedData, loadedType) => {
+  const { saveDraft, findDraftByName, isLoading: savingDraft, error: _draftError, importBepFromJson } = useDraftOperations(user, formData, bepType, (loadedData, loadedType, draftInfo) => {
     setFormData(loadedData);
     setBepType(loadedType);
+    // Set current draft when loading from draft manager
+    if (draftInfo) {
+      setCurrentDraft({ id: draftInfo.id, name: draftInfo.name });
+    }
     // Navigate to form after loading draft
     navigate('/bep-generator/form?step=0');
   }, () => {
@@ -240,6 +247,7 @@ const BEPGeneratorWrapper = () => {
     setValidationErrors({});
     setShowPreview(false);
     setCompletedSections(new Set());
+    setCurrentDraft(null); // Reset draft tracking for new BEP
     // Navigate to form page with step 0 (URL is the source of truth for currentStep)
     navigate('/bep-generator/form?step=0');
   }, [navigate]);
@@ -272,6 +280,7 @@ const BEPGeneratorWrapper = () => {
       setBepType(template.bepType);
       setValidationErrors({});
       setCompletedSections(new Set());
+      setCurrentDraft(null); // Reset draft tracking for template
       // Navigate to form with template loaded (URL is the source of truth for currentStep)
       navigate('/bep-generator/form?step=0');
     } else {
@@ -337,27 +346,82 @@ const BEPGeneratorWrapper = () => {
       alert('Please select a BEP type first');
       return;
     }
-    setNewDraftName('');
-    setShowSaveDraftDialog(true);
-  }, [user, bepType]);
+
+    // Microsoft Word behavior: if we're working on an existing draft, save it directly
+    if (currentDraft && currentDraft.id) {
+      try {
+        const result = await saveDraft(currentDraft.name, formData, true);
+        if (result.success) {
+          setShowSuccessToast(true);
+          setTimeout(() => setShowSuccessToast(false), 3000);
+        } else {
+          alert('Failed to save draft');
+        }
+      } catch (error) {
+        alert('Failed to save draft: ' + error.message);
+      }
+    } else {
+      // New BEP, ask for name
+      setNewDraftName('');
+      setShowSaveDraftDialog(true);
+    }
+  }, [user, bepType, currentDraft, formData, saveDraft]);
 
   const handleSaveDraftConfirm = useCallback(async () => {
     if (!newDraftNameValidation.isValid) return;
 
     try {
-      await saveDraft(newDraftNameValidation.sanitized, formData);
-      setShowSaveDraftDialog(false);
-      setNewDraftName('');
-      setShowSuccessToast(true);
-      setTimeout(() => setShowSuccessToast(false), 3000);
+      const result = await saveDraft(newDraftNameValidation.sanitized, formData, false);
+
+      if (result.success) {
+        // Set as current draft after first save
+        setCurrentDraft({ id: result.draftId, name: newDraftNameValidation.sanitized });
+        setShowSaveDraftDialog(false);
+        setNewDraftName('');
+        setExistingDraftToOverwrite(null);
+        setShowSuccessToast(true);
+        setTimeout(() => setShowSuccessToast(false), 3000);
+      } else if (result.existingDraft) {
+        // Draft already exists, show overwrite confirmation
+        setExistingDraftToOverwrite(result.existingDraft);
+      }
     } catch (error) {
       alert('Failed to save draft: ' + error.message);
     }
   }, [newDraftNameValidation, formData, saveDraft]);
 
+  const handleOverwriteDraft = useCallback(async () => {
+    if (!newDraftNameValidation.isValid) return;
+
+    try {
+      const result = await saveDraft(newDraftNameValidation.sanitized, formData, true);
+
+      if (result.success) {
+        // Set as current draft after overwrite
+        setCurrentDraft({ id: result.draftId, name: newDraftNameValidation.sanitized });
+        setShowSaveDraftDialog(false);
+        setNewDraftName('');
+        setExistingDraftToOverwrite(null);
+        setShowSuccessToast(true);
+        setTimeout(() => setShowSuccessToast(false), 3000);
+      } else {
+        alert('Failed to overwrite draft');
+      }
+    } catch (error) {
+      alert('Failed to overwrite draft: ' + error.message);
+    }
+  }, [newDraftNameValidation, formData, saveDraft]);
+
+  const handleSaveAsNewDraft = useCallback(() => {
+    // Reset to allow user to enter a new name
+    setExistingDraftToOverwrite(null);
+    setNewDraftName('');
+  }, []);
+
   const handleSaveDraftCancel = useCallback(() => {
     setShowSaveDraftDialog(false);
     setNewDraftName('');
+    setExistingDraftToOverwrite(null);
   }, []);
 
   const generateContent = useCallback(async () => {
@@ -425,11 +489,15 @@ const BEPGeneratorWrapper = () => {
       <DraftManager
         user={user}
         currentFormData={formData}
-        onLoadDraft={(loadedData, loadedType) => {
+        onLoadDraft={(loadedData, loadedType, draftInfo) => {
           setFormData(loadedData);
           setBepType(loadedType);
           setValidationErrors({});
           setCompletedSections(new Set());
+          // Set current draft info when loading from draft manager
+          if (draftInfo) {
+            setCurrentDraft({ id: draftInfo.id, name: draftInfo.name });
+          }
           // Navigate to form with loaded draft
           navigate('/bep-generator/form?step=0');
         }}
@@ -563,6 +631,15 @@ const BEPGeneratorWrapper = () => {
                 BEP Generator
               </h1>
               <p className="text-sm text-gray-600 mt-1">{CONFIG.bepTypeDefinitions[bepType]?.title}</p>
+              {currentDraft && (
+                <p className="text-xs text-blue-600 mt-1 font-medium flex items-center">
+                  <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z" />
+                    <path d="M3 8a2 2 0 012-2v10h8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
+                  </svg>
+                  {currentDraft.name}
+                </p>
+              )}
             </div>
             <div className="flex items-center space-x-1">
               <button
@@ -776,6 +853,9 @@ const BEPGeneratorWrapper = () => {
         onNewDraftNameChange={setNewDraftName}
         onSave={handleSaveDraftConfirm}
         onCancel={handleSaveDraftCancel}
+        existingDraft={existingDraftToOverwrite}
+        onOverwrite={handleOverwriteDraft}
+        onSaveAsNew={handleSaveAsNewDraft}
       />
     </div>
   );
