@@ -1,7 +1,7 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import * as d3 from 'd3';
-import { useMindmapD3 } from '../../../hooks/useMindmapD3';
-import { useUndoRedo } from '../../../hooks/useUndoRedo';
+import { useMindmapD3 } from '../../../../hooks/useMindmapD3';
+import { useUndoRedo } from '../../../../hooks/useUndoRedo';
 import {
   parseValue,
   convertToText,
@@ -11,16 +11,16 @@ import {
   searchNodes,
   duplicateNodeInTree,
   changeNodeTypeInTree
-} from '../../../utils/mindmapUtils';
-import { organizeNodes, snapToGrid } from '../../../utils/layoutUtils';
-import MindmapControls from '../controls/MindmapControls';
-import SearchFilter from '../controls/SearchFilter';
-import FieldHeader from '../base/FieldHeader';
-import QuickAddMenu from '../controls/QuickAddMenu';
-import NodeToolbar from '../controls/NodeToolbar';
-import NodeContextMenu from '../controls/NodeContextMenu';
-import CommandPalette from '../controls/CommandPalette';
-import FullscreenDiagramModal from './FullscreenDiagramModal';
+} from '../../../../utils/mindmapUtils';
+import { organizeNodes, snapToGrid } from '../../../../utils/layoutUtils';
+import MindmapControls from '../../controls/MindmapControls';
+import SearchFilter from '../../controls/SearchFilter';
+import FieldHeader from '../../base/FieldHeader';
+import QuickAddMenu from '../../controls/QuickAddMenu';
+import NodeToolbar from '../../controls/NodeToolbar';
+import NodeContextMenu from '../../controls/NodeContextMenu';
+import CommandPalette from '../../controls/CommandPalette';
+import FullscreenDiagramModal from '../diagram-ui/FullscreenDiagramModal';
 
 const VolumeStrategyMindmap = ({ field, value, onChange, error }) => {
   const { name, label, number, required } = field;

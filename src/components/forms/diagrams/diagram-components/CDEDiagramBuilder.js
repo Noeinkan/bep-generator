@@ -28,16 +28,16 @@ import {
   MoreVertical,
   ChevronDown,
 } from 'lucide-react';
-import FullscreenDiagramModal from './FullscreenDiagramModal';
-import FieldHeader from '../base/FieldHeader';
+import FullscreenDiagramModal from '../diagram-ui/FullscreenDiagramModal';
+import FieldHeader from '../../base/FieldHeader';
 
-import { nodeTypes, availableShapes } from './CustomNodes';
+import { nodeTypes, availableShapes } from '../diagram-nodes/CustomNodes';
 import {
   convertToReactFlow,
   convertFromReactFlow,
   getDefaultDiagramStructure,
-} from './diagramMigration';
-import { getTemplate, getTemplateOptions } from './diagramTemplates';
+} from '../diagram-utils/diagramMigration';
+import { getTemplate, getTemplateOptions } from '../diagram-utils/diagramTemplates';
 
 const CDEDiagramBuilderInner = ({ field, value, onChange, error }) => {
   const { name, label, number, required } = field;

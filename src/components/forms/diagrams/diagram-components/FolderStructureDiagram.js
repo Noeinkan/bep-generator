@@ -13,7 +13,7 @@ import {
   Home,
   GripVertical
 } from 'lucide-react';
-import FieldHeader from '../base/FieldHeader';
+import FieldHeader from '../../base/FieldHeader';
 
 // Tooltip Component
 const Tooltip = ({ children, content, position = 'top' }) => {

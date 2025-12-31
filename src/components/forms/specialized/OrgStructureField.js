@@ -1,6 +1,6 @@
 
 import React from 'react';
-import OrgStructureChart from '../diagrams/OrgStructureChart';
+import OrgStructureChart from '../diagrams/diagram-components/OrgStructureChart';
 import FieldHeader from '../base/FieldHeader';
 
 

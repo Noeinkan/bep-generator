@@ -1,15 +1,13 @@
-import React, { useReducer, useEffect, useCallback, useRef, useState } from 'react';
-import styles from './OrgStructureChart.module.css';
-import ConfirmDialog from '../../common/ConfirmDialog';
-import Toast from '../../common/Toast';
+import React, { useReducer, useEffect, useCallback, useMemo, useRef } from 'react';
+import styles from '../diagram-styles/OrgStructureChart.module.css';
 import {
   buildOrgChartData,
   validateNodeData,
   getColorPalette,
   convertTreeToFinalizedParties,
   deepEqual
-} from './orgChartUtils';
-import { orgChartReducer, initialState, ACTIONS } from './orgChartReducer';
+} from '../diagram-utils/orgChartUtils';
+import { orgChartReducer, initialState, ACTIONS } from '../diagram-utils/orgChartReducer';
 
 /**
  * Memoized Lead Node Component
@@ -27,8 +25,7 @@ const LeadNode = React.memo(({
   onCancelEdit, 
   onUpdateEditValues,
   onDelete, 
-  onAddAppointed,
-  isDisabled
+  onAddAppointed 
 }) => {
   const isEditing = editing?.type === 'lead' && editing.path.leadIndex === leadIndex;
   const inputRef = useRef(null);
@@ -147,7 +144,6 @@ const LeadNode = React.memo(({
             <div className={styles.buttonGroup}>
               <button
                 onClick={onStartEdit}
-                disabled={isDisabled}
                 className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonSmall}`}
                 aria-label={`Edit ${lead.name}`}
               >
@@ -155,7 +151,6 @@ const LeadNode = React.memo(({
               </button>
               <button
                 onClick={onDelete}
-                disabled={isDisabled}
                 className={`${styles.button} ${styles.buttonDanger} ${styles.buttonSmall}`}
                 aria-label={`Delete ${lead.name}`}
               >
@@ -163,7 +158,6 @@ const LeadNode = React.memo(({
               </button>
               <button
                 onClick={onAddAppointed}
-                disabled={isDisabled}
                 className={`${styles.button} ${styles.buttonWarning} ${styles.buttonSmall}`}
                 aria-label={`Add appointed party to ${lead.name}`}
               >
@@ -195,8 +189,7 @@ const AppointedNode = React.memo(({
   onSaveEdit, 
   onCancelEdit,
   onUpdateEditValues,
-  onDelete,
-  isDisabled
+  onDelete 
 }) => {
   const isEditing = editing?.type === 'appointed' && 
                     editing.path.leadIndex === leadIndex && 
@@ -320,7 +313,6 @@ const AppointedNode = React.memo(({
             <div className={styles.buttonGroup}>
               <button
                 onClick={onStartEdit}
-                disabled={isDisabled}
                 className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonTiny}`}
                 aria-label={`Edit ${appointed.name}`}
               >
@@ -328,7 +320,6 @@ const AppointedNode = React.memo(({
               </button>
               <button
                 onClick={onDelete}
-                disabled={isDisabled}
                 className={`${styles.button} ${styles.buttonDanger} ${styles.buttonTiny}`}
                 aria-label={`Delete ${appointed.name}`}
               >
@@ -345,8 +336,7 @@ const AppointedNode = React.memo(({
 AppointedNode.displayName = 'AppointedNode';
 
 /**
- * Main OrgStructureChart Component - Enhanced Version
- * with ConfirmDialog and Toast notifications
+ * Main OrgStructureChart Component
  */
 const OrgStructureChart = ({ data, onChange, editable = false }) => {
   // Initialize state with reducer
@@ -359,22 +349,6 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
 
   const { orgData, editing, editValues, errors } = state;
   
-  // Confirmation dialog state
-  const [confirmDialog, setConfirmDialog] = useState({
-    open: false,
-    title: '',
-    message: '',
-    onConfirm: null,
-    variant: 'danger'
-  });
-
-  // Toast notification state
-  const [toast, setToast] = useState({
-    open: false,
-    message: '',
-    type: 'info'
-  });
-
   // Track previous data to detect changes
   const previousDataRef = useRef(data);
 
@@ -393,12 +367,6 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
       dispatch({ type: ACTIONS.SET_ORG_DATA, payload: newTree });
     }
   }, [data, orgData]);
-
-  // Show toast notification
-  const showToast = useCallback((message, type = 'info') => {
-    setToast({ open: true, message, type });
-    setTimeout(() => setToast({ open: false, message: '', type: 'info' }), 3000);
-  }, []);
 
   // Notify parent of changes
   const notifyChange = useCallback((newData) => {
@@ -480,12 +448,9 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
     }
     notifyChange(updatedData);
 
-    // Show success toast
-    showToast('Changes saved successfully', 'success');
-
     // Clear editing state
     dispatch({ type: ACTIONS.CANCEL_EDIT });
-  }, [editValues, editing, orgData, notifyChange, showToast]);
+  }, [editValues, editing, orgData, notifyChange]);
 
   // Handle add/delete operations
   const handleAddLead = useCallback(() => {
@@ -500,27 +465,19 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
       }]
     };
     notifyChange(newData);
-    showToast('Lead added successfully', 'success');
-  }, [orgData, notifyChange, showToast]);
+  }, [orgData, notifyChange]);
 
   const handleDeleteLead = useCallback((leadIndex) => {
-    setConfirmDialog({
-      open: true,
-      title: 'Delete Lead?',
-      message: 'This will permanently delete the lead and all its appointed parties. This action cannot be undone.',
-      variant: 'danger',
-      onConfirm: () => {
-        dispatch({ type: ACTIONS.DELETE_LEAD, payload: { leadIndex } });
-        const newData = {
-          ...orgData,
-          leadGroups: orgData.leadGroups.filter((_, idx) => idx !== leadIndex)
-        };
-        notifyChange(newData);
-        showToast('Lead deleted successfully', 'success');
-        setConfirmDialog({ open: false, title: '', message: '', onConfirm: null, variant: 'danger' });
-      }
-    });
-  }, [orgData, notifyChange, showToast]);
+    const confirmed = window.confirm('Delete this lead and all its appointed parties?');
+    if (!confirmed) return;
+
+    dispatch({ type: ACTIONS.DELETE_LEAD, payload: { leadIndex } });
+    const newData = {
+      ...orgData,
+      leadGroups: orgData.leadGroups.filter((_, idx) => idx !== leadIndex)
+    };
+    notifyChange(newData);
+  }, [orgData, notifyChange]);
 
   const handleAddAppointed = useCallback((leadIndex) => {
     dispatch({ type: ACTIONS.ADD_APPOINTED, payload: { leadIndex } });
@@ -540,34 +497,23 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
       )
     };
     notifyChange(newData);
-    showToast('Appointed party added successfully', 'success');
-  }, [orgData, notifyChange, showToast]);
+  }, [orgData, notifyChange]);
 
   const handleDeleteAppointed = useCallback((leadIndex, appointedIndex) => {
-    setConfirmDialog({
-      open: true,
-      title: 'Delete Appointed Party?',
-      message: 'This will permanently delete this appointed party. This action cannot be undone.',
-      variant: 'warning',
-      onConfirm: () => {
-        dispatch({ type: ACTIONS.DELETE_APPOINTED, payload: { leadIndex, appointedIndex } });
-        const newData = {
-          ...orgData,
-          leadGroups: orgData.leadGroups.map((group, idx) =>
-            idx === leadIndex
-              ? { ...group, children: group.children.filter((_, childIdx) => childIdx !== appointedIndex) }
-              : group
-          )
-        };
-        notifyChange(newData);
-        showToast('Appointed party deleted successfully', 'success');
-        setConfirmDialog({ open: false, title: '', message: '', onConfirm: null, variant: 'danger' });
-      }
-    });
-  }, [orgData, notifyChange, showToast]);
+    const confirmed = window.confirm('Delete this appointed party?');
+    if (!confirmed) return;
 
-  // Disable buttons while editing
-  const isEditing = !!editing;
+    dispatch({ type: ACTIONS.DELETE_APPOINTED, payload: { leadIndex, appointedIndex } });
+    const newData = {
+      ...orgData,
+      leadGroups: orgData.leadGroups.map((group, idx) =>
+        idx === leadIndex
+          ? { ...group, children: group.children.filter((_, childIdx) => childIdx !== appointedIndex) }
+          : group
+      )
+    };
+    notifyChange(newData);
+  }, [orgData, notifyChange]);
 
   // Render empty state
   if (!orgData || !orgData.leadGroups) {
@@ -594,162 +540,138 @@ const OrgStructureChart = ({ data, onChange, editable = false }) => {
   }, [isEditingAppointing]);
 
   return (
-    <>
-      <div className={styles.container} role="tree" aria-label="Organization Structure Chart">
-        {/* Appointing Party */}
-        <div className={styles.appointingPartyWrapper}>
-          <div className={styles.card} role="treeitem" aria-label={`Appointing party: ${orgData.name}`}>
-            {isEditingAppointing ? (
-              <form 
-                className={styles.editForm}
-                onSubmit={(e) => { e.preventDefault(); handleSaveEdit(); }}
-              >
-                <div>
-                  <label htmlFor="appointing-name" className={styles.srOnly}>
-                    Appointing Party Name
-                  </label>
-                  <input
-                    ref={appointingInputRef}
-                    id="appointing-name"
-                    type="text"
-                    className={`${styles.input} ${errors.name ? styles.inputError : ''}`}
-                    value={editValues.name}
-                    onChange={(e) => handleUpdateEditValues({ name: e.target.value })}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        handleSaveEdit();
-                      } else if (e.key === 'Escape') {
-                        handleCancelEdit();
-                      }
-                    }}
-                    placeholder="Appointing Party Name"
-                    aria-invalid={!!errors.name}
-                  />
-                  {errors.name && (
-                    <div className={styles.errorMessage} role="alert">{errors.name}</div>
-                  )}
-                </div>
+    <div className={styles.container} role="tree" aria-label="Organization Structure Chart">
+      {/* Appointing Party */}
+      <div className={styles.appointingPartyWrapper}>
+        <div className={styles.card} role="treeitem" aria-label={`Appointing party: ${orgData.name}`}>
+          {isEditingAppointing ? (
+            <form 
+              className={styles.editForm}
+              onSubmit={(e) => { e.preventDefault(); handleSaveEdit(); }}
+            >
+              <div>
+                <label htmlFor="appointing-name" className={styles.srOnly}>
+                  Appointing Party Name
+                </label>
+                <input
+                  ref={appointingInputRef}
+                  id="appointing-name"
+                  type="text"
+                  className={`${styles.input} ${errors.name ? styles.inputError : ''}`}
+                  value={editValues.name}
+                  onChange={(e) => handleUpdateEditValues({ name: e.target.value })}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSaveEdit();
+                    } else if (e.key === 'Escape') {
+                      handleCancelEdit();
+                    }
+                  }}
+                  placeholder="Appointing Party Name"
+                  aria-invalid={!!errors.name}
+                />
+                {errors.name && (
+                  <div className={styles.errorMessage} role="alert">{errors.name}</div>
+                )}
+              </div>
 
+              <div className={styles.buttonGroup}>
+                <button
+                  type="submit"
+                  className={`${styles.button} ${styles.buttonSuccess}`}
+                  aria-label="Save changes"
+                >
+                  ✓ Save
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCancelEdit}
+                  className={`${styles.button} ${styles.buttonSecondary}`}
+                  aria-label="Cancel editing"
+                >
+                  ✕ Cancel
+                </button>
+              </div>
+            </form>
+          ) : (
+            <>
+              <div className={styles.cardTitle}>{orgData.name}</div>
+              <div className={styles.cardRole}>{orgData.role}</div>
+              {editable && (
                 <div className={styles.buttonGroup}>
                   <button
-                    type="submit"
-                    className={`${styles.button} ${styles.buttonSuccess}`}
-                    aria-label="Save changes"
+                    onClick={() => handleStartEdit('appointing', { type: 'appointing' }, orgData)}
+                    className={`${styles.button} ${styles.buttonPrimary}`}
+                    aria-label={`Edit ${orgData.name}`}
                   >
-                    ✓ Save
+                    ✏️ Edit
                   </button>
                   <button
-                    type="button"
-                    onClick={handleCancelEdit}
-                    className={`${styles.button} ${styles.buttonSecondary}`}
-                    aria-label="Cancel editing"
+                    onClick={handleAddLead}
+                    className={`${styles.button} ${styles.buttonSuccess}`}
+                    aria-label="Add new lead"
                   >
-                    ✕ Cancel
+                    ➕ Add Lead
                   </button>
                 </div>
-              </form>
-            ) : (
-              <>
-                <div className={styles.cardTitle}>{orgData.name}</div>
-                <div className={styles.cardRole}>{orgData.role}</div>
-                {editable && (
-                  <div className={styles.buttonGroup}>
-                    <button
-                      onClick={() => handleStartEdit('appointing', { type: 'appointing' }, orgData)}
-                      disabled={isEditing}
-                      className={`${styles.button} ${styles.buttonPrimary}`}
-                      aria-label={`Edit ${orgData.name}`}
-                    >
-                      ✏️ Edit
-                    </button>
-                    <button
-                      onClick={handleAddLead}
-                      disabled={isEditing}
-                      className={`${styles.button} ${styles.buttonSuccess}`}
-                      aria-label="Add new lead"
-                    >
-                      ➕ Add Lead
-                    </button>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Lead Groups Grid */}
-        <div className={styles.leadsGrid}>
-          {orgData.leadGroups.map((lead, leadIndex) => {
-            const colors = getColorPalette(leadIndex);
-
-            return (
-              <div key={lead.id} className={styles.leadColumn}>
-                <LeadNode
-                  lead={lead}
-                  leadIndex={leadIndex}
-                  colors={colors}
-                  editable={editable}
-                  editing={editing}
-                  editValues={editValues}
-                  errors={errors}
-                  onStartEdit={() => handleStartEdit('lead', { type: 'lead', leadIndex }, lead)}
-                  onSaveEdit={handleSaveEdit}
-                  onCancelEdit={handleCancelEdit}
-                  onUpdateEditValues={handleUpdateEditValues}
-                  onDelete={() => handleDeleteLead(leadIndex)}
-                  onAddAppointed={() => handleAddAppointed(leadIndex)}
-                  isDisabled={isEditing}
-                />
-
-                {/* Appointed Parties */}
-                <div className={styles.appointedPartiesColumn}>
-                  {(lead.children || []).map((appointed, appointedIndex) => (
-                    <AppointedNode
-                      key={appointed.id}
-                      appointed={appointed}
-                      leadIndex={leadIndex}
-                      appointedIndex={appointedIndex}
-                      colors={colors}
-                      editable={editable}
-                      editing={editing}
-                      editValues={editValues}
-                      errors={errors}
-                      onStartEdit={() => 
-                        handleStartEdit('appointed', { type: 'appointed', leadIndex, appointedIndex }, appointed)
-                      }
-                      onSaveEdit={handleSaveEdit}
-                      onCancelEdit={handleCancelEdit}
-                      onUpdateEditValues={handleUpdateEditValues}
-                      onDelete={() => handleDeleteAppointed(leadIndex, appointedIndex)}
-                      isDisabled={isEditing}
-                    />
-                  ))}
-                </div>
-              </div>
-            );
-          })}
+              )}
+            </>
+          )}
         </div>
       </div>
 
-      {/* Confirmation Dialog */}
-      <ConfirmDialog
-        open={confirmDialog.open}
-        title={confirmDialog.title}
-        message={confirmDialog.message}
-        variant={confirmDialog.variant}
-        onConfirm={confirmDialog.onConfirm}
-        onCancel={() => setConfirmDialog({ open: false, title: '', message: '', onConfirm: null, variant: 'danger' })}
-      />
+      {/* Lead Groups Grid */}
+      <div className={styles.leadsGrid}>
+        {orgData.leadGroups.map((lead, leadIndex) => {
+          const colors = getColorPalette(leadIndex);
 
-      {/* Toast Notification */}
-      <Toast
-        open={toast.open}
-        message={toast.message}
-        type={toast.type}
-        onClose={() => setToast({ open: false, message: '', type: 'info' })}
-      />
-    </>
+          return (
+            <div key={lead.id} className={styles.leadColumn}>
+              <LeadNode
+                lead={lead}
+                leadIndex={leadIndex}
+                colors={colors}
+                editable={editable}
+                editing={editing}
+                editValues={editValues}
+                errors={errors}
+                onStartEdit={() => handleStartEdit('lead', { type: 'lead', leadIndex }, lead)}
+                onSaveEdit={handleSaveEdit}
+                onCancelEdit={handleCancelEdit}
+                onUpdateEditValues={handleUpdateEditValues}
+                onDelete={() => handleDeleteLead(leadIndex)}
+                onAddAppointed={() => handleAddAppointed(leadIndex)}
+              />
+
+              {/* Appointed Parties */}
+              <div className={styles.appointedPartiesColumn}>
+                {(lead.children || []).map((appointed, appointedIndex) => (
+                  <AppointedNode
+                    key={appointed.id}
+                    appointed={appointed}
+                    leadIndex={leadIndex}
+                    appointedIndex={appointedIndex}
+                    colors={colors}
+                    editable={editable}
+                    editing={editing}
+                    editValues={editValues}
+                    errors={errors}
+                    onStartEdit={() => 
+                      handleStartEdit('appointed', { type: 'appointed', leadIndex, appointedIndex }, appointed)
+                    }
+                    onSaveEdit={handleSaveEdit}
+                    onCancelEdit={handleCancelEdit}
+                    onUpdateEditValues={handleUpdateEditValues}
+                    onDelete={() => handleDeleteAppointed(leadIndex, appointedIndex)}
+                  />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 };
 
