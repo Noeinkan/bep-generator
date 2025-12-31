@@ -123,7 +123,29 @@ const EMPTY_BEP_DATA = {
   clashDetectionWorkflow: '',
   issueResolution: '',
   communicationProtocols: '',
-  federationStrategy: '',
+  federationStrategy: {
+    overview: '',
+    clashMatrix: {
+      disciplines: [
+        'Architecture',
+        'Structure',
+        'MEP (HVAC)',
+        'MEP (Electrical)',
+        'MEP (Plumbing)',
+        'Facades',
+        'Site/Civil',
+        'Fire Protection'
+      ],
+      clashes: []  // Will be auto-populated by component's useEffect with 8 default clashes
+    },
+    configuration: {
+      approach: 'discipline',
+      frequency: 'weekly',
+      tools: [],
+      modelBreakdown: []
+    },
+    coordinationProcedures: ''
+  },
   informationRisks: '',
   technologyRisks: '',
   riskMitigation: '',

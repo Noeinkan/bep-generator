@@ -33,7 +33,11 @@
       "Bash(cmd /c \"move EnhancedBepTypeSelector.js BepTypeSelector.js\")",
       "Bash(cmd /c:*)",
       "Bash(del BEPGeneratorWrapper.js)",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "Bash(git checkout:*)",
+      "Bash(npx eslint:*)",
+      "Bash(awk:*)",
+      "Bash(exit 0)"
     ],
     "deny": [],
     "ask": []

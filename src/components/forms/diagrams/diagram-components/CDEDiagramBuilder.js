@@ -27,6 +27,8 @@ import {
   Maximize2,
   MoreVertical,
   ChevronDown,
+  Edit3,
+  Eye,
 } from 'lucide-react';
 import FullscreenDiagramModal from '../diagram-ui/FullscreenDiagramModal';
 import FieldHeader from '../../base/FieldHeader';
@@ -39,7 +41,7 @@ import {
 } from '../diagram-utils/diagramMigration';
 import { getTemplate, getTemplateOptions } from '../diagram-utils/diagramTemplates';
 
-const CDEDiagramBuilderInner = ({ field, value, onChange, error }) => {
+const CDEDiagramBuilderInner = ({ field, value, onChange, error, readOnly = false, allowModeToggle = true }) => {
   const { name, label, number, required } = field;
   const { screenToFlowPosition } = useReactFlow();
 
@@ -67,7 +69,11 @@ const CDEDiagramBuilderInner = ({ field, value, onChange, error }) => {
   const [showTemplates, setShowTemplates] = useState(false);
   const [showFocusMode, setShowFocusMode] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [internalEditMode, setInternalEditMode] = useState(false);
   const reactFlowWrapper = useRef(null);
+
+  // Determine if we're in read-only mode
+  const isReadOnly = readOnly || !internalEditMode;
 
   // Save to parent form on changes
   const saveToParent = useCallback(
@@ -351,69 +357,110 @@ const CDEDiagramBuilderInner = ({ field, value, onChange, error }) => {
       />
 
       <div className="w-full border rounded-xl overflow-hidden shadow-lg bg-white">
-        {/* Header - Improved Toolbar with Better Grouping */}
-        <div className="bg-white px-4 py-2 border-b border-gray-200 shadow-sm">
-          <div className="flex items-center justify-between">
-            {/* Left: Brand & Quick Actions */}
-            <div className="flex items-center gap-4">
-              {/* Brand */}
-              <div className="flex items-center gap-2 pr-4 border-r border-gray-200">
-                <Layers className="w-5 h-5 text-indigo-600" />
-                <span className="text-sm font-semibold text-gray-900">CDE Diagram</span>
-              </div>
 
-              {/* History Group */}
-              <div className="flex items-center gap-1 bg-gray-50 rounded-lg p-1">
-                <button
-                  onClick={undo}
-                  disabled={historyIndex <= 0}
-                  className="p-1.5 text-gray-700 hover:bg-white hover:shadow-sm rounded disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-                  title="Undo (Ctrl+Z)"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={redo}
-                  disabled={historyIndex >= history.length - 1}
-                  className="p-1.5 text-gray-700 hover:bg-white hover:shadow-sm rounded disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-                  title="Redo (Ctrl+Y)"
-                >
-                  <RotateCw className="w-4 h-4" />
-                </button>
+        {/* Preview Mode Header - Clean and Simple */}
+        {isReadOnly && (
+          <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-4 py-3 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <Layers className="w-5 h-5 text-indigo-600" />
+                  <span className="text-sm font-semibold text-gray-900">CDE Diagram</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-gray-600">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                    <span><strong>{nodes.length}</strong> nodes</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                    <span><strong>{edges.length}</strong> connections</span>
+                  </div>
+                </div>
               </div>
-
-              {/* Edit Group */}
-              <div className="flex items-center gap-1 bg-gray-50 rounded-lg p-1">
-                <button
-                  onClick={deleteSelected}
-                  disabled={selectedNodes.length === 0}
-                  className="p-1.5 text-red-600 hover:bg-red-50 hover:shadow-sm rounded disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-                  title={`Delete ${selectedNodes.length > 0 ? `(${selectedNodes.length})` : ''}`}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Primary Actions */}
               <div className="flex items-center gap-2">
-                <button
-                  onClick={addLayer}
-                  className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium shadow-sm hover:shadow"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add Layer</span>
-                </button>
-
-                {/* Templates Dropdown */}
-                <div className="relative">
+                {!readOnly && allowModeToggle && (
                   <button
-                    onClick={() => setShowTemplates(!showTemplates)}
-                    className="flex items-center gap-1.5 bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 px-3 py-1.5 rounded-lg transition-all text-sm font-medium shadow-sm"
+                    onClick={() => {
+                      setInternalEditMode(true);
+                      setShowFocusMode(true);
+                    }}
+                    className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg transition-all text-sm font-medium shadow-md hover:shadow-lg"
                   >
-                    <Layers className="w-4 h-4" />
-                    <span>Templates</span>
-                    <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showTemplates ? 'rotate-180' : ''}`} />
+                    <Edit3 className="w-4 h-4" />
+                    <Maximize2 className="w-4 h-4" />
+                    <span>Edit in Fullscreen</span>
                   </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Mode Header - Full Toolbar */}
+        {!isReadOnly && (
+          <div className="bg-white px-4 py-2 border-b border-gray-200 shadow-sm">
+            <div className="flex items-center justify-between">
+              {/* Left: Brand & Quick Actions */}
+              <div className="flex items-center gap-4">
+                {/* Brand */}
+                <div className="flex items-center gap-2 pr-4 border-r border-gray-200">
+                  <Layers className="w-5 h-5 text-indigo-600" />
+                  <span className="text-sm font-semibold text-gray-900">CDE Diagram</span>
+                </div>
+
+                {/* History Group */}
+                <div className="flex items-center gap-1 bg-gray-50 rounded-lg p-1">
+                  <button
+                    onClick={undo}
+                    disabled={historyIndex <= 0}
+                    className="p-1.5 text-gray-700 hover:bg-white hover:shadow-sm rounded disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                    title="Undo (Ctrl+Z)"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={redo}
+                    disabled={historyIndex >= history.length - 1}
+                    className="p-1.5 text-gray-700 hover:bg-white hover:shadow-sm rounded disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                    title="Redo (Ctrl+Y)"
+                  >
+                    <RotateCw className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Edit Group */}
+                <div className="flex items-center gap-1 bg-gray-50 rounded-lg p-1">
+                  <button
+                    onClick={deleteSelected}
+                    disabled={selectedNodes.length === 0}
+                    className="p-1.5 text-red-600 hover:bg-red-50 hover:shadow-sm rounded disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                    title={`Delete ${selectedNodes.length > 0 ? `(${selectedNodes.length})` : ''}`}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Primary Actions */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={addLayer}
+                    className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium shadow-sm hover:shadow"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Layer</span>
+                  </button>
+
+                  {/* Templates Dropdown */}
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowTemplates(!showTemplates)}
+                      className="flex items-center gap-1.5 bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 px-3 py-1.5 rounded-lg transition-all text-sm font-medium shadow-sm"
+                    >
+                      <Layers className="w-4 h-4" />
+                      <span>Templates</span>
+                      <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showTemplates ? 'rotate-180' : ''}`} />
+                    </button>
                   {showTemplates && (
                     <>
                       <div className="fixed inset-0 z-40" onClick={() => setShowTemplates(false)} />
@@ -547,6 +594,18 @@ const CDEDiagramBuilderInner = ({ field, value, onChange, error }) => {
                 )}
               </div>
 
+              {/* Preview Mode Toggle */}
+              {allowModeToggle && (
+                <button
+                  onClick={() => setInternalEditMode(false)}
+                  className="flex items-center gap-2 bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 px-3 py-2 rounded-lg transition-all text-sm font-medium shadow-sm"
+                  title="Switch to Preview Mode"
+                >
+                  <Eye className="w-4 h-4" />
+                  <span>Preview</span>
+                </button>
+              )}
+
               {/* Focus Mode - Prominent CTA */}
               <button
                 onClick={() => setShowFocusMode(true)}
@@ -557,24 +616,33 @@ const CDEDiagramBuilderInner = ({ field, value, onChange, error }) => {
               </button>
             </div>
           </div>
-        </div>
+          </div>
+        )}
 
         {/* React Flow Canvas */}
         <div ref={reactFlowWrapper} style={{ height: '700px' }}>
           <ReactFlow
             nodes={nodes}
             edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
+            onNodesChange={isReadOnly ? undefined : onNodesChange}
+            onEdgesChange={isReadOnly ? undefined : onEdgesChange}
+            onConnect={isReadOnly ? undefined : onConnect}
             onSelectionChange={onSelectionChange}
             nodeTypes={nodeTypes}
+            nodesDraggable={!isReadOnly}
+            nodesConnectable={!isReadOnly}
+            nodesFocusable={!isReadOnly}
+            edgesFocusable={!isReadOnly}
+            elementsSelectable={!isReadOnly}
             snapToGrid={snapToGrid}
             snapGrid={[15, 15]}
             fitView
             attributionPosition="bottom-left"
             multiSelectionKeyCode="Shift"
             deleteKeyCode="Delete"
+            panOnDrag={true}
+            zoomOnScroll={true}
+            zoomOnPinch={true}
           >
             <Background variant="dots" gap={16} size={1} color="#ddd" />
             <Controls showInteractive={false} />
@@ -587,8 +655,8 @@ const CDEDiagramBuilderInner = ({ field, value, onChange, error }) => {
               style={{ background: '#f8f9fa' }}
             />
 
-            {/* Improved Shape Palette */}
-            {showToolbar && (
+            {/* Improved Shape Palette - Only show in edit mode */}
+            {!isReadOnly && showToolbar && (
               <Panel position="top-left" className="bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden" style={{ width: '240px' }}>
                 <div className="px-4 py-3 bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-gray-200 flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -633,7 +701,7 @@ const CDEDiagramBuilderInner = ({ field, value, onChange, error }) => {
               </Panel>
             )}
 
-            {!showToolbar && (
+            {!isReadOnly && !showToolbar && (
               <Panel position="top-left">
                 <button
                   onClick={() => setShowToolbar(true)}
@@ -675,7 +743,9 @@ const CDEDiagramBuilderInner = ({ field, value, onChange, error }) => {
         </div>
       </div>
 
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+      {error && (
+        <p className="text-red-500 text-sm mt-1">{error}</p>
+      )}
 
       {/* Focus Mode - Fullscreen Modal */}
       <FullscreenDiagramModal

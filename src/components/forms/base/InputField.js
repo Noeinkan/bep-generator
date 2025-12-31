@@ -1,6 +1,7 @@
 import OrgStructureField from '../specialized/OrgStructureField';
 import OrgStructureDataTable from '../specialized/OrgStructureDataTable';
 import NamingConventionBuilder from '../custom/NamingConventionBuilder';
+import FederationStrategyBuilder from '../custom/FederationStrategyBuilder';
 // ...existing code...
 import React, { useState } from 'react';
 import CONFIG from '../../../config/bepConfig';
@@ -152,6 +153,16 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
     case 'naming-conventions':
       return (
         <NamingConventionBuilder
+          field={field}
+          value={value}
+          onChange={onChange}
+          error={error}
+        />
+      );
+
+    case 'federation-strategy':
+      return (
+        <FederationStrategyBuilder
           field={field}
           value={value}
           onChange={onChange}
