@@ -73,17 +73,33 @@ const CDEDiagramBuilderInner = ({ field, value, onChange, error }) => {
   const saveToParent = useCallback(
     (currentNodes, currentEdges) => {
       const oldFormat = convertFromReactFlow(currentNodes, currentEdges);
-      onChange(name, JSON.stringify(oldFormat, null, 2));
+      const jsonString = JSON.stringify(oldFormat, null, 2);
+      onChange(name, jsonString);
     },
     [name, onChange]
   );
 
-  // Track changes and save
+  // Track changes and save - use ref to avoid infinite loop
+  const saveTimeoutRef = useRef(null);
   useEffect(() => {
-    if (nodes.length > 0 || edges.length > 0) {
-      saveToParent(nodes, edges);
+    // Debounce saves to avoid excessive updates
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
     }
-  }, [nodes, edges, saveToParent]);
+
+    saveTimeoutRef.current = setTimeout(() => {
+      if (nodes.length > 0 || edges.length > 0) {
+        saveToParent(nodes, edges);
+      }
+    }, 300); // 300ms debounce
+
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nodes, edges]);
 
   // Add to history for undo/redo
   const addToHistory = useCallback(() => {

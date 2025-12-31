@@ -55,20 +55,24 @@ export const BepFormProvider = ({ children, initialData = null, bepType = '' }) 
     const subscription = methods.watch((data) => {
       if (bepTypeState) {
         try {
-          sessionStorage.setItem('bep-temp-state', JSON.stringify({
-            formData: data,
-            bepType: bepTypeState,
-            completedSections: Array.from(completedSections),
-            currentDraft,
-            timestamp: Date.now(),
-          }));
+          // Get fresh completedSections without including it in dependencies
+          setCompletedSections((currentCompleted) => {
+            sessionStorage.setItem('bep-temp-state', JSON.stringify({
+              formData: data,
+              bepType: bepTypeState,
+              completedSections: Array.from(currentCompleted),
+              currentDraft,
+              timestamp: Date.now(),
+            }));
+            return currentCompleted; // Return unchanged to avoid state update
+          });
         } catch (error) {
           console.error('Failed to save BEP state:', error);
         }
       }
     });
     return () => subscription.unsubscribe();
-  }, [methods, bepTypeState, completedSections, currentDraft]);
+  }, [methods, bepTypeState, currentDraft]);
 
   // Restore from sessionStorage on mount
   useEffect(() => {

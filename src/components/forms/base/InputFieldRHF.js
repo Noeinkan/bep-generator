@@ -9,8 +9,16 @@ import InputField from './InputField';
 const InputFieldRHF = ({ field, error }) => {
   const { control, watch, setValue } = useFormContext();
 
-  // Watch all form data to pass to InputField (some components need full formData)
-  const formData = watch();
+  // Only watch organizationalStructure for components that need it (orgchart and orgstructure-data-table)
+  // Using getValues() for initial render, watch() only for reactive updates of specific fields
+  const needsOrgStructure = field?.type === 'orgchart' || field?.type === 'orgstructure-data-table';
+  const organizationalStructure = watch('organizationalStructure', undefined, { disabled: !needsOrgStructure });
+
+  // Build minimal formData object only when needed
+  const formData = React.useMemo(() => {
+    if (!needsOrgStructure) return {};
+    return { organizationalStructure };
+  }, [needsOrgStructure, organizationalStructure]);
 
   // Safety check: if field doesn't have a name, render nothing
   if (!field || !field.name) {
