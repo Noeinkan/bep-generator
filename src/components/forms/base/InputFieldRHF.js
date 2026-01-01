@@ -20,15 +20,35 @@ const InputFieldRHF = ({ field, error }) => {
     return { organizationalStructure };
   }, [needsOrgStructure, organizationalStructure]);
 
-  // Safety check: if field doesn't have a name, render nothing
-  if (!field || !field.name) {
-    console.warn('InputFieldRHF: field or field.name is missing', field);
+  // Safety check: if field doesn't have a name, only allow section-header type
+  if (!field) {
+    console.warn('InputFieldRHF: field is missing', field);
     return null;
+  }
+
+  // Section headers don't need a name (they're not form fields)
+  if (!field.name && field.type !== 'section-header') {
+    console.warn('InputFieldRHF: field.name is missing for non-section-header field', field);
+    return null;
+  }
+
+  // Section headers don't need form control - render directly
+  if (field.type === 'section-header') {
+    return (
+      <InputField
+        field={field}
+        value=""
+        onChange={() => {}}
+        error=""
+        formData={{}}
+      />
+    );
   }
 
   // Determine default value based on field type
   const getDefaultValue = () => {
     if (field.type === 'checkbox') return [];
+    if (field.type === 'table' || field.type === 'introTable') return [];
     if (field.type === 'orgchart') {
       return {
         id: 'appointing_default',

@@ -223,7 +223,7 @@ const CONFIG = {
         { number: '6.5', name: 'informationDeliverablesMatrix', label: 'Information Deliverables Responsibility Matrix', type: 'deliverables-matrix', matrixType: 'deliverables', placeholder: 'Deliverables schedule with responsibilities, due dates, and formats. Auto-syncs from TIDPs.' },
 
         // 6.6 - Information Management Activities Matrix
-        { number: '6.6', name: 'informationManagementMatrix', label: 'Information Management Activities Responsibility Matrix (ISO 19650-2 Annex A)', type: 'im-activities-matrix', matrixType: 'im-activities', placeholder: 'RACI matrix for information management activities per ISO 19650-2. Click to open the Responsibility Matrix Manager.' },
+        { number: '6.6', name: 'informationManagementMatrix', label: 'Information Management Activities (Annex A)', type: 'im-activities-matrix', matrixType: 'im-activities', placeholder: 'Click to open the Responsibility Matrix Manager to define RACI assignments for information management activities.' },
 
         // 6.7 - Mobilisation Plan (Piano mobilizzazione)
         { number: '6.7', name: 'mobilisationPlan', label: 'Mobilisation Plan', type: 'textarea', rows: 3, placeholder: 'Project mobilisation occurs over 4 weeks: Week 1 includes CDE setup, template development...' },
@@ -262,25 +262,24 @@ const CONFIG = {
         { number: '8.3', name: 'hardwareRequirements', label: 'Hardware Requirements', type: 'textarea', rows: 3, placeholder: 'Minimum workstation specifications: Intel i7 processor, 32GB RAM...' },
         { number: '8.4', name: 'networkRequirements', label: 'Network Requirements', type: 'textarea', rows: 3, placeholder: 'Network infrastructure requirements: minimum 100Mbps bandwidth...' },
         { number: '8.5', name: 'interoperabilityNeeds', label: 'Interoperability Requirements', type: 'textarea', rows: 3, placeholder: 'Interoperability requirements ensure seamless data exchange between platforms...' },
-        { number: '8.6', name: 'federationStrategy', label: 'Federation Strategy', type: 'federation-strategy', required: true, placeholder: 'Define federation approach, clash detection matrix, and coordination procedures per ISO 19650-2' },
-        { number: '8.7', name: 'informationBreakdownStrategy', label: 'Information Breakdown Strategy', type: 'textarea', rows: 3, placeholder: 'Information breakdown organizes models by discipline, zone, and level...' },
-        { number: '8.8', name: 'federationProcess', label: 'Federation Process', type: 'textarea', rows: 3, placeholder: 'Federation process involves weekly model coordination and clash detection...' },
-        { number: '8.9', name: 'softwareHardwareInfrastructure', label: 'Software, Hardware and IT Infrastructure', type: 'table', columns: ['Category', 'Item/Component', 'Specification', 'Purpose'] },
-        { number: '8.10', name: 'documentControlInfo', label: 'Document Control Information', type: 'textarea', rows: 4, placeholder: 'Document control procedures follow ISO 19650 standards including version control...' }
+        { number: '8.6', name: 'softwareHardwareInfrastructure', label: 'Software, Hardware and IT Infrastructure', type: 'table', columns: ['Category', 'Item/Component', 'Specification', 'Purpose'] }
       ]
     },
     8: {
       number: '9',
       title: 'Information Production Methods and Procedures',
       fields: [
-        { number: '9.1', name: 'modelingStandards', label: 'Modeling Standards', required: true, type: 'table', columns: ['Standard/Guideline', 'Version', 'Application Area', 'Compliance Level'] },
-        { number: '9.2', name: 'namingConventions', label: 'Naming Conventions', required: true, type: 'naming-conventions' },
-        { number: '9.3', name: 'fileStructure', label: 'Folder Structure', type: 'textarea', rows: 3, placeholder: 'CDE folder structure organized by project phase, discipline, and information container...' },
+        { number: '9.1', name: 'modelingStandards', label: 'Standards and Guidelines', required: true, type: 'table', columns: ['Standard/Guideline', 'Version', 'Application Area', 'Compliance Level'] },
+        { number: '9.2', name: 'namingConventions', label: 'Naming Conventions and Document Control', required: true, type: 'naming-conventions' },
+        { number: '9.3', name: 'fileStructure', label: 'Folder Structure Description', type: 'textarea', rows: 3, placeholder: 'CDE folder structure organized by project phase, discipline, and information container...' },
         { number: '9.4', name: 'fileStructureDiagram', label: 'Folder Structure Diagram', type: 'fileStructure' },
-        { number: '9.5', name: 'volumeStrategy', label: 'Volume Strategy and Model Breakdown', required: true, type: 'mindmap' },
-        { number: '9.6', name: 'classificationSystems', label: 'Classification Systems and Coding', required: true, type: 'table', columns: ['Classification System', 'Application Area', 'Code Format', 'Responsibility'] },
-        { number: '9.7', name: 'classificationStandards', label: 'Classification Standards Implementation', type: 'table', columns: ['Element Category', 'Classification System', 'Code Format', 'Example Code', 'Description'] },
-        { number: '9.8', name: 'dataExchangeProtocols', label: 'Data Exchange Protocols', type: 'table', columns: ['Exchange Type', 'Format', 'Frequency', 'Delivery Method'] }
+        { number: '9.5', name: 'volumeStrategy', label: 'Volume Strategy (Spatial Breakdown)', required: true, type: 'mindmap' },
+        { number: '9.6', name: 'informationBreakdownStrategy', label: 'Discipline and System Breakdown', type: 'textarea', rows: 3, placeholder: 'Information breakdown organizes models by discipline, zone, and level. Defines how project information is decomposed into manageable containers aligned with ISO 19650...' },
+        { number: '9.7', name: 'federationStrategy', label: 'Federation Approach and Clash Matrix', type: 'federation-strategy', required: true, placeholder: 'Define federation approach, clash detection matrix, and coordination procedures per ISO 19650-2' },
+        { number: '9.8', name: 'federationProcess', label: 'Federation Workflow Process', type: 'textarea', rows: 3, placeholder: 'Federation process involves weekly model coordination and clash detection. Detail aggregation workflow, quality validation, and re-federation cycles...' },
+        { number: '9.9', name: 'classificationSystems', label: 'Classification Systems Selection', required: true, type: 'table', columns: ['Classification System', 'Application Area', 'Code Format', 'Responsibility'] },
+        { number: '9.10', name: 'classificationStandards', label: 'Implementation Standards', type: 'table', columns: ['Element Category', 'Classification System', 'Code Format', 'Example Code', 'Description'] },
+        { number: '9.11', name: 'dataExchangeProtocols', label: 'Data Exchange Protocols', type: 'table', columns: ['Exchange Type', 'Format', 'Frequency', 'Delivery Method'] }
       ]
     },
     9: {
@@ -321,33 +320,27 @@ const CONFIG = {
       title: 'Coordination, Collaboration & Risk Management',
       fields: [
         { number: '13.1', name: 'coordinationMeetings', label: 'Coordination Meetings', required: true, type: 'textarea', rows: 3, placeholder: 'Coordination meetings scheduled weekly for design review and clash resolution...' },
-        { number: '13.2', name: 'clashDetectionWorkflow', label: 'Clash Detection Workflow', type: 'textarea', rows: 3, placeholder: 'Clash detection workflow involves automated weekly model federation and analysis...' },
-        { number: '13.3', name: 'issueResolution', label: 'Issue Resolution Process', type: 'textarea', rows: 3, placeholder: 'Issue resolution process follows BCF workflow with tracked assignments and deadlines...' },
-        { number: '13.4', name: 'communicationProtocols', label: 'Communication Protocols', type: 'textarea', rows: 3, placeholder: 'Communication protocols establish clear channels for design coordination and reporting...' },
-        { number: '13.5', name: 'informationRisks', label: 'Information-Related Risks', required: true, type: 'textarea', rows: 4, placeholder: 'Information-related risks include data loss, version control issues, and coordination failures...' },
-        { number: '13.6', name: 'technologyRisks', label: 'Technology-Related Risks', type: 'textarea', rows: 3, placeholder: 'Technology risks include software compatibility issues, system downtime...' },
-        { number: '13.7', name: 'riskMitigation', label: 'Risk Mitigation Strategies', type: 'textarea', rows: 3, placeholder: 'Risk mitigation strategies include regular backups, redundant systems...' },
-        { number: '13.8', name: 'contingencyPlans', label: 'Contingency Plans', type: 'textarea', rows: 3, placeholder: 'Contingency plans address potential project disruptions with backup procedures...' },
-        { number: '13.9', name: 'performanceMetrics', label: 'Performance Metrics and KPIs', type: 'textarea', rows: 3, placeholder: 'Performance metrics track delivery milestones, model quality, and coordination efficiency...' },
-        { number: '13.10', name: 'monitoringProcedures', label: 'Monitoring Procedures', type: 'textarea', rows: 3, placeholder: 'Monitoring procedures ensure ongoing compliance with project standards and schedules...' },
-        { number: '13.11', name: 'auditTrails', label: 'Audit Trails', type: 'textarea', rows: 3, placeholder: 'Audit trails maintain complete records of model changes and approvals...' },
-        { number: '13.12', name: 'changeManagementProcess', label: 'Change Management Process', type: 'textarea', rows: 4, placeholder: 'CHANGE REQUEST PROCEDURE\n\nAll changes to project information requirements must follow formal change management...' },
-        { number: '13.13', name: 'updateProcesses', label: 'Update Processes', type: 'textarea', rows: 3, placeholder: 'Update processes define how changes are incorporated into models and documentation...' },
-        { number: '13.14', name: 'projectKpis', label: 'Project Key Performance Indicators (KPIs)', type: 'table', columns: ['KPI Name', 'Target Value', 'Measurement Method', 'Responsibility'] }
+        { number: '13.2', name: 'issueResolution', label: 'Issue Resolution Process', type: 'textarea', rows: 3, placeholder: 'Issue resolution process follows BCF workflow with tracked assignments and deadlines...' },
+        { number: '13.3', name: 'communicationProtocols', label: 'Communication Protocols', type: 'textarea', rows: 3, placeholder: 'Communication protocols establish clear channels for design coordination and reporting...' },
+        { number: '13.4', name: 'informationRisks', label: 'Information-Related Risks', required: true, type: 'textarea', rows: 4, placeholder: 'Information-related risks include data loss, version control issues, and coordination failures...' },
+        { number: '13.5', name: 'technologyRisks', label: 'Technology-Related Risks', type: 'textarea', rows: 3, placeholder: 'Technology risks include software compatibility issues, system downtime...' },
+        { number: '13.6', name: 'riskMitigation', label: 'Risk Mitigation Strategies', type: 'textarea', rows: 3, placeholder: 'Risk mitigation strategies include regular backups, redundant systems...' },
+        { number: '13.7', name: 'contingencyPlans', label: 'Contingency Plans', type: 'textarea', rows: 3, placeholder: 'Contingency plans address potential project disruptions with backup procedures...' },
+        { number: '13.8', name: 'performanceMetrics', label: 'Performance Metrics and KPIs', type: 'textarea', rows: 3, placeholder: 'Performance metrics track delivery milestones, model quality, and coordination efficiency...' },
+        { number: '13.9', name: 'monitoringProcedures', label: 'Monitoring Procedures', type: 'textarea', rows: 3, placeholder: 'Monitoring procedures ensure ongoing compliance with project standards and schedules...' },
+        { number: '13.10', name: 'auditTrails', label: 'Audit Trails', type: 'textarea', rows: 3, placeholder: 'Audit trails maintain complete records of model changes and approvals...' },
+        { number: '13.11', name: 'changeManagementProcess', label: 'Change Management Process', type: 'textarea', rows: 4, placeholder: 'CHANGE REQUEST PROCEDURE\n\nAll changes to project information requirements must follow formal change management...' },
+        { number: '13.12', name: 'updateProcesses', label: 'Update Processes', type: 'textarea', rows: 3, placeholder: 'Update processes define how changes are incorporated into models and documentation...' },
+        { number: '13.13', name: 'projectKpis', label: 'Project Key Performance Indicators (KPIs)', type: 'table', columns: ['KPI Name', 'Target Value', 'Measurement Method', 'Responsibility'] }
       ]
     },
     13: {
       number: '14',
       title: 'Appendices',
       fields: [
-        { name: 'responsibilityMatrix', label: 'Appendix A: Responsibility Matrix Template', required: true, type: 'table', columns: ['Role/Task', 'Responsible', 'Accountable', 'Consulted', 'Informed'] },
-        { name: 'cobieRequirements', label: 'Appendix B: COBie Data Requirements', required: true, type: 'table', columns: ['Component Type', 'Required Parameters', 'Data Source', 'Validation Method'] },
-        { name: 'fileNamingExamples', label: 'Appendix C: File Naming Convention Examples', required: true, type: 'textarea', rows: 6, placeholder: 'Comprehensive file naming examples:\n\nProject Models:\nGF-SAA-L02-ARC-001 (Project-Company-Level-Discipline-Number)...' },
-        { name: 'exchangeWorkflow', label: 'Appendix D: Information Exchange Workflow Template', required: true, type: 'table', columns: ['Exchange Point', 'Information Required', 'Format', 'Quality Checks', 'Approval Process'] },
-        { name: 'modelCheckingCriteria', label: 'Appendix E: Model Quality Checking Criteria', type: 'table', columns: ['Check Type', 'Acceptance Criteria', 'Tools Used', 'Frequency'] },
-        { name: 'softwareVersionMatrix', label: 'Appendix F: Software Version Compatibility Matrix', type: 'table', columns: ['Software', 'Version', 'File Formats Supported', 'Interoperability Notes'] },
-        { name: 'deliverableTemplates', label: 'Appendix G: Information Deliverable Templates', type: 'textarea', rows: 4, placeholder: 'Standard templates and schedules for key deliverables:\n\n- Task Information Delivery Plan (TIDP) Template...' },
-        { name: 'referencedDocuments', label: 'Appendix H: Referenced Documents and Standards', type: 'standardsTable' }
+        { name: 'cobieRequirements', label: 'Appendix A: COBie Data Requirements', type: 'table', columns: ['Component Type', 'Required Parameters', 'Data Source', 'Validation Method'] },
+        { name: 'softwareVersionMatrix', label: 'Appendix B: Software Version Compatibility Matrix', type: 'table', columns: ['Software', 'Version', 'File Formats Supported', 'Interoperability Notes'] },
+        { name: 'referencedDocuments', label: 'Appendix C: Referenced Documents and Standards', type: 'standardsTable' }
       ]
     }
   },

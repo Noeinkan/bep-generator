@@ -8,13 +8,13 @@ import * as XLSX from 'xlsx';
 
 /**
  * FederationStrategyBuilder
- * Component for Section 8.6: Federation Strategy
+ * Component for Section 9.7: Federation Strategy
  *
  * Provides a structured interface for defining:
- * 8.6.1 Overview - Strategic approach to model federation
- * 8.6.2 Clash Detection Matrix Heatmap - Visual matrix of discipline clash relationships
- * 8.6.3 Federation Configuration - Approach, frequency, tools, model breakdown
- * 8.6.4 Coordination Procedures - Clash resolution workflow
+ * 9.7.1 Overview - Strategic approach to model federation
+ * 9.7.2 Clash Detection Matrix Heatmap - Visual matrix of discipline clash relationships
+ * 9.7.3 Federation Configuration - Approach, frequency, tools, model breakdown
+ * 9.7.4 Coordination Procedures - Clash resolution workflow
  */
 const FederationStrategyBuilder = ({ field, value = {}, onChange, error, disabled = false }) => {
 
@@ -309,7 +309,7 @@ const FederationStrategyBuilder = ({ field, value = {}, onChange, error, disable
           <FieldHeader
             fieldName="federationStrategy_overview"
             label="Federation Overview"
-            number="8.6.1"
+            number="9.7.1"
             asSectionHeader={true}
           />
           <p className="text-sm text-gray-600 mb-3">Strategic approach to model federation</p>
@@ -329,7 +329,7 @@ const FederationStrategyBuilder = ({ field, value = {}, onChange, error, disable
           <FieldHeader
             fieldName="federationStrategy_clashMatrix"
             label="Clash Detection Matrix Heatmap"
-            number="8.6.2"
+            number="9.7.2"
             asSectionHeader={true}
           />
           <p className="text-sm text-gray-600 mb-3">
@@ -373,7 +373,7 @@ const FederationStrategyBuilder = ({ field, value = {}, onChange, error, disable
           <FieldHeader
             fieldName="federationStrategy_configuration"
             label="Federation Configuration"
-            number="8.6.3"
+            number="9.7.3"
             asSectionHeader={true}
           />
           <p className="text-sm text-gray-600 mb-4">
@@ -471,7 +471,7 @@ const FederationStrategyBuilder = ({ field, value = {}, onChange, error, disable
           <FieldHeader
             fieldName="federationStrategy_procedures"
             label="Coordination Procedures"
-            number="8.6.4"
+            number="9.7.4"
             asSectionHeader={true}
           />
           <p className="text-sm text-gray-600 mb-3">Clash resolution workflow and quality control processes</p>

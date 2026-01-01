@@ -75,6 +75,20 @@ const SmartHelpDialog = ({
 }) => {
   const dialogRef = useRef(null);
 
+  // Auto-scroll dialog into view when opened
+  useEffect(() => {
+    if (dialogRef.current) {
+      // Small delay to ensure DOM is ready
+      setTimeout(() => {
+        dialogRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'center'
+        });
+      }, 100);
+    }
+  }, []); // Run once when dialog opens
+
   // Tab configuration based on field state
   const getTabsConfig = () => {
     if (fieldState === 'empty') {

@@ -96,13 +96,33 @@ export const collaborationSchema = z.object({
   changeManagement: optionalString,
 });
 
+// Federation Strategy Schema (complex object)
+const federationStrategySchema = z.object({
+  overview: optionalString,
+  clashMatrix: z.object({
+    disciplines: z.array(z.string()).optional(),
+    clashes: z.array(z.any()).optional(),
+  }).optional(),
+  configuration: z.object({
+    approach: optionalString,
+    frequency: optionalString,
+    tools: z.array(z.string()).optional(),
+    modelBreakdown: z.array(z.string()).optional(),
+  }).optional(),
+  coordinationProcedures: optionalString,
+}).optional();
+
 // Step 8: Information Production
 export const informationProductionSchema = z.object({
   modelingStandards: optionalArray,
-  namingConventions: optionalString,
+  namingConventions: z.any().optional(), // Complex naming conventions object
+  documentControlInfo: optionalString,
   fileStructure: optionalString,
-  fileStructureDiagram: optionalString,
-  volumeStrategy: optionalString,
+  fileStructureDiagram: z.any().optional(), // Complex diagram object
+  volumeStrategy: z.any().optional(), // Complex mindmap object
+  informationBreakdownStrategy: optionalString,
+  federationStrategy: federationStrategySchema,
+  federationProcess: optionalString,
   classificationSystems: optionalArray,
   classificationStandards: optionalArray,
   dataExchangeProtocols: optionalArray,
@@ -141,7 +161,6 @@ export const coordinationRiskSchema = z.object({
   clashDetectionWorkflow: optionalString,
   issueResolution: optionalString,
   communicationProtocols: optionalString,
-  federationStrategy: optionalString,
   informationRisks: optionalString,
   technologyRisks: optionalString,
   riskMitigation: optionalString,
@@ -156,13 +175,8 @@ export const coordinationRiskSchema = z.object({
 
 // Step 13: Appendices
 export const appendicesSchema = z.object({
-  responsibilityMatrix: optionalArray,
   cobieRequirements: optionalArray,
-  fileNamingExamples: optionalString,
-  exchangeWorkflow: optionalArray,
-  modelCheckingCriteria: optionalArray,
   softwareVersionMatrix: optionalArray,
-  deliverableTemplates: optionalString,
   referencedDocuments: optionalString,
 });
 
