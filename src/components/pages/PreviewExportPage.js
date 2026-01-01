@@ -54,15 +54,11 @@ const PreviewExportPage = ({
 
   const handleAdvancedExport = async () => {
     try {
-      console.log('🎬 Starting advanced PDF export...');
-
-      // Wait for components to render
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Brief wait for components to render
+      await new Promise(resolve => setTimeout(resolve, 300));
 
       // Capture screenshots
-      console.log('📸 Capturing component screenshots...');
       const componentScreenshots = await captureCustomComponentScreenshots(formData);
-      console.log('✅ Screenshots captured:', Object.keys(componentScreenshots));
 
       await generatePDF(formData, bepType, {
         orientation: pdfOrientation,
