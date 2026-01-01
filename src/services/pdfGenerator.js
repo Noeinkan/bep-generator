@@ -9,14 +9,27 @@ import CONFIG from '../config/bepConfig';
 
 // Color palette matching the HTML preview
 const COLORS = {
-  primary: [30, 64, 175],      // Blue
+  primary: [30, 64, 175],       // Blue
   secondary: [37, 99, 235],     // Lighter blue
-  success: [16, 185, 129],      // Green
-  warning: [245, 158, 11],      // Amber
+  success: [22, 163, 74],       // Green
+  warning: [217, 119, 6],       // Amber
   dark: [31, 41, 55],           // Dark gray
   light: [248, 250, 252],       // Light background
   text: [31, 41, 55],           // Text color
-  white: [255, 255, 255]
+  white: [255, 255, 255],
+  border: [209, 213, 219]       // Border color
+};
+
+// Professional document layout constants
+const LAYOUT = {
+  marginLeft: 20,
+  marginRight: 20,
+  marginTop: 25,
+  marginBottom: 25,
+  contentWidth: 170,            // A4 width (210) - margins (40)
+  lineHeight: 5,
+  paragraphSpacing: 8,
+  sectionSpacing: 12
 };
 
 export const generatePDF = async (formData, bepType, options = {}) => {
@@ -51,24 +64,24 @@ export const generatePDF = async (formData, bepType, options = {}) => {
     });
 
     const pageWidth = doc.internal.pageSize.getWidth();
-    let yPos = 20;
+    const pageHeight = doc.internal.pageSize.getHeight();
 
     // === COVER PAGE ===
-    addCoverPage(doc, formData, bepType, pageWidth);
+    addCoverPage(doc, formData, bepType, pageWidth, pageHeight);
 
     // === DOCUMENT INFORMATION ===
     doc.addPage();
-    yPos = 20;
-    yPos = addSectionHeader(doc, 'Document Information', yPos, COLORS.success);
+    let yPos = LAYOUT.marginTop;
+    yPos = addSectionHeader(doc, 'Document Information', yPos, COLORS.primary);
     yPos = addDocumentInfo(doc, formData, bepType, yPos);
 
     // === ISO 19650 COMPLIANCE SECTION ===
-    yPos = addSectionHeader(doc, 'ISO 19650-2:2018 Compliance Statement', yPos + 10, COLORS.success);
+    yPos = addSectionHeader(doc, 'ISO 19650-2:2018 Compliance Statement', yPos + LAYOUT.sectionSpacing, COLORS.success);
     yPos = addISOComplianceSection(doc, yPos);
 
     // === TIDP/MIDP SECTION ===
     if (tidpData.length > 0 || midpData.length > 0) {
-      yPos = addSectionHeader(doc, 'Information Delivery Plan', yPos + 10, COLORS.warning);
+      yPos = addSectionHeader(doc, 'Information Delivery Plan', yPos + LAYOUT.sectionSpacing, COLORS.warning);
       yPos = addTIDPMIDPSection(doc, tidpData, midpData, yPos);
     }
 
@@ -98,90 +111,140 @@ export const generatePDF = async (formData, bepType, options = {}) => {
 
 // === HELPER FUNCTIONS ===
 
-function addCoverPage(doc, formData, bepType, pageWidth) {
-  // Background gradient effect (simulated with rectangles)
+function addCoverPage(doc, formData, bepType, pageWidth, pageHeight) {
+  // Professional header band
   doc.setFillColor(...COLORS.primary);
-  doc.rect(0, 0, pageWidth, 100, 'F');
+  doc.rect(0, 0, pageWidth, 80, 'F');
 
+  // Secondary accent band
   doc.setFillColor(...COLORS.secondary);
-  doc.rect(0, 100, pageWidth, 50, 'F');
+  doc.rect(0, 80, pageWidth, 8, 'F');
 
-  // Main title
+  // Main title - centered properly
   doc.setTextColor(...COLORS.white);
-  doc.setFontSize(32);
+  doc.setFontSize(28);
   doc.setFont('helvetica', 'bold');
-  doc.text('BIM EXECUTION PLAN', pageWidth / 2, 40, { align: 'center' });
+  doc.text('BIM EXECUTION PLAN', pageWidth / 2, 35, { align: 'center' });
 
-  // ISO Compliance badge
-  doc.setFontSize(14);
-  doc.setFont('helvetica', 'italic');
-  doc.text('ISO 19650-2:2018 Compliant', pageWidth / 2, 55, { align: 'center' });
-
-  // BEP Type badge
-  doc.setFontSize(16);
-  doc.setFont('helvetica', 'bold');
-  const bepTypeLabel = CONFIG.bepTypeDefinitions[bepType]?.title || bepType;
-  doc.text(bepTypeLabel, pageWidth / 2, 75, { align: 'center' });
-
-  // Description box
-  doc.setFillColor(255, 255, 255, 0.2);
-  const descY = 95;
-  doc.roundedRect(20, descY, pageWidth - 40, 40, 3, 3, 'F');
-
-  doc.setTextColor(...COLORS.white);
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'italic');
-  const description = CONFIG.bepTypeDefinitions[bepType]?.description || '';
-  const descLines = doc.splitTextToSize(description, pageWidth - 50);
-  doc.text(descLines, pageWidth / 2, descY + 10, { align: 'center', maxWidth: pageWidth - 50 });
-
-  // Project information box
-  doc.setTextColor(...COLORS.dark);
-  doc.setFillColor(...COLORS.light);
-  doc.roundedRect(20, 160, pageWidth - 40, 60, 3, 3, 'F');
-
-  doc.setFontSize(18);
-  doc.setFont('helvetica', 'bold');
-  doc.text('Project Information', pageWidth / 2, 172, { align: 'center' });
-
+  // ISO Compliance subtitle
   doc.setFontSize(12);
   doc.setFont('helvetica', 'normal');
-  doc.text(`Project: ${formData.projectName || 'Not specified'}`, pageWidth / 2, 188, { align: 'center' });
-  doc.text(`Project Number: ${formData.projectNumber || 'Not specified'}`, pageWidth / 2, 198, { align: 'center' });
+  doc.text('ISO 19650-2:2018 Compliant', pageWidth / 2, 48, { align: 'center' });
+
+  // BEP Type badge
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
+  const bepTypeLabel = CONFIG.bepTypeDefinitions[bepType]?.title || bepType;
+  doc.text(bepTypeLabel, pageWidth / 2, 65, { align: 'center' });
+
+  // Project information card - centered with proper margins
+  const cardMargin = 25;
+  const cardWidth = pageWidth - (cardMargin * 2);
+  const cardX = cardMargin;
+  const cardY = 100;
+  const cardHeight = 70;
+
+  // Card background with border
+  doc.setFillColor(...COLORS.light);
+  doc.setDrawColor(...COLORS.border);
+  doc.setLineWidth(0.5);
+  doc.roundedRect(cardX, cardY, cardWidth, cardHeight, 4, 4, 'FD');
+
+  // Card header
+  doc.setFillColor(...COLORS.primary);
+  doc.roundedRect(cardX, cardY, cardWidth, 12, 4, 4, 'F');
+  doc.rect(cardX, cardY + 8, cardWidth, 4, 'F'); // Fill bottom corners
+
+  doc.setTextColor(...COLORS.white);
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.text('PROJECT INFORMATION', pageWidth / 2, cardY + 8, { align: 'center' });
+
+  // Project details - left aligned within card
+  doc.setTextColor(...COLORS.text);
+  const detailsX = cardX + 15;
+  let detailsY = cardY + 25;
 
   doc.setFontSize(10);
-  doc.setFont('helvetica', 'italic');
-  const dateStr = `Generated: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`;
-  doc.text(dateStr, pageWidth / 2, 210, { align: 'center' });
-
-  // Footer compliance badge
-  doc.setFillColor(...COLORS.success);
-  doc.roundedRect(40, 240, pageWidth - 80, 15, 3, 3, 'F');
-  doc.setTextColor(...COLORS.white);
-  doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
-  doc.text('✓ Generated in compliance with ISO 19650-2:2018', pageWidth / 2, 249, { align: 'center' });
+  doc.text('Project Name:', detailsX, detailsY);
+  doc.setFont('helvetica', 'normal');
+  doc.text(formData.projectName || 'Not specified', detailsX + 35, detailsY);
+
+  detailsY += 10;
+  doc.setFont('helvetica', 'bold');
+  doc.text('Project Number:', detailsX, detailsY);
+  doc.setFont('helvetica', 'normal');
+  doc.text(formData.projectNumber || 'Not specified', detailsX + 35, detailsY);
+
+  detailsY += 10;
+  doc.setFont('helvetica', 'bold');
+  doc.text('Client:', detailsX, detailsY);
+  doc.setFont('helvetica', 'normal');
+  doc.text(formData.client || formData.appointingParty || 'Not specified', detailsX + 35, detailsY);
+
+  detailsY += 10;
+  doc.setFont('helvetica', 'bold');
+  doc.text('Generated:', detailsX, detailsY);
+  doc.setFont('helvetica', 'normal');
+  doc.text(new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }), detailsX + 35, detailsY);
+
+  // Description box - below project info
+  const description = CONFIG.bepTypeDefinitions[bepType]?.description || '';
+  if (description) {
+    const descY = cardY + cardHeight + 15;
+    doc.setFillColor(245, 247, 250);
+    doc.setDrawColor(...COLORS.border);
+    doc.roundedRect(cardX, descY, cardWidth, 35, 3, 3, 'FD');
+
+    doc.setTextColor(...COLORS.text);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'italic');
+    const descLines = doc.splitTextToSize(description, cardWidth - 20);
+    doc.text(descLines, cardX + 10, descY + 12);
+  }
+
+  // Compliance badge at bottom
+  const badgeY = pageHeight - 50;
+  const badgeHeight = 14;
+  doc.setFillColor(...COLORS.success);
+  doc.roundedRect(cardX, badgeY, cardWidth, badgeHeight, 3, 3, 'F');
+
+  doc.setTextColor(...COLORS.white);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Generated in compliance with ISO 19650-2:2018', pageWidth / 2, badgeY + 9, { align: 'center' });
+
+  // Footer with version
+  doc.setTextColor(150, 150, 150);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.text('BEP Generator v1.0', pageWidth / 2, pageHeight - 20, { align: 'center' });
 }
 
 function addSectionHeader(doc, title, yPos, color = COLORS.primary) {
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
 
-  if (yPos > pageHeight - 40) {
+  // Check for page break
+  if (yPos > pageHeight - 50) {
     doc.addPage();
-    yPos = 20;
+    yPos = LAYOUT.marginTop;
   }
 
+  // Section header bar with proper margins
+  const headerHeight = 10;
   doc.setFillColor(...color);
-  doc.roundedRect(15, yPos, pageWidth - 30, 12, 2, 2, 'F');
+  doc.roundedRect(LAYOUT.marginLeft, yPos, LAYOUT.contentWidth, headerHeight, 2, 2, 'F');
 
+  // Header text - properly centered vertically
   doc.setTextColor(...COLORS.white);
-  doc.setFontSize(14);
+  doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
-  doc.text(title, 20, yPos + 8);
+  doc.text(title, LAYOUT.marginLeft + 5, yPos + 7);
 
   doc.setTextColor(...COLORS.text);
-  return yPos + 18;
+  return yPos + headerHeight + 8;
 }
 
 function addDocumentInfo(doc, formData, bepType, yPos) {
@@ -190,10 +253,10 @@ function addDocumentInfo(doc, formData, bepType, yPos) {
     ['Document Purpose', CONFIG.bepTypeDefinitions[bepType]?.purpose || 'N/A'],
     ['Project Name', formData.projectName || 'Not specified'],
     ['Project Number', formData.projectNumber || 'Not specified'],
-    ['Generated Date', new Date().toLocaleDateString()],
-    ['Generated Time', new Date().toLocaleTimeString()],
+    ['Client / Appointing Party', formData.client || formData.appointingParty || 'Not specified'],
+    ['Generated Date', new Date().toLocaleDateString('en-GB')],
     ['Status', bepType === 'pre-appointment' ? 'Tender Submission' : 'Working Document'],
-    ['Document Version', '1.0']
+    ['Document Version', formData.documentVersion || '1.0']
   ];
 
   autoTable(doc, {
@@ -202,52 +265,56 @@ function addDocumentInfo(doc, formData, bepType, yPos) {
     body: docInfoData,
     theme: 'grid',
     headStyles: {
-      fillColor: COLORS.success,
+      fillColor: COLORS.primary,
       textColor: COLORS.white,
       fontStyle: 'bold',
-      fontSize: 11
+      fontSize: 10,
+      cellPadding: 4
     },
     bodyStyles: {
-      fontSize: 10,
-      textColor: COLORS.text
+      fontSize: 9,
+      textColor: COLORS.text,
+      cellPadding: 4
     },
     alternateRowStyles: {
-      fillColor: COLORS.light
+      fillColor: [250, 250, 252]
     },
     columnStyles: {
-      0: { fontStyle: 'bold', cellWidth: 60 },
+      0: { fontStyle: 'bold', cellWidth: 55 },
       1: { cellWidth: 'auto' }
     },
-    margin: { left: 15, right: 15 }
+    margin: { left: LAYOUT.marginLeft, right: LAYOUT.marginRight },
+    tableWidth: LAYOUT.contentWidth
   });
 
-  return doc.lastAutoTable.finalY + 5;
+  return doc.lastAutoTable.finalY + 8;
 }
 
 function addISOComplianceSection(doc, yPos) {
   const pageHeight = doc.internal.pageSize.getHeight();
 
-  if (yPos > pageHeight - 80) {
+  if (yPos > pageHeight - 100) {
     doc.addPage();
-    yPos = 20;
+    yPos = LAYOUT.marginTop;
   }
 
-  // Declaration text
-  doc.setFontSize(10);
+  // Declaration text with proper margins
+  doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...COLORS.text);
   const declarationText = 'This BIM Execution Plan (BEP) has been prepared in accordance with ISO 19650-2:2018 "Organization and digitization of information about buildings and civil engineering works, including building information modelling (BIM) — Information management using building information modelling — Part 2: Delivery phase of the assets."';
-  const lines = doc.splitTextToSize(declarationText, 180);
-  doc.text(lines, 15, yPos);
-  yPos += lines.length * 5 + 8;
+  const lines = doc.splitTextToSize(declarationText, LAYOUT.contentWidth);
+  doc.text(lines, LAYOUT.marginLeft, yPos);
+  yPos += lines.length * 4 + 10;
 
   // Requirements coverage table
   const coverageData = [
-    ['5.1', 'Information Management', 'Information management function and responsibilities defined'],
-    ['5.2', 'Planning Approach', 'Master Information Delivery Plan (MIDP) and Task Information Delivery Plans (TIDPs)'],
-    ['5.3', 'Information Requirements', 'Exchange information requirements and level of information need defined'],
-    ['5.4', 'Collaborative Production', 'Common Data Environment (CDE) workflows and federation strategy'],
-    ['5.5', 'Quality Assurance', 'Information validation, review and approval processes'],
-    ['5.6', 'Information Security', 'Information security protocols and access control procedures']
+    ['5.1', 'Information Management', 'Information management function and responsibilities'],
+    ['5.2', 'Planning Approach', 'Master Information Delivery Plan (MIDP) and TIDPs'],
+    ['5.3', 'Information Requirements', 'Exchange information requirements and LOD/LOI'],
+    ['5.4', 'Collaborative Production', 'CDE workflows and federation strategy'],
+    ['5.5', 'Quality Assurance', 'Validation, review and approval processes'],
+    ['5.6', 'Information Security', 'Security protocols and access control']
   ];
 
   autoTable(doc, {
@@ -259,21 +326,24 @@ function addISOComplianceSection(doc, yPos) {
       fillColor: COLORS.success,
       textColor: COLORS.white,
       fontStyle: 'bold',
-      fontSize: 10
+      fontSize: 9,
+      cellPadding: 3
     },
     bodyStyles: {
-      fontSize: 9,
-      textColor: COLORS.text
+      fontSize: 8,
+      textColor: COLORS.text,
+      cellPadding: 3
     },
     columnStyles: {
       0: { cellWidth: 15, fontStyle: 'bold', halign: 'center' },
       1: { cellWidth: 50, fontStyle: 'bold' },
       2: { cellWidth: 'auto' }
     },
-    margin: { left: 15, right: 15 }
+    margin: { left: LAYOUT.marginLeft, right: LAYOUT.marginRight },
+    tableWidth: LAYOUT.contentWidth
   });
 
-  return doc.lastAutoTable.finalY + 10;
+  return doc.lastAutoTable.finalY + LAYOUT.sectionSpacing;
 }
 
 function addTIDPMIDPSection(doc, tidpData, midpData, yPos) {
@@ -281,21 +351,21 @@ function addTIDPMIDPSection(doc, tidpData, midpData, yPos) {
 
   // TIDP Section
   if (tidpData.length > 0) {
-    if (yPos > pageHeight - 60) {
+    if (yPos > pageHeight - 70) {
       doc.addPage();
-      yPos = 20;
+      yPos = LAYOUT.marginTop;
     }
 
-    doc.setFontSize(12);
+    doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...COLORS.warning);
-    doc.text('Task Information Delivery Plans (TIDPs)', 15, yPos);
-    yPos += 8;
+    doc.text('Task Information Delivery Plans (TIDPs)', LAYOUT.marginLeft, yPos);
+    yPos += 6;
 
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(...COLORS.text);
-    doc.text('The following TIDPs have been established for this project:', 15, yPos);
+    doc.text('The following TIDPs have been established for this project:', LAYOUT.marginLeft, yPos);
     yPos += 8;
 
     const tidpTableData = tidpData.map((tidp, index) => [
@@ -315,16 +385,19 @@ function addTIDPMIDPSection(doc, tidpData, midpData, yPos) {
         fillColor: COLORS.secondary,
         textColor: COLORS.white,
         fontStyle: 'bold',
-        fontSize: 9
+        fontSize: 8,
+        cellPadding: 3
       },
       bodyStyles: {
         fontSize: 8,
-        textColor: COLORS.text
+        textColor: COLORS.text,
+        cellPadding: 3
       },
       alternateRowStyles: {
         fillColor: [255, 251, 235]
       },
-      margin: { left: 15, right: 15 }
+      margin: { left: LAYOUT.marginLeft, right: LAYOUT.marginRight },
+      tableWidth: LAYOUT.contentWidth
     });
 
     yPos = doc.lastAutoTable.finalY + 10;
@@ -332,15 +405,15 @@ function addTIDPMIDPSection(doc, tidpData, midpData, yPos) {
 
   // MIDP Section
   if (midpData.length > 0) {
-    if (yPos > pageHeight - 60) {
+    if (yPos > pageHeight - 70) {
       doc.addPage();
-      yPos = 20;
+      yPos = LAYOUT.marginTop;
     }
 
-    doc.setFontSize(12);
+    doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...COLORS.warning);
-    doc.text('Master Information Delivery Plan (MIDP)', 15, yPos);
+    doc.text('Master Information Delivery Plan (MIDP)', LAYOUT.marginLeft, yPos);
     yPos += 8;
 
     const midpTableData = midpData.map((midp, index) => [
@@ -360,25 +433,29 @@ function addTIDPMIDPSection(doc, tidpData, midpData, yPos) {
         fillColor: COLORS.secondary,
         textColor: COLORS.white,
         fontStyle: 'bold',
-        fontSize: 9
+        fontSize: 8,
+        cellPadding: 3
       },
       bodyStyles: {
         fontSize: 8,
-        textColor: COLORS.text
+        textColor: COLORS.text,
+        cellPadding: 3
       },
       alternateRowStyles: {
         fillColor: [255, 251, 235]
       },
-      margin: { left: 15, right: 15 }
+      margin: { left: LAYOUT.marginLeft, right: LAYOUT.marginRight },
+      tableWidth: LAYOUT.contentWidth
     });
 
-    yPos = doc.lastAutoTable.finalY + 5;
+    yPos = doc.lastAutoTable.finalY + 8;
 
     if (midpData[0]?.description) {
-      doc.setFontSize(9);
+      doc.setFontSize(8);
       doc.setFont('helvetica', 'italic');
-      const descLines = doc.splitTextToSize(`Description: ${midpData[0].description}`, 180);
-      doc.text(descLines, 15, yPos + 5);
+      doc.setTextColor(...COLORS.text);
+      const descLines = doc.splitTextToSize(`Description: ${midpData[0].description}`, LAYOUT.contentWidth);
+      doc.text(descLines, LAYOUT.marginLeft, yPos);
       yPos += descLines.length * 4 + 10;
     }
   }
@@ -401,20 +478,26 @@ function addBEPContentSections(doc, formData, bepType, yPos, componentScreenshot
     if (currentCategory !== step.category) {
       currentCategory = step.category;
       const categoryName = CONFIG.categories[step.category]?.name || step.category;
+      
+      // Always start category on new page for cleaner layout
+      if (yPos > LAYOUT.marginTop + 20) {
+        doc.addPage();
+        yPos = LAYOUT.marginTop;
+      }
       yPos = addSectionHeader(doc, categoryName, yPos, COLORS.primary);
     }
 
     // Check if we need a new page
-    if (yPos > pageHeight - 40) {
+    if (yPos > pageHeight - 50) {
       doc.addPage();
-      yPos = 20;
+      yPos = LAYOUT.marginTop;
     }
 
-    // Section title
-    doc.setFontSize(12);
+    // Section title with number
+    doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...COLORS.secondary);
-    doc.text(`${stepConfig.number}. ${stepConfig.title}`, 15, yPos);
+    doc.text(`${stepConfig.number}. ${stepConfig.title}`, LAYOUT.marginLeft, yPos);
     yPos += 8;
 
     // Process fields
@@ -425,9 +508,9 @@ function addBEPContentSections(doc, formData, bepType, yPos, componentScreenshot
       if (field.type === 'section-header') return;
       if (!value) return;
 
-      if (yPos > pageHeight - 30) {
+      if (yPos > pageHeight - 40) {
         doc.addPage();
-        yPos = 20;
+        yPos = LAYOUT.marginTop;
       }
 
       // Handle custom visual components
@@ -446,11 +529,11 @@ function addBEPContentSections(doc, formData, bepType, yPos, componentScreenshot
       } else if (field.type === 'introTable' && typeof value === 'object') {
         yPos = renderIntroTableField(doc, field, value, yPos);
       } else {
-        yPos = renderSimpleField(doc, field, value, yPos, pageWidth);
+        yPos = renderSimpleField(doc, field, value, yPos);
       }
     });
 
-    yPos += 5;
+    yPos += LAYOUT.paragraphSpacing;
   });
 
   return yPos;
@@ -461,10 +544,11 @@ function renderTableField(doc, field, value, yPos) {
   const columns = field.columns || ['Column 1', 'Column 2', 'Column 3'];
   const tableData = value.map(row => columns.map(col => row[col] || ''));
 
-  doc.setFontSize(10);
+  doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
-  doc.text(`${field.number ? field.number + ' ' : ''}${field.label}`, 15, yPos);
-  yPos += 6;
+  doc.setTextColor(...COLORS.text);
+  doc.text(`${field.number ? field.number + ' ' : ''}${field.label}`, LAYOUT.marginLeft, yPos);
+  yPos += 5;
 
   autoTable(doc, {
     startY: yPos,
@@ -474,84 +558,118 @@ function renderTableField(doc, field, value, yPos) {
     headStyles: {
       fillColor: COLORS.primary,
       textColor: COLORS.white,
-      fontSize: 9,
-      fontStyle: 'bold'
+      fontSize: 8,
+      fontStyle: 'bold',
+      cellPadding: 3
     },
     bodyStyles: {
       fontSize: 8,
-      textColor: COLORS.text
+      textColor: COLORS.text,
+      cellPadding: 3
     },
     alternateRowStyles: {
-      fillColor: COLORS.light
+      fillColor: [250, 250, 252]
     },
-    margin: { left: 15, right: 15 }
+    margin: { left: LAYOUT.marginLeft, right: LAYOUT.marginRight },
+    tableWidth: LAYOUT.contentWidth
   });
 
-  return doc.lastAutoTable.finalY + 8;
+  return doc.lastAutoTable.finalY + LAYOUT.paragraphSpacing;
 }
 
 // Helper function to render checkbox fields
 function renderCheckboxField(doc, field, value, yPos, pageHeight) {
-  doc.setFontSize(10);
+  doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
-  doc.text(`${field.number ? field.number + ' ' : ''}${field.label}`, 15, yPos);
+  doc.setTextColor(...COLORS.text);
+  doc.text(`${field.number ? field.number + ' ' : ''}${field.label}`, LAYOUT.marginLeft, yPos);
   yPos += 6;
 
-  doc.setFontSize(9);
+  doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
-  value.forEach((item) => {
-    if (yPos > pageHeight - 15) {
+  
+  // Create two-column layout for checkboxes
+  const colWidth = LAYOUT.contentWidth / 2;
+  let col = 0;
+  let startY = yPos;
+
+  value.forEach((item, index) => {
+    if (yPos > pageHeight - 20) {
       doc.addPage();
-      yPos = 20;
+      yPos = LAYOUT.marginTop;
+      startY = yPos;
     }
-    doc.text(`✓ ${item}`, 20, yPos);
-    yPos += 5;
+    
+    const xPos = LAYOUT.marginLeft + (col * colWidth);
+    doc.setTextColor(...COLORS.success);
+    doc.text('✓', xPos, yPos);
+    doc.setTextColor(...COLORS.text);
+    doc.text(item, xPos + 5, yPos);
+    
+    col++;
+    if (col >= 2) {
+      col = 0;
+      yPos += 5;
+    }
   });
 
-  return yPos + 3;
+  // If we ended on first column, move to next line
+  if (col !== 0) {
+    yPos += 5;
+  }
+
+  return yPos + 4;
 }
 
 // Helper function to render textarea fields
 function renderTextareaField(doc, field, value, yPos, pageWidth, pageHeight) {
-  doc.setFontSize(10);
+  doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
-  doc.text(`${field.number ? field.number + ' ' : ''}${field.label}`, 15, yPos);
+  doc.setTextColor(...COLORS.text);
+  doc.text(`${field.number ? field.number + ' ' : ''}${field.label}`, LAYOUT.marginLeft, yPos);
   yPos += 6;
 
-  doc.setFontSize(9);
+  // Add subtle background box for text content
+  doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
-  const textLines = doc.splitTextToSize(value, pageWidth - 30);
+  const textLines = doc.splitTextToSize(value, LAYOUT.contentWidth - 10);
+  
+  const boxHeight = Math.min(textLines.length * 4 + 6, 60);
+  doc.setFillColor(250, 250, 252);
+  doc.setDrawColor(...COLORS.border);
+  doc.roundedRect(LAYOUT.marginLeft, yPos - 2, LAYOUT.contentWidth, boxHeight, 2, 2, 'FD');
+
+  let lineY = yPos + 3;
   textLines.forEach((line) => {
-    if (yPos > pageHeight - 15) {
+    if (lineY > pageHeight - 20) {
       doc.addPage();
-      yPos = 20;
+      lineY = LAYOUT.marginTop;
     }
-    doc.text(line, 15, yPos);
-    yPos += 5;
+    doc.text(line, LAYOUT.marginLeft + 4, lineY);
+    lineY += 4;
   });
 
-  return yPos + 3;
+  return yPos + boxHeight + 4;
 }
 
 // Helper function to render introTable fields
 function renderIntroTableField(doc, field, value, yPos) {
-  const pageWidth = doc.internal.pageSize.getWidth();
-
   // Render intro text if present
   if (value.intro) {
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
-    doc.text(`${field.number ? field.number + ' ' : ''}${field.label}`, 15, yPos);
+    doc.setTextColor(...COLORS.text);
+    doc.text(`${field.number ? field.number + ' ' : ''}${field.label}`, LAYOUT.marginLeft, yPos);
     yPos += 6;
 
-    doc.setFontSize(9);
+    doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
-    const introLines = doc.splitTextToSize(value.intro, pageWidth - 30);
+    const introLines = doc.splitTextToSize(value.intro, LAYOUT.contentWidth);
     introLines.forEach((line) => {
-      doc.text(line, 15, yPos);
-      yPos += 5;
+      doc.text(line, LAYOUT.marginLeft, yPos);
+      yPos += 4;
     });
-    yPos += 3;
+    yPos += 4;
   }
 
   // Render table if present
@@ -567,36 +685,55 @@ function renderIntroTableField(doc, field, value, yPos) {
       headStyles: {
         fillColor: COLORS.primary,
         textColor: COLORS.white,
-        fontSize: 9,
-        fontStyle: 'bold'
+        fontSize: 8,
+        fontStyle: 'bold',
+        cellPadding: 3
       },
       bodyStyles: {
         fontSize: 8,
-        textColor: COLORS.text
+        textColor: COLORS.text,
+        cellPadding: 3
       },
       alternateRowStyles: {
-        fillColor: COLORS.light
+        fillColor: [250, 250, 252]
       },
-      margin: { left: 15, right: 15 }
+      margin: { left: LAYOUT.marginLeft, right: LAYOUT.marginRight },
+      tableWidth: LAYOUT.contentWidth
     });
 
-    yPos = doc.lastAutoTable.finalY + 8;
+    yPos = doc.lastAutoTable.finalY + LAYOUT.paragraphSpacing;
   }
 
   return yPos;
 }
 
 // Helper function to render simple fields
-function renderSimpleField(doc, field, value, yPos, pageWidth) {
+function renderSimpleField(doc, field, value, yPos) {
+  const pageHeight = doc.internal.pageSize.getHeight();
+  
+  if (yPos > pageHeight - 25) {
+    doc.addPage();
+    yPos = LAYOUT.marginTop;
+  }
+
   doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
-  doc.text(`${field.number ? field.number + ' ' : ''}${field.label}:`, 15, yPos);
+  doc.setTextColor(...COLORS.text);
+  
+  const labelText = `${field.number ? field.number + ' ' : ''}${field.label}:`;
+  doc.text(labelText, LAYOUT.marginLeft, yPos);
 
   doc.setFont('helvetica', 'normal');
-  const valueLines = doc.splitTextToSize(String(value), pageWidth - 80);
-  doc.text(valueLines, 80, yPos);
+  const valueStr = String(value);
+  const valueLines = doc.splitTextToSize(valueStr, LAYOUT.contentWidth - 70);
+  
+  // Position value after label
+  const labelWidth = doc.getTextWidth(labelText);
+  const valueX = Math.min(LAYOUT.marginLeft + labelWidth + 3, LAYOUT.marginLeft + 65);
+  
+  doc.text(valueLines, valueX, yPos);
 
-  return yPos + Math.max(5, valueLines.length * 5);
+  return yPos + Math.max(6, valueLines.length * 4 + 2);
 }
 
 // Helper function to add placeholder for visual components
@@ -607,17 +744,17 @@ function addVisualComponentPlaceholder(doc, field, value, yPos, componentScreens
   console.log(`📄 PDF: Processing visual component "${field.name}" (${field.type})`);
   console.log(`Available screenshots:`, Object.keys(componentScreenshots));
 
-  if (yPos > pageHeight - 80) {
+  if (yPos > pageHeight - 90) {
     doc.addPage();
-    yPos = 20;
+    yPos = LAYOUT.marginTop;
   }
 
   // Field label
-  doc.setFontSize(10);
+  doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...COLORS.secondary);
-  doc.text(`${field.number ? field.number + ' ' : ''}${field.label}`, 15, yPos);
-  yPos += 8;
+  doc.text(`${field.number ? field.number + ' ' : ''}${field.label}`, LAYOUT.marginLeft, yPos);
+  yPos += 6;
 
   // Check if we have a screenshot for this component
   const screenshot = componentScreenshots[field.name];
@@ -636,15 +773,16 @@ function addVisualComponentPlaceholder(doc, field, value, yPos, componentScreens
       yPos = renderOrgChartData(doc, value, yPos);
     } else {
       // Visual placeholder box for components without structured data or screenshot
-      const boxHeight = 60;
-      doc.setDrawColor(...COLORS.primary);
-      doc.setFillColor(...COLORS.light);
-      doc.roundedRect(15, yPos, pageWidth - 30, boxHeight, 3, 3, 'FD');
+      const boxHeight = 50;
+      doc.setDrawColor(...COLORS.border);
+      doc.setFillColor(250, 250, 252);
+      doc.setLineWidth(0.5);
+      doc.roundedRect(LAYOUT.marginLeft, yPos, LAYOUT.contentWidth, boxHeight, 3, 3, 'FD');
 
-      // Icon and text
+      // Icon and text - centered properly
       doc.setFontSize(9);
       doc.setFont('helvetica', 'italic');
-      doc.setTextColor(100, 100, 100);
+      doc.setTextColor(120, 120, 120);
 
       const componentTypeLabels = {
         'orgchart': 'Organizational Structure Chart',
@@ -656,11 +794,12 @@ function addVisualComponentPlaceholder(doc, field, value, yPos, componentScreens
       };
 
       const label = componentTypeLabels[field.type] || 'Visual Component';
-      doc.text(`[${label}]`, pageWidth / 2, yPos + boxHeight / 2 - 5, { align: 'center' });
+      const centerX = LAYOUT.marginLeft + (LAYOUT.contentWidth / 2);
+      doc.text(`[ ${label} ]`, centerX, yPos + (boxHeight / 2) - 4, { align: 'center' });
       doc.setFontSize(8);
-      doc.text('Interactive component - see online BEP for full details', pageWidth / 2, yPos + boxHeight / 2 + 5, { align: 'center' });
+      doc.text('Interactive component - see online BEP for full details', centerX, yPos + (boxHeight / 2) + 6, { align: 'center' });
 
-      yPos += boxHeight + 10;
+      yPos += boxHeight + LAYOUT.paragraphSpacing;
     }
   }
 
@@ -671,12 +810,11 @@ function addVisualComponentPlaceholder(doc, field, value, yPos, componentScreens
 // Helper function to render component screenshot
 function renderComponentScreenshot(doc, screenshotBase64, yPos, pageWidth, pageHeight) {
   try {
-    // Calculate dimensions - fit to page width with margins
-    const maxWidth = pageWidth - 30; // 15mm margins on each side
-    const maxHeight = 120; // Maximum height in mm
+    // Calculate dimensions - fit to content width with proper margins
+    const maxWidth = LAYOUT.contentWidth;
+    const maxHeight = 100; // Maximum height in mm
 
     // Add the image
-    // jsPDF will automatically handle the base64 data URL
     const imgProps = doc.getImageProperties(screenshotBase64);
     const imgAspectRatio = imgProps.width / imgProps.height;
 
@@ -690,25 +828,30 @@ function renderComponentScreenshot(doc, screenshotBase64, yPos, pageWidth, pageH
     }
 
     // Check if we need a new page
-    if (yPos + imgHeight > pageHeight - 20) {
+    if (yPos + imgHeight > pageHeight - LAYOUT.marginBottom) {
       doc.addPage();
-      yPos = 20;
+      yPos = LAYOUT.marginTop;
     }
 
-    // Center the image horizontally
-    const xPos = (pageWidth - imgWidth) / 2;
+    // Center the image within content area
+    const xPos = LAYOUT.marginLeft + (LAYOUT.contentWidth - imgWidth) / 2;
+
+    // Add subtle border around image
+    doc.setDrawColor(...COLORS.border);
+    doc.setLineWidth(0.3);
+    doc.rect(xPos - 1, yPos - 1, imgWidth + 2, imgHeight + 2);
 
     // Add image to PDF
     doc.addImage(screenshotBase64, 'PNG', xPos, yPos, imgWidth, imgHeight);
 
-    yPos += imgHeight + 10;
+    yPos += imgHeight + LAYOUT.paragraphSpacing;
   } catch (error) {
     console.error('Error rendering component screenshot:', error);
     // If image rendering fails, show a warning box
-    doc.setFontSize(9);
-    doc.setTextColor(255, 0, 0);
-    doc.text('Failed to render component image', 15, yPos);
-    yPos += 10;
+    doc.setFontSize(8);
+    doc.setTextColor(200, 50, 50);
+    doc.text('Failed to render component image', LAYOUT.marginLeft, yPos);
+    yPos += 8;
     doc.setTextColor(...COLORS.text);
   }
 
@@ -717,27 +860,29 @@ function renderComponentScreenshot(doc, screenshotBase64, yPos, pageWidth, pageH
 
 // Helper function to render naming conventions data
 function renderNamingConventionsData(doc, value, yPos) {
-  const pageWidth = doc.internal.pageSize.getWidth();
-
   if (value.pattern) {
     doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
-    doc.text('Naming Pattern:', 15, yPos);
+    doc.setTextColor(...COLORS.text);
+    doc.text('Naming Pattern:', LAYOUT.marginLeft, yPos);
     yPos += 5;
 
-    doc.setFont('helvetica', 'normal');
-    doc.setFillColor(245, 245, 245);
-    doc.rect(15, yPos, pageWidth - 30, 10, 'F');
+    // Pattern in monospace-style box
+    doc.setFillColor(245, 245, 250);
+    doc.setDrawColor(...COLORS.border);
+    doc.roundedRect(LAYOUT.marginLeft, yPos - 2, LAYOUT.contentWidth, 10, 2, 2, 'FD');
     doc.setFont('courier', 'normal');
-    doc.text(value.pattern, 20, yPos + 7);
-    yPos += 15;
+    doc.setFontSize(9);
+    doc.text(value.pattern, LAYOUT.marginLeft + 4, yPos + 5);
+    yPos += 14;
   }
 
   if (value.fields && Array.isArray(value.fields) && value.fields.length > 0) {
     doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
-    doc.text('Field Definitions:', 15, yPos);
-    yPos += 6;
+    doc.setTextColor(...COLORS.text);
+    doc.text('Field Definitions:', LAYOUT.marginLeft, yPos);
+    yPos += 5;
 
     const tableData = value.fields.map(f => [
       f.code || '',
@@ -754,21 +899,24 @@ function renderNamingConventionsData(doc, value, yPos) {
         fillColor: COLORS.warning,
         textColor: COLORS.white,
         fontSize: 8,
-        fontStyle: 'bold'
+        fontStyle: 'bold',
+        cellPadding: 3
       },
       bodyStyles: {
         fontSize: 7,
-        textColor: COLORS.text
+        textColor: COLORS.text,
+        cellPadding: 2
       },
       columnStyles: {
         0: { cellWidth: 30, fontStyle: 'bold' },
         1: { cellWidth: 'auto' },
         2: { cellWidth: 40, fontStyle: 'italic' }
       },
-      margin: { left: 15, right: 15 }
+      margin: { left: LAYOUT.marginLeft, right: LAYOUT.marginRight },
+      tableWidth: LAYOUT.contentWidth
     });
 
-    yPos = doc.lastAutoTable.finalY + 8;
+    yPos = doc.lastAutoTable.finalY + LAYOUT.paragraphSpacing;
   }
 
   return yPos;
@@ -779,23 +927,26 @@ function renderFederationStrategyData(doc, value, yPos) {
   if (value.approach) {
     doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
-    doc.text('Federation Approach:', 15, yPos);
+    doc.setTextColor(...COLORS.text);
+    doc.text('Federation Approach:', LAYOUT.marginLeft, yPos);
     yPos += 5;
 
     doc.setFont('helvetica', 'normal');
-    const lines = doc.splitTextToSize(value.approach, doc.internal.pageSize.getWidth() - 30);
+    doc.setFontSize(8);
+    const lines = doc.splitTextToSize(value.approach, LAYOUT.contentWidth);
     lines.forEach(line => {
-      doc.text(line, 15, yPos);
+      doc.text(line, LAYOUT.marginLeft, yPos);
       yPos += 4;
     });
-    yPos += 5;
+    yPos += 4;
   }
 
   if (value.clashMatrix && Array.isArray(value.clashMatrix) && value.clashMatrix.length > 0) {
     doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
-    doc.text('Clash Detection Matrix:', 15, yPos);
-    yPos += 6;
+    doc.setTextColor(...COLORS.text);
+    doc.text('Clash Detection Matrix:', LAYOUT.marginLeft, yPos);
+    yPos += 5;
 
     const tableData = value.clashMatrix.map(row => [
       row.discipline1 || '',
@@ -813,16 +964,19 @@ function renderFederationStrategyData(doc, value, yPos) {
         fillColor: COLORS.warning,
         textColor: COLORS.white,
         fontSize: 8,
-        fontStyle: 'bold'
+        fontStyle: 'bold',
+        cellPadding: 3
       },
       bodyStyles: {
         fontSize: 7,
-        textColor: COLORS.text
+        textColor: COLORS.text,
+        cellPadding: 2
       },
-      margin: { left: 15, right: 15 }
+      margin: { left: LAYOUT.marginLeft, right: LAYOUT.marginRight },
+      tableWidth: LAYOUT.contentWidth
     });
 
-    yPos = doc.lastAutoTable.finalY + 8;
+    yPos = doc.lastAutoTable.finalY + LAYOUT.paragraphSpacing;
   }
 
   return yPos;
@@ -833,8 +987,9 @@ function renderOrgChartData(doc, value, yPos) {
   if (value.nodes && Array.isArray(value.nodes) && value.nodes.length > 0) {
     doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
-    doc.text('Organizational Roles:', 15, yPos);
-    yPos += 6;
+    doc.setTextColor(...COLORS.text);
+    doc.text('Organizational Roles:', LAYOUT.marginLeft, yPos);
+    yPos += 5;
 
     const tableData = value.nodes.map(node => [
       node.role || node.title || '',
@@ -852,25 +1007,28 @@ function renderOrgChartData(doc, value, yPos) {
         fillColor: COLORS.success,
         textColor: COLORS.white,
         fontSize: 8,
-        fontStyle: 'bold'
+        fontStyle: 'bold',
+        cellPadding: 3
       },
       bodyStyles: {
         fontSize: 7,
-        textColor: COLORS.text
+        textColor: COLORS.text,
+        cellPadding: 2
       },
-      margin: { left: 15, right: 15 }
+      margin: { left: LAYOUT.marginLeft, right: LAYOUT.marginRight },
+      tableWidth: LAYOUT.contentWidth
     });
 
-    yPos = doc.lastAutoTable.finalY + 5;
+    yPos = doc.lastAutoTable.finalY + 4;
   }
 
   // Add note about visual representation
-  doc.setFontSize(8);
+  doc.setFontSize(7);
   doc.setFont('helvetica', 'italic');
-  doc.setTextColor(100, 100, 100);
-  doc.text('Note: See online BEP for interactive organizational chart diagram', 15, yPos);
+  doc.setTextColor(120, 120, 120);
+  doc.text('Note: See online BEP for interactive organizational chart diagram', LAYOUT.marginLeft, yPos);
   doc.setTextColor(...COLORS.text);
-  yPos += 10;
+  yPos += LAYOUT.paragraphSpacing;
 
   return yPos;
 }
@@ -882,24 +1040,39 @@ function addPageNumbers(doc) {
 
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'italic');
-    doc.setTextColor(128, 128, 128);
+    
+    // Skip footer on cover page (page 1)
+    if (i === 1) continue;
 
-    // Page number
+    // Footer separator line
+    doc.setDrawColor(...COLORS.border);
+    doc.setLineWidth(0.3);
+    doc.line(LAYOUT.marginLeft, pageHeight - 18, pageWidth - LAYOUT.marginRight, pageHeight - 18);
+
+    // Page number - right aligned
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(100, 100, 100);
     doc.text(
       `Page ${i} of ${pageCount}`,
-      pageWidth / 2,
-      pageHeight - 10,
-      { align: 'center' }
+      pageWidth - LAYOUT.marginRight,
+      pageHeight - 12,
+      { align: 'right' }
     );
 
-    // Footer text
-    doc.setFontSize(8);
+    // Footer text - left aligned
+    doc.setFontSize(7);
     doc.text(
       'ISO 19650-2:2018 Compliant BIM Execution Plan',
+      LAYOUT.marginLeft,
+      pageHeight - 12
+    );
+
+    // Document identifier - center
+    doc.text(
+      'BEP Generator',
       pageWidth / 2,
-      pageHeight - 6,
+      pageHeight - 12,
       { align: 'center' }
     );
   }
