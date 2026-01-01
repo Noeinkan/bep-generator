@@ -155,7 +155,8 @@ const BepFormView = () => {
   };
 
   const handlePreview = useCallback(() => {
-    navigate(`/bep-generator/${getDocumentSlug()}/preview`);
+    const docSlug = getDocumentSlug();
+    navigate(`/bep-generator/${docSlug}/preview`);
   }, [navigate, getDocumentSlug]);
 
   const handleSaveDraft = useCallback(async () => {
