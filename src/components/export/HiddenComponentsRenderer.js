@@ -21,12 +21,17 @@ const HiddenComponentsRenderer = ({ formData, bepType }) => {
       id="hidden-components-for-pdf"
       style={{
         position: 'fixed',
-        left: '-9999px',
         top: 0,
-        width: '1200px', // Fixed width for consistent screenshots
-        opacity: 0, // Invisible but still capturable by html2canvas
+        left: 0,
+        width: '1200px',
+        maxHeight: '100vh',
+        overflow: 'hidden',
         pointerEvents: 'none',
-        zIndex: -1000
+        zIndex: -1000,
+        backgroundColor: 'white',
+        // Make it invisible but keep it in the viewport for html2canvas
+        clipPath: 'inset(0 0 100% 100%)', // Clips the content so it's not visible
+        opacity: 0.01 // Very low opacity instead of 0
       }}
     >
       {/* Organizational Structure Chart */}

@@ -9,6 +9,7 @@ import { generatePDF } from '../../../services/pdfGenerator';
 import { generateDocx } from '../../../services/docxGenerator';
 import { captureCustomComponentScreenshots } from '../../../services/componentScreenshotCapture';
 import HiddenComponentsRenderer from '../../export/HiddenComponentsRenderer';
+import '../../../utils/debugScreenshots'; // Load debug tools
 
 /**
  * View component for BEP preview and export
@@ -58,15 +59,25 @@ const BepPreviewView = () => {
       if (exportFormat === 'pdf') {
         // Wait for components to render
         setStatusMessage('Waiting for components to render...');
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        console.log('🎬 Starting PDF export...');
+        console.log('FormData available:', Object.keys(formData));
+        console.log('FormData:', formData);
+
+        // Give components time to fully render (especially SVG/Canvas)
+        await new Promise(resolve => setTimeout(resolve, 2500));
 
         // Capture screenshots from hidden components
         setStatusMessage('Capturing component diagrams...');
-        console.log('🎬 Starting PDF export...');
-        console.log('FormData available:', formData);
+        console.log('⏳ About to call captureCustomComponentScreenshots...');
 
-        const componentScreenshots = await captureCustomComponentScreenshots(formData);
-        console.log('📸 Screenshots captured:', componentScreenshots);
+        let componentScreenshots = {};
+        try {
+          componentScreenshots = await captureCustomComponentScreenshots(formData);
+          console.log('✅ Screenshots captured:', Object.keys(componentScreenshots));
+          console.log('📊 Screenshot details:', componentScreenshots);
+        } catch (error) {
+          console.error('❌ Error capturing screenshots:', error);
+        }
 
         // Generate PDF with screenshots
         setStatusMessage('Generating PDF document...');

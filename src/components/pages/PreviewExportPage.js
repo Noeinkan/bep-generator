@@ -3,6 +3,7 @@ import { Download, FileText, Eye, FileType, Printer, CheckCircle, AlertCircle, L
 import { generateBEPContent } from '../../services/bepFormatter';
 import { generatePDF } from '../../services/pdfGenerator';
 import BepPreviewRenderer from '../export/BepPreviewRenderer';
+import { captureCustomComponentScreenshots } from '../../services/componentScreenshotCapture';
 
 const PreviewExportPage = ({
   formData,
@@ -53,11 +54,22 @@ const PreviewExportPage = ({
 
   const handleAdvancedExport = async () => {
     try {
+      console.log('🎬 Starting advanced PDF export...');
+
+      // Wait for components to render
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Capture screenshots
+      console.log('📸 Capturing component screenshots...');
+      const componentScreenshots = await captureCustomComponentScreenshots(formData);
+      console.log('✅ Screenshots captured:', Object.keys(componentScreenshots));
+
       await generatePDF(formData, bepType, {
         orientation: pdfOrientation,
         filename: `BEP_${bepType}_${new Date().toISOString().split('T')[0]}.pdf`,
         tidpData,
-        midpData
+        midpData,
+        componentScreenshots
       });
     } catch (error) {
       console.error('Advanced PDF export failed:', error);

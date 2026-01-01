@@ -1,4 +1,5 @@
 import html2canvas from 'html2canvas';
+import { toPng } from 'html-to-image';
 
 /**
  * Simplified screenshot capture service for custom visual components
@@ -40,26 +41,37 @@ const waitForElement = (selector, timeout = 5000) => {
 };
 
 /**
- * Capture a single component as a screenshot
+ * Capture a single component as a screenshot using html-to-image
+ * This library handles SVG and Canvas elements better than html2canvas
  */
 const captureComponent = async (element) => {
   try {
     // Wait a bit for component to fully render
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-    const canvas = await html2canvas(element, {
-      scale: 2, // High quality
-      backgroundColor: '#ffffff',
-      logging: false,
-      useCORS: true,
-      allowTaint: true,
+    console.log('    🔧 Capture options:', {
       width: element.scrollWidth,
-      height: element.scrollHeight
+      height: element.scrollHeight,
+      pixelRatio: 2
     });
 
-    return canvas.toDataURL('image/png');
+    // Use html-to-image (toPng) which handles SVG/Canvas better
+    const dataUrl = await toPng(element, {
+      pixelRatio: 2, // High quality (2x)
+      backgroundColor: '#ffffff',
+      width: element.scrollWidth,
+      height: element.scrollHeight,
+      style: {
+        transform: 'scale(1)',
+        transformOrigin: 'top left'
+      }
+    });
+
+    console.log('    ✓ Image captured, DataURL length:', dataUrl.length, 'chars');
+
+    return dataUrl;
   } catch (error) {
-    console.error('Error capturing component:', error);
+    console.error('    ❌ Error capturing component:', error);
     throw error;
   }
 };
@@ -68,13 +80,17 @@ const captureComponent = async (element) => {
  * Main function: captures all custom visual components
  * Returns a map of fieldName -> base64 image data
  *
- * Tries to capture from both the visible preview and hidden components container
+ * Strategy: Prioritize hidden components container for reliable capture
  */
 export const captureCustomComponentScreenshots = async (formData) => {
   console.log('🎬 Starting screenshot capture...');
   console.log('FormData keys:', Object.keys(formData));
 
   const screenshots = {};
+
+  // First, check if hidden components container exists
+  const hiddenContainer = document.querySelector('#hidden-components-for-pdf');
+  console.log('Hidden container found:', !!hiddenContainer);
 
   // Capture each component that has data
   for (const { name, type } of VISUAL_COMPONENTS) {
@@ -86,48 +102,70 @@ export const captureCustomComponentScreenshots = async (formData) => {
 
     console.log(`📸 Capturing ${name} (${type})...`);
 
-    // Try multiple selector strategies
-    const selectors = [
-      `[data-field-name="${name}"]`, // Primary selector
-      `#${name}`,                     // ID selector
-      `.${type}-component`            // Type-based class
-    ];
+    // Find all elements with this field name
+    const allElements = Array.from(document.querySelectorAll(`[data-field-name="${name}"]`));
+    console.log(`  🔍 Found ${allElements.length} elements with data-field-name="${name}"`);
+
+    // Sort elements: visible first, hidden last
+    allElements.sort((a, b) => {
+      const aInHidden = a.closest('#hidden-components-for-pdf') !== null;
+      const bInHidden = b.closest('#hidden-components-for-pdf') !== null;
+      return (aInHidden ? 1 : 0) - (bInHidden ? 1 : 0);
+    });
 
     let captured = false;
 
-    for (const selector of selectors) {
+    // Try each element, starting with visible ones
+    for (let i = 0; i < allElements.length; i++) {
+      const element = allElements[i];
+      const isInHidden = element.closest('#hidden-components-for-pdf') !== null;
+
+      console.log(`  🔍 Trying element ${i + 1}/${allElements.length} [${isInHidden ? 'HIDDEN' : 'VISIBLE'}]...`);
+
+      // Check if element has dimensions
+      if (element.offsetWidth === 0 || element.offsetHeight === 0) {
+        console.log(`  ⊘ Element has no dimensions (${element.offsetWidth}x${element.offsetHeight})`);
+        continue;
+      }
+
+      console.log(`  ✓ Element has dimensions (${element.offsetWidth}x${element.offsetHeight}px)`);
+
       try {
-        const element = await waitForElement(selector, 1000);
-
-        if (!element) continue;
-
-        // Check if element is actually visible and has dimensions
-        if (element.offsetWidth === 0 || element.offsetHeight === 0) {
-          console.log(`  ⊘ Element found but has no dimensions: ${selector}`);
-          continue;
-        }
-
-        console.log(`  ✓ Found element (${element.offsetWidth}x${element.offsetHeight}px) via ${selector}`);
+        // Wait a bit for rendering
+        await new Promise(resolve => setTimeout(resolve, 200));
 
         const imageData = await captureComponent(element);
         screenshots[name] = imageData;
 
-        console.log(`  ✓ Captured successfully (${(imageData.length / 1024).toFixed(1)} KB)`);
+        console.log(`  ✅ Captured successfully from ${isInHidden ? 'HIDDEN' : 'VISIBLE'} element (${(imageData.length / 1024).toFixed(1)} KB)`);
         captured = true;
         break;
       } catch (error) {
-        // Continue to next selector
+        console.log(`  ⚠️ Error capturing element:`, error.message);
         continue;
       }
     }
 
     if (!captured) {
-      console.warn(`  ✗ Failed to capture ${name} with any selector`);
+      console.warn(`  ❌ Failed to capture ${name} with any selector`);
     }
   }
 
-  console.log(`\n✅ Screenshot capture complete: ${Object.keys(screenshots).length}/${VISUAL_COMPONENTS.filter(c => formData[c.name]).length} components captured`);
+  const capturedCount = Object.keys(screenshots).length;
+  const totalCount = VISUAL_COMPONENTS.filter(c => formData[c.name]).length;
+
+  console.log(`\n✅ Screenshot capture complete: ${capturedCount}/${totalCount} components captured`);
   console.log('Captured components:', Object.keys(screenshots));
+
+  if (capturedCount === 0 && totalCount > 0) {
+    console.error('⚠️ WARNING: No screenshots were captured! Check that components are rendering.');
+  }
+
+  // Save to window for debugging
+  if (typeof window !== 'undefined') {
+    window.lastCapturedScreenshots = screenshots;
+    console.log('💾 Screenshots saved to window.lastCapturedScreenshots for debugging');
+  }
 
   return screenshots;
 };
