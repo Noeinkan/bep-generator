@@ -19,8 +19,21 @@ const BepPreviewView = () => {
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [exportFormat, setExportFormat] = useState('pdf');
+  const [error, setError] = useState(null);
+  const [statusMessage, setStatusMessage] = useState('');
 
   const formData = getFormData();
+
+  const downloadBlob = useCallback((blob, filename) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, []);
 
   const handlePreviewBEP = useCallback(() => {
     const content = generateBEPContent(formData, bepType, { tidpData: tidps, midpData: midps });
@@ -28,52 +41,47 @@ const BepPreviewView = () => {
     if (newWindow) {
       newWindow.document.write(content);
       newWindow.document.close();
+      newWindow.focus();
+    } else {
+      setError('Preview popup was blocked. Please allow popups and try again.');
     }
   }, [formData, bepType, tidps, midps]);
 
   const handleExport = useCallback(async () => {
     try {
+      setError(null);
       setIsGenerating(true);
+      setStatusMessage(`Generating ${exportFormat.toUpperCase()} document, please wait...`);
 
       if (exportFormat === 'pdf') {
         try {
           const result = await generatePDF(formData, bepType, { tidpData: tidps, midpData: midps });
           if (result.success) {
-            console.log(`PDF generated successfully: ${result.filename} (${result.size} bytes)`);
+            setStatusMessage(`Document exported successfully as ${exportFormat.toUpperCase()}.`);
           }
         } catch (error) {
-          console.error('PDF generation failed:', error);
-          alert('PDF generation failed: ' + error.message);
+          setStatusMessage(`Export failed: ${error.message}`);
         }
       } else if (exportFormat === 'word') {
         const docxBlob = await generateDocx(formData, bepType, { tidpData: tidps, midpData: midps });
-        const url = URL.createObjectURL(docxBlob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `BEP_${bepType}_${new Date().toISOString().split('T')[0]}.docx`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        downloadBlob(docxBlob, `BEP_${bepType}_${new Date().toISOString().split('T')[0]}.docx`);
+        setStatusMessage(`Document exported successfully as ${exportFormat.toUpperCase()}.`);
       } else if (exportFormat === 'html') {
-        const content = await generateBEPContent(formData, bepType, { tidpData: tidps, midpData: midps });
+        const content = generateBEPContent(formData, bepType, { tidpData: tidps, midpData: midps });
         const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `BEP_${bepType}_${new Date().toISOString().split('T')[0]}.html`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        downloadBlob(blob, `BEP_${bepType}_${new Date().toISOString().split('T')[0]}.html`);
+        setStatusMessage(`Document exported successfully as ${exportFormat.toUpperCase()}.`);
       }
     } catch (error) {
-      console.error('Export failed:', error);
-      alert('Export failed: ' + error.message);
+      setStatusMessage(`Export failed: ${error.message}`);
     } finally {
       setIsGenerating(false);
+      if (statusMessage.includes('successfully') || statusMessage.includes('failed')) {
+        setTimeout(() => setStatusMessage(''), 5000);
+      }
+      setStatusMessage('');
     }
-  }, [exportFormat, formData, bepType, tidps, midps]);
+  }, [exportFormat, formData, bepType, tidps, midps, downloadBlob, statusMessage]);
 
   const handleBack = useCallback(() => {
     navigate(-1); // Go back to previous step
@@ -85,20 +93,33 @@ const BepPreviewView = () => {
   }
 
   return (
-    <PreviewExportPage
-      formData={formData}
-      bepType={bepType}
-      onBack={handleBack}
-      onExport={handleExport}
-      isGenerating={isGenerating}
-      exportFormat={exportFormat}
-      setExportFormat={setExportFormat}
-      previewBEP={handlePreviewBEP}
-      downloadBEP={handleExport}
-      isExporting={isGenerating}
-      tidpData={tidps}
-      midpData={midps}
-    />
+    <>
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        role="status"
+        style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }}
+      >
+        {statusMessage}
+      </div>
+      <main aria-busy={isGenerating}>
+        <PreviewExportPage
+          formData={formData}
+          bepType={bepType}
+          onBack={handleBack}
+          onExport={handleExport}
+          isGenerating={isGenerating}
+          exportFormat={exportFormat}
+          setExportFormat={setExportFormat}
+          previewBEP={handlePreviewBEP}
+          downloadBEP={handleExport}
+          isExporting={isGenerating}
+          tidpData={tidps}
+          midpData={midps}
+          error={error}
+        />
+      </main>
+    </>
   );
 };
 
