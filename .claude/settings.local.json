@@ -37,7 +37,9 @@
       "Bash(git checkout:*)",
       "Bash(npx eslint:*)",
       "Bash(awk:*)",
-      "Bash(exit 0)"
+      "Bash(exit 0)",
+      "Bash(del srcservicesscreenshotStore.js)",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": []

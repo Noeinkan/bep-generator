@@ -55,30 +55,32 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
 
     case 'orgchart':
       return (
-        <OrgStructureField
-          field={field}
-          value={value}
-          onChange={(v) => {
-            // The org chart component emits the complete tree structure
-            // Store it directly in the organizationalStructure field
-            if (v && typeof v === 'object') {
-              // If v.tree exists, use it; otherwise use v directly
-              const treeData = v.tree || v;
-              onChange(name, treeData);
+        <div data-field-name={name} data-component-type="orgchart">
+          <OrgStructureField
+            field={field}
+            value={value}
+            onChange={(v) => {
+              // The org chart component emits the complete tree structure
+              // Store it directly in the organizationalStructure field
+              if (v && typeof v === 'object') {
+                // If v.tree exists, use it; otherwise use v directly
+                const treeData = v.tree || v;
+                onChange(name, treeData);
 
-              // Also sync leadAppointedParty and finalizedParties for backward compatibility
-              if (v.leadAppointedParty !== undefined) {
-                onChange('leadAppointedParty', v.leadAppointedParty);
+                // Also sync leadAppointedParty and finalizedParties for backward compatibility
+                if (v.leadAppointedParty !== undefined) {
+                  onChange('leadAppointedParty', v.leadAppointedParty);
+                }
+                if (v.finalizedParties !== undefined) {
+                  onChange('finalizedParties', v.finalizedParties);
+                }
+              } else {
+                onChange(name, v);
               }
-              if (v.finalizedParties !== undefined) {
-                onChange('finalizedParties', v.finalizedParties);
-              }
-            } else {
-              onChange(name, v);
-            }
-          }}
-          formData={formData}
-        />
+            }}
+            formData={formData}
+          />
+        </div>
       );
     
     case 'orgstructure-data-table':
@@ -122,52 +124,62 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
 
     case 'fileStructure':
       return (
-        <FolderStructureDiagram
-          field={field}
-          value={value}
-          onChange={onChange}
-          error={error}
-        />
+        <div data-field-name={name} data-component-type="fileStructure">
+          <FolderStructureDiagram
+            field={field}
+            value={value}
+            onChange={onChange}
+            error={error}
+          />
+        </div>
       );
 
     case 'cdeDiagram':
       return (
-        <CDEDiagramBuilderV2
-          field={field}
-          value={value}
-          onChange={onChange}
-          error={error}
-        />
+        <div data-field-name={name} data-component-type="cdeDiagram">
+          <CDEDiagramBuilderV2
+            field={field}
+            value={value}
+            onChange={onChange}
+            error={error}
+          />
+        </div>
       );
 
     case 'mindmap':
       return (
-        <VolumeStrategyMindmap
-          field={field}
-          value={value}
-          onChange={onChange}
-          error={error}
-        />
+        <div data-field-name={name} data-component-type="mindmap">
+          <VolumeStrategyMindmap
+            field={field}
+            value={value}
+            onChange={onChange}
+            error={error}
+          />
+        </div>
       );
 
     case 'naming-conventions':
       return (
-        <NamingConventionBuilder
-          field={field}
-          value={value}
-          onChange={onChange}
-          error={error}
-        />
+        <div data-field-name={name} data-component-type="naming-conventions">
+          <NamingConventionBuilder
+            field={field}
+            value={value}
+            onChange={onChange}
+            error={error}
+          />
+        </div>
       );
 
     case 'federation-strategy':
       return (
-        <FederationStrategyBuilder
-          field={field}
-          value={value}
-          onChange={onChange}
-          error={error}
-        />
+        <div data-field-name={name} data-component-type="federation-strategy">
+          <FederationStrategyBuilder
+            field={field}
+            value={value}
+            onChange={onChange}
+            error={error}
+          />
+        </div>
       );
 
     case 'textarea':

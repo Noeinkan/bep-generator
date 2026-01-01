@@ -11,6 +11,7 @@ import { useDraftOperations } from '../../../hooks/useDraftOperations';
 import { useAuth } from '../../../contexts/AuthContext';
 import SaveDraftDialog from '../drafts/SaveDraftDialog';
 import { validateDraftName } from '../../../utils/validationUtils';
+import HiddenComponentsRenderer from '../../export/HiddenComponentsRenderer';
 
 /**
  * Main form view component for BEP Generator
@@ -126,7 +127,7 @@ const BepFormView = () => {
     markStepCompleted(currentStep);
 
     if (isLastStep) {
-      // Last step reached, go to preview
+      // Last step reached - go to preview (screenshots already captured by useEffect)
       navigate(`/bep-generator/${getDocumentSlug()}/preview`);
     } else {
       // Move to next step
@@ -465,6 +466,9 @@ const BepFormView = () => {
         onOverwrite={handleOverwriteDraft}
         onSaveAsNew={handleSaveAsNewDraft}
       />
+
+      {/* Hidden components for PDF screenshot capture */}
+      <HiddenComponentsRenderer formData={formData} bepType={bepType} />
     </div>
   );
 };

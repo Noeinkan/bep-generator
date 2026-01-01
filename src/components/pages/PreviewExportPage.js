@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Download, FileText, Eye, FileType, Printer, CheckCircle, AlertCircle, Loader2, Settings, RotateCcw, ArrowLeft } from 'lucide-react';
 import { generateBEPContent } from '../../services/bepFormatter';
 import { generatePDF } from '../../services/pdfGenerator';
+import BepPreviewRenderer from '../export/BepPreviewRenderer';
 
 const PreviewExportPage = ({
   formData,
@@ -15,13 +16,10 @@ const PreviewExportPage = ({
   midpData = [],
   onBack
 }) => {
-  const [isPreviewLoading, setIsPreviewLoading] = useState(true);
   const [previewError, setPreviewError] = useState(null);
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
   const [pdfQuality, setPdfQuality] = useState('standard'); // 'standard' or 'high'
   const [pdfOrientation, setPdfOrientation] = useState('portrait'); // 'portrait' or 'landscape'
-
-  const content = generateBEPContent(formData, bepType, { tidpData, midpData });
 
   const exportFormats = [
     {
@@ -52,16 +50,6 @@ const PreviewExportPage = ({
       borderColor: 'border-green-200'
     }
   ];
-
-  const handlePreviewLoad = () => {
-    setIsPreviewLoading(false);
-    setPreviewError(null);
-  };
-
-  const handlePreviewError = () => {
-    setIsPreviewLoading(false);
-    setPreviewError('Failed to load preview');
-  };
 
   const handleAdvancedExport = async () => {
     try {
@@ -344,7 +332,7 @@ const PreviewExportPage = ({
             <div>
               <h3 className="text-xl font-semibold text-gray-900">Live Preview</h3>
               <p className="text-sm text-gray-600 mt-1">
-                See how your BIM Execution Plan will look
+                See how your BIM Execution Plan will look with all diagrams and components
               </p>
             </div>
             {previewError && (
@@ -356,24 +344,15 @@ const PreviewExportPage = ({
           </div>
         </div>
 
-        <div className="relative">
-          {isPreviewLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
-              <div className="text-center">
-                <Loader2 className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-3" />
-                <p className="text-gray-600 font-medium">Loading preview...</p>
-              </div>
-            </div>
-          )}
-
-          <iframe
-            srcDoc={content}
-            title="BEP Preview"
-            className="w-full border-0"
-            style={{ height: '700px' }}
-            onLoad={handlePreviewLoad}
-            onError={handlePreviewError}
-          />
+        <div className="relative overflow-y-auto" style={{ maxHeight: '800px' }}>
+          <div className="p-8">
+            <BepPreviewRenderer
+              formData={formData}
+              bepType={bepType}
+              tidpData={tidpData}
+              midpData={midpData}
+            />
+          </div>
         </div>
       </div>
     </div>

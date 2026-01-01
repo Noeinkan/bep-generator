@@ -25,7 +25,8 @@ export const generatePDF = async (formData, bepType, options = {}) => {
     format = 'a4',
     filename = `BEP_${bepType}_${new Date().toISOString().split('T')[0]}.pdf`,
     tidpData = [],
-    midpData = []
+    midpData = [],
+    componentScreenshots = {} // Map of fieldName -> base64 image data
   } = options;
 
   try {
@@ -72,7 +73,7 @@ export const generatePDF = async (formData, bepType, options = {}) => {
     }
 
     // === BEP CONTENT SECTIONS ===
-    yPos = addBEPContentSections(doc, formData, bepType, yPos);
+    yPos = addBEPContentSections(doc, formData, bepType, yPos, componentScreenshots);
 
     // === FOOTER ON ALL PAGES ===
     addPageNumbers(doc);
@@ -385,141 +386,491 @@ function addTIDPMIDPSection(doc, tidpData, midpData, yPos) {
   return yPos;
 }
 
-function addBEPContentSections(doc, formData, bepType, yPos) {
+function addBEPContentSections(doc, formData, bepType, yPos, componentScreenshots = {}) {
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
 
-  // Group steps by category
-  const groupedSteps = CONFIG.steps.reduce((acc, step, index) => {
-    const cat = step.category;
-    if (!acc[cat]) acc[cat] = [];
-    const stepConfig = CONFIG.getFormFields(bepType, index);
-    if (stepConfig) {
-      acc[cat].push({ index, title: stepConfig.title, fields: stepConfig.fields });
+  let currentCategory = null;
+
+  // Process steps in sequential order
+  CONFIG.steps.forEach((step, stepIndex) => {
+    const stepConfig = CONFIG.getFormFields(bepType, stepIndex);
+    if (!stepConfig) return;
+
+    // Add category header when category changes
+    if (currentCategory !== step.category) {
+      currentCategory = step.category;
+      const categoryName = CONFIG.categories[step.category]?.name || step.category;
+      yPos = addSectionHeader(doc, categoryName, yPos, COLORS.primary);
     }
-    return acc;
-  }, {});
 
-  // Process each category
-  Object.entries(groupedSteps).forEach(([catKey, items]) => {
-    const categoryName = CONFIG.categories[catKey]?.name || catKey;
+    // Check if we need a new page
+    if (yPos > pageHeight - 40) {
+      doc.addPage();
+      yPos = 20;
+    }
 
-    // Add category header
-    yPos = addSectionHeader(doc, categoryName, yPos, COLORS.primary);
+    // Section title
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...COLORS.secondary);
+    doc.text(`${stepConfig.number}. ${stepConfig.title}`, 15, yPos);
+    yPos += 8;
 
-    items.forEach((item) => {
-      if (yPos > pageHeight - 40) {
+    // Process fields
+    stepConfig.fields.forEach((field) => {
+      const value = formData[field.name];
+
+      // Skip section headers and fields without values
+      if (field.type === 'section-header') return;
+      if (!value) return;
+
+      if (yPos > pageHeight - 30) {
         doc.addPage();
         yPos = 20;
       }
 
-      // Section title
-      doc.setFontSize(12);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(...COLORS.secondary);
-      doc.text(item.title, 15, yPos);
-      yPos += 8;
+      // Handle custom visual components
+      if (['orgchart', 'cdeDiagram', 'naming-conventions', 'federation-strategy', 'mindmap', 'fileStructure'].includes(field.type)) {
+        yPos = addVisualComponentPlaceholder(doc, field, value, yPos, componentScreenshots);
+        return;
+      }
 
-      // Process fields
-      item.fields.forEach((field) => {
-        const value = formData[field.name];
-        if (!value) return;
-
-        if (yPos > pageHeight - 30) {
-          doc.addPage();
-          yPos = 20;
-        }
-
-        if (field.type === 'table' && Array.isArray(value) && value.length > 0) {
-          // Render as table
-          const columns = field.columns || ['Column 1', 'Column 2', 'Column 3'];
-          const tableData = value.map(row => columns.map(col => row[col] || ''));
-
-          doc.setFontSize(10);
-          doc.setFont('helvetica', 'bold');
-          doc.text(`${field.number ? field.number + ' ' : ''}${field.label}`, 15, yPos);
-          yPos += 6;
-
-          autoTable(doc, {
-            startY: yPos,
-            head: [columns],
-            body: tableData,
-            theme: 'striped',
-            headStyles: {
-              fillColor: COLORS.primary,
-              textColor: COLORS.white,
-              fontSize: 9,
-              fontStyle: 'bold'
-            },
-            bodyStyles: {
-              fontSize: 8,
-              textColor: COLORS.text
-            },
-            alternateRowStyles: {
-              fillColor: COLORS.light
-            },
-            margin: { left: 15, right: 15 }
-          });
-
-          yPos = doc.lastAutoTable.finalY + 8;
-
-        } else if (field.type === 'checkbox' && Array.isArray(value)) {
-          // Render checkbox list
-          doc.setFontSize(10);
-          doc.setFont('helvetica', 'bold');
-          doc.text(`${field.number ? field.number + ' ' : ''}${field.label}`, 15, yPos);
-          yPos += 6;
-
-          doc.setFontSize(9);
-          doc.setFont('helvetica', 'normal');
-          value.forEach((item) => {
-            if (yPos > pageHeight - 15) {
-              doc.addPage();
-              yPos = 20;
-            }
-            doc.text(`✓ ${item}`, 20, yPos);
-            yPos += 5;
-          });
-          yPos += 3;
-
-        } else if (field.type === 'textarea') {
-          // Render textarea
-          doc.setFontSize(10);
-          doc.setFont('helvetica', 'bold');
-          doc.text(`${field.number ? field.number + ' ' : ''}${field.label}`, 15, yPos);
-          yPos += 6;
-
-          doc.setFontSize(9);
-          doc.setFont('helvetica', 'normal');
-          const textLines = doc.splitTextToSize(value, pageWidth - 30);
-          textLines.forEach((line) => {
-            if (yPos > pageHeight - 15) {
-              doc.addPage();
-              yPos = 20;
-            }
-            doc.text(line, 15, yPos);
-            yPos += 5;
-          });
-          yPos += 3;
-
-        } else {
-          // Render as simple field pair
-          doc.setFontSize(9);
-          doc.setFont('helvetica', 'bold');
-          doc.text(`${field.number ? field.number + ' ' : ''}${field.label}:`, 15, yPos);
-
-          doc.setFont('helvetica', 'normal');
-          const valueLines = doc.splitTextToSize(String(value), pageWidth - 80);
-          doc.text(valueLines, 80, yPos);
-          yPos += Math.max(5, valueLines.length * 5);
-        }
-      });
-
-      yPos += 5;
+      // Handle standard field types
+      if (field.type === 'table' && Array.isArray(value) && value.length > 0) {
+        yPos = renderTableField(doc, field, value, yPos);
+      } else if (field.type === 'checkbox' && Array.isArray(value)) {
+        yPos = renderCheckboxField(doc, field, value, yPos, pageHeight);
+      } else if (field.type === 'textarea') {
+        yPos = renderTextareaField(doc, field, value, yPos, pageWidth, pageHeight);
+      } else if (field.type === 'introTable' && typeof value === 'object') {
+        yPos = renderIntroTableField(doc, field, value, yPos);
+      } else {
+        yPos = renderSimpleField(doc, field, value, yPos, pageWidth);
+      }
     });
 
     yPos += 5;
   });
+
+  return yPos;
+}
+
+// Helper function to render table fields
+function renderTableField(doc, field, value, yPos) {
+  const columns = field.columns || ['Column 1', 'Column 2', 'Column 3'];
+  const tableData = value.map(row => columns.map(col => row[col] || ''));
+
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.text(`${field.number ? field.number + ' ' : ''}${field.label}`, 15, yPos);
+  yPos += 6;
+
+  autoTable(doc, {
+    startY: yPos,
+    head: [columns],
+    body: tableData,
+    theme: 'striped',
+    headStyles: {
+      fillColor: COLORS.primary,
+      textColor: COLORS.white,
+      fontSize: 9,
+      fontStyle: 'bold'
+    },
+    bodyStyles: {
+      fontSize: 8,
+      textColor: COLORS.text
+    },
+    alternateRowStyles: {
+      fillColor: COLORS.light
+    },
+    margin: { left: 15, right: 15 }
+  });
+
+  return doc.lastAutoTable.finalY + 8;
+}
+
+// Helper function to render checkbox fields
+function renderCheckboxField(doc, field, value, yPos, pageHeight) {
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.text(`${field.number ? field.number + ' ' : ''}${field.label}`, 15, yPos);
+  yPos += 6;
+
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  value.forEach((item) => {
+    if (yPos > pageHeight - 15) {
+      doc.addPage();
+      yPos = 20;
+    }
+    doc.text(`✓ ${item}`, 20, yPos);
+    yPos += 5;
+  });
+
+  return yPos + 3;
+}
+
+// Helper function to render textarea fields
+function renderTextareaField(doc, field, value, yPos, pageWidth, pageHeight) {
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.text(`${field.number ? field.number + ' ' : ''}${field.label}`, 15, yPos);
+  yPos += 6;
+
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  const textLines = doc.splitTextToSize(value, pageWidth - 30);
+  textLines.forEach((line) => {
+    if (yPos > pageHeight - 15) {
+      doc.addPage();
+      yPos = 20;
+    }
+    doc.text(line, 15, yPos);
+    yPos += 5;
+  });
+
+  return yPos + 3;
+}
+
+// Helper function to render introTable fields
+function renderIntroTableField(doc, field, value, yPos) {
+  const pageWidth = doc.internal.pageSize.getWidth();
+
+  // Render intro text if present
+  if (value.intro) {
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${field.number ? field.number + ' ' : ''}${field.label}`, 15, yPos);
+    yPos += 6;
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    const introLines = doc.splitTextToSize(value.intro, pageWidth - 30);
+    introLines.forEach((line) => {
+      doc.text(line, 15, yPos);
+      yPos += 5;
+    });
+    yPos += 3;
+  }
+
+  // Render table if present
+  if (value.rows && Array.isArray(value.rows) && value.rows.length > 0) {
+    const columns = field.tableColumns || ['Column 1', 'Column 2', 'Column 3'];
+    const tableData = value.rows.map(row => columns.map(col => row[col] || ''));
+
+    autoTable(doc, {
+      startY: yPos,
+      head: [columns],
+      body: tableData,
+      theme: 'striped',
+      headStyles: {
+        fillColor: COLORS.primary,
+        textColor: COLORS.white,
+        fontSize: 9,
+        fontStyle: 'bold'
+      },
+      bodyStyles: {
+        fontSize: 8,
+        textColor: COLORS.text
+      },
+      alternateRowStyles: {
+        fillColor: COLORS.light
+      },
+      margin: { left: 15, right: 15 }
+    });
+
+    yPos = doc.lastAutoTable.finalY + 8;
+  }
+
+  return yPos;
+}
+
+// Helper function to render simple fields
+function renderSimpleField(doc, field, value, yPos, pageWidth) {
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'bold');
+  doc.text(`${field.number ? field.number + ' ' : ''}${field.label}:`, 15, yPos);
+
+  doc.setFont('helvetica', 'normal');
+  const valueLines = doc.splitTextToSize(String(value), pageWidth - 80);
+  doc.text(valueLines, 80, yPos);
+
+  return yPos + Math.max(5, valueLines.length * 5);
+}
+
+// Helper function to add placeholder for visual components
+function addVisualComponentPlaceholder(doc, field, value, yPos, componentScreenshots = {}) {
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+
+  console.log(`📄 PDF: Processing visual component "${field.name}" (${field.type})`);
+  console.log(`Available screenshots:`, Object.keys(componentScreenshots));
+
+  if (yPos > pageHeight - 80) {
+    doc.addPage();
+    yPos = 20;
+  }
+
+  // Field label
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...COLORS.secondary);
+  doc.text(`${field.number ? field.number + ' ' : ''}${field.label}`, 15, yPos);
+  yPos += 8;
+
+  // Check if we have a screenshot for this component
+  const screenshot = componentScreenshots[field.name];
+  console.log(`Screenshot for "${field.name}":`, screenshot ? `Found (${screenshot.substring(0, 50)}...)` : 'NOT FOUND');
+
+  if (screenshot) {
+    // Render the screenshot image
+    yPos = renderComponentScreenshot(doc, screenshot, yPos, pageWidth, pageHeight);
+  } else {
+    // Fallback: Try to render structured data or show placeholder
+    if (field.type === 'naming-conventions' && value) {
+      yPos = renderNamingConventionsData(doc, value, yPos);
+    } else if (field.type === 'federation-strategy' && value) {
+      yPos = renderFederationStrategyData(doc, value, yPos);
+    } else if (field.type === 'orgchart' && value) {
+      yPos = renderOrgChartData(doc, value, yPos);
+    } else {
+      // Visual placeholder box for components without structured data or screenshot
+      const boxHeight = 60;
+      doc.setDrawColor(...COLORS.primary);
+      doc.setFillColor(...COLORS.light);
+      doc.roundedRect(15, yPos, pageWidth - 30, boxHeight, 3, 3, 'FD');
+
+      // Icon and text
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'italic');
+      doc.setTextColor(100, 100, 100);
+
+      const componentTypeLabels = {
+        'orgchart': 'Organizational Structure Chart',
+        'cdeDiagram': 'CDE Workflow Diagram',
+        'naming-conventions': 'Naming Convention Rules',
+        'federation-strategy': 'Federation Strategy & Clash Matrix',
+        'mindmap': 'Volume Strategy Mind Map',
+        'fileStructure': 'Folder Structure Diagram'
+      };
+
+      const label = componentTypeLabels[field.type] || 'Visual Component';
+      doc.text(`[${label}]`, pageWidth / 2, yPos + boxHeight / 2 - 5, { align: 'center' });
+      doc.setFontSize(8);
+      doc.text('Interactive component - see online BEP for full details', pageWidth / 2, yPos + boxHeight / 2 + 5, { align: 'center' });
+
+      yPos += boxHeight + 10;
+    }
+  }
+
+  doc.setTextColor(...COLORS.text);
+  return yPos;
+}
+
+// Helper function to render component screenshot
+function renderComponentScreenshot(doc, screenshotBase64, yPos, pageWidth, pageHeight) {
+  try {
+    // Calculate dimensions - fit to page width with margins
+    const maxWidth = pageWidth - 30; // 15mm margins on each side
+    const maxHeight = 120; // Maximum height in mm
+
+    // Add the image
+    // jsPDF will automatically handle the base64 data URL
+    const imgProps = doc.getImageProperties(screenshotBase64);
+    const imgAspectRatio = imgProps.width / imgProps.height;
+
+    let imgWidth = maxWidth;
+    let imgHeight = imgWidth / imgAspectRatio;
+
+    // If image is too tall, scale down to max height
+    if (imgHeight > maxHeight) {
+      imgHeight = maxHeight;
+      imgWidth = imgHeight * imgAspectRatio;
+    }
+
+    // Check if we need a new page
+    if (yPos + imgHeight > pageHeight - 20) {
+      doc.addPage();
+      yPos = 20;
+    }
+
+    // Center the image horizontally
+    const xPos = (pageWidth - imgWidth) / 2;
+
+    // Add image to PDF
+    doc.addImage(screenshotBase64, 'PNG', xPos, yPos, imgWidth, imgHeight);
+
+    yPos += imgHeight + 10;
+  } catch (error) {
+    console.error('Error rendering component screenshot:', error);
+    // If image rendering fails, show a warning box
+    doc.setFontSize(9);
+    doc.setTextColor(255, 0, 0);
+    doc.text('Failed to render component image', 15, yPos);
+    yPos += 10;
+    doc.setTextColor(...COLORS.text);
+  }
+
+  return yPos;
+}
+
+// Helper function to render naming conventions data
+function renderNamingConventionsData(doc, value, yPos) {
+  const pageWidth = doc.internal.pageSize.getWidth();
+
+  if (value.pattern) {
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Naming Pattern:', 15, yPos);
+    yPos += 5;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFillColor(245, 245, 245);
+    doc.rect(15, yPos, pageWidth - 30, 10, 'F');
+    doc.setFont('courier', 'normal');
+    doc.text(value.pattern, 20, yPos + 7);
+    yPos += 15;
+  }
+
+  if (value.fields && Array.isArray(value.fields) && value.fields.length > 0) {
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Field Definitions:', 15, yPos);
+    yPos += 6;
+
+    const tableData = value.fields.map(f => [
+      f.code || '',
+      f.description || '',
+      f.example || ''
+    ]);
+
+    autoTable(doc, {
+      startY: yPos,
+      head: [['Code', 'Description', 'Example']],
+      body: tableData,
+      theme: 'striped',
+      headStyles: {
+        fillColor: COLORS.warning,
+        textColor: COLORS.white,
+        fontSize: 8,
+        fontStyle: 'bold'
+      },
+      bodyStyles: {
+        fontSize: 7,
+        textColor: COLORS.text
+      },
+      columnStyles: {
+        0: { cellWidth: 30, fontStyle: 'bold' },
+        1: { cellWidth: 'auto' },
+        2: { cellWidth: 40, fontStyle: 'italic' }
+      },
+      margin: { left: 15, right: 15 }
+    });
+
+    yPos = doc.lastAutoTable.finalY + 8;
+  }
+
+  return yPos;
+}
+
+// Helper function to render federation strategy data
+function renderFederationStrategyData(doc, value, yPos) {
+  if (value.approach) {
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Federation Approach:', 15, yPos);
+    yPos += 5;
+
+    doc.setFont('helvetica', 'normal');
+    const lines = doc.splitTextToSize(value.approach, doc.internal.pageSize.getWidth() - 30);
+    lines.forEach(line => {
+      doc.text(line, 15, yPos);
+      yPos += 4;
+    });
+    yPos += 5;
+  }
+
+  if (value.clashMatrix && Array.isArray(value.clashMatrix) && value.clashMatrix.length > 0) {
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Clash Detection Matrix:', 15, yPos);
+    yPos += 6;
+
+    const tableData = value.clashMatrix.map(row => [
+      row.discipline1 || '',
+      row.discipline2 || '',
+      row.priority || '',
+      row.frequency || ''
+    ]);
+
+    autoTable(doc, {
+      startY: yPos,
+      head: [['Discipline A', 'Discipline B', 'Priority', 'Check Frequency']],
+      body: tableData,
+      theme: 'grid',
+      headStyles: {
+        fillColor: COLORS.warning,
+        textColor: COLORS.white,
+        fontSize: 8,
+        fontStyle: 'bold'
+      },
+      bodyStyles: {
+        fontSize: 7,
+        textColor: COLORS.text
+      },
+      margin: { left: 15, right: 15 }
+    });
+
+    yPos = doc.lastAutoTable.finalY + 8;
+  }
+
+  return yPos;
+}
+
+// Helper function to render org chart data
+function renderOrgChartData(doc, value, yPos) {
+  if (value.nodes && Array.isArray(value.nodes) && value.nodes.length > 0) {
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Organizational Roles:', 15, yPos);
+    yPos += 6;
+
+    const tableData = value.nodes.map(node => [
+      node.role || node.title || '',
+      node.name || '',
+      node.company || '',
+      node.contact || ''
+    ]);
+
+    autoTable(doc, {
+      startY: yPos,
+      head: [['Role', 'Name', 'Company', 'Contact']],
+      body: tableData,
+      theme: 'striped',
+      headStyles: {
+        fillColor: COLORS.success,
+        textColor: COLORS.white,
+        fontSize: 8,
+        fontStyle: 'bold'
+      },
+      bodyStyles: {
+        fontSize: 7,
+        textColor: COLORS.text
+      },
+      margin: { left: 15, right: 15 }
+    });
+
+    yPos = doc.lastAutoTable.finalY + 5;
+  }
+
+  // Add note about visual representation
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'italic');
+  doc.setTextColor(100, 100, 100);
+  doc.text('Note: See online BEP for interactive organizational chart diagram', 15, yPos);
+  doc.setTextColor(...COLORS.text);
+  yPos += 10;
 
   return yPos;
 }
