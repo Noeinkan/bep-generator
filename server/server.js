@@ -12,6 +12,9 @@ const validationRoutes = require('./routes/validation');
 const aiRoutes = require('./routes/ai');
 const draftsRoutes = require('./routes/drafts');
 
+// Import services
+const puppeteerPdfService = require('./services/puppeteerPdfService');
+
 const app = require('./app');
 const PORT = process.env.PORT || 3001;
 
@@ -107,7 +110,30 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 if (require.main === module) {
-  app.listen(PORT, '0.0.0.0', () => {
+  app.listen(PORT, '0.0.0.0', async () => {
     console.log(`Server running on port ${PORT}`);
+
+    // Initialize Puppeteer browser pool
+    try {
+      console.log('🚀 Initializing Puppeteer...');
+      await puppeteerPdfService.initialize();
+      console.log('✅ Puppeteer initialized successfully');
+    } catch (error) {
+      console.error('⚠️  Puppeteer initialization failed:', error.message);
+      console.error('   PDF generation will not be available until server restart');
+    }
   });
 }
+
+// Graceful shutdown
+process.on('SIGTERM', async () => {
+  console.log('SIGTERM received, shutting down gracefully...');
+  await puppeteerPdfService.cleanup();
+  process.exit(0);
+});
+
+process.on('SIGINT', async () => {
+  console.log('SIGINT received, shutting down gracefully...');
+  await puppeteerPdfService.cleanup();
+  process.exit(0);
+});

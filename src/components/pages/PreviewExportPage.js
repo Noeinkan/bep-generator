@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Download, FileText, Eye, FileType, Printer, CheckCircle, AlertCircle, Loader2, Settings, RotateCcw, ArrowLeft } from 'lucide-react';
 import { generateBEPContent } from '../../services/bepFormatter';
-import { generatePDF } from '../../services/pdfGenerator';
+import { generateBEPPDFOnServer } from '../../services/backendPdfService';
 import BepPreviewRenderer from '../export/BepPreviewRenderer';
 import { captureCustomComponentScreenshots } from '../../services/componentScreenshotCapture';
+import toast from 'react-hot-toast';
 
 const PreviewExportPage = ({
   formData,
@@ -54,22 +55,57 @@ const PreviewExportPage = ({
 
   const handleAdvancedExport = async () => {
     try {
+      // Show loading toast
+      const loadingToast = toast.loading('Generating PDF...');
+
       // Brief wait for components to render
       await new Promise(resolve => setTimeout(resolve, 300));
 
-      // Capture screenshots
-      const componentScreenshots = await captureCustomComponentScreenshots(formData);
+      // Capture screenshots of custom components
+      let componentScreenshots = {};
+      try {
+        componentScreenshots = await captureCustomComponentScreenshots(formData);
+        console.log('✅ Component screenshots captured:', Object.keys(componentScreenshots).length);
+      } catch (screenshotError) {
+        console.warn('⚠️  Screenshot capture failed, continuing without images:', screenshotError);
+        toast.dismiss(loadingToast);
+        toast.error('Warning: Some diagrams may not appear in the PDF');
+      }
 
-      await generatePDF(formData, bepType, {
-        orientation: pdfOrientation,
-        filename: `BEP_${bepType}_${new Date().toISOString().split('T')[0]}.pdf`,
+      // Generate PDF on backend using Puppeteer
+      await generateBEPPDFOnServer(
+        formData,
+        bepType,
         tidpData,
         midpData,
-        componentScreenshots
-      });
+        componentScreenshots,
+        {
+          orientation: pdfOrientation,
+          quality: pdfQuality || 'standard'
+        }
+      );
+
+      // Success
+      toast.dismiss(loadingToast);
+      toast.success('PDF generated successfully!');
+
     } catch (error) {
-      console.error('Advanced PDF export failed:', error);
-      alert('PDF export failed: ' + error.message);
+      console.error('❌ PDF export failed:', error);
+
+      // User-friendly error messages
+      let errorMessage = 'PDF export failed';
+
+      if (error.message.includes('timeout')) {
+        errorMessage = 'PDF generation timed out. Try using standard quality instead of high quality.';
+      } else if (error.message.includes('network') || error.message.includes('connect')) {
+        errorMessage = 'Network error. Please check your connection and try again.';
+      } else if (error.message.includes('too large')) {
+        errorMessage = 'BEP data too large. Please reduce the number of components.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      toast.error(errorMessage);
     }
   };
 
