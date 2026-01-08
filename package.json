@@ -53,12 +53,11 @@
   },
   "scripts": {
     "prestart": "node scripts/check-ports.js",
-    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\" \"npm run start:ml\" \"npm run start:tunnel\" \"npm run start:tunnel-ml\"",
+    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\" \"npm run start:ml\" \"npm run start:tunnel\"",
     "start:frontend": "cross-env NODE_OPTIONS=--max-old-space-size=8192 react-scripts start",
     "start:backend": "node server/server.js",
     "start:ml": "cd ml-service && venv\\Scripts\\python.exe api_ollama.py",
     "start:tunnel": "node scripts/start-tunnel.js",
-    "start:tunnel-ml": "node scripts/tunnel-ml.js",
     "tunnel": "node scripts/tunnel-now.js",
     "start:ml:old": "cd ml-service && venv\\Scripts\\python.exe api.py",
     "start:3000": "cross-env NODE_OPTIONS=--max-old-space-size=8192 react-scripts start",

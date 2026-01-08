@@ -65,24 +65,17 @@ Questo avvierà AUTOMATICAMENTE:
 1. ✅ Frontend (React - porta 3000)
 2. ✅ Backend (Node.js - porta 3001)
 3. ✅ ML service (Python + Ollama - porta 8000)
-4. ✅ **Cloudflare Tunnel** (dopo 15 secondi)
+4. ✅ **Cloudflare Tunnel** per l'app principale (dopo 15 secondi)
 
 **Cerca nell'output l'URL del tunnel:**
 ```
-[3] Your quick Tunnel has been created! Visit it at:
-[3] https://magical-unicorn-abc123.trycloudflare.com
+[Tunnel] 🚀 TUNNEL ATTIVO! Copia questo URL:
+[Tunnel]    https://magical-unicorn-abc123.trycloudflare.com
 ```
 
-**Copia quell'URL e condividilo!**
+**Copia quell'URL e condividilo!** Il tunnel espone il frontend su porta 3000, e il backend (con AI) è accessibile tramite il proxy React.
 
-### Opzione 2: Script Batch (vecchio metodo)
-
-Doppio click su:
-```
-start-demo.bat
-```
-
-### Opzione 3: Solo il tunnel (se i servizi sono già avviati)
+### Opzione 2: Solo il tunnel (se i servizi sono già avviati)
 
 Se hai già avviato l'app e vuoi solo creare un nuovo tunnel:
 ```bash
@@ -114,7 +107,7 @@ https://random-name-1234.trycloudflare.com
 ## 🧪 Verifica che tutto funzioni
 
 ### 1. Test locale (prima di condividere)
-Apri nel browser: http://localhost:3001
+Apri nel browser: http://localhost:3000 (frontend) o http://localhost:3001 (backend diretto)
 
 ### 2. Test servizio AI
 Apri: http://localhost:8000/docs
@@ -122,7 +115,7 @@ Apri: http://localhost:8000/docs
 Dovresti vedere la documentazione FastAPI del servizio ML.
 
 ### 3. Test tunnel pubblico
-Apri l'URL Cloudflare generato nel browser.
+Apri l'URL Cloudflare generato nel browser. Il tunnel punta al frontend (porta 3000), che comunica con il backend (porta 3001) tramite proxy.
 
 ### 4. Test funzionalità AI nell'app
 1. Crea un nuovo BEP
@@ -133,13 +126,8 @@ Apri l'URL Cloudflare generato nel browser.
 
 ## ⏸️ Stop della Demo
 
-### Se hai usato lo script automatico:
-1. **Premi `Ctrl+C`** nella finestra del tunnel
-2. **Chiudi** la finestra "BEP Generator - Services"
-
-### Se hai avviato manualmente:
-1. **Ctrl+C** nel terminale del tunnel
-2. **Ctrl+C** nel terminale dell'applicazione
+1. **Premi `Ctrl+C`** nel terminale dove hai lanciato `npm start`
+2. Tutti i servizi (frontend, backend, ML service, tunnel) si fermeranno automaticamente
 
 ---
 
@@ -288,6 +276,26 @@ cloudflared tunnel run bep-demo
 **Svantaggi:**
 - ⚠️ Richiede un dominio personale
 - ⚠️ Setup più complesso
+
+---
+
+## 📝 Architettura Semplificata
+
+La configurazione attuale usa **UN SOLO tunnel Cloudflare** che espone il frontend (porta 3000):
+
+```
+Internet → Cloudflare Tunnel (porta 3000) → React Frontend
+                                             ↓ (proxy)
+                                          Backend (porta 3001)
+                                             ↓
+                                          ML Service (porta 8000)
+                                             ↓
+                                          Ollama (porta 11434)
+```
+
+Il frontend React ha un proxy configurato in [package.json](package.json:5) (`"proxy": "http://localhost:3001"`) che inoltra le richieste API al backend. Il backend poi comunica con il servizio ML, che a sua volta comunica con Ollama.
+
+**Nota:** Non serve esporre separatamente il servizio ML perché il backend fa da intermediario.
 
 ---
 

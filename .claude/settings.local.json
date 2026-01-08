@@ -40,7 +40,8 @@
       "Bash(exit 0)",
       "Bash(del srcservicesscreenshotStore.js)",
       "Bash(rm:*)",
-      "Bash(where:*)"
+      "Bash(where:*)",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": []
