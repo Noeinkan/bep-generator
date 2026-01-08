@@ -7,6 +7,7 @@ import PreviewExportPage from '../PreviewExportPage';
 import { generateBEPContent } from '../../../services/bepFormatter';
 import { generateBEPPDFOnServer } from '../../../services/backendPdfService';
 import { generateDocx } from '../../../services/docxGenerator';
+import { generateDocxSimple } from '../../../services/docxGenerator.simple';
 import { captureCustomComponentScreenshots } from '../../../services/componentScreenshotCapture';
 import HiddenComponentsRenderer from '../../export/HiddenComponentsRenderer';
 import toast from 'react-hot-toast';
@@ -101,9 +102,37 @@ const BepPreviewView = () => {
           toast.success('PDF generated successfully!');
         }
       } else if (exportFormat === 'word') {
-        const docxBlob = await generateDocx(formData, bepType, { tidpData: tidps, midpData: midps });
+        // Wait for components to render
+        setStatusMessage('Waiting for components to render...');
+        console.log('📝 Starting DOCX export...');
+
+        // Give components time to fully render (especially SVG/Canvas)
+        await new Promise(resolve => setTimeout(resolve, 2500));
+
+        // Capture screenshots from hidden components
+        setStatusMessage('Capturing component diagrams...');
+        console.log('⏳ About to call captureCustomComponentScreenshots for DOCX...');
+
+        let componentScreenshots = {};
+        try {
+          componentScreenshots = await captureCustomComponentScreenshots(formData);
+          console.log('✅ Screenshots captured for DOCX:', Object.keys(componentScreenshots));
+        } catch (error) {
+          console.error('❌ Error capturing screenshots for DOCX:', error);
+          toast.error('Warning: Some diagrams may not appear in the DOCX');
+        }
+
+        // Generate DOCX with component images
+        setStatusMessage('Generating Word document...');
+        // Using simple version for testing
+        const docxBlob = await generateDocxSimple(formData, bepType, {
+          tidpData: tidps,
+          midpData: midps,
+          componentImages: componentScreenshots
+        });
         downloadBlob(docxBlob, `BEP_${bepType}_${new Date().toISOString().split('T')[0]}.docx`);
         setStatusMessage(`Document exported successfully as ${exportFormat.toUpperCase()}.`);
+        toast.success('Word document generated successfully!');
       } else if (exportFormat === 'html') {
         const content = generateBEPContent(formData, bepType, { tidpData: tidps, midpData: midps });
         const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
