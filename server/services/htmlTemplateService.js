@@ -491,13 +491,15 @@ class HtmlTemplateService {
       /* Sections */
       .section {
         margin-bottom: 50px;
-        page-break-inside: avoid;
+        /* Allow sections to break across pages */
       }
 
       .section-header {
         margin-bottom: 30px;
         padding-bottom: 10px;
         border-bottom: 3px solid #2563eb;
+        page-break-after: avoid;
+        page-break-inside: avoid;
       }
 
       .section-header.tidp-header {
@@ -517,7 +519,8 @@ class HtmlTemplateService {
       /* Fields */
       .field-group {
         margin-bottom: 30px;
-        page-break-inside: avoid;
+        /* Allow field groups to break if needed, but prefer to keep together */
+        page-break-inside: auto;
       }
 
       .field-label {
@@ -525,6 +528,7 @@ class HtmlTemplateService {
         font-weight: 600;
         color: #374151;
         margin-bottom: 10px;
+        page-break-after: avoid;
       }
 
       .field-value {
@@ -549,10 +553,17 @@ class HtmlTemplateService {
         width: 100%;
         border-collapse: collapse;
         border: 1px solid #d1d5db;
+        page-break-inside: auto;
       }
 
       .data-table thead {
+        display: table-header-group;
         background-color: #f3f4f6;
+      }
+
+      .data-table tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
       }
 
       .data-table th {
