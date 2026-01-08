@@ -41,7 +41,8 @@
       "Bash(del srcservicesscreenshotStore.js)",
       "Bash(rm:*)",
       "Bash(where:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(git grep:*)"
     ],
     "deny": [],
     "ask": []
