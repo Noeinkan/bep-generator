@@ -11,16 +11,22 @@ import {
   Packer,
   BorderStyle,
   ShadingType,
-  convertInchesToTwip
+  convertInchesToTwip,
+  ImageRun
 } from 'docx';
 import CONFIG from '../config/bepConfig';
+import { convertHtmlToDocx } from './htmlToDocx';
 
 // Enhanced version with styling
 export const generateDocxSimple = async (formData, bepType, options = {}) => {
-  const { tidpData = [], midpData = [] } = options;
+  const { tidpData = [], midpData = [], componentImages = {} } = options;
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString();
   const formattedTime = currentDate.toLocaleTimeString();
+
+  // Debug: log which images we received
+  console.log('🖼️ Component images received:', Object.keys(componentImages));
+  console.log('📊 Number of images:', Object.keys(componentImages).length);
 
   const sections = [];
 
@@ -39,13 +45,44 @@ export const generateDocxSimple = async (formData, bepType, options = {}) => {
     });
   };
 
+  // Helper function to convert base64 image to ImageRun
+  const addImageFromBase64 = (base64String) => {
+    try {
+      if (!base64String) return null;
+
+      // Remove data:image/png;base64, prefix if present
+      const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
+
+      // Convert base64 to binary string
+      const binaryString = atob(base64Data);
+
+      // Convert binary string to Uint8Array
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+
+      return new ImageRun({
+        data: bytes,
+        transformation: {
+          width: 500,
+          height: 350
+        }
+      });
+    } catch (error) {
+      console.error('Error adding image:', error);
+      return null;
+    }
+  };
+
   // Cover page with styled text
   sections.push(
     new Paragraph({
       children: [new TextRun({
         text: "BIM EXECUTION PLAN (BEP)",
         bold: true,
-        size: 48  // 24pt
+        size: 48,  // 24pt
+        color: "2E86AB"
       })],
       heading: HeadingLevel.HEADING_1,
       alignment: AlignmentType.CENTER,
@@ -55,7 +92,8 @@ export const generateDocxSimple = async (formData, bepType, options = {}) => {
       children: [new TextRun({
         text: "ISO 19650-2:2018 Compliant",
         bold: true,
-        size: 32  // 16pt
+        size: 32,  // 16pt
+        color: "4A4A4A"
       })],
       heading: HeadingLevel.HEADING_2,
       alignment: AlignmentType.CENTER,
@@ -64,7 +102,8 @@ export const generateDocxSimple = async (formData, bepType, options = {}) => {
     new Paragraph({
       children: [new TextRun({
         text: CONFIG.bepTypeDefinitions[bepType].title,
-        size: 28  // 14pt
+        size: 28,  // 14pt
+        color: "2E86AB"
       })],
       alignment: AlignmentType.CENTER,
       spacing: { after: 200 }
@@ -86,7 +125,8 @@ export const generateDocxSimple = async (formData, bepType, options = {}) => {
       children: [new TextRun({
         text: "ISO 19650 COMPLIANCE STATEMENT",
         bold: true,
-        size: 32
+        size: 32,
+        color: "2E86AB"
       })],
       heading: HeadingLevel.HEADING_2,
       spacing: { before: 400, after: 200 },
@@ -117,7 +157,7 @@ export const generateDocxSimple = async (formData, bepType, options = {}) => {
   // Document Information Table
   sections.push(
     new Paragraph({
-      children: [new TextRun({ text: "DOCUMENT INFORMATION", bold: true, size: 28 })],
+      children: [new TextRun({ text: "DOCUMENT INFORMATION", bold: true, size: 28, color: "2E86AB" })],
       heading: HeadingLevel.HEADING_3,
       spacing: { before: 400, after: 200 }
     }),
@@ -178,7 +218,7 @@ export const generateDocxSimple = async (formData, bepType, options = {}) => {
   Object.entries(groupedSteps).forEach(([cat, items], catIndex) => {
     sections.push(
       new Paragraph({
-        children: [new TextRun({ text: CONFIG.categories[cat].name, bold: true, size: 36 })],
+        children: [new TextRun({ text: CONFIG.categories[cat].name, bold: true, size: 36, color: "2E86AB" })],
         heading: HeadingLevel.HEADING_1,
         pageBreakBefore: catIndex > 0,
         spacing: { after: 300 }
@@ -188,7 +228,7 @@ export const generateDocxSimple = async (formData, bepType, options = {}) => {
     items.forEach((item) => {
       sections.push(
         new Paragraph({
-          children: [new TextRun({ text: item.title, bold: true, size: 28 })],
+          children: [new TextRun({ text: item.title, bold: true, size: 28, color: "4A4A4A" })],
           heading: HeadingLevel.HEADING_2,
           spacing: { before: 200, after: 200 }
         })
@@ -214,11 +254,34 @@ export const generateDocxSimple = async (formData, bepType, options = {}) => {
       otherFields.forEach(field => {
         sections.push(
           new Paragraph({
-            children: [new TextRun({ text: field.label, bold: true, size: 22 })],
+            children: [new TextRun({ text: field.label, bold: true, size: 22, color: "2E86AB" })],
             heading: HeadingLevel.HEADING_3,
             spacing: { before: 200, after: 100 }
           })
         );
+
+        // Add image if available for custom components
+        if (componentImages && componentImages[field.name]) {
+          console.log(`📸 Adding image for field: ${field.name}`);
+          try {
+            const imageRun = addImageFromBase64(componentImages[field.name]);
+            if (imageRun) {
+              console.log(`✅ Image added successfully for field: ${field.name}`);
+              sections.push(
+                new Paragraph({
+                  children: [imageRun],
+                  spacing: { after: 200 }
+                })
+              );
+            } else {
+              console.warn(`⚠️ imageRun is null for field: ${field.name}`);
+            }
+          } catch (err) {
+            console.error(`❌ Could not add image for field ${field.name}:`, err);
+          }
+        } else {
+          console.log(`ℹ️ No image available for field: ${field.name}`);
+        }
 
         const value = formData[field.name];
         if (field.type === 'checkbox' && Array.isArray(value)) {
@@ -226,10 +289,29 @@ export const generateDocxSimple = async (formData, bepType, options = {}) => {
             sections.push(new Paragraph({ text: `✓ ${item}`, bullet: { level: 0 }, spacing: { after: 50 } }));
           });
         } else if (field.type === 'textarea' && value) {
-          const lines = value.split('\n');
-          lines.forEach(line => {
-            sections.push(new Paragraph({ text: line || '', spacing: { after: 100 } }));
-          });
+          // Check if the value is HTML (from TipTap) or plain text
+          const isHtml = value.trim().startsWith('<') && value.includes('>');
+
+          if (isHtml) {
+            // Convert HTML to DOCX elements
+            try {
+              const docxElements = convertHtmlToDocx(value);
+              docxElements.forEach(element => sections.push(element));
+            } catch (error) {
+              console.error('Error converting HTML to DOCX:', error);
+              // Fallback to plain text
+              const lines = value.split('\n');
+              lines.forEach(line => {
+                sections.push(new Paragraph({ text: line || '', spacing: { after: 100 } }));
+              });
+            }
+          } else {
+            // Plain text - split by lines
+            const lines = value.split('\n');
+            lines.forEach(line => {
+              sections.push(new Paragraph({ text: line || '', spacing: { after: 100 } }));
+            });
+          }
         }
       });
     });
@@ -238,7 +320,7 @@ export const generateDocxSimple = async (formData, bepType, options = {}) => {
   // Footer
   sections.push(
     new Paragraph({
-      children: [new TextRun({ text: "DOCUMENT CONTROL INFORMATION", bold: true, size: 28 })],
+      children: [new TextRun({ text: "DOCUMENT CONTROL INFORMATION", bold: true, size: 28, color: "2E86AB" })],
       heading: HeadingLevel.HEADING_3,
       pageBreakBefore: true,
       spacing: { after: 200 }
