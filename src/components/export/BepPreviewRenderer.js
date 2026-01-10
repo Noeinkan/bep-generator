@@ -1,5 +1,6 @@
 import React from 'react';
 import OrgStructureField from '../forms/specialized/OrgStructureField';
+import OrgStructureDataTable from '../forms/specialized/OrgStructureDataTable';
 import CDEDiagramBuilderV2 from '../forms/diagrams/diagram-components/CDEDiagramBuilder';
 import VolumeStrategyMindmap from '../forms/diagrams/diagram-components/VolumeStrategyMindmap';
 import FolderStructureDiagram from '../forms/diagrams/diagram-components/FolderStructureDiagram';
@@ -27,6 +28,19 @@ const BepPreviewRenderer = ({ formData, bepType, tidpData = [], midpData = [] })
               value={value}
               onChange={noop}
               formData={formData}
+              exportMode={true}
+            />
+          </div>
+        );
+
+      case 'orgstructure-data-table':
+        return (
+          <div className="my-6 p-6 bg-white rounded-lg border border-gray-200" data-field-name={field.name} data-component-type="orgstructure-data-table">
+            <OrgStructureDataTable
+              field={field}
+              value={value}
+              formData={formData}
+              exportMode={true}
             />
           </div>
         );

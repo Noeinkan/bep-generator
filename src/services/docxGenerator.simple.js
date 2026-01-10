@@ -30,11 +30,19 @@ export const generateDocxSimple = async (formData, bepType, options = {}) => {
 
   const sections = [];
 
+  // List of field types that have visual components (should match componentScreenshotCapture.js)
+  const VISUAL_COMPONENT_TYPES = ['orgchart', 'orgstructure-data-table', 'cdeDiagram', 'mindmap', 'fileStructure', 'naming-conventions', 'federation-strategy'];
+
   // Helper function to create bordered cells
   const createBorderedCell = (content, isBold = false) => {
+    // Ensure content is always a valid string to prevent DOCX corruption
+    const safeContent = content == null || content === undefined || content === ''
+      ? ''
+      : String(content);
+
     return new TableCell({
       children: [new Paragraph({
-        children: [new TextRun({ text: String(content), bold: isBold })]
+        children: [new TextRun({ text: safeContent, bold: isBold })]
       })],
       borders: {
         top: { style: BorderStyle.SINGLE, size: 1, color: "CCCCCC" },
@@ -48,10 +56,19 @@ export const generateDocxSimple = async (formData, bepType, options = {}) => {
   // Helper function to convert base64 image to ImageRun
   const addImageFromBase64 = (base64String) => {
     try {
-      if (!base64String) return null;
+      if (!base64String) {
+        console.warn('No base64 string provided for image');
+        return null;
+      }
 
       // Remove data:image/png;base64, prefix if present
       const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
+
+      // Validate base64 string
+      if (!base64Data || base64Data.length === 0) {
+        console.error('Invalid base64 data after prefix removal');
+        return null;
+      }
 
       // Convert base64 to binary string
       const binaryString = atob(base64Data);
@@ -62,15 +79,24 @@ export const generateDocxSimple = async (formData, bepType, options = {}) => {
         bytes[i] = binaryString.charCodeAt(i);
       }
 
+      // Validate that we have actual image data
+      if (bytes.length === 0) {
+        console.error('Image byte array is empty');
+        return null;
+      }
+
+      console.log(`Creating ImageRun with ${bytes.length} bytes`);
+
       return new ImageRun({
         data: bytes,
         transformation: {
-          width: 500,
-          height: 350
+          width: 600,
+          height: 400
         }
       });
     } catch (error) {
       console.error('Error adding image:', error);
+      console.error('Error details:', error.message, error.stack);
       return null;
     }
   };
@@ -210,7 +236,9 @@ export const generateDocxSimple = async (formData, bepType, options = {}) => {
     if (!acc[cat]) acc[cat] = [];
     const stepConfig = CONFIG.getFormFields(bepType, index);
     if (stepConfig) {
-      acc[cat].push({ index, title: `${acc[cat].length + 1}. ${stepConfig.title.toUpperCase()}`, fields: stepConfig.fields });
+      // Use stepConfig.number instead of auto-incrementing
+      const sectionNumber = stepConfig.number || `${acc[cat].length + 1}`;
+      acc[cat].push({ index, title: `${sectionNumber}. ${stepConfig.title.toUpperCase()}`, fields: stepConfig.fields });
     }
     return acc;
   }, {});
@@ -235,34 +263,60 @@ export const generateDocxSimple = async (formData, bepType, options = {}) => {
       );
 
       const fields = item.fields;
-      const tableFields = fields.filter(f => f.type !== 'textarea' && f.type !== 'checkbox' && f.type !== 'custom');
-      const otherFields = fields.filter(f => f.type === 'textarea' || f.type === 'checkbox' || f.type === 'custom');
+      const tableFields = fields.filter(f =>
+        f.type !== 'textarea' &&
+        f.type !== 'checkbox' &&
+        f.type !== 'custom' &&
+        !VISUAL_COMPONENT_TYPES.includes(f.type)
+      );
+      const otherFields = fields.filter(f =>
+        f.type === 'textarea' ||
+        f.type === 'checkbox' ||
+        f.type === 'custom' ||
+        VISUAL_COMPONENT_TYPES.includes(f.type)
+      );
 
       if (tableFields.length > 0) {
-        const tableRows = tableFields.map(field =>
-          new TableRow({
-            children: [
-              createBorderedCell(field.label + ":", true),
-              createBorderedCell(formData[field.name] || '')
-            ]
-          })
-        );
+        const tableRows = tableFields
+          .filter(field => field.label) // Only include fields with labels
+          .map(field => {
+            // Add field number to label if available and not empty
+            const fieldLabel = (field.number && field.number.trim())
+              ? `${field.number} ${field.label || 'Field'}`
+              : (field.label || 'Field');
 
-        sections.push(new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: tableRows }));
+            return new TableRow({
+              children: [
+                createBorderedCell(fieldLabel + ":", true),
+                createBorderedCell(formData[field.name])
+              ]
+            });
+          });
+
+        // Only add table if we have rows
+        if (tableRows.length > 0) {
+          sections.push(new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: tableRows }));
+        }
       }
 
       otherFields.forEach(field => {
+        // Add field number if available and not empty (e.g., "3.1", "3.2")
+        const fieldLabel = (field.number && field.number.trim())
+          ? `${field.number} ${field.label || 'Untitled Field'}`
+          : (field.label || 'Untitled Field');
+
         sections.push(
           new Paragraph({
-            children: [new TextRun({ text: field.label, bold: true, size: 22, color: "2E86AB" })],
+            children: [new TextRun({ text: fieldLabel, bold: true, size: 22, color: "2E86AB" })],
             heading: HeadingLevel.HEADING_3,
             spacing: { before: 200, after: 100 }
           })
         );
 
-        // Add image if available for custom components
-        if (componentImages && componentImages[field.name]) {
-          console.log(`📸 Adding image for field: ${field.name}`);
+        // Add image if available for visual components
+        const isVisualComponent = VISUAL_COMPONENT_TYPES.includes(field.type);
+        if (isVisualComponent && componentImages && componentImages[field.name]) {
+          console.log(`📸 Adding image for visual component: ${field.name} (type: ${field.type})`);
           try {
             const imageRun = addImageFromBase64(componentImages[field.name]);
             if (imageRun) {
@@ -274,13 +328,46 @@ export const generateDocxSimple = async (formData, bepType, options = {}) => {
                 })
               );
             } else {
-              console.warn(`⚠️ imageRun is null for field: ${field.name}`);
+              console.warn(`⚠️ imageRun is null for field: ${field.name}, adding placeholder text`);
+              // Add placeholder text instead of failing
+              sections.push(
+                new Paragraph({
+                  children: [new TextRun({
+                    text: `[Visual component: ${field.label || field.name}]`,
+                    italics: true,
+                    color: "999999"
+                  })],
+                  spacing: { after: 200 }
+                })
+              );
             }
           } catch (err) {
             console.error(`❌ Could not add image for field ${field.name}:`, err);
+            // Add error placeholder instead of failing silently
+            sections.push(
+              new Paragraph({
+                children: [new TextRun({
+                  text: `[Error loading visual component: ${field.label || field.name}]`,
+                  italics: true,
+                  color: "FF0000"
+                })],
+                spacing: { after: 200 }
+              })
+            );
           }
-        } else {
-          console.log(`ℹ️ No image available for field: ${field.name}`);
+        } else if (isVisualComponent) {
+          console.log(`⚠️ Visual component ${field.name} (type: ${field.type}) but no image in componentImages. Available:`, Object.keys(componentImages));
+          // Add placeholder for missing image
+          sections.push(
+            new Paragraph({
+              children: [new TextRun({
+                text: `[Visual component not captured: ${field.label || field.name}]`,
+                italics: true,
+                color: "999999"
+              })],
+              spacing: { after: 200 }
+            })
+          );
         }
 
         const value = formData[field.name];

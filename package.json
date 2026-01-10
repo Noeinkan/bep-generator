@@ -53,7 +53,7 @@
   },
   "scripts": {
     "prestart": "node scripts/check-ports.js",
-    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\" \"npm run start:ml\" \"npm run start:tunnel\"",
+    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\" \"npm run start:ml\"",
     "start:frontend": "cross-env NODE_OPTIONS=--max-old-space-size=8192 react-scripts start",
     "start:backend": "node server/server.js",
     "start:ml": "cd ml-service && venv\\Scripts\\python.exe api_ollama.py",

@@ -164,7 +164,7 @@ class HtmlTemplateService {
    */
   renderFieldValue(field, value, componentImages) {
     // Custom visual components - use embedded screenshots
-    const visualComponentTypes = ['orgchart', 'cdeDiagram', 'mindmap', 'fileStructure', 'naming-conventions', 'federation-strategy'];
+    const visualComponentTypes = ['orgchart', 'orgstructure-data-table', 'cdeDiagram', 'mindmap', 'fileStructure', 'naming-conventions', 'federation-strategy'];
 
     if (visualComponentTypes.includes(field.type)) {
       return this.renderComponentImage(field.name, componentImages);

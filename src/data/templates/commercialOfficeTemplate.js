@@ -202,7 +202,107 @@ CAPABILITY VERIFICATION
 All resources will be tested for collaborative production capability before full information delivery commences. This includes verification of software interoperability, CDE access permissions, and information security compliance.`,
   resourceAllocation: 'Project staffing confirmed: 2x Senior BIM Coordinators, 4x Discipline BIM Modelers, 1x Information Manager, 1x CDE Administrator. Weekly allocation: 40 hours coordination, 160 hours modeling, 20 hours QA/QC.',
   informationManagementResponsibilities: 'Sarah Johnson, Information Manager, oversees all information production, validation, and exchange protocols in full compliance with ISO 19650-2:2018. Key responsibilities include establishing CDE governance structures, coordinating Task Information Delivery Plans (TIDPs) across all disciplines, ensuring model federation quality and consistency, implementing information security protocols including access controls and audit procedures, conducting weekly quality audits of information deliverables, facilitating cross-disciplinary coordination meetings, managing version control and approval workflows, monitoring compliance with established naming conventions and standards, coordinating client information exchanges and milestone reviews, and providing regular progress reports to project leadership on information delivery performance.',
-  organizationalStructure: 'The delivery team operates under a Lead Appointed Party structure with Smith & Associates Architects as the primary coordinator reporting directly to ABC Development Corporation. The organizational hierarchy includes: Project Director (Michael Thompson - overall project governance), Information Manager (Sarah Johnson - ISO 19650 compliance and data coordination), Design Team Coordinator (James Wilson - discipline coordination), and four Task Team Leaders representing Architecture (Emma Davis), Structural Engineering (Robert Chen), MEP Engineering (Lisa Rodriguez), and Quantity Surveying (David Kumar). Supporting specialists include Sustainability Consultant (Green Building Associates), Facade Engineer (Advanced Envelope Solutions), and Cost Manager (Value Engineering Partners). All parties maintain direct contractual relationships with the client while operating through established collaboration agreements, shared CDE protocols, and unified project communication channels to ensure seamless information exchange and coordinated delivery.',
+  organizationalStructure: {
+    id: 'appointing_gf2024',
+    name: 'ABC Development Corporation',
+    role: 'Appointing Party',
+    contact: 'd.brown@abcdev.com | +44 20 9876 5432',
+    leadGroups: [
+      {
+        id: 'lead_architecture',
+        name: 'Smith & Associates Architects Ltd.',
+        role: 'Lead Appointed Party - Architecture',
+        contact: 'j.smith@smithassociates.com | +44 20 1234 5678',
+        children: [
+          {
+            id: 'ap_interior',
+            name: 'Interior Design Associates',
+            role: 'Appointed Party - Interior Design',
+            contact: 'info@interiordesign.com | +44 20 3456 7890'
+          },
+          {
+            id: 'ap_landscape',
+            name: 'Green Spaces Design',
+            role: 'Appointed Party - Landscaping',
+            contact: 'design@greenspaces.com | +44 20 4567 8901'
+          }
+        ]
+      },
+      {
+        id: 'lead_structural',
+        name: 'Engineering Excellence Ltd.',
+        role: 'Lead Appointed Party - Structural Engineering',
+        contact: 'e.chen@engexcel.com | +44 20 2345 6789',
+        children: [
+          {
+            id: 'ap_geotechnical',
+            name: 'Ground Engineering Specialists',
+            role: 'Appointed Party - Geotechnical Engineering',
+            contact: 'projects@groundeng.com | +44 20 5678 9012'
+          },
+          {
+            id: 'ap_civil',
+            name: 'Civil Works Partners',
+            role: 'Appointed Party - Civil Engineering',
+            contact: 'info@civilworks.com | +44 20 6789 0123'
+          }
+        ]
+      },
+      {
+        id: 'lead_mep',
+        name: 'Advanced Systems Group',
+        role: 'Lead Appointed Party - MEP Engineering',
+        contact: 'm.rodriguez@asg.com | +44 20 3456 7890',
+        children: [
+          {
+            id: 'ap_hvac',
+            name: 'Climate Control Experts',
+            role: 'Appointed Party - HVAC Specialist',
+            contact: 'design@climatecontrol.com | +44 20 7890 1234'
+          },
+          {
+            id: 'ap_electrical',
+            name: 'Power Systems Ltd.',
+            role: 'Appointed Party - Electrical Services',
+            contact: 'projects@powersystems.com | +44 20 8901 2345'
+          },
+          {
+            id: 'ap_plumbing',
+            name: 'Water & Drainage Solutions',
+            role: 'Appointed Party - Plumbing & Drainage',
+            contact: 'info@waterdrainage.com | +44 20 9012 3456'
+          },
+          {
+            id: 'ap_fire',
+            name: 'Fire Safety Engineering Ltd.',
+            role: 'Appointed Party - Fire Protection',
+            contact: 'safety@fireeng.com | +44 20 0123 4567'
+          }
+        ]
+      },
+      {
+        id: 'lead_facades',
+        name: 'Curtain Wall Experts Ltd.',
+        role: 'Lead Appointed Party - Facade Engineering',
+        contact: 'd.wilson@cwe.com | +44 20 4567 8901',
+        children: [
+          {
+            id: 'ap_glazing',
+            name: 'Advanced Glazing Solutions',
+            role: 'Appointed Party - Glazing Specialist',
+            contact: 'info@advancedglazing.com | +44 20 1234 5678'
+          }
+        ]
+      },
+      {
+        id: 'lead_qs',
+        name: 'Cost Management Partners',
+        role: 'Lead Appointed Party - Quantity Surveying',
+        contact: 's.williams@cmp.com | +44 20 5678 9012',
+        children: []
+      }
+    ]
+  },
   taskTeamsBreakdown: [
     { 'Task Team': 'Architecture', 'Leader': 'Emma Davis (Smith & Associates)', 'Members': '6 architects, 2 BIM specialists, 1 visualization expert', 'Responsibilities': 'Design development, spatial coordination, building envelope design, interior layouts, accessibility compliance, planning submission drawings, and architectural specification preparation' },
     { 'Task Team': 'Structural Engineering', 'Leader': 'Robert Chen (Engineering Excellence)', 'Members': '4 structural engineers, 1 BIM coordinator, 1 analysis specialist', 'Responsibilities': 'Structural design and analysis, foundation design, steel/concrete detailing, connection design, loading calculations, construction sequence planning, and structural model coordination' },
@@ -219,7 +319,23 @@ All resources will be tested for collaborative production capability before full
   // Legacy fields for backward compatibility (converted from table format)
   taskTeamLeaders: 'Architecture: John Smith (Modern Design Associates)\nStructural: Emily Chen (Engineering Excellence Ltd.)\nMEP: Michael Rodriguez (Advanced Systems Group)\nFacades: David Wilson (Curtain Wall Experts Ltd.)',
   appointedParties: 'Architecture: Modern Design Associates\nStructural: Engineering Excellence Ltd.\nMEP: Advanced Systems Group\nQuantity Surveyor: Cost Management Partners\nSpecialist Facades: Curtain Wall Experts Ltd.',
-  informationPurposes: ['Design Development', 'Construction Planning', 'Quantity Surveying', 'Facility Management'],
+  informationPurposes: [
+    'Design Development and Coordination',
+    'Construction Planning and Sequencing',
+    'Quantity Surveying and Cost Management',
+    'Facility Management and Operations',
+    'Clash Detection and Resolution',
+    'Regulatory Compliance and Building Control',
+    'Energy Analysis and Sustainability Assessment',
+    'Structural Analysis and Performance Verification',
+    'MEP Systems Coordination and Integration',
+    'Health and Safety Planning (CDM Compliance)',
+    'Stakeholder Communication and Visualization',
+    'As-Built Documentation and Asset Handover',
+    'Maintenance Planning and Lifecycle Management',
+    'Space Planning and Occupancy Analysis',
+    'Procurement and Supply Chain Management'
+  ],
   geometricalInfo: 'LOD 350 for construction documentation phase, with dimensional accuracy of ±10mm for structural elements and ±5mm for MEP coordination points.',
   alphanumericalInfo: 'All building elements must include material specifications, performance data, manufacturer information, maintenance requirements, and warranty details.',
   documentationInfo: 'Construction drawings, specifications, schedules, O&M manuals, warranty documents, and asset registers in digital format.',

@@ -9,6 +9,7 @@ import { toPng } from 'html-to-image';
 // List of custom visual component field names and their types
 const VISUAL_COMPONENTS = [
   { name: 'organizationalStructure', type: 'orgchart' },
+  { name: 'leadAppointedPartiesTable', type: 'orgstructure-data-table' },
   { name: 'cdeStrategy', type: 'cdeDiagram' },
   { name: 'volumeStrategy', type: 'mindmap' },
   { name: 'fileStructureDiagram', type: 'fileStructure' },

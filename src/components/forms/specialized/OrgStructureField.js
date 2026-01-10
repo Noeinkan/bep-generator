@@ -5,7 +5,7 @@ import FieldHeader from '../base/FieldHeader';
 
 
 
-const OrgStructureField = ({ value, onChange, field, intro, onIntroChange, formData }) => {
+const OrgStructureField = ({ value, onChange, field, intro, onIntroChange, formData, exportMode = false }) => {
   // Use value (organizationalStructure field) as the primary data source
   // Fall back to building from formData if needed for backward compatibility
   const chartData = value || formData?.organizationalStructure || {
@@ -23,7 +23,7 @@ const OrgStructureField = ({ value, onChange, field, intro, onIntroChange, formD
         number={field.number}
         required={field.required}
       />
-      <OrgStructureChart data={chartData} onChange={onChange} editable />
+      <OrgStructureChart data={chartData} onChange={onChange} editable={!exportMode} />
     </div>
   );
 };

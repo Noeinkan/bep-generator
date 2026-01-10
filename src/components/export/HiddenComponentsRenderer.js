@@ -1,5 +1,6 @@
 import React from 'react';
 import OrgStructureField from '../forms/specialized/OrgStructureField';
+import OrgStructureDataTable from '../forms/specialized/OrgStructureDataTable';
 import CDEDiagramBuilderV2 from '../forms/diagrams/diagram-components/CDEDiagramBuilder';
 import VolumeStrategyMindmap from '../forms/diagrams/diagram-components/VolumeStrategyMindmap';
 import FolderStructureDiagram from '../forms/diagrams/diagram-components/FolderStructureDiagram';
@@ -42,6 +43,19 @@ const HiddenComponentsRenderer = ({ formData, bepType }) => {
             value={formData.organizationalStructure}
             onChange={noop}
             formData={formData}
+            exportMode={true}
+          />
+        </div>
+      )}
+
+      {/* Lead Appointed Parties Table (Section 3.2) - Auto-populated from Org Structure */}
+      {formData.organizationalStructure && (
+        <div data-field-name="leadAppointedPartiesTable" data-component-type="orgstructure-data-table" style={{ marginBottom: '50px' }}>
+          <OrgStructureDataTable
+            field={{ name: 'leadAppointedPartiesTable', label: 'Lead Appointed Parties and Information Managers', readOnly: true }}
+            value={formData.leadAppointedPartiesTable}
+            formData={formData}
+            exportMode={true}
           />
         </div>
       )}
