@@ -2,6 +2,7 @@ import OrgStructureField from '../specialized/OrgStructureField';
 import OrgStructureDataTable from '../specialized/OrgStructureDataTable';
 import NamingConventionBuilder from '../custom/NamingConventionBuilder';
 import FederationStrategyBuilder from '../custom/FederationStrategyBuilder';
+import CDEPlatformEcosystem from '../custom/CDEPlatformEcosystem';
 // ...existing code...
 import React, { useState } from 'react';
 import CONFIG from '../../../config/bepConfig';
@@ -10,7 +11,6 @@ import IntroTableField from './IntroTableField';
 import FieldHeader from './FieldHeader';
 import CheckboxGroup from './CheckboxGroup';
 import FolderStructureDiagram from '../diagrams/diagram-components/FolderStructureDiagram';
-import CDEDiagramBuilderV2 from '../diagrams/diagram-components/CDEDiagramBuilder';
 import VolumeStrategyMindmap from '../diagrams/diagram-components/VolumeStrategyMindmap';
 import TipTapEditor from '../editors/TipTapEditor';
 import TimelineInput from '../specialized/TimelineInput';
@@ -137,7 +137,7 @@ const InputField = React.memo(({ field, value, onChange, error, formData = {} })
     case 'cdeDiagram':
       return (
         <div data-field-name={name} data-component-type="cdeDiagram">
-          <CDEDiagramBuilderV2
+          <CDEPlatformEcosystem
             field={field}
             value={value}
             onChange={onChange}

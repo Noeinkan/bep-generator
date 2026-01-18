@@ -1,7 +1,7 @@
 import React from 'react';
 import OrgStructureField from '../forms/specialized/OrgStructureField';
 import OrgStructureDataTable from '../forms/specialized/OrgStructureDataTable';
-import CDEDiagramBuilderV2 from '../forms/diagrams/diagram-components/CDEDiagramBuilder';
+import CDEPlatformEcosystem from '../forms/custom/CDEPlatformEcosystem';
 import VolumeStrategyMindmap from '../forms/diagrams/diagram-components/VolumeStrategyMindmap';
 import FolderStructureDiagram from '../forms/diagrams/diagram-components/FolderStructureDiagram';
 import NamingConventionBuilder from '../forms/custom/NamingConventionBuilder';
@@ -48,10 +48,11 @@ const BepPreviewRenderer = ({ formData, bepType, tidpData = [], midpData = [] })
       case 'cdeDiagram':
         return (
           <div className="my-6 p-6 bg-white rounded-lg border border-gray-200" data-field-name={field.name} data-component-type="cdeDiagram">
-            <CDEDiagramBuilderV2
+            <CDEPlatformEcosystem
               field={field}
               value={value}
               onChange={noop}
+              exportMode={true}
             />
           </div>
         );

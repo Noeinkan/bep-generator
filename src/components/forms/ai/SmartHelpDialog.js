@@ -222,7 +222,7 @@ const SmartHelpDialog = ({
       if (improveOptions.concise) instructions.push('make more concise');
 
       const prompt = instructions.length > 0
-        ? `Improve the following text by: ${instructions.join(', ')}.\n\nText: ${currentContent}`
+        ? `Rewrite the following text to ${instructions.join(', ')}. Output ONLY the improved text without any introduction, explanation, or commentary.\n\nText to improve:\n${currentContent}`
         : currentContent;
 
       const response = await axios.post('http://localhost:3001/api/ai/suggest', {

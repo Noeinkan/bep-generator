@@ -28,9 +28,13 @@ const COMMERCIAL_OFFICE_TEMPLATE = {
     ]
   },
   keyContacts: [
-    { 'Role': 'Project Director', 'Name': 'John Smith', 'Company': 'Smith & Associates Architects Ltd.', 'Contact Details': 'j.smith@smithassociates.com | +44 20 1234 5678' },
-    { 'Role': 'BIM Manager', 'Name': 'Sarah Johnson', 'Company': 'Smith & Associates Architects Ltd.', 'Contact Details': 's.johnson@smithassociates.com | +44 20 1234 5679' },
-    { 'Role': 'Client Representative', 'Name': 'David Brown', 'Company': 'ABC Development Corporation', 'Contact Details': 'd.brown@abcdev.com | +44 20 9876 5432' }
+    { 'Role': 'Project Director', 'Name': 'John Smith', 'Company': 'Smith & Associates Architects Ltd.', 'Email': 'j.smith@smithassociates.com', 'Phone Number': '+44 20 1234 5678' },
+    { 'Role': 'BIM Manager', 'Name': 'Sarah Johnson', 'Company': 'Smith & Associates Architects Ltd.', 'Email': 's.johnson@smithassociates.com', 'Phone Number': '+44 20 1234 5679' },
+    { 'Role': 'Client Representative', 'Name': 'David Brown', 'Company': 'ABC Development Corporation', 'Email': 'd.brown@abcdev.com', 'Phone Number': '+44 20 9876 5432' },
+    { 'Role': 'Information Manager', 'Name': 'Sarah Johnson', 'Company': 'Smith & Associates Architects Ltd.', 'Email': 's.johnson@smithassociates.com', 'Phone Number': '+44 20 1234 5679' },
+    { 'Role': 'Lead Architect', 'Name': 'Emma Davis', 'Company': 'Smith & Associates Architects Ltd.', 'Email': 'e.davis@smithassociates.com', 'Phone Number': '+44 20 1234 5680' },
+    { 'Role': 'Structural Lead', 'Name': 'Robert Chen', 'Company': 'Engineering Excellence Ltd.', 'Email': 'r.chen@engexcel.com', 'Phone Number': '+44 20 2345 6789' },
+    { 'Role': 'MEP Lead', 'Name': 'Lisa Rodriguez', 'Company': 'Advanced Systems Group', 'Email': 'l.rodriguez@asg.com', 'Phone Number': '+44 20 3456 7890' }
   ],
   valueProposition: 'Our BIM approach will deliver 15% reduction in construction costs through early clash detection, 25% faster design coordination, and comprehensive lifecycle cost analysis enabling informed material selections. The digital twin will provide 30% operational cost savings through predictive maintenance and space optimization, while the structured data handover ensures seamless facilities management integration.',
 
@@ -83,6 +87,23 @@ const COMMERCIAL_OFFICE_TEMPLATE = {
     { 'Role/Service': 'MEP Services', 'Company Name': 'Advanced Systems Group', 'Certification': 'ISO 19650 certified', 'Contact': 'info@advancedsystems.com' },
     { 'Role/Service': 'Curtain Wall', 'Company Name': 'Specialist Facades Ltd.', 'Certification': 'BIM Level 2 compliant', 'Contact': 'projects@specialistfacades.com' },
     { 'Role/Service': 'Landscaping', 'Company Name': 'Green Spaces Design', 'Certification': 'Autodesk certified', 'Contact': 'design@greenspaces.com' }
+  ],
+  trackRecordProjects: [
+    { 'Project Name': 'Tech Innovation Hub', 'Value': '£25M', 'Completion Date': 'March 2023', 'Project Type': 'Commercial Office', 'Our Role': 'Lead Design Consultant', 'Key BIM Achievements': 'Zero clashes at construction, 30% RFI reduction, BREEAM Excellent achieved' },
+    { 'Project Name': 'Riverside Commercial Centre', 'Value': '£18M', 'Completion Date': 'August 2022', 'Project Type': 'Mixed Use', 'Our Role': 'BIM Coordinator', 'Key BIM Achievements': '4D sequencing reduced programme by 8 weeks, digital twin handover' },
+    { 'Project Name': 'Metropolitan Tower Refurbishment', 'Value': '£12M', 'Completion Date': 'December 2021', 'Project Type': 'Renovation/Retrofit', 'Our Role': 'Design Lead', 'Key BIM Achievements': 'Scan-to-BIM for existing conditions, clash-free MEP coordination' },
+    { 'Project Name': 'University Research Building', 'Value': '£35M', 'Completion Date': 'June 2021', 'Project Type': 'Education', 'Our Role': 'Lead Appointed Party', 'Key BIM Achievements': 'Full COBie handover, integrated FM systems, 5D cost tracking' },
+    { 'Project Name': 'Corporate Headquarters Phase 1', 'Value': '£42M', 'Completion Date': 'November 2020', 'Project Type': 'Commercial Building', 'Our Role': 'BIM Manager', 'Key BIM Achievements': 'First ISO 19650-certified project, established company BIM standards' }
+  ],
+  eirComplianceMatrix: [
+    { 'EIR Requirement': 'ISO 19650-2:2018 Compliance', 'Our Proposed Response': 'Full compliance with all clauses; certified Information Manager leads delivery', 'Evidence/Experience': 'ISO 19650 Lead certification; 5+ projects delivered to ISO 19650', 'BEP Section Reference': 'Section 1, 3, 6' },
+    { 'EIR Requirement': 'Federated Model Delivery', 'Our Proposed Response': 'Weekly federation using Navisworks with automated clash detection', 'Evidence/Experience': 'Tech Hub project: zero construction clashes', 'BEP Section Reference': 'Section 9.7' },
+    { 'EIR Requirement': 'COBie Data at Handover', 'Our Proposed Response': 'Progressive COBie population with milestone validation', 'Evidence/Experience': 'University Research Building: full COBie handover accepted first time', 'BEP Section Reference': 'Section 5, 14' },
+    { 'EIR Requirement': 'CDE Implementation', 'Our Proposed Response': 'BIM 360/Autodesk Construction Cloud with ISO 19650 workflows', 'Evidence/Experience': '8+ projects using cloud CDE platforms', 'BEP Section Reference': 'Section 7' },
+    { 'EIR Requirement': 'LOD 350 for Construction', 'Our Proposed Response': 'Staged LOD progression with quality gates at each milestone', 'Evidence/Experience': 'Established LOD protocols; Solibri validation at each stage', 'BEP Section Reference': 'Section 5' },
+    { 'EIR Requirement': 'IFC 4 Exchange', 'Our Proposed Response': 'Native authoring with validated IFC 4 exports; weekly testing', 'Evidence/Experience': 'Proven IFC workflows; buildingSMART certified validators', 'BEP Section Reference': 'Section 8' },
+    { 'EIR Requirement': '4D Construction Sequencing', 'Our Proposed Response': 'Synchro Pro integration with contractor programme', 'Evidence/Experience': 'Riverside Centre: 8-week programme reduction through 4D', 'BEP Section Reference': 'Section 4' },
+    { 'EIR Requirement': 'Digital Twin Handover', 'Our Proposed Response': 'Progressive digital twin development with IoT integration framework', 'Evidence/Experience': 'Tech Hub digital twin operational since 2023', 'BEP Section Reference': 'Section 4, 6' }
   ],
   proposedBimGoals: 'We propose to implement a collaborative BIM workflow that will improve design coordination by 60%, reduce construction conflicts by 90%, optimize project delivery timelines by 20%, and establish a comprehensive digital asset for facility management handover.',
   proposedObjectives: 'Our proposed objectives include achieving zero design conflicts at construction stage, reducing RFIs by 40%, improving construction efficiency by 25%, and delivering comprehensive FM data for operations.',
@@ -304,11 +325,18 @@ All resources will be tested for collaborative production capability before full
     ]
   },
   taskTeamsBreakdown: [
-    { 'Task Team': 'Architecture', 'Leader': 'Emma Davis (Smith & Associates)', 'Members': '6 architects, 2 BIM specialists, 1 visualization expert', 'Responsibilities': 'Design development, spatial coordination, building envelope design, interior layouts, accessibility compliance, planning submission drawings, and architectural specification preparation' },
-    { 'Task Team': 'Structural Engineering', 'Leader': 'Robert Chen (Engineering Excellence)', 'Members': '4 structural engineers, 1 BIM coordinator, 1 analysis specialist', 'Responsibilities': 'Structural design and analysis, foundation design, steel/concrete detailing, connection design, loading calculations, construction sequence planning, and structural model coordination' },
-    { 'Task Team': 'MEP Engineering', 'Leader': 'Lisa Rodriguez (Advanced Systems)', 'Members': '5 MEP engineers, 2 BIM modelers, 1 sustainability engineer', 'Responsibilities': 'HVAC system design, electrical distribution, plumbing design, fire protection systems, building automation integration, energy modeling, and MEP coordination with architecture' },
-    { 'Task Team': 'Quantity Surveying', 'Leader': 'David Kumar (Cost Management Partners)', 'Members': '2 quantity surveyors, 1 cost planner, 1 data analyst', 'Responsibilities': 'Cost planning and control, quantity extraction from BIM models, value engineering analysis, tender documentation, contract administration, and lifecycle cost assessment' },
-    { 'Task Team': 'Information Management', 'Leader': 'Sarah Johnson (BIM Manager)', 'Members': '2 information coordinators, 1 CDE administrator, 1 quality controller', 'Responsibilities': 'CDE management, model federation, quality assurance, standards compliance, information delivery coordination, and client liaison for information requirements' }
+    { 'Task Team': 'Architecture', 'Discipline': 'Architecture', 'Leader': 'Emma Davis', 'Leader Contact': 'e.davis@smithassociates.com', 'Company': 'Smith & Associates Architects Ltd.' },
+    { 'Task Team': 'Structural Engineering', 'Discipline': 'Structural', 'Leader': 'Robert Chen', 'Leader Contact': 'r.chen@engexcel.com', 'Company': 'Engineering Excellence Ltd.' },
+    { 'Task Team': 'MEP Engineering', 'Discipline': 'MEP', 'Leader': 'Lisa Rodriguez', 'Leader Contact': 'l.rodriguez@asg.com', 'Company': 'Advanced Systems Group' },
+    { 'Task Team': 'Quantity Surveying', 'Discipline': 'Cost Management', 'Leader': 'David Kumar', 'Leader Contact': 'd.kumar@cmp.com', 'Company': 'Cost Management Partners' },
+    { 'Task Team': 'Facade Engineering', 'Discipline': 'Facades', 'Leader': 'David Wilson', 'Leader Contact': 'd.wilson@cwe.com', 'Company': 'Curtain Wall Experts Ltd.' }
+  ],
+  confirmedTrackRecord: [
+    { 'Project Name': 'Tech Innovation Hub', 'Value': '£25M', 'Completion Date': 'March 2023', 'Project Type': 'Commercial Office', 'Our Role': 'Lead Design Consultant', 'Key BIM Achievements': 'Zero clashes at construction, 30% RFI reduction, BREEAM Excellent achieved' },
+    { 'Project Name': 'Riverside Commercial Centre', 'Value': '£18M', 'Completion Date': 'August 2022', 'Project Type': 'Mixed Use', 'Our Role': 'BIM Coordinator', 'Key BIM Achievements': '4D sequencing reduced programme by 8 weeks, digital twin handover' },
+    { 'Project Name': 'Metropolitan Tower Refurbishment', 'Value': '£12M', 'Completion Date': 'December 2021', 'Project Type': 'Renovation/Retrofit', 'Our Role': 'Design Lead', 'Key BIM Achievements': 'Scan-to-BIM for existing conditions, clash-free MEP coordination' },
+    { 'Project Name': 'University Research Building', 'Value': '£35M', 'Completion Date': 'June 2021', 'Project Type': 'Education', 'Our Role': 'Lead Appointed Party', 'Key BIM Achievements': 'Full COBie handover, integrated FM systems, 5D cost tracking' },
+    { 'Project Name': 'Corporate Headquarters Phase 1', 'Value': '£42M', 'Completion Date': 'November 2020', 'Project Type': 'Commercial Building', 'Our Role': 'BIM Manager', 'Key BIM Achievements': 'First ISO 19650-certified project, established company BIM standards' }
   ],
   confirmedBimGoals: 'The confirmed BIM goals include implementing collaborative workflows to achieve improved design coordination, reduced construction conflicts, optimized delivery timelines, and comprehensive digital asset creation for facility management.',
   implementationObjectives: 'Implementation objectives include zero design conflicts at construction, 40% reduction in RFIs, improved construction efficiency, and delivery of comprehensive FM data for operations.',
@@ -350,6 +378,33 @@ All resources will be tested for collaborative production capability before full
     { 'Stage/Phase': 'Stage 6', 'Milestone Description': 'Handover', 'Deliverables': 'As-built models and FM data', 'Due Date': 'Month 36' }
   ],
   tidpRequirements: 'Each task team must produce TIDPs detailing their information deliverables, responsibilities, quality requirements, and delivery schedules in alignment with project milestones.',
+  tidpDescription: 'TIDPs define discipline-specific delivery requirements aligned with project milestones. Each TIDP includes: information container definitions, production responsibilities, delivery schedules, quality checking procedures, and approval workflows. TIDPs are maintained by Task Team Leaders and reviewed monthly by the Information Manager to ensure alignment with the MIDP and project programme.',
+  informationDeliverablesMatrix: {
+    columns: ['Deliverable', 'Responsible Party', 'Due Date', 'Format', 'Status'],
+    data: [
+      { 'Deliverable': 'Architectural Design Model - Stage 2', 'Responsible Party': 'Smith & Associates Architects', 'Due Date': 'Month 6', 'Format': 'RVT, IFC 4', 'Status': 'Scheduled' },
+      { 'Deliverable': 'Structural Analysis Model - Stage 2', 'Responsible Party': 'Engineering Excellence Ltd.', 'Due Date': 'Month 6', 'Format': 'RVT, IFC 4', 'Status': 'Scheduled' },
+      { 'Deliverable': 'MEP Coordination Model - Stage 3', 'Responsible Party': 'Advanced Systems Group', 'Due Date': 'Month 12', 'Format': 'RVT, IFC 4', 'Status': 'Scheduled' },
+      { 'Deliverable': 'Federated Coordination Model', 'Responsible Party': 'BIM Coordinator', 'Due Date': 'Weekly', 'Format': 'NWD', 'Status': 'Ongoing' },
+      { 'Deliverable': 'Clash Detection Reports', 'Responsible Party': 'BIM Coordinator', 'Due Date': 'Bi-weekly', 'Format': 'BCF, PDF', 'Status': 'Ongoing' },
+      { 'Deliverable': 'COBie Data Extract - Stage 4', 'Responsible Party': 'Information Manager', 'Due Date': 'Month 18', 'Format': 'COBie, XLSX', 'Status': 'Scheduled' },
+      { 'Deliverable': 'As-Built Models - Stage 6', 'Responsible Party': 'All Disciplines', 'Due Date': 'Month 36', 'Format': 'RVT, IFC 4', 'Status': 'Scheduled' },
+      { 'Deliverable': 'Digital Twin Package', 'Responsible Party': 'Information Manager', 'Due Date': 'Month 36', 'Format': 'IFC 4, COBie, JSON', 'Status': 'Scheduled' }
+    ]
+  },
+  informationManagementMatrix: {
+    columns: ['Activity', 'Lead Appointed Party', 'Appointed Parties', 'Information Manager', 'Appointing Party'],
+    data: [
+      { 'Activity': 'Establish information requirements', 'Lead Appointed Party': 'C', 'Appointed Parties': 'I', 'Information Manager': 'R', 'Appointing Party': 'A' },
+      { 'Activity': 'Develop BEP', 'Lead Appointed Party': 'A', 'Appointed Parties': 'C', 'Information Manager': 'R', 'Appointing Party': 'I' },
+      { 'Activity': 'Establish CDE', 'Lead Appointed Party': 'A', 'Appointed Parties': 'I', 'Information Manager': 'R', 'Appointing Party': 'C' },
+      { 'Activity': 'Develop TIDPs', 'Lead Appointed Party': 'C', 'Appointed Parties': 'R', 'Information Manager': 'A', 'Appointing Party': 'I' },
+      { 'Activity': 'Produce information', 'Lead Appointed Party': 'A', 'Appointed Parties': 'R', 'Information Manager': 'C', 'Appointing Party': 'I' },
+      { 'Activity': 'Review and approve information', 'Lead Appointed Party': 'R', 'Appointed Parties': 'C', 'Information Manager': 'A', 'Appointing Party': 'I' },
+      { 'Activity': 'Coordinate information models', 'Lead Appointed Party': 'C', 'Appointed Parties': 'C', 'Information Manager': 'R', 'Appointing Party': 'I' },
+      { 'Activity': 'Submit information to client', 'Lead Appointed Party': 'A', 'Appointed Parties': 'C', 'Information Manager': 'R', 'Appointing Party': 'I' }
+    ]
+  },
   mobilisationPlan: 'Project mobilisation occurs over 4 weeks: Week 1 includes CDE setup, template development, and team onboarding; Week 2 involves standards training, tool deployment, and workflow testing; Week 3 encompasses pilot model creation, federation testing, and quality checking procedures; Week 4 includes final system validation, team competency verification, and formal project launch. All team members complete ISO 19650 certification and project-specific training before accessing the CDE and commencing information production activities.',
   teamCapabilitySummary: 'The delivery team provides comprehensive BIM capabilities across all disciplines: 15 certified BIM professionals with ISO 19650 competency, advanced modeling expertise in Revit, Tekla, and specialist analysis software, 5+ years experience delivering federated models for commercial projects £10M+, proven track record in clash detection reducing construction issues by 60%, established workflows for 4D/5D integration, and dedicated quality assurance resources ensuring deliverable compliance. Team capacity supports peak deployment of 35 specialists during technical design phases.',
   taskTeamExchange: 'Information exchange protocols establish: weekly model federation with automated clash detection reports, fortnightly design coordination meetings with federated model reviews, monthly design freeze periods for cross-disciplinary validation, standardised BCF workflows for issue resolution, real-time model access through shared CDE workspace, automated notification systems for model updates and issue assignments, and formal sign-off procedures for milestone deliverables ensuring all disciplines approve federated models before progression to next design stage.',
@@ -498,6 +553,17 @@ All resources will be tested for collaborative production capability before full
   reviewProcesses: 'Stage gate reviews at each RIBA stage, weekly coordination reviews, monthly progress reviews, and formal design freeze approvals.',
   approvalWorkflows: 'Task team lead approval, discipline coordination review, project manager authorization, and client sign-off for major milestones.',
   complianceVerification: 'Regular audits against ISO 19650 requirements, BIM standards compliance checks, and quality metrics monitoring.',
+  modelReviewAuthorisation: `Information model review and authorisation follows ISO 19650 approval protocols:
+
+1. TASK TEAM REVIEW: Model authors perform self-checking using Revit warnings cleanup, visual inspection, and parameter verification before submission. Task Team Leader validates quality before progression to Shared state.
+
+2. COORDINATION REVIEW: BIM Coordinator conducts clash detection and spatial coordination checks. BCF issues raised for identified conflicts with assigned resolution responsibilities and deadlines.
+
+3. TECHNICAL REVIEW: Discipline leads review technical content for design compliance, buildability assessment, and standards adherence. Sign-off required before milestone submission.
+
+4. INFORMATION MANAGER APPROVAL: Final authorisation for progression to Published state. Validates naming conventions, metadata completeness, and CDE compliance. Maintains audit trail of all approvals.
+
+5. CLIENT MILESTONE REVIEW: Formal client review at defined data drops. Feedback incorporated through change management process. Published status confirmed upon client acceptance.`,
   dataClassification: [
     { 'Classification Level': 'Public', 'Description': 'Information that can be freely shared with external parties', 'Examples': 'Marketing materials, project brochures, general site photos', 'Access Controls': 'No access restrictions, publicly available' },
     { 'Classification Level': 'Internal', 'Description': 'Information for internal project team use only', 'Examples': 'Design development work, meeting minutes, progress reports', 'Access Controls': 'Project team members only, authenticated access required' },
@@ -527,6 +593,29 @@ All resources will be tested for collaborative production capability before full
   monitoringProcedures: 'Monthly performance reviews, automated quality checking, delivery milestone tracking, and continuous improvement feedback loops.',
   auditTrails: 'Comprehensive logging of all CDE activities, version history tracking, approval records, and change management documentation.',
   updateProcesses: 'Quarterly BEP reviews, change request procedures, stakeholder approval for modifications, and continuous alignment with project requirements.',
+  changeManagementProcess: `CHANGE REQUEST PROCEDURE
+
+All changes to project information requirements must follow formal change management:
+
+1. CHANGE INITIATION: Any stakeholder can raise a change request via the CDE change request form, documenting proposed changes, justification, and impact assessment.
+
+2. IMPACT ASSESSMENT: Information Manager evaluates impact on BEP, delivery schedules, resource requirements, and costs within 5 working days.
+
+3. REVIEW & APPROVAL: Changes reviewed at monthly Information Management Review meeting. Critical changes escalated to Project Director for expedited review.
+
+4. IMPLEMENTATION: Approved changes documented in BEP revision log, communicated to all stakeholders, and incorporated into relevant TIDPs within 10 working days.
+
+5. VERIFICATION: Implementation verified through quality audits and stakeholder confirmation.`,
+
+  projectKpis: [
+    { 'KPI Name': 'Model Coordination Effectiveness', 'Target Value': '<5 clashes per 1000 elements', 'Measurement Method': 'Weekly Navisworks clash detection reports', 'Responsibility': 'BIM Coordinator' },
+    { 'KPI Name': 'Information Delivery Timeliness', 'Target Value': '≥95% on-time delivery', 'Measurement Method': 'MIDP milestone tracking dashboard', 'Responsibility': 'Information Manager' },
+    { 'KPI Name': 'Data Quality Compliance', 'Target Value': '≥90% first-time validation pass', 'Measurement Method': 'Solibri validation reports at data drops', 'Responsibility': 'Information Manager' },
+    { 'KPI Name': 'RFI Reduction', 'Target Value': '≥40% reduction vs baseline', 'Measurement Method': 'Monthly RFI log analysis', 'Responsibility': 'Project Manager' },
+    { 'KPI Name': 'Design Change Efficiency', 'Target Value': '≤5 working days response time', 'Measurement Method': 'Change request tracking system', 'Responsibility': 'BIM Manager' },
+    { 'KPI Name': 'CDE Adoption Rate', 'Target Value': '≥98% via CDE (not email)', 'Measurement Method': 'Monthly CDE usage analytics', 'Responsibility': 'CDE Administrator' },
+    { 'KPI Name': 'Team Competency Compliance', 'Target Value': '100% meeting requirements', 'Measurement Method': 'Quarterly competency assessments', 'Responsibility': 'Information Manager' }
+  ],
 
   // Additional shared fields
   bimGoals: 'The BIM goals for this project are to enhance design coordination through clash detection reducing RFIs by 40%, improve construction sequencing through 4D modeling resulting in 20% schedule compression, enable accurate cost forecasting through 5D integration achieving ±2% budget variance, and deliver comprehensive digital asset information for lifecycle management supporting 25% reduction in operational costs over the first 5 years.',
@@ -767,6 +856,30 @@ All resources will be tested for collaborative production capability before full
     { 'Component Type': 'HVAC Equipment', 'Required Parameters': 'Capacity, Energy Rating, Maintenance Schedule, Serial Number, Commissioning Date', 'Data Source': 'MEP Model + Equipment Schedules', 'Validation Method': 'Equipment database validation' },
     { 'Component Type': 'Lighting Fixtures', 'Required Parameters': 'Wattage, Light Output, Control System, Replacement Cycle, Warranty', 'Data Source': 'MEP Model + Lighting Schedules', 'Validation Method': 'Automated parameter checking' },
     { 'Component Type': 'Structural Elements', 'Required Parameters': 'Material Grade, Load Capacity, Fire Rating, Installation Date, Inspection Schedule', 'Data Source': 'Structural Model + Material Data', 'Validation Method': 'Structural analysis integration' }
+  ],
+  softwareVersionMatrix: [
+    { 'Software': 'Autodesk Revit', 'Version': '2024.2', 'File Formats Supported': 'RVT, RFA, RTE, IFC 4, DWG, DXF, PDF', 'Interoperability Notes': 'Primary authoring tool for all disciplines; IFC export validated with buildingSMART certification' },
+    { 'Software': 'Autodesk Navisworks Manage', 'Version': '2024.1', 'File Formats Supported': 'NWD, NWF, NWC, IFC, DWG, RVT, FBX', 'Interoperability Notes': 'Federation and clash detection; direct Revit links; BCF export for issue tracking' },
+    { 'Software': 'Solibri Model Checker', 'Version': '9.13', 'File Formats Supported': 'IFC 2x3, IFC 4, BCF 2.1, SMC', 'Interoperability Notes': 'Model validation and rule checking; IFC-only workflow; BCF issue export' },
+    { 'Software': 'Autodesk Construction Cloud', 'Version': 'Current SaaS', 'File Formats Supported': 'All common formats via web interface', 'Interoperability Notes': 'Cloud CDE platform; Revit Cloud Worksharing; Design Collaboration' },
+    { 'Software': 'Microsoft 365', 'Version': 'Current SaaS', 'File Formats Supported': 'DOCX, XLSX, PDF, SharePoint', 'Interoperability Notes': 'Document management; Teams integration; SharePoint for WIP documents' },
+    { 'Software': 'Synchro Pro', 'Version': '2024 SP1', 'File Formats Supported': 'IFC, NWD, MPP, P6 XER', 'Interoperability Notes': '4D scheduling; imports from Navisworks and P6' },
+    { 'Software': 'BIMcollab Zoom', 'Version': '8.0', 'File Formats Supported': 'IFC, BCF 2.1, BCF 3.0', 'Interoperability Notes': 'Issue management; BCF workflow; integrates with Revit and Navisworks' },
+    { 'Software': 'AutoCAD', 'Version': '2024', 'File Formats Supported': 'DWG, DXF, PDF', 'Interoperability Notes': '2D documentation; legacy drawing support; Revit DWG export compatible' }
+  ],
+  referencedDocuments: [
+    { 'Document/Standard': 'ISO 19650-1:2018', 'Version/Edition': '2018', 'Description': 'Organization and digitization of information about buildings and civil engineering works, including BIM - Part 1: Concepts and principles' },
+    { 'Document/Standard': 'ISO 19650-2:2018', 'Version/Edition': '2018', 'Description': 'Organization and digitization of information about buildings and civil engineering works, including BIM - Part 2: Delivery phase of the assets' },
+    { 'Document/Standard': 'ISO 19650-3:2020', 'Version/Edition': '2020', 'Description': 'Organization and digitization of information about buildings and civil engineering works - Part 3: Operational phase of the assets' },
+    { 'Document/Standard': 'ISO 19650-5:2020', 'Version/Edition': '2020', 'Description': 'Organization and digitization of information about buildings and civil engineering works - Part 5: Security-minded approach to information management' },
+    { 'Document/Standard': 'BS EN ISO 16739-1:2018', 'Version/Edition': '2018', 'Description': 'Industry Foundation Classes (IFC) for data sharing in the construction and facility management industries' },
+    { 'Document/Standard': 'PAS 1192-2:2013', 'Version/Edition': '2013', 'Description': 'Specification for information management for the capital/delivery phase of construction projects using BIM (superseded by ISO 19650-2 but referenced for legacy context)' },
+    { 'Document/Standard': 'UK BIM Framework', 'Version/Edition': '2021', 'Description': 'National guidance for implementing ISO 19650 in the UK construction industry' },
+    { 'Document/Standard': 'RIBA Plan of Work 2020', 'Version/Edition': '2020', 'Description': 'Project stage definitions and deliverables framework for UK construction projects' },
+    { 'Document/Standard': 'Uniclass 2015', 'Version/Edition': 'Current', 'Description': 'Unified classification system for the construction industry in the UK' },
+    { 'Document/Standard': 'COBie UK 2012', 'Version/Edition': '2012', 'Description': 'Construction Operations Building information exchange specification for asset data handover' },
+    { 'Document/Standard': 'AIA Document E203-2013', 'Version/Edition': '2013', 'Description': 'Building Information Modeling and Digital Data Exhibit (LOD framework reference)' },
+    { 'Document/Standard': 'BIM Protocol 2nd Edition', 'Version/Edition': 'CIC 2018', 'Description': 'Construction Industry Council BIM Protocol for contractual requirements' }
   ],
   fileNamingExamples: 'Comprehensive file naming examples:\n\nProject Models:\nGF-SAA-L02-ARC-001 (Greenfield-Smith Associates-Level 02-Architecture-Model 001)\nGF-JEL-SZ1-STR-002 (Greenfield-Jones Engineering-Structural Zone 1-Structure-Model 002)\nGF-TSS-MZ2-MEP-003 (Greenfield-TechServ Solutions-MEP Zone 2-Services-Model 003)\n\nDrawings:\nGF-SAA-ZZ-ARC-DR-A-1001 (General Arrangement Plans)\nGF-JEL-ZZ-STR-DR-S-2001 (Structural General Arrangement)\nGF-TSS-L03-MEP-DR-M-3001 (Level 3 Mechanical Plans)\n\nDocuments:\nGF-SAA-ZZ-ARC-SP-001 (Architectural Specification)\nGF-CMP-ZZ-QS-RP-001 (Cost Report)\nGF-ALL-ZZ-PM-MR-001 (Project Meeting Minutes)',
   exchangeWorkflow: [

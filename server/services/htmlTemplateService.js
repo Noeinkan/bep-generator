@@ -1,6 +1,12 @@
-// Since bepConfig.js is an ES6 module, we'll use dynamic import or hardcode essential data
-// For now, we'll define the essential structure here
-const CONFIG = {
+const fs = require('fs');
+const path = require('path');
+
+/**
+ * Default configuration structure
+ * Used as fallback when bepConfig.js cannot be loaded
+ * @type {Object}
+ */
+const DEFAULT_CONFIG = {
   bepTypeDefinitions: {
     'pre-appointment': {
       title: 'Pre-Appointment BEP',
@@ -14,68 +20,295 @@ const CONFIG = {
     }
   },
   steps: [],
-  formFields: {}
+  formFields: {},
+  sharedFormFields: {}
 };
 
-// Try to load CONFIG dynamically (this will work after build)
-try {
-  const configPath = require.resolve('../../src/config/bepConfig.js');
-  delete require.cache[configPath];
-  const loadedConfig = require('../../src/config/bepConfig');
-  if (loadedConfig.default) {
-    Object.assign(CONFIG, loadedConfig.default);
-  } else if (loadedConfig.CONFIG) {
-    Object.assign(CONFIG, loadedConfig.CONFIG);
-  } else {
-    Object.assign(CONFIG, loadedConfig);
+// Mutable config that gets populated
+let CONFIG = { ...DEFAULT_CONFIG };
+
+/**
+ * Attempts to load the BEP configuration from the frontend config file
+ * @returns {Object} Result object with success status and any error details
+ */
+function loadBepConfig() {
+  const result = { success: false, error: null, configPath: null };
+
+  try {
+    const configPath = require.resolve('../../src/config/bepConfig.js');
+    result.configPath = configPath;
+
+    // Clear require cache to get fresh config
+    delete require.cache[configPath];
+
+    const loadedConfig = require('../../src/config/bepConfig');
+
+    // Handle different export formats
+    let configData = null;
+    if (loadedConfig.default) {
+      configData = loadedConfig.default;
+    } else if (loadedConfig.CONFIG) {
+      configData = loadedConfig.CONFIG;
+    } else if (typeof loadedConfig === 'object' && loadedConfig !== null) {
+      configData = loadedConfig;
+    }
+
+    if (!configData) {
+      throw new Error('Config file loaded but no valid configuration object found');
+    }
+
+    // Validate essential properties
+    if (!configData.bepTypeDefinitions) {
+      console.warn('⚠️  Loaded config missing bepTypeDefinitions, using defaults');
+      configData.bepTypeDefinitions = DEFAULT_CONFIG.bepTypeDefinitions;
+    }
+
+    if (!configData.steps || !Array.isArray(configData.steps)) {
+      console.warn('⚠️  Loaded config missing steps array, using defaults');
+      configData.steps = DEFAULT_CONFIG.steps;
+    }
+
+    if (!configData.formFields || typeof configData.formFields !== 'object') {
+      console.warn('⚠️  Loaded config missing formFields, using defaults');
+      configData.formFields = DEFAULT_CONFIG.formFields;
+    }
+
+    if (!configData.sharedFormFields || typeof configData.sharedFormFields !== 'object') {
+      console.warn('⚠️  Loaded config missing sharedFormFields, using defaults');
+      configData.sharedFormFields = DEFAULT_CONFIG.sharedFormFields;
+    }
+
+    CONFIG = { ...DEFAULT_CONFIG, ...configData };
+    result.success = true;
+
+  } catch (error) {
+    result.error = {
+      message: error.message,
+      code: error.code,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    };
+
+    console.warn('⚠️  Could not load bepConfig.js, using default structure');
+    console.warn(`   Reason: ${error.message}`);
+
+    if (error.code === 'MODULE_NOT_FOUND') {
+      console.warn('   Tip: Ensure the frontend config file exists at src/config/bepConfig.js');
+    }
+
+    CONFIG = { ...DEFAULT_CONFIG };
   }
-} catch (error) {
-  console.warn('⚠️  Could not load bepConfig.js, using default structure:', error.message);
+
+  return result;
+}
+
+// Initial config load
+const configLoadResult = loadBepConfig();
+if (configLoadResult.success) {
+  console.log('✓ BEP config loaded successfully');
 }
 
 /**
  * HTML Template Service
- * Generates complete HTML for BEP PDF generation
- * Replicates the structure of BepPreviewRenderer.js with inline CSS
+ * Generates complete HTML for BEP PDF generation with support for:
+ * - Table of Contents
+ * - Watermarks (Draft, Confidential, Final)
+ * - Print-optimized styling
+ * - A4-accurate dimensions
+ *
+ * @class HtmlTemplateService
  */
 class HtmlTemplateService {
+  constructor() {
+    this._cssCache = null;
+  }
+
   /**
    * Generate complete BEP HTML document
-   * @param {Object} formData - Form data
-   * @param {string} bepType - BEP type (pre-appointment/post-appointment)
-   * @param {Array} tidpData - TIDP data
-   * @param {Array} midpData - MIDP data
-   * @param {Object} componentImages - Map of fieldName -> base64 image
+   * @param {Object} formData - Form data containing all BEP fields
+   * @param {string} bepType - BEP type ('pre-appointment' or 'post-appointment')
+   * @param {Array} tidpData - TIDP (Task Information Delivery Plan) data
+   * @param {Array} midpData - MIDP (Master Information Delivery Plan) data
+   * @param {Object} componentImages - Map of fieldName -> base64 image data
+   * @param {Object} options - Additional options
+   * @param {string} [options.watermark] - Watermark text (e.g., 'DRAFT', 'CONFIDENTIAL', 'FINAL')
+   * @param {boolean} [options.includeToc=true] - Whether to include table of contents
    * @returns {Promise<string>} Complete HTML document
    */
-  async generateBEPHTML(formData, bepType, tidpData = [], midpData = [], componentImages = {}) {
+  async generateBEPHTML(formData, bepType, tidpData = [], midpData = [], componentImages = {}, options = {}) {
+    const { watermark = null, includeToc = true } = options;
     const css = this.getInlineCSS();
-    const bodyContent = this.renderBEPContent(formData, bepType, tidpData, midpData, componentImages);
+    const sections = this.collectSections(formData, bepType, tidpData, midpData);
+    const bodyContent = this.renderBEPContent(formData, bepType, tidpData, midpData, componentImages, sections, { watermark, includeToc });
 
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BIM Execution Plan - ${formData.projectName || 'BEP'}</title>
+  <title>BIM Execution Plan - ${this.escapeHtml(formData.projectName || 'BEP')}</title>
   <style>${css}</style>
 </head>
 <body>
+  ${watermark ? this.renderWatermark(watermark) : ''}
   ${bodyContent}
 </body>
 </html>`;
   }
 
   /**
-   * Render BEP content body
+   * Render watermark element
+   * @param {string} text - Watermark text
+   * @returns {string} Watermark HTML
    */
-  renderBEPContent(formData, bepType, tidpData, midpData, componentImages) {
+  renderWatermark(text) {
+    const normalizedText = text.toUpperCase().trim();
+    let watermarkClass = 'watermark';
+
+    if (normalizedText === 'DRAFT') {
+      watermarkClass += ' watermark-draft';
+    } else if (normalizedText === 'CONFIDENTIAL') {
+      watermarkClass += ' watermark-confidential';
+    } else if (normalizedText === 'FINAL') {
+      watermarkClass += ' watermark-final';
+    }
+
+    return `<div class="${watermarkClass}">${this.escapeHtml(normalizedText)}</div>`;
+  }
+
+  /**
+   * Collect all sections for TOC generation
+   * @param {Object} formData - Form data
+   * @param {string} bepType - BEP type
+   * @param {Array} tidpData - TIDP data
+   * @param {Array} midpData - MIDP data
+   * @returns {Array} Array of section objects with number, title, and subsections
+   */
+  collectSections(formData, bepType, tidpData, midpData) {
+    const sections = [];
+    const steps = CONFIG.steps || [];
+
+    steps.forEach((step, stepIndex) => {
+      const stepConfig = this.getFormFields(bepType, stepIndex);
+      if (!stepConfig || !stepConfig.fields) return;
+
+      // Check if section has any content
+      const hasContent = stepConfig.fields.some(field => {
+        if (field.type === 'section-header') return false;
+        return this.hasRenderableValue(field, formData[field.name]);
+      });
+
+      if (!hasContent) return;
+
+      const section = {
+        number: stepConfig.number,
+        title: stepConfig.title,
+        subsections: []
+      };
+
+      // Collect subsections (field labels with content)
+      stepConfig.fields.forEach(field => {
+        if (field.type === 'section-header') return;
+        if (!this.hasRenderableValue(field, formData[field.name])) return;
+
+        if (field.number) {
+          section.subsections.push({
+            number: field.number,
+            title: field.label
+          });
+        }
+      });
+
+      sections.push(section);
+    });
+
+    // Add TIDP/MIDP section if present
+    if (tidpData.length > 0 || midpData.length > 0) {
+      const tidpSection = {
+        number: sections.length + 1,
+        title: 'Information Delivery Planning',
+        subsections: []
+      };
+
+      if (tidpData.length > 0) {
+        tidpSection.subsections.push({ number: '', title: 'Task Information Delivery Plans (TIDPs)' });
+      }
+      if (midpData.length > 0) {
+        tidpSection.subsections.push({ number: '', title: 'Master Information Delivery Plan (MIDP)' });
+      }
+
+      sections.push(tidpSection);
+    }
+
+    return sections;
+  }
+
+  /**
+   * Render Table of Contents
+   * @param {Array} sections - Array of section objects
+   * @returns {string} TOC HTML
+   */
+  renderTableOfContents(sections) {
+    if (!sections || sections.length === 0) return '';
+
+    let html = `
+      <div class="toc">
+        <h2 class="toc-title">Table of Contents</h2>
+        <ul class="toc-list">
+    `;
+
+    sections.forEach((section) => {
+      html += `
+        <li class="toc-item">
+          <span class="toc-item-number">${section.number}.</span>
+          <span class="toc-item-title">${this.escapeHtml(section.title)}</span>
+          <span class="toc-item-dots"></span>
+        </li>
+      `;
+
+      // Add subsections
+      section.subsections.forEach(sub => {
+        html += `
+          <li class="toc-item toc-item-subsection">
+            <span class="toc-item-number">${sub.number}</span>
+            <span class="toc-item-title">${this.escapeHtml(sub.title)}</span>
+            <span class="toc-item-dots"></span>
+          </li>
+        `;
+      });
+    });
+
+    html += `
+        </ul>
+      </div>
+    `;
+
+    return html;
+  }
+
+  /**
+   * Render BEP content body
+   * @param {Object} formData - Form data
+   * @param {string} bepType - BEP type
+   * @param {Array} tidpData - TIDP data
+   * @param {Array} midpData - MIDP data
+   * @param {Object} componentImages - Component images map
+   * @param {Array} sections - Collected sections for TOC
+   * @param {Object} options - Render options
+   * @returns {string} Complete body HTML
+   */
+  renderBEPContent(formData, bepType, tidpData, midpData, componentImages, sections, options = {}) {
+    const { includeToc } = options;
     const bepConfig = CONFIG.bepTypeDefinitions?.[bepType] || CONFIG.bepTypeDefinitions['pre-appointment'];
 
     let html = '<div class="container">';
 
     // Cover page
     html += this.renderCoverPage(formData, bepType, bepConfig);
+
+    // Table of Contents
+    if (includeToc && sections.length > 0) {
+      html += this.renderTableOfContents(sections);
+    }
 
     // Content sections
     html += this.renderContentSections(formData, bepType, componentImages);
@@ -92,6 +325,10 @@ class HtmlTemplateService {
 
   /**
    * Render cover page
+   * @param {Object} formData - Form data
+   * @param {string} bepType - BEP type
+   * @param {Object} bepConfig - BEP configuration
+   * @returns {string} Cover page HTML
    */
   renderCoverPage(formData, bepType, bepConfig) {
     const projectName = this.escapeHtml(formData.projectName || 'Not specified');
@@ -117,6 +354,10 @@ class HtmlTemplateService {
 
   /**
    * Render content sections
+   * @param {Object} formData - Form data
+   * @param {string} bepType - BEP type
+   * @param {Object} componentImages - Component images map
+   * @returns {string} Content sections HTML
    */
   renderContentSections(formData, bepType, componentImages) {
     let html = '';
@@ -125,6 +366,14 @@ class HtmlTemplateService {
     steps.forEach((step, stepIndex) => {
       const stepConfig = this.getFormFields(bepType, stepIndex);
       if (!stepConfig || !stepConfig.fields) return;
+
+      // Check if section has any content
+      const hasContent = stepConfig.fields.some(field => {
+        if (field.type === 'section-header') return false;
+        return this.hasRenderableValue(field, formData[field.name]);
+      });
+
+      if (!hasContent) return;
 
       // Section header
       html += `
@@ -140,7 +389,7 @@ class HtmlTemplateService {
         if (field.type === 'section-header') return;
 
         const value = formData[field.name];
-        if (!value) return;
+        if (!this.hasRenderableValue(field, value)) return;
 
         html += `
           <div class="field-group">
@@ -161,6 +410,10 @@ class HtmlTemplateService {
 
   /**
    * Render field value based on type
+   * @param {Object} field - Field configuration
+   * @param {*} value - Field value
+   * @param {Object} componentImages - Component images map
+   * @returns {string} Field value HTML
    */
   renderFieldValue(field, value, componentImages) {
     // Custom visual components - use embedded screenshots
@@ -190,7 +443,46 @@ class HtmlTemplateService {
   }
 
   /**
+   * Determine whether a field has a value that should render in the PDF
+   * @param {Object} field - Field configuration
+   * @param {*} value - Field value
+   * @returns {boolean} True when value should be rendered
+   */
+  hasRenderableValue(field, value) {
+    if (value === null || value === undefined) return false;
+
+    if (typeof value === 'string') {
+      return value.trim().length > 0;
+    }
+
+    if (typeof value === 'number') {
+      return !Number.isNaN(value);
+    }
+
+    if (typeof value === 'boolean') {
+      return true;
+    }
+
+    if (Array.isArray(value)) {
+      return value.length > 0;
+    }
+
+    if (typeof value === 'object') {
+      if (field?.type === 'table') {
+        return Array.isArray(value) && value.length > 0;
+      }
+
+      return Object.keys(value).length > 0;
+    }
+
+    return Boolean(value);
+  }
+
+  /**
    * Render component screenshot image
+   * @param {string} fieldName - Field name
+   * @param {Object} componentImages - Component images map
+   * @returns {string} Component image HTML
    */
   renderComponentImage(fieldName, componentImages) {
     const imageData = componentImages[fieldName];
@@ -206,17 +498,25 @@ class HtmlTemplateService {
   }
 
   /**
-   * Render table
+   * Render table with improved column handling
+   * @param {Object} field - Field configuration
+   * @param {Array} rows - Table rows
+   * @returns {string} Table HTML
    */
   renderTable(field, rows) {
     if (!Array.isArray(rows) || rows.length === 0) return '';
 
     const columns = field.columns || [];
+    const columnCount = columns.length;
+
+    // Calculate column widths based on count
+    const columnWidth = columnCount > 0 ? Math.floor(100 / columnCount) : 100;
 
     let html = '<div class="table-wrapper"><table class="data-table"><thead><tr>';
 
-    columns.forEach(col => {
-      html += `<th>${this.escapeHtml(col)}</th>`;
+    columns.forEach((col, idx) => {
+      const width = field.columnWidths?.[idx] || `${columnWidth}%`;
+      html += `<th style="width: ${width}">${this.escapeHtml(col)}</th>`;
     });
 
     html += '</tr></thead><tbody>';
@@ -224,7 +524,8 @@ class HtmlTemplateService {
     rows.forEach(row => {
       html += '<tr>';
       columns.forEach(col => {
-        html += `<td>${this.escapeHtml(row[col] || '-')}</td>`;
+        const cellValue = row[col];
+        html += `<td>${this.escapeHtml(cellValue || '-')}</td>`;
       });
       html += '</tr>';
     });
@@ -236,6 +537,8 @@ class HtmlTemplateService {
 
   /**
    * Render checkbox list
+   * @param {Array} items - Checked items
+   * @returns {string} Checkbox list HTML
    */
   renderCheckboxList(items) {
     if (!Array.isArray(items) || items.length === 0) return '';
@@ -252,14 +555,19 @@ class HtmlTemplateService {
   }
 
   /**
-   * Render textarea
+   * Render textarea content
+   * @param {string} value - Text content
+   * @returns {string} Textarea HTML
    */
   renderTextarea(value) {
     return `<p class="textarea-content">${this.escapeHtml(value).replace(/\n/g, '<br>')}</p>`;
   }
 
   /**
-   * Render introTable
+   * Render introTable field (intro text + table)
+   * @param {Object} field - Field configuration
+   * @param {Object} value - Field value with intro and rows
+   * @returns {string} IntroTable HTML
    */
   renderIntroTable(field, value) {
     let html = '';
@@ -270,11 +578,14 @@ class HtmlTemplateService {
 
     if (value.rows && Array.isArray(value.rows) && value.rows.length > 0) {
       const columns = field.tableColumns || [];
+      const columnCount = columns.length;
+      const columnWidth = columnCount > 0 ? Math.floor(100 / columnCount) : 100;
 
       html += '<div class="table-wrapper"><table class="data-table"><thead><tr>';
 
-      columns.forEach(col => {
-        html += `<th>${this.escapeHtml(col)}</th>`;
+      columns.forEach((col, idx) => {
+        const width = field.columnWidths?.[idx] || `${columnWidth}%`;
+        html += `<th style="width: ${width}">${this.escapeHtml(col)}</th>`;
       });
 
       html += '</tr></thead><tbody>';
@@ -294,7 +605,9 @@ class HtmlTemplateService {
   }
 
   /**
-   * Render simple field
+   * Render simple field value
+   * @param {*} value - Field value
+   * @returns {string} Simple field HTML
    */
   renderSimpleField(value) {
     return `<p class="field-value">${this.escapeHtml(String(value))}</p>`;
@@ -302,6 +615,9 @@ class HtmlTemplateService {
 
   /**
    * Render TIDP/MIDP sections
+   * @param {Array} tidpData - TIDP data
+   * @param {Array} midpData - MIDP data
+   * @returns {string} TIDP/MIDP sections HTML
    */
   renderTIDPMIDPSections(tidpData, midpData) {
     let html = `
@@ -320,10 +636,10 @@ class HtmlTemplateService {
           <table class="data-table tidp-table">
             <thead>
               <tr>
-                <th>Task Team</th>
-                <th>Discipline</th>
-                <th>Team Leader</th>
-                <th>Reference</th>
+                <th style="width: 30%">Task Team</th>
+                <th style="width: 25%">Discipline</th>
+                <th style="width: 25%">Team Leader</th>
+                <th style="width: 20%">Reference</th>
               </tr>
             </thead>
             <tbody>
@@ -356,9 +672,9 @@ class HtmlTemplateService {
           <table class="data-table midp-table">
             <thead>
               <tr>
-                <th>MIDP Reference</th>
-                <th>Version</th>
-                <th>Status</th>
+                <th style="width: 40%">MIDP Reference</th>
+                <th style="width: 30%">Version</th>
+                <th style="width: 30%">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -388,21 +704,35 @@ class HtmlTemplateService {
 
   /**
    * Get form fields for step (mirrors frontend CONFIG.getFormFields)
+   * @param {string} bepType - BEP type
+   * @param {number} stepIndex - Step index
+   * @returns {Object|null} Form fields configuration or null if not found
    */
   getFormFields(bepType, stepIndex) {
     try {
-      // Try to access formFields from CONFIG
       const formFields = CONFIG.formFields || {};
+      const sharedFormFields = CONFIG.sharedFormFields || {};
       const typeFields = formFields[bepType] || {};
-      return typeFields[stepIndex];
+
+      if (stepIndex <= 2 && typeFields[stepIndex]) {
+        return typeFields[stepIndex];
+      }
+
+      if (stepIndex >= 3 && sharedFormFields[stepIndex]) {
+        return sharedFormFields[stepIndex];
+      }
+
+      return null;
     } catch (error) {
-      console.error('Error getting form fields:', error);
+      console.error('Error getting form fields:', error.message);
       return null;
     }
   }
 
   /**
    * Escape HTML to prevent XSS
+   * @param {*} text - Text to escape
+   * @returns {string} Escaped HTML string
    */
   escapeHtml(text) {
     if (text === null || text === undefined) return '';
@@ -420,9 +750,38 @@ class HtmlTemplateService {
   }
 
   /**
-   * Get inline CSS (Tailwind-like styles + print CSS)
+   * Load CSS from external file with caching
+   * @returns {string} CSS content
+   */
+  loadCSSFromFile() {
+    if (this._cssCache) {
+      return this._cssCache;
+    }
+
+    try {
+      const cssPath = path.join(__dirname, 'templates', 'bepStyles.css');
+      this._cssCache = fs.readFileSync(cssPath, 'utf8');
+      return this._cssCache;
+    } catch (error) {
+      console.warn('⚠️  Could not load external CSS file, using inline fallback');
+      console.warn(`   Reason: ${error.message}`);
+      return this.getInlineCSSFallback();
+    }
+  }
+
+  /**
+   * Get inline CSS (loads from external file with fallback)
+   * @returns {string} CSS content
    */
   getInlineCSS() {
+    return this.loadCSSFromFile();
+  }
+
+  /**
+   * Fallback inline CSS if external file fails to load
+   * @returns {string} Fallback CSS content
+   */
+  getInlineCSSFallback() {
     return `
       * {
         box-sizing: border-box;
@@ -432,19 +791,18 @@ class HtmlTemplateService {
 
       body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        font-size: 14px;
+        font-size: 11pt;
         line-height: 1.6;
         color: #1f2937;
         background-color: #ffffff;
       }
 
       .container {
-        max-width: 1200px;
+        max-width: 170mm;
         margin: 0 auto;
         background-color: #ffffff;
       }
 
-      /* Cover Page */
       .cover-page {
         margin-bottom: 60px;
         padding: 60px 40px;
@@ -455,18 +813,18 @@ class HtmlTemplateService {
       }
 
       .cover-title {
-        font-size: 48px;
+        font-size: 36pt;
         font-weight: 700;
         margin-bottom: 20px;
       }
 
       .cover-subtitle {
-        font-size: 28px;
+        font-size: 18pt;
         margin-bottom: 10px;
       }
 
       .cover-iso {
-        font-size: 16px;
+        font-size: 12pt;
         font-style: italic;
         opacity: 0.9;
         margin-bottom: 40px;
@@ -478,20 +836,75 @@ class HtmlTemplateService {
       }
 
       .cover-info-item {
-        font-size: 20px;
+        font-size: 14pt;
         margin-bottom: 8px;
       }
 
       .cover-info-date {
-        font-size: 14px;
+        font-size: 10pt;
         margin-top: 20px;
         opacity: 0.75;
       }
 
-      /* Sections */
+      .watermark {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-45deg);
+        font-size: 72pt;
+        font-weight: 700;
+        color: rgba(0, 0, 0, 0.06);
+        pointer-events: none;
+        z-index: 1000;
+        white-space: nowrap;
+        text-transform: uppercase;
+      }
+
+      .toc {
+        page-break-after: always;
+        padding: 40px 0;
+      }
+
+      .toc-title {
+        font-size: 24pt;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 30px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #2563eb;
+      }
+
+      .toc-list {
+        list-style: none;
+      }
+
+      .toc-item {
+        display: flex;
+        align-items: baseline;
+        margin-bottom: 12px;
+        font-size: 12pt;
+      }
+
+      .toc-item-number {
+        font-weight: 600;
+        color: #2563eb;
+        min-width: 40px;
+      }
+
+      .toc-item-title {
+        flex: 1;
+        color: #1f2937;
+      }
+
+      .toc-item-dots {
+        flex: 1;
+        border-bottom: 1px dotted #d1d5db;
+        margin: 0 8px;
+        min-width: 20px;
+      }
+
       .section {
         margin-bottom: 50px;
-        /* Allow sections to break across pages */
       }
 
       .section-header {
@@ -502,12 +915,8 @@ class HtmlTemplateService {
         page-break-inside: avoid;
       }
 
-      .section-header.tidp-header {
-        border-bottom-color: #d97706;
-      }
-
       .section-title {
-        font-size: 32px;
+        font-size: 18pt;
         font-weight: 700;
         color: #111827;
       }
@@ -516,15 +925,13 @@ class HtmlTemplateService {
         padding-left: 20px;
       }
 
-      /* Fields */
       .field-group {
         margin-bottom: 30px;
-        /* Allow field groups to break if needed, but prefer to keep together */
         page-break-inside: auto;
       }
 
       .field-label {
-        font-size: 20px;
+        font-size: 13pt;
         font-weight: 600;
         color: #374151;
         margin-bottom: 10px;
@@ -536,17 +943,9 @@ class HtmlTemplateService {
         color: #4b5563;
       }
 
-      .subsection-title {
-        font-size: 20px;
-        font-weight: 600;
-        color: #374151;
-        margin: 25px 0 15px 0;
-      }
-
-      /* Tables */
       .table-wrapper {
         margin: 20px 0;
-        overflow-x: auto;
+        overflow-x: visible;
       }
 
       .data-table {
@@ -554,6 +953,7 @@ class HtmlTemplateService {
         border-collapse: collapse;
         border: 1px solid #d1d5db;
         page-break-inside: auto;
+        table-layout: fixed;
       }
 
       .data-table thead {
@@ -566,45 +966,57 @@ class HtmlTemplateService {
         page-break-after: auto;
       }
 
-      .data-table th {
-        padding: 12px 16px;
+      .data-table th,
+      .data-table td {
+        padding: 10px 12px;
         text-align: left;
-        font-size: 12px;
+        border-bottom: 1px solid #d1d5db;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+        vertical-align: top;
+      }
+
+      .data-table th {
+        font-size: 9pt;
         font-weight: 600;
         color: #374151;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        border-bottom: 1px solid #d1d5db;
       }
 
       .data-table td {
-        padding: 12px 16px;
-        font-size: 14px;
+        font-size: 10pt;
         color: #111827;
-        border-bottom: 1px solid #e5e7eb;
       }
 
-      .data-table tbody tr:hover {
-        background-color: #f9fafb;
+      .component-image {
+        margin: 30px 0;
+        text-align: center;
+        page-break-inside: avoid;
       }
 
-      .data-table tbody tr:nth-child(even) {
-        background-color: #fafafa;
+      .component-image img {
+        max-width: 100%;
+        max-height: 200mm;
+        width: auto;
+        height: auto;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
       }
 
-      .tidp-table thead {
-        background-color: #fef3c7;
+      .component-placeholder {
+        padding: 60px 20px;
+        background-color: #f3f4f6;
+        border: 2px dashed #d1d5db;
+        border-radius: 8px;
+        text-align: center;
+        color: #9ca3af;
+        font-style: italic;
       }
 
-      .midp-table thead {
-        background-color: #fef3c7;
-      }
-
-      .monospace {
-        font-family: 'Courier New', Courier, monospace;
-      }
-
-      /* Checkbox list */
       .checkbox-list {
         list-style: none;
         margin: 10px 0;
@@ -623,44 +1035,17 @@ class HtmlTemplateService {
         font-weight: bold;
       }
 
-      /* Textarea */
-      .textarea-content {
+      .textarea-content,
+      .intro-text {
         margin: 10px 0;
         color: #4b5563;
         white-space: pre-wrap;
       }
 
-      .intro-text {
-        margin-bottom: 20px;
-        color: #4b5563;
-        white-space: pre-wrap;
+      .monospace {
+        font-family: 'Courier New', Courier, monospace;
       }
 
-      /* Component images */
-      .component-image {
-        margin: 30px 0;
-        text-align: center;
-        page-break-inside: avoid;
-      }
-
-      .component-image img {
-        max-width: 100%;
-        height: auto;
-        border: 1px solid #e5e7eb;
-        border-radius: 4px;
-      }
-
-      .component-placeholder {
-        padding: 60px 20px;
-        background-color: #f3f4f6;
-        border: 2px dashed #d1d5db;
-        border-radius: 8px;
-        text-align: center;
-        color: #9ca3af;
-        font-style: italic;
-      }
-
-      /* Print-specific styles */
       @page {
         size: A4;
         margin: 25mm 20mm;
@@ -672,6 +1057,10 @@ class HtmlTemplateService {
           print-color-adjust: exact;
         }
 
+        .container {
+          max-width: 100%;
+        }
+
         .page-break {
           page-break-before: always;
         }
@@ -681,6 +1070,31 @@ class HtmlTemplateService {
         }
       }
     `;
+  }
+
+  /**
+   * Reload configuration from file
+   * Useful for hot-reloading in development
+   * @returns {Object} Config load result
+   */
+  reloadConfig() {
+    this._cssCache = null; // Clear CSS cache too
+    return loadBepConfig();
+  }
+
+  /**
+   * Get current configuration status
+   * @returns {Object} Status object with config details
+   */
+  getConfigStatus() {
+    return {
+      hasSteps: CONFIG.steps.length > 0,
+      stepCount: CONFIG.steps.length,
+      hasBepTypes: Object.keys(CONFIG.bepTypeDefinitions).length > 0,
+      bepTypes: Object.keys(CONFIG.bepTypeDefinitions),
+      hasFormFields: Object.keys(CONFIG.formFields).length > 0,
+      initialLoadResult: configLoadResult
+    };
   }
 }
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import OrgStructureField from '../forms/specialized/OrgStructureField';
 import OrgStructureDataTable from '../forms/specialized/OrgStructureDataTable';
-import CDEDiagramBuilderV2 from '../forms/diagrams/diagram-components/CDEDiagramBuilder';
+import CDEPlatformEcosystem from '../forms/custom/CDEPlatformEcosystem';
 import VolumeStrategyMindmap from '../forms/diagrams/diagram-components/VolumeStrategyMindmap';
 import FolderStructureDiagram from '../forms/diagrams/diagram-components/FolderStructureDiagram';
 import NamingConventionBuilder from '../forms/custom/NamingConventionBuilder';
@@ -23,16 +23,12 @@ const HiddenComponentsRenderer = ({ formData, bepType }) => {
       style={{
         position: 'fixed',
         top: 0,
-        left: 0,
+        left: '-10000px',
         width: '1200px',
-        maxHeight: '100vh',
-        overflow: 'hidden',
         pointerEvents: 'none',
         zIndex: -1000,
         backgroundColor: 'white',
-        // Make it invisible but keep it in the viewport for html2canvas
-        clipPath: 'inset(0 0 100% 100%)', // Clips the content so it's not visible
-        opacity: 0.01 // Very low opacity instead of 0
+        opacity: 0.01
       }}
     >
       {/* Organizational Structure Chart */}
@@ -60,13 +56,14 @@ const HiddenComponentsRenderer = ({ formData, bepType }) => {
         </div>
       )}
 
-      {/* CDE Diagram */}
+      {/* CDE Platform Ecosystem */}
       {formData.cdeStrategy && (
         <div data-field-name="cdeStrategy" data-component-type="cdeDiagram" style={{ marginBottom: '50px' }}>
-          <CDEDiagramBuilderV2
-            field={{ name: 'cdeStrategy', label: 'CDE Strategy' }}
+          <CDEPlatformEcosystem
+            field={{ name: 'cdeStrategy', label: 'Multi-Platform CDE Strategy' }}
             value={formData.cdeStrategy}
             onChange={noop}
+            exportMode={true}
           />
         </div>
       )}

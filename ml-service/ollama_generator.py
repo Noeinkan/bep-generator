@@ -162,9 +162,32 @@ class OllamaGenerator:
             # If the model repeated the partial text, remove it
             text = text.replace(partial_text, '', 1).strip()
 
-        # Remove common AI artifacts
+        # Remove common AI artifacts and meta-commentary
         text = re.sub(r'^(Sure|Here|Okay|Certainly)[,!.]?\s*', '', text, flags=re.IGNORECASE)
         text = re.sub(r'^(I\'ll|I will|Let me)\s+\w+\s+', '', text, flags=re.IGNORECASE)
+
+        # Remove AI preambles like "Here is a rewritten version..." or "Is a rewritten version..."
+        preamble_patterns = [
+            r'^(Here\s+is|Is|This\s+is|Below\s+is)\s+(a\s+)?(rewritten|revised|improved|polished|enhanced|updated)\s+(version|text).*?:\s*',
+            r'^(Here\'s|This\'s)\s+(a\s+)?(rewritten|revised|improved|polished|enhanced|updated)\s+(version|text).*?:\s*',
+            r'^The\s+(following|rewritten|revised|improved)\s+(is|text|version).*?:\s*',
+            r'^(Rewritten|Revised|Improved|Polished|Enhanced)\s+(version|text).*?:\s*',
+            # Quote-wrapped preambles
+            r'^["\']?(Here\s+is|Is|This\s+is)',
+        ]
+        for pattern in preamble_patterns:
+            text = re.sub(pattern, '', text, flags=re.IGNORECASE | re.DOTALL)
+
+        # Remove trailing AI explanations like "This revised text adheres to..."
+        trailing_patterns = [
+            r'\n\n(This\s+(revised|rewritten|improved|updated)\s+text\s+(adheres|follows|demonstrates|shows).*?)$',
+            r'\n\n(By\s+following\s+(ISO\s+19650|industry\s+best\s+practices).*?)$',
+            r'\n\n(The\s+above\s+(text|content)\s+(is|has\s+been).*?)$',
+            r'\n\n(I\'ve\s+(made|updated|revised|improved).*?)$',
+            r'\n\n(Key\s+(changes|improvements|updates)\s+(include|made).*?)$',
+        ]
+        for pattern in trailing_patterns:
+            text = re.sub(pattern, '', text, flags=re.IGNORECASE | re.DOTALL)
 
         # Fix spacing - PRESERVE newlines for proper formatting
         # Only collapse multiple spaces on the same line
